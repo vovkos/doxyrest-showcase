@@ -1,0 +1,165 @@
+.. index:: pair: page; Laplace Operator
+.. _doxid-d5/db5/tutorial_laplace_operator:
+
+Laplace Operator
+================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>` to implement a discrete analog of the *Laplacian operator*.
+
+.. rubric:: Theory
+
+#. In the previous tutorial we learned how to use the *Sobel Operator*. It was based on the fact that in the edge area, the pixel intensity shows a "jump" or a high variation of intensity. Getting the first derivative of the intensity, we observed that an edge is characterized by a maximum, as it can be seen in the figure:
+   
+   .. image:: Laplace_Operator_Tutorial_Theory_Previous.jpg
+
+#. And...what happens if we take the second derivative?
+   
+   .. image:: Laplace_Operator_Tutorial_Theory_ddIntensity.jpg
+   
+   You can observe that the second derivative is zero! So, we can also use this criterion to attempt to detect edges in an image. However, note that zeros will not only appear in edges (they can actually appear in other meaningless locations); this can be solved by applying filtering where needed.
+
+.. rubric:: Laplacian Operator
+
+#. From the explanation above, we deduce that the second derivative can be used to *detect edges*. Since images are "\*2D\*", we would need to take the derivative in both dimensions. Here, the Laplacian operator comes handy.
+
+#. The *Laplacian operator* is defined by:
+   
+   .. math::
+   
+   	Laplace(f) = \dfrac{\partial^{2} f}{\partial x^{2}} + \dfrac{\partial^{2} f}{\partial y^{2}}
+
+#. The Laplacian operator is implemented in OpenCV by the function :ref:`cv::Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>`. In fact, since the Laplacian uses the gradient of images, it calls internally the *Sobel* operator to perform its computation.
+
+.. rubric:: Code
+
+#. **What does this program do?**
+   
+   * Loads an image
+   
+   * Remove noise by applying a Gaussian blur and then convert the original image to grayscale
+   
+   * Applies a Laplacian operator to the grayscale image and stores the output image
+   
+   * Display the result in a window
+
+#. The tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/Laplace_Demo.cpp>`__
+   
+   .. ref-code-block:: cpp
+   
+   	
+   	#include "opencv2/imgproc.hpp"
+   	#include "opencv2/imgcodecs.hpp"
+   	#include "opencv2/highgui.hpp"
+   	
+   	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+   	
+   	int main( int, char** argv )
+   	{
+   	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, src_gray, dst;
+   	  int kernel_size = 3;
+   	  int scale = 1;
+   	  int delta = 0;
+   	  int ddepth = :ref:`CV_16S <doxid-d1/d1b/group__core__hal__interface_1ga9d2ee1a8334733dea7482a47a88e0f87>`;
+   	  const char* window_name = "Laplace Demo";
+   	
+   	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+   	
+   	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+   	    { return -1; }
+   	
+   	  :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`( src, src, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(3,3), 0, 0, :ref:`BORDER_DEFAULT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>` );
+   	
+   	  :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, src_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` ); // Convert the image to grayscale
+   	
+   	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` abs_dst;
+   	  :ref:`Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>`( src_gray, dst, ddepth, kernel_size, scale, delta, :ref:`BORDER_DEFAULT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>` );
+   	
+   	  :ref:`convertScaleAbs <doxid-d2/de8/group__core__array_1ga3460e9c9f37b563ab9dd550c4d8c4e7d>`( dst, abs_dst );
+   	
+   	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, abs_dst );
+   	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+   	
+   	  return 0;
+   	}
+
+.. rubric:: Explanation
+
+#. Create some needed variables:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat src, src_gray, dst;
+   	int kernel_size = 3;
+   	int scale = 1;
+   	int delta = 0;
+   	int ddepth = :ref:`CV_16S <doxid-d1/d1b/group__core__hal__interface_1ga9d2ee1a8334733dea7482a47a88e0f87>`;
+   	const char* window_name = "Laplace Demo";
+
+#. Loads the source image:
+   
+   .. ref-code-block:: cpp
+   
+   	src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+   
+   	if( src.empty() )
+   	  { return -1; }
+
+#. Apply a Gaussian blur to reduce noise:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`( src, src, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(3,3), 0, 0, :ref:`BORDER_DEFAULT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>` );
+
+#. Convert the image to grayscale using :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, src_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` ); // Convert the image to grayscale
+
+#. Apply the Laplacian operator to the grayscale image:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>`( src_gray, dst, ddepth, kernel_size, scale, delta, :ref:`BORDER_DEFAULT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>` );
+   
+   where the arguments are:
+   
+   * *src_gray* : The input image.
+   
+   * *dst* : Destination (output) image
+   
+   * *ddepth* : Depth of the destination image. Since our input is *CV_8U* we define *ddepth* = *CV_16S* to avoid overflow
+   
+   * *kernel_size* : The kernel size of the Sobel operator to be applied internally. We use 3 in this example.
+   
+   * *scale*, *delta* and *BORDER_DEFAULT* : We leave them as default values.
+
+#. Convert the output from the Laplacian operator to a *CV_8U* image:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`convertScaleAbs <doxid-d2/de8/group__core__array_1ga3460e9c9f37b563ab9dd550c4d8c4e7d>`( dst, abs_dst );
+
+#. Display the result in a window:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, abs_dst );
+   	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+   
+   
+   
+   .. rubric:: Results
+
+#. After compiling the code above, we can run it giving as argument the path to an image. For example, using as an input:
+   
+   .. image:: Laplace_Operator_Tutorial_Original_Image.jpg
+
+#. We obtain the following result. Notice how the trees and the silhouette of the cow are approximately well defined (except in areas in which the intensity are very similar, i.e. around the cow's head). Also, note that the roof of the house behind the trees (right side) is notoriously marked. This is due to the fact that the contrast is higher in that region.
+   
+   .. image:: Laplace_Operator_Tutorial_Result.jpg
+

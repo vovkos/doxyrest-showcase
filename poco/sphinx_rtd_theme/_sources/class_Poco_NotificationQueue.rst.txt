@@ -1,0 +1,267 @@
+.. index:: pair: class; Poco::NotificationQueue
+.. _doxid-class_poco_1_1_notification_queue:
+
+class Poco::NotificationQueue
+=============================
+
+.. toctree::
+	:hidden:
+
+	struct_Poco_NotificationQueue_WaitInfo.rst
+
+Overview
+~~~~~~~~
+
+A :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>` object provides a way to implement asynchronous notifications. :ref:`More...<details-class_poco_1_1_notification_queue>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <NotificationQueue.h>
+	
+	class NotificationQueue
+	{
+	public:
+		// structs
+	
+		struct :ref:`WaitInfo<doxid-struct_poco_1_1_notification_queue_1_1_wait_info>`;
+
+		// methods
+	
+		void
+		:ref:`enqueueNotification<doxid-class_poco_1_1_notification_queue_1a2732fd8c8c82253f2fd03d7b313d5e2f>`(:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification);
+	
+		void
+		:ref:`enqueueUrgentNotification<doxid-class_poco_1_1_notification_queue_1a5e309ac3ba2928737a50ee745efe6ff9>`(:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification);
+	
+		:ref:`Notification<doxid-class_poco_1_1_notification>`*
+		:ref:`dequeueNotification<doxid-class_poco_1_1_notification_queue_1af8d1d91b739aa070bb855d921547ed20>`();
+	
+		:ref:`Notification<doxid-class_poco_1_1_notification>`*
+		:ref:`waitDequeueNotification<doxid-class_poco_1_1_notification_queue_1a7981b552d708a3ee681a5c4b69817f54>`();
+	
+		:ref:`Notification<doxid-class_poco_1_1_notification>`*
+		:ref:`waitDequeueNotification<doxid-class_poco_1_1_notification_queue_1a06bbe07bf768da65b3edc1cde91ff2cb>`(long milliseconds);
+	
+		void
+		:ref:`dispatch<doxid-class_poco_1_1_notification_queue_1a1cd99c42cb71adb09bd253836eeb787d>`(:ref:`NotificationCenter<doxid-class_poco_1_1_notification_center>`& notificationCenter);
+	
+		void
+		:ref:`wakeUpAll<doxid-class_poco_1_1_notification_queue_1ac7dbc59cd5c01524770425a6308da19c>`();
+	
+		bool
+		:ref:`empty<doxid-class_poco_1_1_notification_queue_1a7696f4032d68ceb3f9adb228e726c26a>`() const;
+	
+		int
+		:ref:`size<doxid-class_poco_1_1_notification_queue_1a8c279d2ec80ebdd903483449a92d2d16>`() const;
+	
+		void
+		:ref:`clear<doxid-class_poco_1_1_notification_queue_1a4df810aaff40f415803fbff2cd4a7f61>`();
+	
+		bool
+		:ref:`hasIdleThreads<doxid-class_poco_1_1_notification_queue_1a90448728acc9897646bb665474b53b44>`() const;
+	
+		static
+		NotificationQueue&
+		:ref:`defaultQueue<doxid-class_poco_1_1_notification_queue_1a6cb421b35467f3829126e3020a6d6bab>`();
+
+	protected:
+		// methods
+	
+		:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`
+		:target:`dequeueOne<doxid-class_poco_1_1_notification_queue_1a706fd7ca8c9060f0b612580da5bca5c2>`();
+	};
+.. _details-class_poco_1_1_notification_queue:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>` object provides a way to implement asynchronous notifications.
+
+This is especially useful for sending notifications from one thread to another, for example from a background thread to the main (user interface) thread.
+
+The :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>` can also be used to distribute work from a controlling thread to one or more worker threads. Each worker thread repeatedly calls :ref:`waitDequeueNotification() <doxid-class_poco_1_1_notification_queue_1a7981b552d708a3ee681a5c4b69817f54>` and processes the returned notification. Special care must be taken when shutting down a queue with worker threads waiting for notifications. The recommended sequence to shut down and destroy the queue is to
+
+.. ref-code-block:: cpp
+
+	1. set a termination flag for every worker thread
+	2. call the wakeUpAll() method
+	3. join each worker thread
+	4. destroy the notification queue.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_notification_queue_1a6470352ba2ddef9a9f4fa775853051f7:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~NotificationQueue()
+
+Destroys the :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>`.
+
+Methods
+-------
+
+.. index:: pair: function; enqueueNotification
+.. _doxid-class_poco_1_1_notification_queue_1a2732fd8c8c82253f2fd03d7b313d5e2f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	enqueueNotification(:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification)
+
+Enqueues the given notification by adding it to the end of the queue (FIFO).
+
+The queue takes ownership of the notification, thus a call like
+
+.. ref-code-block:: cpp
+
+	notificationQueue.enqueueNotification(new MyNotification);
+
+does not result in a memory leak.
+
+.. index:: pair: function; enqueueUrgentNotification
+.. _doxid-class_poco_1_1_notification_queue_1a5e309ac3ba2928737a50ee745efe6ff9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	enqueueUrgentNotification(:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification)
+
+Enqueues the given notification by adding it to the front of the queue (LIFO).
+
+The event therefore gets processed before all other events already in the queue. The queue takes ownership of the notification, thus a call like
+
+.. ref-code-block:: cpp
+
+	notificationQueue.enqueueUrgentNotification(new MyNotification);
+
+does not result in a memory leak.
+
+.. index:: pair: function; dequeueNotification
+.. _doxid-class_poco_1_1_notification_queue_1af8d1d91b739aa070bb855d921547ed20:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Notification<doxid-class_poco_1_1_notification>`*
+	dequeueNotification()
+
+Dequeues the next pending notification.
+
+Returns 0 (null) if no notification is available. The caller gains ownership of the notification and is expected to release it when done with it.
+
+It is highly recommended that the result is immediately assigned to a :ref:`Notification::Ptr <doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`, to avoid potential memory management issues.
+
+.. index:: pair: function; waitDequeueNotification
+.. _doxid-class_poco_1_1_notification_queue_1a7981b552d708a3ee681a5c4b69817f54:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Notification<doxid-class_poco_1_1_notification>`*
+	waitDequeueNotification()
+
+Dequeues the next pending notification.
+
+If no notification is available, waits for a notification to be enqueued. The caller gains ownership of the notification and is expected to release it when done with it. This method returns 0 (null) if wakeUpWaitingThreads() has been called by another thread.
+
+It is highly recommended that the result is immediately assigned to a :ref:`Notification::Ptr <doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`, to avoid potential memory management issues.
+
+.. index:: pair: function; waitDequeueNotification
+.. _doxid-class_poco_1_1_notification_queue_1a06bbe07bf768da65b3edc1cde91ff2cb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Notification<doxid-class_poco_1_1_notification>`*
+	waitDequeueNotification(long milliseconds)
+
+Dequeues the next pending notification.
+
+If no notification is available, waits for a notification to be enqueued up to the specified time. Returns 0 (null) if no notification is available. The caller gains ownership of the notification and is expected to release it when done with it.
+
+It is highly recommended that the result is immediately assigned to a :ref:`Notification::Ptr <doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`, to avoid potential memory management issues.
+
+.. index:: pair: function; dispatch
+.. _doxid-class_poco_1_1_notification_queue_1a1cd99c42cb71adb09bd253836eeb787d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	dispatch(:ref:`NotificationCenter<doxid-class_poco_1_1_notification_center>`& notificationCenter)
+
+Dispatches all queued notifications to the given notification center.
+
+.. index:: pair: function; wakeUpAll
+.. _doxid-class_poco_1_1_notification_queue_1ac7dbc59cd5c01524770425a6308da19c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wakeUpAll()
+
+Wakes up all threads that wait for a notification.
+
+.. index:: pair: function; empty
+.. _doxid-class_poco_1_1_notification_queue_1a7696f4032d68ceb3f9adb228e726c26a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	empty() const
+
+Returns true iff the queue is empty.
+
+.. index:: pair: function; size
+.. _doxid-class_poco_1_1_notification_queue_1a8c279d2ec80ebdd903483449a92d2d16:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	size() const
+
+Returns the number of notifications in the queue.
+
+.. index:: pair: function; clear
+.. _doxid-class_poco_1_1_notification_queue_1a4df810aaff40f415803fbff2cd4a7f61:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	clear()
+
+Removes all notifications from the queue.
+
+.. index:: pair: function; hasIdleThreads
+.. _doxid-class_poco_1_1_notification_queue_1a90448728acc9897646bb665474b53b44:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	hasIdleThreads() const
+
+Returns true if the queue has at least one thread waiting for a notification.
+
+.. index:: pair: function; defaultQueue
+.. _doxid-class_poco_1_1_notification_queue_1a6cb421b35467f3829126e3020a6d6bab:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	NotificationQueue&
+	defaultQueue()
+
+Returns a reference to the default :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>`.
+

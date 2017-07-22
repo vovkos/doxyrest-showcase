@@ -1,0 +1,310 @@
+.. index:: pair: page; Histogram Calculation
+.. _doxid-d8/dbc/tutorial_histogram_calculation:
+
+Histogram Calculation
+=====================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>` to divide an image into its correspondent planes.
+
+* To calculate histograms of arrays of images by using the OpenCV function :ref:`cv::calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`
+
+* To normalize an array by using the function :ref:`cv::normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`
+
+In the last tutorial (:ref:`Histogram Equalization <doxid-d4/d1b/tutorial_histogram_equalization>`) we talked about a particular kind of histogram called *Image histogram*. Now we will considerate it in its more general concept. Read on!
+
+
+
+.. rubric:: What are histograms?
+
+* Histograms are collected *counts* of data organized into a set of predefined *bins*
+
+* When we say *data* we are not restricting it to be intensity values (as we saw in the previous Tutorial). The data collected can be whatever feature you find useful to describe your image.
+
+* Let's see an example. Imagine that a Matrix contains information of an image (i.e. intensity in the range :math:`0-255`):
+  
+  .. image:: Histogram_Calculation_Theory_Hist0.jpg
+
+* What happens if we want to *count* this data in an organized way? Since we know that the *range* of information value for this case is 256 values, we can segment our range in subparts (called **bins**) like:
+  
+  .. math::
+  
+  	\begin{array}{l} [0, 255] = { [0, 15] \cup [16, 31] \cup ....\cup [240,255] } \\ range = { bin_{1} \cup bin_{2} \cup ....\cup bin_{n = 15} } \end{array}
+  
+  and we can keep count of the number of pixels that fall in the range of each :math:`bin_{i}`. Applying this to the example above we get the image below ( axis x represents the bins and axis y the number of pixels in each of them).
+  
+  .. image:: Histogram_Calculation_Theory_Hist1.jpg
+
+* This was just a simple example of how an histogram works and why it is useful. An histogram can keep count not only of color intensities, but of whatever image features that we want to measure (i.e. gradients, directions, etc).
+
+* Let's identify some parts of the histogram:
+  
+  #. **dims** : The number of parameters you want to collect data of. In our example, **dims = 1** because we are only counting the intensity values of each pixel (in a greyscale image).
+  
+  #. **bins** : It is the number of **subdivisions** in each dim. In our example, **bins = 16**
+  
+  #. **range** : The limits for the values to be measured. In this case: **range = [0,255]**
+
+* What if you want to count two features? In this case your resulting histogram would be a 3D plot (in which x and y would be :math:`bin_{x}` and :math:`bin_{y}` for each feature and z would be the number of counts for each combination of :math:`(bin_{x}, bin_{y})`. The same would apply for more features (of course it gets trickier).
+
+.. rubric:: What OpenCV offers you
+
+For simple purposes, OpenCV implements the function :ref:`cv::calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`, which calculates the histogram of a set of arrays (usually images or image planes). It can operate with up to 32 dimensions. We will see it in the code below!
+
+.. rubric:: Code
+
+* **What does this program do?**
+  
+  * Loads an image
+  
+  * Splits the image into its R, G and B planes using the function :ref:`cv::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`
+  
+  * Calculate the Histogram of each 1-channel plane by calling the function :ref:`cv::calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`
+  
+  * Plot the three histograms in a window
+
+* **Downloadable code** : Click `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/calcHist_Demo.cpp>`__
+
+* **Code at glance:**
+  
+  .. ref-code-block:: cpp
+  
+  	
+  	#include "opencv2/highgui.hpp"
+  	#include "opencv2/imgcodecs.hpp"
+  	#include "opencv2/imgproc.hpp"
+  	#include <iostream>
+  	
+  	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+  	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+  	
+  	int main(int argc, char** argv)
+  	{
+  	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, dst;
+  	
+  	  :ref:`String <doxid-dc/d0e/classcv_1_1_string>` imageName( "../data/lena.jpg" ); // by default
+  	
+  	  if (argc > 1)
+  	  {
+  	      imageName = argv[1];
+  	  }
+  	
+  	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( imageName, :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+  	
+  	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+  	    { return -1; }
+  	
+  	  vector<Mat> bgr_planes;
+  	  :ref:`split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`( src, bgr_planes );
+  	
+  	  int histSize = 256;
+  	
+  	  float range[] = { 0, 256 } ;
+  	  const float* :ref:`histRange <doxid-d8/d0e/group__cudaimgproc__hist_1ga87819085c1059186d9cdeacd92cea783>` = { range };
+  	
+  	  bool uniform = true; bool :ref:`accumulate <doxid-d7/df3/group__imgproc__motion_1ga1a567a79901513811ff3b9976923b199>` = false;
+  	
+  	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` b_hist, g_hist, r_hist;
+  	
+  	  :ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &bgr_planes[0], 1, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
+  	  :ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &bgr_planes[1], 1, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
+  	  :ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &bgr_planes[2], 1, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
+  	
+  	  // Draw the histograms for B, G and R
+  	  int hist_w = 512; int hist_h = 400;
+  	  int bin_w = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( (double) hist_w/histSize );
+  	
+  	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` histImage( hist_h, hist_w, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0,0,0) );
+  	
+  	  :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(b_hist, b_hist, 0, histImage.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`() );
+  	  :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(g_hist, g_hist, 0, histImage.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`() );
+  	  :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(r_hist, r_hist, 0, histImage.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`() );
+  	
+  	  for( int i = 1; i < histSize; i++ )
+  	  {
+  	      :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( bin_w*(i-1), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(b_hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i-1)) ) ,
+  	                       Point( bin_w*(i), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(b_hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i)) ),
+  	                       Scalar( 255, 0, 0), 2, 8, 0  );
+  	      :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( bin_w*(i-1), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(g_hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i-1)) ) ,
+  	                       Point( bin_w*(i), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(g_hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i)) ),
+  	                       Scalar( 0, 255, 0), 2, 8, 0  );
+  	      :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( bin_w*(i-1), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(r_hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i-1)) ) ,
+  	                       Point( bin_w*(i), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(r_hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i)) ),
+  	                       Scalar( 0, 0, 255), 2, 8, 0  );
+  	  }
+  	
+  	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("calcHist Demo", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("calcHist Demo", histImage );
+  	
+  	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+  	
+  	  return 0;
+  	
+  	}
+
+.. rubric:: Explanation
+
+#. Create the necessary matrices:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat src, dst;
+
+#. Load the source image
+   
+   .. ref-code-block:: cpp
+   
+   	src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], 1 );
+   	
+   	if( !src.data )
+   	  { return -1; }
+
+#. Separate the source image in its three R,G and B planes. For this we use the OpenCV function :ref:`cv::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>` :
+   
+   .. ref-code-block:: cpp
+   
+   	vector<Mat> bgr_planes;
+   	:ref:`split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`( src, bgr_planes );
+   
+   our input is the image to be divided (this case with three channels) and the output is a vector of Mat )
+
+#. Now we are ready to start configuring the **histograms** for each plane. Since we are working with the B, G and R planes, we know that our values will range in the interval :math:`[0,255]`
+   
+   #. Establish number of bins (5, 10...):
+      
+      .. ref-code-block:: cpp
+      
+      	int histSize = 256; //from 0 to 255
+   
+   #. Set the range of values (as we said, between 0 and 255 )
+      
+      .. ref-code-block:: cpp
+      
+      	float range[] = { 0, 256 } ; //the upper boundary is exclusive
+      	const float* histRange = { range };
+   
+   #. We want our bins to have the same size (uniform) and to clear the histograms in the beginning, so:
+      
+      .. ref-code-block:: cpp
+      
+      	bool uniform = true; bool accumulate = false;
+   
+   #. Finally, we create the Mat objects to save our histograms. Creating 3 (one for each plane):
+      
+      .. ref-code-block:: cpp
+      
+      	Mat b_hist, g_hist, r_hist;
+   
+   #. We proceed to calculate the histograms by using the OpenCV function :ref:`cv::calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>` :
+      
+      .. ref-code-block:: cpp
+      
+      	:ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &bgr_planes[0], 1, 0, Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
+      	:ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &bgr_planes[1], 1, 0, Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
+      	:ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &bgr_planes[2], 1, 0, Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
+      
+      where the arguments are:
+      
+      * **&bgr_planes[0]:** The source array(s)
+      
+      * **1** : The number of source arrays (in this case we are using 1. We can enter here also a list of arrays )
+      
+      * **0** : The channel (*dim*) to be measured. In this case it is just the intensity (each array is single-channel) so we just write 0.
+      
+      * **Mat()** : A mask to be used on the source array ( zeros indicating pixels to be ignored ). If not defined it is not used
+      
+      * **b_hist** : The Mat object where the histogram will be stored
+      
+      * **1** : The histogram dimensionality.
+      
+      * **histSize:** The number of bins per each used dimension
+      
+      * **histRange:** The range of values to be measured per each dimension
+      
+      * **uniform** and **accumulate** : The bin sizes are the same and the histogram is cleared at the beginning.
+
+#. Create an image to display the histograms:
+   
+   .. ref-code-block:: cpp
+   
+   	// Draw the histograms for R, G and B
+   	int hist_w = 512; int hist_h = 400;
+   	int bin_w = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( (double) hist_w/histSize );
+   	
+   	Mat histImage( hist_h, hist_w, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0,0,0) );
+
+#. Notice that before drawing, we first :ref:`cv::normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>` the histogram so its values fall in the range indicated by the parameters entered:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(b_hist, b_hist, 0, histImage.rows, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, Mat() );
+   	:ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(g_hist, g_hist, 0, histImage.rows, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, Mat() );
+   	:ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(r_hist, r_hist, 0, histImage.rows, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, Mat() );
+   
+   this function receives these arguments:
+   
+   * **b_hist:** Input array
+   
+   * **b_hist:** Output normalized array (can be the same)
+   
+   * **0** and\*\*histImage.rows: For this example, they are the lower and upper limits to normalize the values ofr_hist\*\*
+   
+   * **NORM_MINMAX:** Argument that indicates the type of normalization (as described above, it adjusts the values between the two limits set before)
+   
+   * **-1:** Implies that the output normalized array will be the same type as the input
+   
+   * **Mat():** Optional mask
+
+#. Finally, observe that to access the bin (in this case in this 1D-Histogram):
+   
+   .. ref-code-block:: cpp
+   
+   	for( int i = 1; i < histSize; i++ )
+   	{
+   	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( bin_w*(i-1), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(b_hist.at<float>(i-1)) ) ,
+   	                     Point( bin_w*(i), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(b_hist.at<float>(i)) ),
+   	                     Scalar( 255, 0, 0), 2, 8, 0  );
+   	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( bin_w*(i-1), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(g_hist.at<float>(i-1)) ) ,
+   	                     Point( bin_w*(i), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(g_hist.at<float>(i)) ),
+   	                     Scalar( 0, 255, 0), 2, 8, 0  );
+   	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( bin_w*(i-1), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(r_hist.at<float>(i-1)) ) ,
+   	                     Point( bin_w*(i), hist_h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(r_hist.at<float>(i)) ),
+   	                     Scalar( 0, 0, 255), 2, 8, 0  );
+   	}
+   
+   we use the expression:
+   
+   .. ref-code-block:: cpp
+   
+   	b_hist.at<float>(i)
+   
+   where :math:`i` indicates the dimension. If it were a 2D-histogram we would use something like:
+   
+   .. ref-code-block:: cpp
+   
+   	b_hist.at<float>( i, j )
+
+#. Finally we display our histograms and wait for the user to exit:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("calcHist Demo", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("calcHist Demo", histImage );
+   	
+   	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+   	
+   	return 0;
+
+.. rubric:: Result
+
+#. Using as input argument an image like the shown below:
+   
+   .. image:: Histogram_Calculation_Original_Image.jpg
+
+#. Produces the following histogram:
+   
+   .. image:: Histogram_Calculation_Result.jpg
+

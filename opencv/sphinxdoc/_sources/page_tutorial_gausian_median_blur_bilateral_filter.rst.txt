@@ -1,0 +1,273 @@
+.. index:: pair: page; Smoothing Images
+.. _doxid-dc/dd3/tutorial_gausian_median_blur_bilateral_filter:
+
+Smoothing Images
+================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to apply diverse linear filters to smooth images using OpenCV functions such as:
+
+* :ref:`cv::blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`
+
+* :ref:`cv::GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`
+
+* :ref:`cv::medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>`
+
+* :ref:`cv::bilateralFilter <doxid-d4/d86/group__imgproc__filter_1ga9d7064d478c95d60003cf839430737ed>`
+
+.. rubric:: Theory
+
+The explanation below belongs to the book `Computer Vision: Algorithms and Applications <http://szeliski.org/Book/>`__ by Richard Szeliski and to *LearningOpenCV*
+
+
+
+* *Smoothing*, also called *blurring*, is a simple and frequently used image processing operation.
+
+* There are many reasons for smoothing. In this tutorial we will focus on smoothing in order to reduce noise (other uses will be seen in the following tutorials).
+
+* To perform a smoothing operation we will apply a *filter* to our image. The most common type of filters are *linear*, in which an output pixel's value (i.e. :math:`g(i,j)`) is determined as a weighted sum of input pixel values (i.e. :math:`f(i+k,j+l)`) :
+  
+  .. math::
+  
+  	g(i,j) = \sum_{k,l} f(i+k, j+l) h(k,l)
+  
+  :math:`h(k,l)` is called the *kernel*, which is nothing more than the coefficients of the filter.
+  
+  It helps to visualize a *filter* as a window of coefficients sliding across the image.
+
+* There are many kind of filters, here we will mention the most used:
+
+.. rubric:: Normalized Box Filter
+
+* This filter is the simplest of all! Each output pixel is the *mean* of its kernel neighbors ( all of them contribute with equal weights)
+
+* The kernel is below:
+  
+  .. math::
+  
+  	K = \dfrac{1}{K_{width} \cdot K_{height}} \begin{bmatrix} 1 & 1 & 1 & ... & 1 \\ 1 & 1 & 1 & ... & 1 \\ . & . & . & ... & 1 \\ . & . & . & ... & 1 \\ 1 & 1 & 1 & ... & 1 \end{bmatrix}
+
+.. rubric:: Gaussian Filter
+
+* Probably the most useful filter (although not the fastest). Gaussian filtering is done by convolving each point in the input array with a *Gaussian kernel* and then summing them all to produce the output array.
+
+* Just to make the picture clearer, remember how a 1D Gaussian kernel look like?
+  
+  .. image:: Smoothing_Tutorial_theory_gaussian_0.jpg
+  
+  Assuming that an image is 1D, you can notice that the pixel located in the middle would have the biggest weight. The weight of its neighbors decreases as the spatial distance between them and the center pixel increases.
+  
+  Remember that a 2D Gaussian can be represented as :
+  
+  .. math::
+  
+  	G_{0}(x, y) = A e^{ \dfrac{ -(x - \mu_{x})^{2} }{ 2\sigma^{2}_{x} } + \dfrac{ -(y - \mu_{y})^{2} }{ 2\sigma^{2}_{y} } }
+  
+  where :math:`\mu` is the mean (the peak) and :math:`\sigma` represents the variance (per each of the variables :math:`x` and :math:`y`)
+  
+  
+  
+  .. rubric:: Median Filter
+
+The median filter run through each element of the signal (in this case the image) and replace each pixel with the **median** of its neighboring pixels (located in a square neighborhood around the evaluated pixel).
+
+.. rubric:: Bilateral Filter
+
+* So far, we have explained some filters which main goal is to *smooth* an input image. However, sometimes the filters do not only dissolve the noise, but also smooth away the *edges*. To avoid this (at certain extent at least), we can use a bilateral filter.
+
+* In an analogous way as the Gaussian filter, the bilateral filter also considers the neighboring pixels with weights assigned to each of them. These weights have two components, the first of which is the same weighting used by the Gaussian filter. The second component takes into account the difference in intensity between the neighboring pixels and the evaluated one.
+
+* For a more detailed explanation you can check `this link <http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MANDUCHI1/Bilateral_Filtering.html>`__
+
+.. rubric:: Code
+
+* **What does this program do?**
+  
+  * Loads an image
+  
+  * Applies 4 different kinds of filters (explained in Theory) and show the filtered images sequentially
+
+* **Downloadable code** : Click `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Smoothing.cpp>`__
+
+* **Code at glance:**
+  
+  .. ref-code-block:: cpp
+  
+  	
+  	#include "opencv2/imgproc.hpp"
+  	#include "opencv2/imgcodecs.hpp"
+  	#include "opencv2/highgui.hpp"
+  	
+  	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+  	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+  	
+  	int DELAY_CAPTION = 1500;
+  	int DELAY_BLUR = 100;
+  	int MAX_KERNEL_LENGTH = 31;
+  	
+  	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst;
+  	char window_name[] = "Smoothing Demo";
+  	
+  	int display_caption( const char* caption );
+  	int display_dst( int delay );
+  	
+  	
+  	int main( void )
+  	{
+  	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_name, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+  	
+  	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/lena.jpg", :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+  	
+  	  if( display_caption( "Original Image" ) != 0 ) { return 0; }
+  	
+  	  dst = src.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+  	  if( display_dst( DELAY_CAPTION ) != 0 ) { return 0; }
+  	
+  	
+  	  if( display_caption( "Homogeneous Blur" ) != 0 ) { return 0; }
+  	
+  	  for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+  	      { :ref:`blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`( src, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( i, i ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1) );
+  	        if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+  	
+  	  if( display_caption( "Gaussian Blur" ) != 0 ) { return 0; }
+  	
+  	  for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+  	      { :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`( src, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( i, i ), 0, 0 );
+  	        if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+  	
+  	  if( display_caption( "Median Blur" ) != 0 ) { return 0; }
+  	
+  	  for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+  	      { :ref:`medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>` ( src, dst, i );
+  	        if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+  	
+  	  if( display_caption( "Bilateral Blur" ) != 0 ) { return 0; }
+  	
+  	  for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+  	      { :ref:`bilateralFilter <doxid-d4/d86/group__imgproc__filter_1ga9d7064d478c95d60003cf839430737ed>` ( src, dst, i, i*2, i/2 );
+  	        if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+  	
+  	  display_caption( "End: Press a key!" );
+  	
+  	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+  	
+  	  return 0;
+  	}
+  	
+  	int display_caption( const char* caption )
+  	{
+  	  dst = Mat::zeros( src.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), src.:ref:`type <doxid-db/de6/classcv_1_1_mat_1af2d2652e552d7de635988f18a84b53e5>`() );
+  	  :ref:`putText <doxid-d6/d6e/group__imgproc__draw_1ga5126f47f883d730f633d74f07456c576>`( dst, caption,
+  	           :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( src.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`/4, src.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`/2),
+  	           :ref:`FONT_HERSHEY_COMPLEX <doxid-d0/de1/group__core_1gga0f9314ea6e35f99bb23f29567fc16e11af7b1b25521fc9b5731a97cfd13460c2a>`, 1, Scalar(255, 255, 255) );
+  	
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+  	  int c = :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`( DELAY_CAPTION );
+  	  if( c >= 0 ) { return -1; }
+  	  return 0;
+  	}
+  	
+  	int display_dst( int delay )
+  	{
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+  	  int c = :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>` ( delay );
+  	  if( c >= 0 ) { return -1; }
+  	  return 0;
+  	}
+
+.. rubric:: Explanation
+
+#. Let's check the OpenCV functions that involve only the smoothing procedure, since the rest is already known by now.
+
+#. **Normalized Block Filter:**
+   
+   OpenCV offers the function :ref:`cv::blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>` to perform smoothing with this filter.
+   
+   .. ref-code-block:: cpp
+   
+   	for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+   	    { :ref:`blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`( src, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( i, i ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1) );
+   	      if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+   
+   We specify 4 arguments (more details, check the Reference):
+   
+   * *src* : Source image
+   
+   * *dst* : Destination image
+   
+   * *Size( w,h )* : Defines the size of the kernel to be used ( of width *w* pixels and height *h* pixels)
+   
+   * *Point(-1, -1)* : Indicates where the anchor point (the pixel evaluated) is located with respect to the neighborhood. If there is a negative value, then the center of the kernel is considered the anchor point.
+
+#. **Gaussian Filter:**
+   
+   It is performed by the function :ref:`cv::GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>` :
+   
+   .. ref-code-block:: cpp
+   
+   	for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+   	    { :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`( src, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( i, i ), 0, 0 );
+   	      if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+   
+   Here we use 4 arguments (more details, check the OpenCV reference):
+   
+   * *src* : Source image
+   
+   * *dst* : Destination image
+   
+   * *Size(w, h)* : The size of the kernel to be used (the neighbors to be considered). :math:`w` and :math:`h` have to be odd and positive numbers otherwise thi size will be calculated using the :math:`\sigma_{x}` and :math:`\sigma_{y}` arguments.
+   
+   * :math:`\sigma_{x}` : The standard deviation in x. Writing :math:`0` implies that :math:`\sigma_{x}` is calculated using kernel size.
+   
+   * :math:`\sigma_{y}` : The standard deviation in y. Writing :math:`0` implies that :math:`\sigma_{y}` is calculated using kernel size.
+
+#. **Median Filter:**
+   
+   This filter is provided by the :ref:`cv::medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>` function:
+   
+   .. ref-code-block:: cpp
+   
+   	for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+   	    { :ref:`medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>` ( src, dst, i );
+   	      if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+   
+   We use three arguments:
+   
+   * *src* : Source image
+   
+   * *dst* : Destination image, must be the same type as *src*
+   
+   * *i* : Size of the kernel (only one because we use a square window). Must be odd.
+
+#. **Bilateral Filter**
+   
+   Provided by OpenCV function :ref:`cv::bilateralFilter <doxid-d4/d86/group__imgproc__filter_1ga9d7064d478c95d60003cf839430737ed>`
+   
+   .. ref-code-block:: cpp
+   
+   	for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+   	    { :ref:`bilateralFilter <doxid-d4/d86/group__imgproc__filter_1ga9d7064d478c95d60003cf839430737ed>` ( src, dst, i, i*2, i/2 );
+   	      if( display_dst( DELAY_BLUR ) != 0 ) { return 0; } }
+   
+   We use 5 arguments:
+   
+   * *src* : Source image
+   
+   * *dst* : Destination image
+   
+   * *d* : The diameter of each pixel neighborhood.
+   
+   * :math:`\sigma_{Color}` : Standard deviation in the color space.
+   
+   * :math:`\sigma_{Space}` : Standard deviation in the coordinate space (in pixel terms)
+
+.. rubric:: Results
+
+* The code opens an image (in this case *lena.jpg*) and display it under the effects of the 4 filters explained.
+
+* Here is a snapshot of the image smoothed using *medianBlur* :
+  
+  .. image:: Smoothing_Tutorial_Result_Median_Filter.jpg
+

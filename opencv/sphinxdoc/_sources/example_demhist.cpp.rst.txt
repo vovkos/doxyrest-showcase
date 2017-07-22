@@ -1,0 +1,108 @@
+.. index:: pair: example; demhist.cpp
+.. _doxid-d2/dcb/demhist_8cpp-example:
+
+demhist.cpp
+===========
+
+An example for creating histograms of an image
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/core/utility.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	int _brightness = 100;
+	int _contrast = 100;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image;
+	
+	/* brightness/contrast callback function */
+	static void updateBrightnessContrast( int /*arg*/, void* )
+	{
+	    int histSize = 64;
+	    int brightness = _brightness - 100;
+	    int contrast = _contrast - 100;
+	
+	    /*
+	     * The algorithm is by Werner D. Streidt
+	     * (http://visca.com/ffactory/archives/5-99/msg00021.html)
+	     */
+	    double a, b;
+	    if( contrast > 0 )
+	    {
+	        double delta = 127.*contrast/100;
+	        a = 255./(255. - delta*2);
+	        b = a*(brightness - delta);
+	    }
+	    else
+	    {
+	        double delta = -128.*contrast/100;
+	        a = (256.-delta*2)/255.;
+	        b = a*brightness + delta;
+	    }
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst, hist;
+	    image.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(dst, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`, a, b);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", dst);
+	
+	    :ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`(&dst, 1, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), hist, 1, &histSize, 0);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` histImage = :ref:`Mat::ones <doxid-db/de6/classcv_1_1_mat_1a69ae0402d116fc9c71908d8508dc2f09>`(200, 320, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`)*255;
+	
+	    :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(hist, hist, 0, histImage.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	
+	    histImage = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(255);
+	    int binW = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`((double)histImage.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`/histSize);
+	
+	    for( int i = 0; i < histSize; i++ )
+	        :ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( histImage, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(i*binW, histImage.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`),
+	                   Point((i+1)*binW, histImage.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(hist.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(i))),
+	                   :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0), -1, 8, 0 );
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("histogram", histImage);
+	}
+	static void help()
+	{
+	    std::cout << "\nThis program demonstrates the use of calcHist() -- histogram creation.\n"
+	              << "Usage: \n" << "demhist [image_name -- Defaults to ../data/baboon.jpg]" << std::endl;
+	}
+	
+	const char* keys =
+	{
+	    "{help h||}{@image|../data/baboon.jpg|input image file}"
+	};
+	
+	int main( int argc, const char** argv )
+	{
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, keys);
+	    if (parser.has("help"))
+	    {
+	        help();
+	        return 0;
+	    }
+	    string inputImage = parser.get<string>(0);
+	
+	    // Load the source image. HighGUI use.
+	    image = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( inputImage, 0 );
+	    if(image.empty())
+	    {
+	        std::cerr << "Cannot read image file: " << inputImage << std::endl;
+	        return -1;
+	    }
+	
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("image", 0);
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("histogram", 0);
+	
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("brightness", "image", &_brightness, 200, updateBrightnessContrast);
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("contrast", "image", &_contrast, 200, updateBrightnessContrast);
+	
+	    updateBrightnessContrast(0, 0);
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	
+	    return 0;
+	}

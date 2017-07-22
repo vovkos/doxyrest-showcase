@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changing Colorspaces &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contours in OpenCV" href="page_tutorial_py_table_of_contents_contours.html" />
+    <link rel="prev" title="Canny Edge Detection" href="page_tutorial_py_canny.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_contours.html" title="Contours in OpenCV"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_canny.html" title="Canny Edge Detection"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" accesskey="U">Image Processing in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_canny.html"
+                        title="previous chapter">Canny Edge Detection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_contours.html"
+                        title="next chapter">Contours in OpenCV</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changing-colorspaces">
+<span id="doxid-df-d9d-tutorial-py-colorspaces"></span><span id="index-0"></span><h1>Changing Colorspaces</h1>
+<p class="rubric">Goal</p>
+<ul class="simple">
+<li>In this tutorial, you will learn how to convert images from one color-space to another, like BGR <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> Gray, BGR <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> HSV etc.</li>
+<li>In addition to that, we will create an application which extracts a colored object in a video</li>
+<li>You will learn following functions : <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cv2.cvtColor()</span></a>, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga48af0ab51e36436c5d04340e036ce981"><span class="std std-ref">cv2.inRange()</span></a> etc.</li>
+</ul>
+<p class="rubric">Changing Color-space</p>
+<p>There are more than 150 color-space conversion methods available in OpenCV. But we will look into only two which are most widely used ones, BGR <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> Gray and BGR <span class="math notranslate nohighlight">\(\leftrightarrow\)</span> HSV.</p>
+<p>For color conversion, we use the function cv2.cvtColor(input_image, flag) where flag determines the type of conversion.</p>
+<p>For BGR <span class="math notranslate nohighlight">\(\rightarrow\)</span> Gray conversion we use the flags cv2.COLOR_BGR2GRAY. Similarly for BGR <span class="math notranslate nohighlight">\(\rightarrow\)</span> HSV, we use the flag cv2.COLOR_BGR2HSV. To get other flags, just run following commands in your Python terminal :</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">import</span> <span class="n">cv2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">dir</span><span class="p">(</span><span class="n">cv2</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="p">.</span><span class="n">startswith</span><span class="p">(</span><span class="sc">&#39;COLOR_&#39;</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">flags</span> <span class="p">)</span>
+</pre>
+<p>For HSV, Hue range is [0,179], Saturation range is [0,255] and Value range is [0,255]. Different softwares use different scales. So if you are comparing OpenCV values with them, you need to normalize these ranges.</p>
+<p class="rubric">Object Tracking</p>
+<p>Now we know how to convert BGR image to HSV, we can use this to extract a colored object. In HSV, it is more easier to represent a color than in BGR color-space. In our application, we will try to extract a blue colored object. So here is the method:</p>
+<ul class="simple">
+<li>Take each frame of the video</li>
+<li>Convert from BGR to HSV color-space</li>
+<li>We threshold the HSV image for a range of blue color</li>
+<li>Now extract the blue object alone, we can do whatever on that image we want.</li>
+</ul>
+<p>Below is the code which are commented in detail :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+
+    <span class="cp"># Take each frame</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="cp"># Convert BGR to HSV</span>
+    <span class="n">hsv</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+    <span class="cp"># define range of blue color in HSV</span>
+    <span class="n">lower_blue</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([</span><span class="mi">110</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+    <span class="n">upper_blue</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([</span><span class="mi">130</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">])</span>
+
+    <span class="cp"># Threshold the HSV image to get only blue colors</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">hsv</span><span class="p">,</span> <span class="n">lower_blue</span><span class="p">,</span> <span class="n">upper_blue</span><span class="p">)</span>
+
+    <span class="cp"># Bitwise-AND mask and original image</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="n">frame</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span> <span class="n">mask</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;mask&#39;</span><span class="p">,</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;res&#39;</span><span class="p">,</span><span class="n">res</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>Below image shows tracking of the blue object:</p>
+<img alt="image" src="_images/frame.jpg" />
+<p>There are some noises in the image. We will see how to remove them in later chapters.</p>
+<p>This is the simplest method in object tracking. Once you learn functions of contours, you can do plenty of things like find centroid of this object and use it to track the object, draw diagrams just by moving your hand in front of camera and many other funny stuffs.</p>
+<p class="rubric">How to find HSV values to track?</p>
+<p>This is a common question found in <a class="reference external" href="http://www.stackoverflow.com">stackoverflow.com</a>. It is very simple and you can use the same function, <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cv2.cvtColor()</span></a>. Instead of passing an image, you just pass the BGR values you want. For example, to find the HSV value of Green, try following commands in Python terminal:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">green</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">([[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span> <span class="p">]]])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">hsv_green</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">green</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">hsv_green</span> <span class="p">)</span>
+<span class="p">[[[</span> <span class="mi">60</span> <span class="mi">255</span> <span class="mi">255</span><span class="p">]]]</span>
+</pre>
+<p>Now you take [H-10, 100,100] and [H+10, 255, 255] as lower bound and upper bound respectively. Apart from this method, you can use any image editing tools like GIMP or any online converters to find these values, but don’t forget to adjust the HSV ranges.</p>
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+<ol class="arabic simple">
+<li>Try to find a way to extract more than one colored objects, for eg, extract red, blue, green objects simultaneously.</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_contours.html" title="Contours in OpenCV"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_canny.html" title="Canny Edge Detection"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

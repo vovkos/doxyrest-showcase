@@ -1,0 +1,111 @@
+.. index:: pair: page; Load, Modify, and Save an Image
+.. _doxid-db/d64/tutorial_load_save_image:
+
+Load, Modify, and Save an Image
+===============================
+
+We assume that by now you know how to load an image using :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>` and to display it in a window (using :ref:`cv::imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`). Read the :ref:`Load and Display an Image <doxid-db/deb/tutorial_display_image>` tutorial otherwise.
+
+
+
+.. rubric:: Goals
+
+In this tutorial you will learn how to:
+
+* Load an image using :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`
+
+* Transform an image from BGR to Grayscale format by using :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`
+
+* Save your transformed image in a file on disk (using :ref:`cv::imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`)
+
+.. rubric:: Code
+
+Here it is:
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/opencv.hpp>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	int main( int argc, char** argv )
+	{
+	 char* imageName = argv[1];
+	
+	 :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image;
+	 image = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( imageName, :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+	
+	 if( argc != 2 || !image.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` )
+	 {
+	   printf( " No image data \n " );
+	   return -1;
+	 }
+	
+	 :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` gray_image;
+	 :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( image, gray_image, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+	
+	 :ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`( "../../images/Gray_Image.jpg", gray_image );
+	
+	 :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( imageName, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	 :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Gray image", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	
+	 :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( imageName, image );
+	 :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Gray image", gray_image );
+	
+	 :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	 return 0;
+	}
+
+
+
+.. rubric:: Explanation
+
+#. We begin by loading an image using :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`, located in the path given by *imageName*. For this example, assume you are loading a BGR image.
+
+#. Now we are going to convert our image from BGR to Grayscale format. OpenCV has a really nice function to do this kind of transformations:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( image, gray_image, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+   
+   As you can see, :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>` takes as arguments:
+   
+   * a source image (*image*)
+   
+   * a destination image (*gray_image*), in which we will save the converted image.
+   
+   * an additional parameter that indicates what kind of transformation will be performed. In this case we use **COLOR_BGR2GRAY** (because of :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>` has BGR default channel order in case of color images).
+
+#. So now we have our new *gray_image* and want to save it on disk (otherwise it will get lost after the program ends). To save it, we will use a function analagous to :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>` : :ref:`cv::imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`( "../../images/Gray_Image.jpg", gray_image );
+   
+   Which will save our *gray_image* as *Gray_Image.jpg* in the folder *images* located two levels up of my current location.
+
+#. Finally, let's check out the images. We create two windows and use them to show the original image as well as the new one:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( imageName, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+   	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Gray image", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+   	
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( imageName, image );
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Gray image", gray_image );
+
+#. Add the *waitKey(0)* function call for the program to wait forever for an user key press.
+
+.. rubric:: Result
+
+When you run your program you should get something like this:
+
+.. image:: Load_Save_Image_Result_1.jpg
+
+And if you check in your folder (in my case *images*), you should have a newly .jpg file named *Gray_Image.jpg* :
+
+.. image:: Load_Save_Image_Result_2.jpg
+
+Congratulations, you are done with this tutorial!
+

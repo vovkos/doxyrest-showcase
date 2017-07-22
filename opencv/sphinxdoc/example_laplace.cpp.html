@@ -1,0 +1,195 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>laplace.cpp &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lsd_lines.cpp" href="example_lsd_lines.cpp.html" />
+    <link rel="prev" title="kmeans.cpp" href="example_kmeans.cpp.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example_lsd_lines.cpp.html" title="lsd_lines.cpp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="example_kmeans.cpp.html" title="kmeans.cpp"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example_kmeans.cpp.html"
+                        title="previous chapter">kmeans.cpp</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example_lsd_lines.cpp.html"
+                        title="next chapter">lsd_lines.cpp</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="laplace-cpp">
+<span id="doxid-de-db2-laplace-8cpp-example"></span><span id="index-0"></span><h1>laplace.cpp</h1>
+<p>An example using Laplace transformations for edge detection</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/videoio.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;ctype.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span>
+            <span class="s">&quot;</span><span class="se">\n</span><span class="s">This program demonstrates Laplace point/edge detection using OpenCV function Laplacian()</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;It captures from the camera of your choice: 0, 1, ... default 0</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;Call:</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;./laplace -c=&lt;camera #, default 0&gt; -p=&lt;index of the frame to be decoded/captured next&gt;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">enum</span> <span class="p">{</span><span class="n">GAUSSIAN</span><span class="p">,</span> <span class="n">BLUR</span><span class="p">,</span> <span class="n">MEDIAN</span><span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">smoothType</span> <span class="o">=</span> <span class="n">GAUSSIAN</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">cap</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">cv::CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="s">&quot;{help h | | }{ c | 0 | }{ p | | }&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">).</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">isdigit</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span>
+        <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">));</span>
+    <span class="k">else</span>
+        <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">));</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9d2ca36789e7fcfe7a7be3b328038585"><span class="std std-ref">isOpened</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Video &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">)</span> <span class="o">&lt;&lt;</span>
+            <span class="s">&quot;: width=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1aa6480e6972ef4c00d74814ec841a2939"><span class="std std-ref">get</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad"><span class="std std-ref">CAP_PROP_FRAME_WIDTH</span></a><span></span><span class="p">)</span> <span class="o">&lt;&lt;</span>
+            <span class="s">&quot;, height=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1aa6480e6972ef4c00d74814ec841a2939"><span class="std std-ref">get</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e"><span class="std std-ref">CAP_PROP_FRAME_HEIGHT</span></a><span></span><span class="p">)</span> <span class="o">&lt;&lt;</span>
+            <span class="s">&quot;, nframes=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1aa6480e6972ef4c00d74814ec841a2939"><span class="std std-ref">get</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2"><span class="std std-ref">CAP_PROP_FRAME_COUNT</span></a><span></span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">parser</span><span class="p">.</span><span class="n">check</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">parser</span><span class="p">.</span><span class="n">printErrors</span><span class="p">();</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;seeking to frame #&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">pos</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a8c6d8c2d37505b5ca61ffd4bb54e9a7c"><span class="std std-ref">set</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068"><span class="std std-ref">CAP_PROP_POS_FRAMES</span></a><span></span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9d2ca36789e7fcfe7a7be3b328038585"><span class="std std-ref">isOpened</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not initialize capturing...</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Laplacian&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Sigma&quot;</span><span class="p">,</span> <span class="s">&quot;Laplacian&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sigma</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">smoothed</span><span class="p">,</span> <span class="n">laplace</span><span class="p">,</span> <span class="n">result</span><span class="p">;</span>
+
+    <span class="k">for</span><span class="p">(;;)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">;</span>
+        <span class="n">cap</span> <span class="o">&gt;&gt;</span> <span class="n">frame</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">frame</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+            <span class="k">break</span><span class="p">;</span>
+
+        <span class="kt">int</span> <span class="n">ksize</span> <span class="o">=</span> <span class="p">(</span><span class="n">sigma</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span><span class="o">|</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">smoothType</span> <span class="o">==</span> <span class="n">GAUSSIAN</span><span class="p">)</span>
+            <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">smoothed</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="n">ksize</span><span class="p">,</span> <span class="n">ksize</span><span class="p">),</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">smoothType</span> <span class="o">==</span> <span class="n">BLUR</span><span class="p">)</span>
+            <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga8c45db9afe636703801b0b2e440fce37"><span class="std std-ref">blur</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">smoothed</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="n">ksize</span><span class="p">,</span> <span class="n">ksize</span><span class="p">));</span>
+        <span class="k">else</span>
+            <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga564869aa33e58769b4469101aac458f9"><span class="std std-ref">medianBlur</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">smoothed</span><span class="p">,</span> <span class="n">ksize</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gad78703e4c8fe703d479c1860d76429e6"><span class="std std-ref">Laplacian</span></a><span></span><span class="p">(</span><span class="n">smoothed</span><span class="p">,</span> <span class="n">laplace</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga9d2ee1a8334733dea7482a47a88e0f87"><span class="std std-ref">CV_16S</span></a><span></span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga3460e9c9f37b563ab9dd550c4d8c4e7d"><span class="std std-ref">convertScaleAbs</span></a><span></span><span class="p">(</span><span class="n">laplace</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">sigma</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span><span class="p">);</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Laplacian&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+
+        <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39; &#39;</span> <span class="p">)</span>
+            <span class="n">smoothType</span> <span class="o">=</span> <span class="n">smoothType</span> <span class="o">==</span> <span class="n">GAUSSIAN</span> <span class="o">?</span> <span class="nl">BLUR</span> <span class="p">:</span> <span class="n">smoothType</span> <span class="o">==</span> <span class="n">BLUR</span> <span class="o">?</span> <span class="nl">MEDIAN</span> <span class="p">:</span> <span class="n">GAUSSIAN</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;q&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;Q&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span>
+            <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example_lsd_lines.cpp.html" title="lsd_lines.cpp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="example_kmeans.cpp.html" title="kmeans.cpp"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

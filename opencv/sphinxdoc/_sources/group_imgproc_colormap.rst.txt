@@ -1,0 +1,168 @@
+.. index:: pair: group; ColorMaps in OpenCV
+.. _doxid-d3/d50/group__imgproc__colormap:
+
+ColorMaps in OpenCV
+===================
+
+.. toctree::
+	:hidden:
+
+	enum_cv_ColormapTypes.rst
+
+Overview
+~~~~~~~~
+
+The human perception isn't built for observing fine changes in grayscale images. :ref:`More...<details-d3/d50/group__imgproc__colormap>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// enums
+
+	enum :ref:`cv::ColormapTypes<doxid-d3/d50/group__imgproc__colormap_1ga9a805d8262bcbe273f16be9ea2055a65>`;
+
+	// global functions
+
+	void
+	:ref:`cv::applyColorMap<doxid-d3/d50/group__imgproc__colormap_1gadf478a5e5ff49d8aa24e726ea6f65d15>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int colormap
+		);
+
+	void
+	:ref:`cv::applyColorMap<doxid-d3/d50/group__imgproc__colormap_1gacb22288ddccc55f9bd9e6d492b409cae>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` userColor
+		);
+
+.. _details-d3/d50/group__imgproc__colormap:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+The human perception isn't built for observing fine changes in grayscale images. Human eyes are more sensitive to observing changes between colors, so you often need to recolor your grayscale images to get a clue about them. OpenCV now comes with various colormaps to enhance the visualization in your computer vision application.
+
+In OpenCV you only need applyColorMap to apply a colormap on a given image. The following sample code reads the path to an image from command line, applies a Jet colormap on it and shows the result:
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/core.hpp>
+	#include <opencv2/imgproc.hpp>
+	#include <opencv2/imgcodecs.hpp>
+	#include <opencv2/highgui.hpp>
+	using namespace cv;
+	
+	#include <iostream>
+	using namespace std;
+	
+	int main(int argc, const char *argv[])
+	{
+	    // We need an input image. (can be grayscale or color)
+	    if (argc < 2)
+	    {
+	        cerr << "We need an image to process here. Please run: colorMap [path_to_image]" << endl;
+	        return -1;
+	    }
+	    Mat img_in = imread(argv[1]);
+	    if(img_in.empty())
+	    {
+	        cerr << "Sample image (" << argv[1] << ") is empty. Please adjust your path, so it points to a valid input image!" << endl;
+	        return -1;
+	    }
+	    // Holds the colormap version of the image:
+	    Mat img_color;
+	    // Apply the colormap:
+	    applyColorMap(img_in, img_color, COLORMAP_JET);
+	    // Show the result:
+	    imshow("colorMap", img_color);
+	    waitKey(0);
+	    return 0;
+	}
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::ColormapTypes <doxid-d3/d50/group__imgproc__colormap_1ga9a805d8262bcbe273f16be9ea2055a65>`
+
+Global Functions
+----------------
+
+.. index:: pair: function; applyColorMap
+.. _doxid-d3/d50/group__imgproc__colormap_1gadf478a5e5ff49d8aa24e726ea6f65d15:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::applyColorMap(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int colormap
+		)
+
+Applies a GNU Octave/MATLAB equivalent colormap on a given image.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- The source image, grayscale or colored of type CV_8UC1 or CV_8UC3.
+
+	*
+		- dst
+
+		- The result is the colormapped source image. Note: :ref:`Mat::create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>` is called on dst.
+
+	*
+		- colormap
+
+		- The colormap to apply, see :ref:`cv::ColormapTypes <doxid-d3/d50/group__imgproc__colormap_1ga9a805d8262bcbe273f16be9ea2055a65>`
+
+.. index:: pair: function; applyColorMap
+.. _doxid-d3/d50/group__imgproc__colormap_1gacb22288ddccc55f9bd9e6d492b409cae:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::applyColorMap(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` userColor
+		)
+
+Applies a user colormap on a given image.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- The source image, grayscale or colored of type CV_8UC1 or CV_8UC3.
+
+	*
+		- dst
+
+		- The result is the colormapped source image. Note: :ref:`Mat::create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>` is called on dst.
+
+	*
+		- userColor
+
+		- The colormap to apply of type CV_8UC1 or CV_8UC3 and size 256
+

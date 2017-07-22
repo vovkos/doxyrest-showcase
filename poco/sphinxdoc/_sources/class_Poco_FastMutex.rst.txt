@@ -1,0 +1,156 @@
+.. index:: pair: class; Poco::FastMutex
+.. _doxid-class_poco_1_1_fast_mutex:
+
+class Poco::FastMutex
+=====================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>` (mutual exclusion) is similar to a :ref:`Mutex <doxid-class_poco_1_1_mutex>`. :ref:`More...<details-class_poco_1_1_fast_mutex>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Mutex.h>
+	
+	class FastMutex: private :ref:`Poco::FastMutexImpl<doxid-class_poco_1_1_fast_mutex_impl>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`Poco::ScopedLock<doxid-class_poco_1_1_scoped_lock>`<FastMutex> :target:`ScopedLock<doxid-class_poco_1_1_fast_mutex_1a65a71c9197937367ebeb0f8d46132333>`;
+
+		// methods
+	
+		void
+		:ref:`lock<doxid-class_poco_1_1_fast_mutex_1a706292a6c12e17552fc368ec415984dc>`();
+	
+		void
+		:ref:`lock<doxid-class_poco_1_1_fast_mutex_1ae9ce4227b4adba8d6e24632b0ddef7c3>`(long milliseconds);
+	
+		bool
+		:ref:`tryLock<doxid-class_poco_1_1_fast_mutex_1a76f8f599068569dcfd549b9ef9fe603b>`();
+	
+		bool
+		:ref:`tryLock<doxid-class_poco_1_1_fast_mutex_1a51cd4097b34e925f424958f9864706a1>`(long milliseconds);
+	
+		void
+		:ref:`unlock<doxid-class_poco_1_1_fast_mutex_1a04d8f91aabca6ffa6df941c6f5b50f98>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	protected:
+		// methods
+	
+		void
+		:ref:`lockImpl<doxid-class_poco_1_1_mutex_impl_1a2d1eb72d1f8bc63971feb7c34b5ad2db>`();
+	
+		bool
+		:ref:`tryLockImpl<doxid-class_poco_1_1_mutex_impl_1af6912745580c04c99d3e12110a516c93>`();
+	
+		bool
+		:ref:`tryLockImpl<doxid-class_poco_1_1_mutex_impl_1ad43e90a41d5d0731fe95062a4b96104b>`(long milliseconds);
+	
+		void
+		:ref:`unlockImpl<doxid-class_poco_1_1_mutex_impl_1ae6c2b2db1b69a8184debbb95bd32775e>`();
+
+.. _details-class_poco_1_1_fast_mutex:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>` (mutual exclusion) is similar to a :ref:`Mutex <doxid-class_poco_1_1_mutex>`.
+
+Unlike a :ref:`Mutex <doxid-class_poco_1_1_mutex>`, however, a :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>` is not recursive, which means that a deadlock will occur if the same thread tries to lock a mutex it has already locked again. Locking a :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>` is faster than locking a recursive :ref:`Mutex <doxid-class_poco_1_1_mutex>`. Using the :ref:`ScopedLock <doxid-class_poco_1_1_scoped_lock>` class is the preferred way to automatically lock and unlock a mutex.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_fast_mutex_1a666592998f39ee6535fa2a1609f590b6:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~FastMutex()
+
+destroys the :ref:`Mutex <doxid-class_poco_1_1_mutex>`.
+
+Methods
+-------
+
+.. index:: pair: function; lock
+.. _doxid-class_poco_1_1_fast_mutex_1a706292a6c12e17552fc368ec415984dc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	lock()
+
+Locks the mutex.
+
+Blocks if the mutex is held by another thread.
+
+.. index:: pair: function; lock
+.. _doxid-class_poco_1_1_fast_mutex_1ae9ce4227b4adba8d6e24632b0ddef7c3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	lock(long milliseconds)
+
+Locks the mutex.
+
+Blocks up to the given number of milliseconds if the mutex is held by another thread. Throws a TimeoutException if the mutex can not be locked within the given timeout.
+
+Performance Note: On most platforms (including Windows), this member function is implemented using a loop calling (the equivalent of) :ref:`tryLock() <doxid-class_poco_1_1_fast_mutex_1a76f8f599068569dcfd549b9ef9fe603b>` and :ref:`Thread::sleep() <doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7>`. On POSIX platforms that support pthread_mutex_timedlock(), this is used.
+
+.. index:: pair: function; tryLock
+.. _doxid-class_poco_1_1_fast_mutex_1a76f8f599068569dcfd549b9ef9fe603b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryLock()
+
+Tries to lock the mutex.
+
+Returns false immediately if the mutex is already held by another thread. Returns true if the mutex was successfully locked.
+
+.. index:: pair: function; tryLock
+.. _doxid-class_poco_1_1_fast_mutex_1a51cd4097b34e925f424958f9864706a1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryLock(long milliseconds)
+
+Locks the mutex.
+
+Blocks up to the given number of milliseconds if the mutex is held by another thread. Returns true if the mutex was successfully locked.
+
+Performance Note: On most platforms (including Windows), this member function is implemented using a loop calling (the equivalent of) :ref:`tryLock() <doxid-class_poco_1_1_fast_mutex_1a76f8f599068569dcfd549b9ef9fe603b>` and :ref:`Thread::sleep() <doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7>`. On POSIX platforms that support pthread_mutex_timedlock(), this is used.
+
+.. index:: pair: function; unlock
+.. _doxid-class_poco_1_1_fast_mutex_1a04d8f91aabca6ffa6df941c6f5b50f98:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	unlock()
+
+Unlocks the mutex so that it can be acquired by other threads.
+

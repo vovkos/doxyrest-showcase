@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cross compilation for ARM based Linux systems &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to build applications with OpenCV inside the “Microsoft Visual Studio”" href="page_tutorial_windows_visual_studio_Opencv.html" />
+    <link rel="prev" title="Building OpenCV for Tegra with CUDA" href="page_tutorial_building_tegra_cuda.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_windows_visual_studio_Opencv.html" title="How to build applications with OpenCV inside the “Microsoft Visual Studio”"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_building_tegra_cuda.html" title="Building OpenCV for Tegra with CUDA"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_introduction.html" accesskey="U">Introduction to OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_building_tegra_cuda.html"
+                        title="previous chapter">Building OpenCV for Tegra with CUDA</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_windows_visual_studio_Opencv.html"
+                        title="next chapter">How to build applications with OpenCV inside the “Microsoft Visual Studio”</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cross-compilation-for-arm-based-linux-systems">
+<span id="doxid-d0-d76-tutorial-arm-crosscompile-with-cmake"></span><span id="index-0"></span><h1>Cross compilation for ARM based Linux systems</h1>
+<p>This steps are tested on Ubuntu Linux 12.04, but should work for other Linux distributions. I case of other distributions package names and names of cross compilation tools may differ. There are several popular EABI versions that are used on ARM platform. This tutorial is written for <em>gnueabi</em> and <em>gnueabihf</em>, but other variants should work with minimal changes.</p>
+<p class="rubric">Prerequisites</p>
+<ul>
+<li><p class="first">Host computer with Linux;</p>
+</li>
+<li><p class="first">Git;</p>
+</li>
+<li><p class="first">CMake 2.6 or higher;</p>
+</li>
+<li><p class="first">Cross compilation tools for ARM: gcc, libstc++, etc. Depending on target platform you need to choose <em>gnueabi</em> or <em>gnueabihf</em> tools. Install command for <em>gnueabi</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gcc</span><span class="o">-</span><span class="n">arm</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnueabi</span>
+</pre>
+<p>Install command for <em>gnueabihf</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gcc</span><span class="o">-</span><span class="n">arm</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnueabihf</span>
+</pre>
+</li>
+<li><p class="first">pkgconfig;</p>
+</li>
+<li><p class="first">Python 2.6 for host system;</p>
+</li>
+<li><p class="first">[optional] ffmpeg or libav development packages for armeabi(hf): libavcodec-dev, libavformat-dev, libswscale-dev;</p>
+</li>
+<li><p class="first">[optional] GTK+2.x or higher, including headers (libgtk2.0-dev) for armeabi(hf);</p>
+</li>
+<li><p class="first">[optional] libdc1394 2.x;</p>
+</li>
+<li><p class="first">[optional] libjpeg-dev, libpng-dev, libtiff-dev, libjasper-dev for armeabi(hf).</p>
+</li>
+</ul>
+<p class="rubric">Getting OpenCV Source Code</p>
+<p>You can use the latest stable OpenCV version available in <em>sourceforge</em> or you can grab the latest snapshot from our <a class="reference external" href="https://github.com/opencv/opencv.git">Git repository</a>.</p>
+<p class="rubric">Getting the Latest Stable OpenCV Version</p>
+<ul class="simple">
+<li>Go to our <a class="reference external" href="http://sourceforge.net/projects/opencvlibrary">page on Sourceforge</a>;</li>
+<li>Download the source tarball and unpack it.</li>
+</ul>
+<p class="rubric">Getting the Cutting-edge OpenCV from the Git Repository</p>
+<p>Launch Git client and clone <a class="reference external" href="http://github.com/opencv/opencv">OpenCV repository</a></p>
+<p>In Linux it can be achieved with the following command in Terminal:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cd</span> <span class="o">~/&lt;</span><span class="n">my_working</span> <span class="n">_directory</span><span class="o">&gt;</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/opencv/opencv.git</span>
+</pre>
+<p class="rubric">Building OpenCV</p>
+<ol class="arabic">
+<li><p class="first">Create a build directory, make it current and run the following command:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cmake</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">some</span> <span class="n">optional</span> <span class="n">parameters</span><span class="o">&gt;</span><span class="p">]</span> <span class="o">-</span><span class="n">DCMAKE_TOOLCHAIN_FILE</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">OpenCV</span> <span class="n">source</span> <span class="n">directory</span><span class="o">&gt;/</span><span class="n">platforms</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">arm</span><span class="o">-</span><span class="n">gnueabi</span><span class="p">.</span><span class="n">toolchain</span><span class="p">.</span><span class="n">cmake</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">OpenCV</span> <span class="n">source</span> <span class="n">directory</span><span class="o">&gt;</span>
+</pre>
+<p>Toolchain uses <em>gnueabihf</em> EABI convention by default. Add -DSOFTFP=ON cmake argument to switch on softfp compiler.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cmake</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">some</span> <span class="n">optional</span> <span class="n">parameters</span><span class="o">&gt;</span><span class="p">]</span> <span class="o">-</span><span class="n">DSOFTFP</span><span class="o">=</span><span class="n">ON</span> <span class="o">-</span><span class="n">DCMAKE_TOOLCHAIN_FILE</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">OpenCV</span> <span class="n">source</span> <span class="n">directory</span><span class="o">&gt;/</span><span class="n">platforms</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">arm</span><span class="o">-</span><span class="n">gnueabi</span><span class="p">.</span><span class="n">toolchain</span><span class="p">.</span><span class="n">cmake</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">OpenCV</span> <span class="n">source</span> <span class="n">directory</span><span class="o">&gt;</span>
+</pre>
+<p>For example:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">opencv</span><span class="o">/</span><span class="n">platforms</span><span class="o">/</span><span class="n">linux</span>
+<span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="n">build_hardfp</span>
+<span class="n">cd</span> <span class="n">build_hardfp</span>
+
+<span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_TOOLCHAIN_FILE</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">arm</span><span class="o">-</span><span class="n">gnueabi</span><span class="p">.</span><span class="n">toolchain</span><span class="p">.</span><span class="n">cmake</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="p">..</span>
+</pre>
+</li>
+<li><p class="first">Run make in build (&lt;cmake_binary_dir&gt;) directory:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">make</span>
+</pre>
+</li>
+</ol>
+<p>Optionally you can strip symbols info from the created library via install/strip make target. This option produces smaller binary ( twice smaller) but makes further debugging harder.</p>
+<p class="rubric">Enable hardware optimizations</p>
+<p>Depending on target platform architecture different instruction sets can be used. By default compiler generates code for armv5l without VFPv3 and NEON extensions. Add -DENABLE_VFPV3=ON to cmake command line to enable code generation for VFPv3 and -DENABLE_NEON=ON for using NEON SIMD extensions.</p>
+<p>TBB is supported on multi core ARM SoCs also. Add -DWITH_TBB=ON and -DBUILD_TBB=ON to enable it. Cmake scripts download TBB sources from official project site <a class="reference external" href="http://threadingbuildingblocks.org/">http://threadingbuildingblocks.org/</a> and build it.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_windows_visual_studio_Opencv.html" title="How to build applications with OpenCV inside the “Microsoft Visual Studio”"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_building_tegra_cuda.html" title="Building OpenCV for Tegra with CUDA"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_introduction.html" >Introduction to OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,792 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Template Matching &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Thresholding Operations using inRange" href="page_tutorial_threshold_inRange.html" />
+    <link rel="prev" title="Sobel Derivatives" href="page_tutorial_sobel_derivatives.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_threshold_inRange.html" title="Thresholding Operations using inRange"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_sobel_derivatives.html" title="Sobel Derivatives"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_sobel_derivatives.html"
+                        title="previous chapter">Sobel Derivatives</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_threshold_inRange.html"
+                        title="next chapter">Thresholding Operations using inRange</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="template-matching">
+<span id="doxid-de-da9-tutorial-template-matching"></span><span id="index-0"></span><h1>Template Matching</h1>
+<p><strong>Prev Tutorial:</strong> <a class="reference internal" href="page_tutorial_back_projection.html#doxid-da-d7f-tutorial-back-projection"><span class="std std-ref">Back Projection</span></a></p>
+<p><strong>Next Tutorial:</strong> <a class="reference internal" href="page_tutorial_find_contours.html#doxid-df-d0d-tutorial-find-contours"><span class="std std-ref">Finding contours in your image</span></a></p>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate()</span></a> to search for matches between an image patch and an input image</li>
+<li>Use the OpenCV function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">minMaxLoc()</span></a> to find the maximum and minimum values (as well as their positions) in a given array.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">What is template matching?</p>
+<p>Template matching is a technique for finding areas of an image that match (are similar) to a template image (patch).</p>
+<p>While the patch must be a rectangle it may be that not all of the rectangle is relevant. In such a case, a mask can be used to isolate the portion of the patch that should be used to find the match.</p>
+<p class="rubric">How does it work?</p>
+<ul>
+<li><p class="first">We need two primary components:</p>
+<ol class="arabic simple">
+<li><strong>Source image (I):</strong> The image in which we expect to find a match to the template image</li>
+<li><strong>Template image (T):</strong> The patch image which will be compared to the template image</li>
+</ol>
+<p>our goal is to detect the highest matching area:</p>
+<img alt="_images/Template_Matching_Template_Theory_Summary.jpg" src="_images/Template_Matching_Template_Theory_Summary.jpg" />
+</li>
+<li><p class="first">To identify the matching area, we have to <em>compare</em> the template image against the source image by sliding it:</p>
+<img alt="_images/Template_Matching_Template_Theory_Sliding.jpg" src="_images/Template_Matching_Template_Theory_Sliding.jpg" />
+</li>
+<li><p class="first">By <strong>sliding</strong>, we mean moving the patch one pixel at a time (left to right, up to down). At each location, a metric is calculated so it represents how “good” or “bad” the match at that location is (or how similar the patch is to that particular area of the source image).</p>
+</li>
+<li><p class="first">For each location of <strong>T</strong> over <strong>I</strong>, you <em>store</em> the metric in the <em>result matrix</em> <strong>R</strong>. Each location <span class="math notranslate nohighlight">\((x,y)\)</span> in <strong>R</strong> contains the match metric:</p>
+<img alt="_images/Template_Matching_Template_Theory_Result.jpg" src="_images/Template_Matching_Template_Theory_Result.jpg" />
+<p>the image above is the result <strong>R</strong> of sliding the patch with a metric <strong>TM_CCORR_NORMED</strong>. The brightest locations indicate the highest matches. As you can see, the location marked by the red circle is probably the one with the highest value, so that location (the rectangle formed by that point as a corner and width and height equal to the patch image) is considered the match.</p>
+</li>
+<li><p class="first">In practice, we locate the highest value (or lower, depending of the type of matching method) in the <em>R</em> matrix, using the function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">minMaxLoc()</span></a></p>
+</li>
+</ul>
+<p class="rubric">How does the mask work?</p>
+<ul>
+<li><p class="first">If masking is needed for the match, three components are required:</p>
+<ol class="arabic simple">
+<li><strong>Source image (I):</strong> The image in which we expect to find a match to the template image</li>
+<li><strong>Template image (T):</strong> The patch image which will be compared to the template image</li>
+<li><strong>Mask image (M):</strong> The mask, a grayscale image that masks the template</li>
+</ol>
+</li>
+<li><p class="first">Only two matching methods currently accept a mask: CV_TM_SQDIFF and CV_TM_CCORR_NORMED (see below for explanation of all the matching methods available in opencv).</p>
+</li>
+<li><p class="first">The mask must have the same dimensions as the template</p>
+</li>
+<li><p class="first">The mask should have a CV_8U or CV_32F depth and the same number of channels as the template image. In CV_8U case, the mask values are treated as binary, i.e. zero and non-zero. In CV_32F case, the values should fall into [0..1] range and the template pixels will be multiplied by the corresponding mask pixel values. Since the input images in the sample have the CV_8UC3 type, the mask is also read as color image.</p>
+<img alt="_images/Template_Matching_Mask_Example.jpg" src="_images/Template_Matching_Mask_Example.jpg" />
+</li>
+</ul>
+<p class="rubric">Which are the matching methods available in OpenCV?</p>
+<p>Good question. OpenCV implements Template matching in the function <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate()</span></a>. The available methods are 6:</p>
+<ol class="arabic">
+<li><p class="first"><strong>method=CV_TM_SQDIFF</strong></p>
+<div class="math notranslate nohighlight">
+\[R(x,y)= \sum _{x',y'} (T(x',y')-I(x+x',y+y'))^2\]</div>
+</li>
+<li><p class="first"><strong>method=CV_TM_SQDIFF_NORMED</strong></p>
+<div class="math notranslate nohighlight">
+\[R(x,y)= \frac{\sum_{x',y'} (T(x',y')-I(x+x',y+y'))^2}{\sqrt{\sum_{x',y'}T(x',y')^2 \cdot \sum_{x',y'} I(x+x',y+y')^2}}\]</div>
+</li>
+<li><p class="first"><strong>method=CV_TM_CCORR</strong></p>
+<div class="math notranslate nohighlight">
+\[R(x,y)= \sum _{x',y'} (T(x',y') \cdot I(x+x',y+y'))\]</div>
+</li>
+<li><p class="first"><strong>method=CV_TM_CCORR_NORMED</strong></p>
+<div class="math notranslate nohighlight">
+\[R(x,y)= \frac{\sum_{x',y'} (T(x',y') \cdot I(x+x',y+y'))}{\sqrt{\sum_{x',y'}T(x',y')^2 \cdot \sum_{x',y'} I(x+x',y+y')^2}}\]</div>
+</li>
+<li><p class="first"><strong>method=CV_TM_CCOEFF</strong></p>
+<div class="math notranslate nohighlight">
+\[R(x,y)= \sum _{x',y'} (T'(x',y') \cdot I'(x+x',y+y'))\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{l} T'(x',y')=T(x',y') - 1/(w \cdot h) \cdot \sum _{x'',y''} T(x'',y'') \\ I'(x+x',y+y')=I(x+x',y+y') - 1/(w \cdot h) \cdot \sum _{x'',y''} I(x+x'',y+y'') \end{array}\end{split}\]</div>
+</li>
+<li><p class="first"><strong>method=CV_TM_CCOEFF_NORMED</strong></p>
+<div class="math notranslate nohighlight">
+\[R(x,y)= \frac{ \sum_{x',y'} (T'(x',y') \cdot I'(x+x',y+y')) }{ \sqrt{\sum_{x',y'}T'(x',y')^2 \cdot \sum_{x',y'} I'(x+x',y+y')^2} }\]</div>
+</li>
+</ol>
+<p class="rubric">Code</p>
+<ul>
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Loads an input image, an image patch (<em>template</em>), and optionally a mask</li>
+<li>Perform a template matching procedure by using the OpenCV function <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate()</span></a> with any of the 6 matching methods described before. The user can choose the method by entering its selection in the Trackbar. If a mask is supplied, it will only be used for the methods that support masking</li>
+<li>Normalize the output of the matching procedure</li>
+<li>Localize the location with higher matching probability</li>
+<li>Draw a rectangle around the area corresponding to the highest match</li>
+</ul>
+</li>
+<li><p class="first"><strong>Downloadable code</strong> : Click <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/MatchTemplate_Demo.cpp">here</a></p>
+</li>
+<li><p class="first"><strong>Code at glance:</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">bool</span> <span class="n">use_mask</span><span class="p">;</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">;</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">templ</span><span class="p">;</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">mask</span><span class="p">;</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">result</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">image_window</span> <span class="o">=</span> <span class="s">&quot;Source Image&quot;</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">result_window</span> <span class="o">=</span> <span class="s">&quot;Result window&quot;</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">match_method</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">max_Trackbar</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">MatchingMethod</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Not enough parameters&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:</span><span class="se">\n</span><span class="s">./MatchTemplate_Demo &lt;image_name&gt; &lt;template_name&gt; [&lt;mask_name&gt;]&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">img</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+  <span class="n">templ</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">use_mask</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="o">||</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="o">||</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()))</span>
+  <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Can&#39;t read one of the images&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">image_window</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">result_window</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">trackbar_label</span> <span class="o">=</span> <span class="s">&quot;Method: </span><span class="se">\n</span><span class="s"> 0: SQDIFF </span><span class="se">\n</span><span class="s"> 1: SQDIFF NORMED </span><span class="se">\n</span><span class="s"> 2: TM CCORR </span><span class="se">\n</span><span class="s"> 3: TM CCORR NORMED </span><span class="se">\n</span><span class="s"> 4: TM COEFF </span><span class="se">\n</span><span class="s"> 5: TM COEFF NORMED&quot;</span><span class="p">;</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="n">trackbar_label</span><span class="p">,</span> <span class="n">image_window</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">match_method</span><span class="p">,</span> <span class="n">max_Trackbar</span><span class="p">,</span> <span class="n">MatchingMethod</span> <span class="p">);</span>
+
+  <span class="n">MatchingMethod</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">MatchingMethod</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_display</span><span class="p">;</span>
+  <span class="n">img</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span> <span class="n">img_display</span> <span class="p">);</span>
+
+  <span class="kt">int</span> <span class="n">result_cols</span> <span class="o">=</span>  <span class="n">img</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="o">-</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">result_rows</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="o">-</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="n">result</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a55ced2c8d844d683ea9a725c60037ad0"><span class="std std-ref">create</span></a><span></span><span class="p">(</span> <span class="n">result_rows</span><span class="p">,</span> <span class="n">result_cols</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32ec76240e43e4c9c7b2e2785180a7e6"><span class="std std-ref">CV_32FC1</span></a><span></span> <span class="p">);</span>
+
+  <span class="kt">bool</span> <span class="n">method_accepts_mask</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ggab39a415800ebd0d977c477376649649ba051653cd2ea0b4a8aef977182cfacd8a"><span class="std std-ref">CV_TM_SQDIFF</span></a><span></span> <span class="o">==</span> <span class="n">match_method</span> <span class="o">||</span> <span class="n">match_method</span> <span class="o">==</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ggab39a415800ebd0d977c477376649649ba83190d4cd72f78ef986706b0221b9bab"><span class="std std-ref">CV_TM_CCORR_NORMED</span></a><span></span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">method_accepts_mask</span><span class="p">)</span>
+    <span class="p">{</span> <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span> <span class="p">}</span>
+  <span class="k">else</span>
+    <span class="p">{</span> <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">);</span> <span class="p">}</span>
+
+  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+
+  <span class="kt">double</span> <span class="n">minVal</span><span class="p">;</span> <span class="kt">double</span> <span class="n">maxVal</span><span class="p">;</span> <span class="n">Point</span> <span class="n">minLoc</span><span class="p">;</span> <span class="n">Point</span> <span class="n">maxLoc</span><span class="p">;</span>
+  <span class="n">Point</span> <span class="n">matchLoc</span><span class="p">;</span>
+
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">minMaxLoc</span></a><span></span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minVal</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxVal</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minLoc</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxLoc</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">match_method</span>  <span class="o">==</span> <a class="reference internal" href="enum_cv_TemplateMatchModes.html#doxid-df-dfb-group-imgproc-object-1gga3a7850640f1fe1f58fe91a2d7583695dab65c042ed62c9e9e095a1e7e41fe2773"><span class="std std-ref">TM_SQDIFF</span></a><span></span> <span class="o">||</span> <span class="n">match_method</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_TemplateMatchModes.html#doxid-df-dfb-group-imgproc-object-1gga3a7850640f1fe1f58fe91a2d7583695da5382c8f9df87e87cf1e9f9927dc3bc31"><span class="std std-ref">TM_SQDIFF_NORMED</span></a><span></span> <span class="p">)</span>
+    <span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">minLoc</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span>
+    <span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">maxLoc</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">img_display</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">matchLoc</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="p">,</span> <span class="n">matchLoc</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="p">),</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">matchLoc</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="p">,</span> <span class="n">matchLoc</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="p">),</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">image_window</span><span class="p">,</span> <span class="n">img_display</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">result_window</span><span class="p">,</span> <span class="n">result</span> <span class="p">);</span>
+
+  <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+<li><p class="first"><strong>Downloadable code</strong> : Click <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/java/tutorial_code/ImgProc/tutorial_template_matching/MatchTemplateDemo.java">here</a></p>
+</li>
+<li><p class="first"><strong>Code at glance:</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">Point</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">imgcodecs</span><span class="p">.</span><span class="n">Imgcodecs</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">imgproc</span><span class="p">.</span><span class="n">Imgproc</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">javax</span><span class="p">.</span><span class="n">swing</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">javax</span><span class="p">.</span><span class="n">swing</span><span class="p">.</span><span class="n">event</span><span class="p">.</span><span class="n">ChangeEvent</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">javax</span><span class="p">.</span><span class="n">swing</span><span class="p">.</span><span class="n">event</span><span class="p">.</span><span class="n">ChangeListener</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">awt</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">awt</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="n">BufferedImage</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">awt</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="n">DataBufferByte</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="n">MatchTemplateDemoRun</span> <span class="n">implements</span> <span class="n">ChangeListener</span><span class="p">{</span>
+
+    <span class="n">Boolean</span> <span class="n">use_mask</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="n">Mat</span> <span class="n">img</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">(),</span> <span class="n">templ</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+    <span class="n">Mat</span> <span class="n">mask</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+
+    <span class="kt">int</span> <span class="n">match_method</span><span class="p">;</span>
+
+    <span class="n">JLabel</span> <span class="n">imgDisplay</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(),</span> <span class="n">resultDisplay</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">();</span>
+
+    <span class="k">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Not enough parameters&quot;</span><span class="p">);</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Program arguments:</span><span class="se">\n</span><span class="s">&lt;image_name&gt; &lt;template_name&gt; [&lt;mask_name&gt;]&quot;</span><span class="p">);</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">);</span>
+        <span class="n">templ</span> <span class="o">=</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">);</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">use_mask</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="o">||</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">mask</span><span class="p">.</span><span class="n">empty</span><span class="p">()))</span>
+        <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Can&#39;t read one of the images&quot;</span><span class="p">);</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">matchingMethod</span><span class="p">();</span>
+        <span class="n">createJFrame</span><span class="p">();</span>
+
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">void</span> <span class="n">matchingMethod</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="n">Mat</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+
+        <span class="n">Mat</span> <span class="n">img_display</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+        <span class="n">img</span><span class="p">.</span><span class="n">copyTo</span><span class="p">(</span> <span class="n">img_display</span> <span class="p">);</span>
+
+        <span class="kt">int</span> <span class="n">result_cols</span> <span class="o">=</span>  <span class="n">img</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span> <span class="o">-</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">result_rows</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">rows</span><span class="p">()</span> <span class="o">-</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="n">result</span><span class="p">.</span><span class="n">create</span><span class="p">(</span> <span class="n">result_rows</span><span class="p">,</span> <span class="n">result_cols</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_32FC1</span> <span class="p">);</span>
+
+        <span class="n">Boolean</span> <span class="n">method_accepts_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="o">==</span> <span class="n">match_method</span> <span class="o">||</span>
+                <span class="n">match_method</span> <span class="o">==</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_CCORR_NORMED</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">method_accepts_mask</span><span class="p">)</span>
+        <span class="p">{</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">);</span> <span class="p">}</span>
+
+        <span class="n">Core</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Core</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+
+        <span class="kt">double</span> <span class="n">minVal</span><span class="p">;</span> <span class="kt">double</span> <span class="n">maxVal</span><span class="p">;</span>
+        <span class="n">Point</span> <span class="n">matchLoc</span><span class="p">;</span>
+
+        <span class="n">Core</span><span class="p">.</span><span class="n">MinMaxLocResult</span> <span class="n">mmr</span> <span class="o">=</span> <span class="n">Core</span><span class="p">.</span><span class="n">minMaxLoc</span><span class="p">(</span> <span class="n">result</span> <span class="p">);</span>
+
+        <span class="c1">//  For all the other methods, the higher the better</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">match_method</span>  <span class="o">==</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="o">||</span> <span class="n">match_method</span> <span class="o">==</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_SQDIFF_NORMED</span> <span class="p">)</span>
+        <span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">mmr</span><span class="p">.</span><span class="n">minLoc</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">mmr</span><span class="p">.</span><span class="n">maxLoc</span><span class="p">;</span> <span class="p">}</span>
+
+        <span class="n">Imgproc</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">matchLoc</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">(),</span>
+                <span class="n">matchLoc</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">()),</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">Imgproc</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">matchLoc</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">(),</span>
+                <span class="n">matchLoc</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">()),</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="n">Image</span> <span class="n">tmpImg</span> <span class="o">=</span> <span class="n">toBufferedImage</span><span class="p">(</span><span class="n">img_display</span><span class="p">);</span>
+        <span class="n">ImageIcon</span> <span class="n">icon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="p">(</span><span class="n">tmpImg</span><span class="p">);</span>
+        <span class="n">imgDisplay</span><span class="p">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">);</span>
+
+        <span class="n">result</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_8UC1</span><span class="p">,</span> <span class="mf">255.0</span><span class="p">);</span>
+        <span class="n">tmpImg</span> <span class="o">=</span> <span class="n">toBufferedImage</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="p">(</span><span class="n">tmpImg</span><span class="p">);</span>
+        <span class="n">resultDisplay</span><span class="p">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">void</span> <span class="n">stateChanged</span><span class="p">(</span><span class="n">ChangeEvent</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">JSlider</span> <span class="n">source</span> <span class="o">=</span> <span class="p">(</span><span class="n">JSlider</span><span class="p">)</span> <span class="n">e</span><span class="p">.</span><span class="n">getSource</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">source</span><span class="p">.</span><span class="n">getValueIsAdjusting</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">match_method</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">source</span><span class="p">.</span><span class="n">getValue</span><span class="p">();</span>
+            <span class="n">matchingMethod</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">Image</span> <span class="n">toBufferedImage</span><span class="p">(</span><span class="n">Mat</span> <span class="n">m</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">type</span> <span class="o">=</span> <span class="n">BufferedImage</span><span class="p">.</span><span class="n">TYPE_BYTE_GRAY</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">m</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="n">type</span> <span class="o">=</span> <span class="n">BufferedImage</span><span class="p">.</span><span class="n">TYPE_3BYTE_BGR</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kt">int</span> <span class="n">bufferSize</span> <span class="o">=</span> <span class="n">m</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span><span class="o">*</span><span class="n">m</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="o">*</span><span class="n">m</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span>
+        <span class="n">byte</span> <span class="p">[]</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">byte</span><span class="p">[</span><span class="n">bufferSize</span><span class="p">];</span>
+        <span class="n">m</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">b</span><span class="p">);</span> <span class="c1">// get all the pixels</span>
+        <span class="n">BufferedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BufferedImage</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">cols</span><span class="p">(),</span><span class="n">m</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span> <span class="n">type</span><span class="p">);</span>
+        <span class="k">final</span> <span class="n">byte</span><span class="p">[]</span> <span class="n">targetPixels</span> <span class="o">=</span> <span class="p">((</span><span class="n">DataBufferByte</span><span class="p">)</span> <span class="n">image</span><span class="p">.</span><span class="n">getRaster</span><span class="p">().</span><span class="n">getDataBuffer</span><span class="p">()).</span><span class="n">getData</span><span class="p">();</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">arraycopy</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">targetPixels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">image</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">void</span> <span class="n">createJFrame</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="n">String</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&quot;Source image; Control; Result image&quot;</span><span class="p">;</span>
+        <span class="n">JFrame</span> <span class="n">frame</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JFrame</span><span class="p">(</span><span class="n">title</span><span class="p">);</span>
+        <span class="n">frame</span><span class="p">.</span><span class="n">setLayout</span><span class="p">(</span><span class="k">new</span> <span class="n">GridLayout</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+        <span class="n">frame</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">imgDisplay</span><span class="p">);</span>
+
+        <span class="kt">int</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1ac48df53b8fd34b87e7b121fa8fd4c379"><span class="std std-ref">min</span></a><span></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+        <span class="n">JSlider</span> <span class="n">slider</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JSlider</span><span class="p">(</span><span class="n">JSlider</span><span class="p">.</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">,</span> <span class="n">match_method</span><span class="p">);</span>
+
+        <span class="n">slider</span><span class="p">.</span><span class="n">setPaintTicks</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+        <span class="n">slider</span><span class="p">.</span><span class="n">setPaintLabels</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+
+        <span class="c1">// Set the spacing for the minor tick mark</span>
+        <span class="n">slider</span><span class="p">.</span><span class="n">setMinorTickSpacing</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="c1">// Customizing the labels</span>
+        <span class="n">Hashtable</span> <span class="n">labelTable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hashtable</span><span class="p">();</span>
+        <span class="n">labelTable</span><span class="p">.</span><span class="n">put</span><span class="p">(</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span> <span class="mi">0</span> <span class="p">),</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(</span><span class="s">&quot;0 - SQDIFF&quot;</span><span class="p">)</span> <span class="p">);</span>
+        <span class="n">labelTable</span><span class="p">.</span><span class="n">put</span><span class="p">(</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span> <span class="mi">1</span> <span class="p">),</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(</span><span class="s">&quot;1 - SQDIFF NORMED&quot;</span><span class="p">)</span> <span class="p">);</span>
+        <span class="n">labelTable</span><span class="p">.</span><span class="n">put</span><span class="p">(</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span> <span class="mi">2</span> <span class="p">),</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(</span><span class="s">&quot;2 - TM CCORR&quot;</span><span class="p">)</span> <span class="p">);</span>
+        <span class="n">labelTable</span><span class="p">.</span><span class="n">put</span><span class="p">(</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span> <span class="mi">3</span> <span class="p">),</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(</span><span class="s">&quot;3 - TM CCORR NORMED&quot;</span><span class="p">)</span> <span class="p">);</span>
+        <span class="n">labelTable</span><span class="p">.</span><span class="n">put</span><span class="p">(</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span> <span class="mi">4</span> <span class="p">),</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(</span><span class="s">&quot;4 - TM COEFF&quot;</span><span class="p">)</span> <span class="p">);</span>
+        <span class="n">labelTable</span><span class="p">.</span><span class="n">put</span><span class="p">(</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span> <span class="mi">5</span> <span class="p">),</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(</span><span class="s">&quot;5 - TM COEFF NORMED : (Method)&quot;</span><span class="p">)</span> <span class="p">);</span>
+        <span class="n">slider</span><span class="p">.</span><span class="n">setLabelTable</span><span class="p">(</span> <span class="n">labelTable</span> <span class="p">);</span>
+
+        <span class="n">slider</span><span class="p">.</span><span class="n">addChangeListener</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+        <span class="n">frame</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">slider</span><span class="p">);</span>
+
+        <span class="n">frame</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">resultDisplay</span><span class="p">);</span>
+        <span class="n">frame</span><span class="p">.</span><span class="n">setDefaultCloseOperation</span><span class="p">(</span><span class="n">JFrame</span><span class="p">.</span><span class="n">EXIT_ON_CLOSE</span><span class="p">);</span>
+        <span class="n">frame</span><span class="p">.</span><span class="n">pack</span><span class="p">();</span>
+        <span class="n">frame</span><span class="p">.</span><span class="n">setVisible</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="n">MatchTemplateDemo</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// load the native OpenCV library</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">loadLibrary</span><span class="p">(</span><span class="n">Core</span><span class="p">.</span><span class="n">NATIVE_LIBRARY_NAME</span><span class="p">);</span>
+
+        <span class="c1">// run code</span>
+        <span class="k">new</span> <span class="nf">MatchTemplateDemoRun</span><span class="p">().</span><span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</li>
+<li><p class="first"><strong>Downloadable code</strong> : Click <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/python/tutorial_code/imgProc/match_template/match_template.py">here</a></p>
+</li>
+<li><p class="first"><strong>Code at glance:</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">sys</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+
+<span class="n">use_mask</span> <span class="o">=</span> <span class="n">False</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">None</span>
+<span class="n">templ</span> <span class="o">=</span> <span class="n">None</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">None</span>
+<span class="n">image_window</span> <span class="o">=</span> <span class="s">&quot;Source Image&quot;</span>
+<span class="n">result_window</span> <span class="o">=</span> <span class="s">&quot;Result window&quot;</span>
+
+<span class="n">match_method</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">max_Trackbar</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="n">def</span> <span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span><span class="o">:</span>
+
+   <span class="k">if</span> <span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">print</span> <span class="sc">&#39;Not enough parameters&#39;</span>
+      <span class="n">print</span> <span class="sc">&#39;Usage:</span><span class="se">\n</span><span class="sc">match_template_demo.py &lt;image_name&gt; &lt;template_name&gt; [&lt;mask_name&gt;]&#39;</span>
+      <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
+   <span class="n">global</span> <span class="n">img</span>
+   <span class="n">global</span> <span class="n">templ</span>
+   <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cv2</span><span class="p">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+   <span class="n">templ</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">cv2</span><span class="p">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+
+   <span class="k">if</span> <span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">global</span> <span class="n">use_mask</span>
+      <span class="n">use_mask</span> <span class="o">=</span> <span class="n">True</span>
+      <span class="n">global</span> <span class="n">mask</span>
+      <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">cv2</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">)</span>
+
+   <span class="k">if</span> <span class="p">((</span><span class="n">img</span> <span class="n">is</span> <span class="n">None</span><span class="p">)</span> <span class="n">or</span> <span class="p">(</span><span class="n">templ</span> <span class="n">is</span> <span class="n">None</span><span class="p">)</span> <span class="n">or</span> <span class="p">(</span><span class="n">use_mask</span> <span class="n">and</span> <span class="p">(</span><span class="n">mask</span> <span class="n">is</span> <span class="n">None</span><span class="p">)))</span><span class="o">:</span>
+      <span class="n">print</span> <span class="sc">&#39;Can</span><span class="se">\&#39;</span><span class="sc">t read one of the images&#39;</span>
+      <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
+
+   <span class="n">cv2</span><span class="p">.</span><span class="n">namedWindow</span><span class="p">(</span> <span class="n">image_window</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">WINDOW_AUTOSIZE</span> <span class="p">)</span>
+   <span class="n">cv2</span><span class="p">.</span><span class="n">namedWindow</span><span class="p">(</span> <span class="n">result_window</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">WINDOW_AUTOSIZE</span> <span class="p">)</span>
+
+
+
+   <span class="n">trackbar_label</span> <span class="o">=</span> <span class="sc">&#39;Method: </span><span class="se">\n</span><span class="sc"> 0: SQDIFF </span><span class="se">\n</span><span class="sc"> 1: SQDIFF NORMED </span><span class="se">\n</span><span class="sc"> 2: TM CCORR </span><span class="se">\n</span><span class="sc"> 3: TM CCORR NORMED </span><span class="se">\n</span><span class="sc"> 4: TM COEFF </span><span class="se">\n</span><span class="sc"> 5: TM COEFF NORMED&#39;</span>
+   <span class="n">cv2</span><span class="p">.</span><span class="n">createTrackbar</span><span class="p">(</span> <span class="n">trackbar_label</span><span class="p">,</span> <span class="n">image_window</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">max_Trackbar</span><span class="p">,</span> <span class="n">MatchingMethod</span> <span class="p">)</span>
+
+
+   <span class="n">MatchingMethod</span><span class="p">(</span><span class="n">match_method</span><span class="p">)</span>
+
+
+   <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+   <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="n">def</span> <span class="n">MatchingMethod</span><span class="p">(</span><span class="n">param</span><span class="p">)</span><span class="o">:</span>
+
+   <span class="n">global</span> <span class="n">match_method</span>
+   <span class="n">match_method</span> <span class="o">=</span> <span class="n">param</span>
+
+
+   <span class="n">img_display</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+
+   <span class="n">method_accepts_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="o">==</span> <span class="n">match_method</span> <span class="n">or</span> <span class="n">match_method</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_CCORR_NORMED</span><span class="p">)</span>
+   <span class="k">if</span> <span class="p">(</span><span class="n">use_mask</span> <span class="n">and</span> <span class="n">method_accepts_mask</span><span class="p">)</span><span class="o">:</span>
+       <span class="n">result</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+   <span class="k">else</span><span class="o">:</span>
+       <span class="n">result</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">match_method</span><span class="p">)</span>
+
+
+
+   <span class="n">cv2</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
+
+   <span class="n">minVal</span><span class="p">,</span> <span class="n">maxVal</span><span class="p">,</span> <span class="n">minLoc</span><span class="p">,</span> <span class="n">maxLoc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">minMaxLoc</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">None</span><span class="p">)</span>
+
+
+
+   <span class="k">if</span> <span class="p">(</span><span class="n">match_method</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="n">or</span> <span class="n">match_method</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">)</span><span class="o">:</span>
+       <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">minLoc</span>
+   <span class="k">else</span><span class="o">:</span>
+       <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">maxLoc</span>
+
+
+
+   <span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="p">(</span><span class="n">matchLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matchLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+   <span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="p">(</span><span class="n">matchLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matchLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+   <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_window</span><span class="p">,</span> <span class="n">img_display</span><span class="p">)</span>
+   <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">result_window</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+   <span class="n">pass</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="o">:</span>
+   <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="p">])</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Explanation</p>
+<ul class="simple">
+<li>Declare some global variables, such as the image, template and result matrices, as well as the match method and the window names:</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="kt">bool</span> <span class="n">use_mask</span><span class="p">;</span>
+<span class="n">Mat</span> <span class="n">img</span><span class="p">;</span> <span class="n">Mat</span> <span class="n">templ</span><span class="p">;</span> <span class="n">Mat</span> <span class="n">mask</span><span class="p">;</span> <span class="n">Mat</span> <span class="n">result</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">image_window</span> <span class="o">=</span> <span class="s">&quot;Source Image&quot;</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">result_window</span> <span class="o">=</span> <span class="s">&quot;Result window&quot;</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">match_method</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">max_Trackbar</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Boolean</span> <span class="n">use_mask</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="n">Mat</span> <span class="n">img</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">(),</span> <span class="n">templ</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+<span class="n">Mat</span> <span class="n">mask</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="n">match_method</span><span class="p">;</span>
+
+<span class="n">JLabel</span> <span class="n">imgDisplay</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">(),</span> <span class="n">resultDisplay</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JLabel</span><span class="p">();</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">use_mask</span> <span class="o">=</span> <span class="n">False</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">None</span>
+<span class="n">templ</span> <span class="o">=</span> <span class="n">None</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">None</span>
+<span class="n">image_window</span> <span class="o">=</span> <span class="s">&quot;Source Image&quot;</span>
+<span class="n">result_window</span> <span class="o">=</span> <span class="s">&quot;Result window&quot;</span>
+
+<span class="n">match_method</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">max_Trackbar</span> <span class="o">=</span> <span class="mi">5</span>
+</pre>
+<ul class="simple">
+<li>Load the source image, template, and optionally, if supported for the matching method, a mask:</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+<span class="n">templ</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">use_mask</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">templ</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">mask</span><span class="p">.</span><span class="n">empty</span><span class="p">()))</span>
+<span class="p">{</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Can&#39;t read one of the images&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">);</span>
+<span class="n">templ</span> <span class="o">=</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Imgcodecs</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">global</span> <span class="n">img</span>
+<span class="n">global</span> <span class="n">templ</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cv2</span><span class="p">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+<span class="n">templ</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">cv2</span><span class="p">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span><span class="o">:</span>
+   <span class="n">global</span> <span class="n">use_mask</span>
+   <span class="n">use_mask</span> <span class="o">=</span> <span class="n">True</span>
+   <span class="n">global</span> <span class="n">mask</span>
+   <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span> <span class="n">sys</span><span class="p">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">cv2</span><span class="p">.</span><span class="n">IMREAD_COLOR</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="p">((</span><span class="n">img</span> <span class="n">is</span> <span class="n">None</span><span class="p">)</span> <span class="n">or</span> <span class="p">(</span><span class="n">templ</span> <span class="n">is</span> <span class="n">None</span><span class="p">)</span> <span class="n">or</span> <span class="p">(</span><span class="n">use_mask</span> <span class="n">and</span> <span class="p">(</span><span class="n">mask</span> <span class="n">is</span> <span class="n">None</span><span class="p">)))</span><span class="o">:</span>
+   <span class="n">print</span> <span class="sc">&#39;Can</span><span class="se">\&#39;</span><span class="sc">t read one of the images&#39;</span>
+   <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre>
+<ul class="simple">
+<li>Create the Trackbar to enter the kind of matching method to be used. When a change is detected the callback function is called.</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">trackbar_label</span> <span class="o">=</span> <span class="s">&quot;Method: </span><span class="se">\n</span><span class="s"> 0: SQDIFF </span><span class="se">\n</span><span class="s"> 1: SQDIFF NORMED </span><span class="se">\n</span><span class="s"> 2: TM CCORR </span><span class="se">\n</span><span class="s"> 3: TM CCORR NORMED </span><span class="se">\n</span><span class="s"> 4: TM COEFF </span><span class="se">\n</span><span class="s"> 5: TM COEFF NORMED&quot;</span><span class="p">;</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="n">trackbar_label</span><span class="p">,</span> <span class="n">image_window</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">match_method</span><span class="p">,</span> <span class="n">max_Trackbar</span><span class="p">,</span> <span class="n">MatchingMethod</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="n">JSlider</span> <span class="n">slider</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JSlider</span><span class="p">(</span><span class="n">JSlider</span><span class="p">.</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">,</span> <span class="n">match_method</span><span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">trackbar_label</span> <span class="o">=</span> <span class="sc">&#39;Method: </span><span class="se">\n</span><span class="sc"> 0: SQDIFF </span><span class="se">\n</span><span class="sc"> 1: SQDIFF NORMED </span><span class="se">\n</span><span class="sc"> 2: TM CCORR </span><span class="se">\n</span><span class="sc"> 3: TM CCORR NORMED </span><span class="se">\n</span><span class="sc"> 4: TM COEFF </span><span class="se">\n</span><span class="sc"> 5: TM COEFF NORMED&#39;</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">createTrackbar</span><span class="p">(</span> <span class="n">trackbar_label</span><span class="p">,</span> <span class="n">image_window</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">max_Trackbar</span><span class="p">,</span> <span class="n">MatchingMethod</span> <span class="p">)</span>
+</pre>
+<ul class="simple">
+<li>Let’s check out the callback function. First, it makes a copy of the source image:</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">img_display</span><span class="p">;</span>
+<span class="n">img</span><span class="p">.</span><span class="n">copyTo</span><span class="p">(</span> <span class="n">img_display</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">img_display</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">();</span>
+<span class="n">img</span><span class="p">.</span><span class="n">copyTo</span><span class="p">(</span> <span class="n">img_display</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">img_display</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+</pre>
+<ul class="simple">
+<li>Perform the template matching operation. The arguments are naturally the input image <strong>I</strong>, the template <strong>T</strong>, the result <strong>R</strong> and the match_method (given by the Trackbar), and optionally the mask image <strong>M</strong>.</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="kt">bool</span> <span class="n">method_accepts_mask</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ggab39a415800ebd0d977c477376649649ba051653cd2ea0b4a8aef977182cfacd8a"><span class="std std-ref">CV_TM_SQDIFF</span></a><span></span> <span class="o">==</span> <span class="n">match_method</span> <span class="o">||</span> <span class="n">match_method</span> <span class="o">==</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ggab39a415800ebd0d977c477376649649ba83190d4cd72f78ef986706b0221b9bab"><span class="std std-ref">CV_TM_CCORR_NORMED</span></a><span></span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">method_accepts_mask</span><span class="p">)</span>
+  <span class="p">{</span> <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span> <span class="p">}</span>
+<span class="k">else</span>
+  <span class="p">{</span> <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">matchTemplate</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">);</span> <span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Boolean</span> <span class="n">method_accepts_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="o">==</span> <span class="n">match_method</span> <span class="o">||</span>
+        <span class="n">match_method</span> <span class="o">==</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_CCORR_NORMED</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">use_mask</span> <span class="o">&amp;&amp;</span> <span class="n">method_accepts_mask</span><span class="p">)</span>
+<span class="p">{</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">mask</span><span class="p">);</span> <span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">match_method</span><span class="p">);</span> <span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">method_accepts_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="o">==</span> <span class="n">match_method</span> <span class="n">or</span> <span class="n">match_method</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_CCORR_NORMED</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">use_mask</span> <span class="n">and</span> <span class="n">method_accepts_mask</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">match_method</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+<span class="k">else</span><span class="o">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">match_method</span><span class="p">)</span>
+</pre>
+<ul class="simple">
+<li>We normalize the results:</li>
+</ul>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Core</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Core</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">cv2</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
+</pre>
+<ul class="simple">
+<li>We localize the minimum and maximum values in the result matrix <strong>R</strong> by using <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">minMaxLoc()</span></a>.</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="n">minVal</span><span class="p">;</span> <span class="kt">double</span> <span class="n">maxVal</span><span class="p">;</span> <span class="n">Point</span> <span class="n">minLoc</span><span class="p">;</span> <span class="n">Point</span> <span class="n">maxLoc</span><span class="p">;</span>
+<span class="n">Point</span> <span class="n">matchLoc</span><span class="p">;</span>
+
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">minMaxLoc</span></a><span></span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minVal</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxVal</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minLoc</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxLoc</span><span class="p">,</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="n">minVal</span><span class="p">;</span> <span class="kt">double</span> <span class="n">maxVal</span><span class="p">;</span>
+<span class="n">Point</span> <span class="n">matchLoc</span><span class="p">;</span>
+
+<span class="n">Core</span><span class="p">.</span><span class="n">MinMaxLocResult</span> <span class="n">mmr</span> <span class="o">=</span> <span class="n">Core</span><span class="p">.</span><span class="n">minMaxLoc</span><span class="p">(</span> <span class="n">result</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">minVal</span><span class="p">,</span> <span class="n">maxVal</span><span class="p">,</span> <span class="n">minLoc</span><span class="p">,</span> <span class="n">maxLoc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">minMaxLoc</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">None</span><span class="p">)</span>
+</pre>
+<ul class="simple">
+<li>For the first two methods ( TM_SQDIFF and MT_SQDIFF_NORMED ) the best match are the lowest values. For all the others, higher values represent better matches. So, we save the corresponding value in the <strong>matchLoc</strong> variable:</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span><span class="p">(</span> <span class="n">match_method</span>  <span class="o">==</span> <a class="reference internal" href="enum_cv_TemplateMatchModes.html#doxid-df-dfb-group-imgproc-object-1gga3a7850640f1fe1f58fe91a2d7583695dab65c042ed62c9e9e095a1e7e41fe2773"><span class="std std-ref">TM_SQDIFF</span></a><span></span> <span class="o">||</span> <span class="n">match_method</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_TemplateMatchModes.html#doxid-df-dfb-group-imgproc-object-1gga3a7850640f1fe1f58fe91a2d7583695da5382c8f9df87e87cf1e9f9927dc3bc31"><span class="std std-ref">TM_SQDIFF_NORMED</span></a><span></span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">minLoc</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">else</span>
+  <span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">maxLoc</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//  For all the other methods, the higher the better</span>
+<span class="k">if</span><span class="p">(</span> <span class="n">match_method</span>  <span class="o">==</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="o">||</span> <span class="n">match_method</span> <span class="o">==</span> <span class="n">Imgproc</span><span class="p">.</span><span class="n">TM_SQDIFF_NORMED</span> <span class="p">)</span>
+<span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">mmr</span><span class="p">.</span><span class="n">minLoc</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span> <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">mmr</span><span class="p">.</span><span class="n">maxLoc</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span> <span class="p">(</span><span class="n">match_method</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF</span> <span class="n">or</span> <span class="n">match_method</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">minLoc</span>
+<span class="k">else</span><span class="o">:</span>
+    <span class="n">matchLoc</span> <span class="o">=</span> <span class="n">maxLoc</span>
+</pre>
+<ul class="simple">
+<li>Display the source image and the result matrix. Draw a rectangle around the highest possible matching area:</li>
+</ul>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">img_display</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">matchLoc</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">cols</span> <span class="p">,</span> <span class="n">matchLoc</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">rows</span> <span class="p">),</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+<a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">result</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">matchLoc</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">cols</span> <span class="p">,</span> <span class="n">matchLoc</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">rows</span> <span class="p">),</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">image_window</span><span class="p">,</span> <span class="n">img_display</span> <span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">result_window</span><span class="p">,</span> <span class="n">result</span> <span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Imgproc</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">matchLoc</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">cols</span><span class="p">(),</span>
+        <span class="n">matchLoc</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">rows</span><span class="p">()),</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">Imgproc</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">matchLoc</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">cols</span><span class="p">(),</span>
+        <span class="n">matchLoc</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">rows</span><span class="p">()),</span> <span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="n">Image</span> <span class="n">tmpImg</span> <span class="o">=</span> <span class="n">toBufferedImage</span><span class="p">(</span><span class="n">img_display</span><span class="p">);</span>
+<span class="n">ImageIcon</span> <span class="n">icon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="p">(</span><span class="n">tmpImg</span><span class="p">);</span>
+<span class="n">imgDisplay</span><span class="p">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">);</span>
+
+<span class="n">result</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_8UC1</span><span class="p">,</span> <span class="mf">255.0</span><span class="p">);</span>
+<span class="n">tmpImg</span> <span class="o">=</span> <span class="n">toBufferedImage</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="n">icon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="p">(</span><span class="n">tmpImg</span><span class="p">);</span>
+<span class="n">resultDisplay</span><span class="p">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img_display</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="p">(</span><span class="n">matchLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matchLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">matchLoc</span><span class="p">,</span> <span class="p">(</span><span class="n">matchLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matchLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">templ</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_window</span><span class="p">,</span> <span class="n">img_display</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">result_window</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre>
+<p class="rubric">Results</p>
+<ol class="arabic">
+<li><p class="first">Testing our program with an input image such as:</p>
+<img alt="_images/Template_Matching_Original_Image.jpg" src="_images/Template_Matching_Original_Image.jpg" />
+<p>and a template image:</p>
+<img alt="_images/Template_Matching_Template_Image.jpg" src="_images/Template_Matching_Template_Image.jpg" />
+</li>
+<li><p class="first">Generate the following result matrices (first row are the standard methods SQDIFF, CCORR and CCOEFF, second row are the same methods in its normalized version). In the first column, the darkest is the better match, for the other two columns, the brighter a location, the higher the match.</p>
+<img alt="Result_0" src="_images/Template_Matching_Correl_Result_0.jpg" />
+<img alt="Result_1" src="_images/Template_Matching_Correl_Result_1.jpg" />
+<img alt="Result_2" src="_images/Template_Matching_Correl_Result_2.jpg" />
+<img alt="Result_3" src="_images/Template_Matching_Correl_Result_3.jpg" />
+<img alt="Result_4" src="_images/Template_Matching_Correl_Result_4.jpg" />
+<img alt="Result_5" src="_images/Template_Matching_Correl_Result_5.jpg" />
+</li>
+<li><p class="first">The right match is shown below (black rectangle around the face of the guy at the right). Notice that CCORR and CCDEFF gave erroneous best matches, however their normalized version did it right, this may be due to the fact that we are only considering the “highest match” and not the other possible high matches.</p>
+<img alt="_images/Template_Matching_Image_Result.jpg" src="_images/Template_Matching_Image_Result.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_threshold_inRange.html" title="Thresholding Operations using inRange"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_sobel_derivatives.html" title="Sobel Derivatives"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

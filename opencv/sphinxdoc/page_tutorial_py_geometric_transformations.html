@@ -1,0 +1,212 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Geometric Transformations of Images &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Histograms in OpenCV" href="page_tutorial_py_table_of_contents_histograms.html" />
+    <link rel="prev" title="Contours Hierarchy" href="page_tutorial_py_contours_hierarchy.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_histograms.html" title="Histograms in OpenCV"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_contours_hierarchy.html" title="Contours Hierarchy"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" accesskey="U">Image Processing in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_contours_hierarchy.html"
+                        title="previous chapter">Contours Hierarchy</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_histograms.html"
+                        title="next chapter">Histograms in OpenCV</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="geometric-transformations-of-images">
+<span id="doxid-da-d6e-tutorial-py-geometric-transformations"></span><span id="index-0"></span><h1>Geometric Transformations of Images</h1>
+<p class="rubric">Goals</p>
+<ul class="simple">
+<li>Learn to apply different geometric transformation to images like translation, rotation, affine transformation etc.</li>
+<li>You will see these functions: <strong>cv2.getPerspectiveTransform</strong></li>
+</ul>
+<p class="rubric">Transformations</p>
+<p>OpenCV provides two transformation functions, <strong>cv2.warpAffine</strong> and <strong>cv2.warpPerspective</strong>, with which you can have all kinds of transformations. <strong>cv2.warpAffine</strong> takes a 2x3 transformation matrix while <strong>cv2.warpPerspective</strong> takes a 3x3 transformation matrix as input.</p>
+<p class="rubric">Scaling</p>
+<p>Scaling is just resizing of the image. OpenCV comes with a function <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga2fe39d2201b12e1b961ca56b2aff9ff2"><span class="std std-ref">cv2.resize()</span></a> for this purpose. The size of the image can be specified manually, or you can specify the scaling factor. Different interpolation methods are used. Preferable interpolation methods are <strong>cv2.INTER_AREA</strong> for shrinking and <strong>cv2.INTER_CUBIC</strong> (slow) &amp; <strong>cv2.INTER_LINEAR</strong> for zooming. By default, interpolation method used is <strong>cv2.INTER_LINEAR</strong> for all resizing purposes. You can resize an input image either of following methods:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;messi5.jpg&#39;</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">,</span><span class="n">fx</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fy</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">INTER_CUBIC</span><span class="p">)</span>
+
+<span class="cp">#OR</span>
+
+<span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">2</span><span class="o">*</span><span class="n">width</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">height</span><span class="p">),</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">INTER_CUBIC</span><span class="p">)</span>
+</pre>
+<p class="rubric">Translation</p>
+<p>Translation is the shifting of object’s location. If you know the shift in (x,y) direction, let it be <span class="math notranslate nohighlight">\((t_x,t_y)\)</span>, you can create the transformation matrix <span class="math notranslate nohighlight">\(\textbf{M}\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M = \begin{bmatrix} 1 &amp; 0 &amp; t_x \\ 0 &amp; 1 &amp; t_y \end{bmatrix}\end{split}\]</div>
+<p>You can take make it into a Numpy array of type np.float32 and pass it into <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga8a534cca6fb845c9ac77f10c35f67c0c"><span class="std std-ref">cv2.warpAffine()</span></a> function. See below example for a shift of (100,50):</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;messi5.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">50</span><span class="p">]])</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">M</span><span class="p">,(</span><span class="n">cols</span><span class="p">,</span><span class="n">rows</span><span class="p">))</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;img&#39;</span><span class="p">,</span><span class="n">dst</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p><strong>warning</strong></p>
+<p>Third argument of the <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga8a534cca6fb845c9ac77f10c35f67c0c"><span class="std std-ref">cv2.warpAffine()</span></a> function is the size of the output image, which should be in the form of **(width, height)**. Remember width = number of columns, and height = number of rows.</p>
+<p>See the result below:</p>
+<img alt="image" src="_images/translation.jpg" />
+<p class="rubric">Rotation</p>
+<p>Rotation of an image for an angle <span class="math notranslate nohighlight">\(\theta\)</span> is achieved by the transformation matrix of the form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M = \begin{bmatrix} cos\theta &amp; -sin\theta \\ sin\theta &amp; cos\theta \end{bmatrix}\end{split}\]</div>
+<p>But OpenCV provides scaled rotation with adjustable center of rotation so that you can rotate at any location you prefer. Modified transformation matrix is given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix} \alpha &amp; \beta &amp; (1- \alpha ) \cdot center.x - \beta \cdot center.y \\ - \beta &amp; \alpha &amp; \beta \cdot center.x + (1- \alpha ) \cdot center.y \end{bmatrix}\end{split}\]</div>
+<p>where:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{l} \alpha = scale \cdot \cos \theta , \\ \beta = scale \cdot \sin \theta \end{array}\end{split}\]</div>
+<p>To find this transformation matrix, OpenCV provides a function, <strong>cv2.getRotationMatrix2D</strong>. Check below example which rotates the image by 90 degree with respect to center without any scaling.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;messi5.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">getRotationMatrix2D</span><span class="p">((</span><span class="n">cols</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">rows</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="mi">90</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">M</span><span class="p">,(</span><span class="n">cols</span><span class="p">,</span><span class="n">rows</span><span class="p">))</span>
+</pre>
+<p>See the result:</p>
+<img alt="image" src="_images/rotation.jpg" />
+<p class="rubric">Affine Transformation</p>
+<p>In affine transformation, all parallel lines in the original image will still be parallel in the output image. To find the transformation matrix, we need three points from input image and their corresponding locations in output image. Then <strong>cv2.getAffineTransform</strong> will create a 2x3 matrix which is to be passed to <strong>cv2.warpAffine</strong>.</p>
+<p>Check below example, and also look at the points I selected (which are marked in Green color):</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;drawing.png&#39;</span><span class="p">)</span>
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">,</span><span class="n">ch</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span>
+
+<span class="n">pts1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([[</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">],[</span><span class="mi">200</span><span class="p">,</span><span class="mi">50</span><span class="p">],[</span><span class="mi">50</span><span class="p">,</span><span class="mi">200</span><span class="p">]])</span>
+<span class="n">pts2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">],[</span><span class="mi">200</span><span class="p">,</span><span class="mi">50</span><span class="p">],[</span><span class="mi">100</span><span class="p">,</span><span class="mi">250</span><span class="p">]])</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">getAffineTransform</span><span class="p">(</span><span class="n">pts1</span><span class="p">,</span><span class="n">pts2</span><span class="p">)</span>
+
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">M</span><span class="p">,(</span><span class="n">cols</span><span class="p">,</span><span class="n">rows</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;Input&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">dst</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;Output&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>See the result:</p>
+<img alt="image" src="_images/affine.jpg" />
+<p class="rubric">Perspective Transformation</p>
+<p>For perspective transformation, you need a 3x3 transformation matrix. Straight lines will remain straight even after the transformation. To find this transformation matrix, you need 4 points on the input image and corresponding points on the output image. Among these 4 points, 3 of them should not be collinear. Then transformation matrix can be found by the function <strong>cv2.getPerspectiveTransform</strong>. Then apply <strong>cv2.warpPerspective</strong> with this 3x3 transformation matrix.</p>
+<p>See the code below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;sudoku.png&#39;</span><span class="p">)</span>
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">,</span><span class="n">ch</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span>
+
+<span class="n">pts1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([[</span><span class="mi">56</span><span class="p">,</span><span class="mi">65</span><span class="p">],[</span><span class="mi">368</span><span class="p">,</span><span class="mi">52</span><span class="p">],[</span><span class="mi">28</span><span class="p">,</span><span class="mi">387</span><span class="p">],[</span><span class="mi">389</span><span class="p">,</span><span class="mi">390</span><span class="p">]])</span>
+<span class="n">pts2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">300</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">],[</span><span class="mi">300</span><span class="p">,</span><span class="mi">300</span><span class="p">]])</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">getPerspectiveTransform</span><span class="p">(</span><span class="n">pts1</span><span class="p">,</span><span class="n">pts2</span><span class="p">)</span>
+
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">warpPerspective</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">M</span><span class="p">,(</span><span class="mi">300</span><span class="p">,</span><span class="mi">300</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;Input&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">dst</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;Output&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>Result:</p>
+<img alt="image" src="_images/perspective.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>“Computer Vision: Algorithms and Applications”, Richard Szeliski</li>
+</ol>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_histograms.html" title="Histograms in OpenCV"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_contours_hierarchy.html" title="Contours Hierarchy"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

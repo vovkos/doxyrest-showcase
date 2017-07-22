@@ -1,0 +1,133 @@
+.. index:: pair: page; Contours : More Functions
+.. _doxid-d5/d45/tutorial_py_contours_more_functions:
+
+Contours : More Functions
+=========================
+
+.. rubric:: Goal
+
+In this chapter, we will learn about
+
+* Convexity defects and how to find them.
+
+* Finding shortest distance from a point to a polygon
+
+* Matching different shapes
+
+.. rubric:: Theory and Code
+
+.. rubric:: 1. Convexity Defects
+
+We saw what is convex hull in second chapter about contours. Any deviation of the object from this hull can be considered as convexity defect.
+
+OpenCV comes with a ready-made function to find this, :ref:`cv2.convexityDefects() <doxid-d3/dc0/group__imgproc__shape_1gada4437098113fd8683c932e0567f47ba>`. A basic function call would look like below:
+
+.. ref-code-block:: cpp
+
+	hull = cv2.convexHull(cnt,returnPoints = False)
+	defects = cv2.convexityDefects(cnt,hull)
+
+Remember we have to pass returnPoints = False while finding convex hull, in order to find convexity defects.
+
+It returns an array where each row contains these values - **[ start point, end point, farthest point, approximate distance to farthest point ]**. We can visualize it using an image. We draw a line joining start point and end point, then draw a circle at the farthest point. Remember first three values returned are indices of cnt. So we have to bring those values from cnt.
+
+.. ref-code-block:: cpp
+
+	import cv2
+	import numpy as np
+	
+	img = cv2.imread('star.jpg')
+	img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+	ret,thresh = cv2.threshold(img_gray, 127, 255,0)
+	im2,contours,hierarchy = cv2.findContours(thresh,2,1)
+	cnt = contours[0]
+	
+	hull = cv2.convexHull(cnt,returnPoints = False)
+	defects = cv2.convexityDefects(cnt,hull)
+	
+	for i in range(defects.shape[0]):
+	    s,e,f,d = defects[i,0]
+	    start = tuple(cnt[s][0])
+	    end = tuple(cnt[e][0])
+	    far = tuple(cnt[f][0])
+	    cv2.line(img,start,end,[0,255,0],2)
+	    cv2.circle(img,far,5,[0,0,255],-1)
+	
+	cv2.imshow('img',img)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+
+And see the result:
+
+.. image:: defects.jpg
+	:alt: image
+
+
+
+.. rubric:: 2. Point Polygon Test
+
+This function finds the shortest distance between a point in the image and a contour. It returns the distance which is negative when point is outside the contour, positive when point is inside and zero if point is on the contour.
+
+For example, we can check the point (50,50) as follows:
+
+.. ref-code-block:: cpp
+
+	dist = cv2.pointPolygonTest(cnt,(50,50),True)
+
+In the function, third argument is measureDist. If it is True, it finds the signed distance. If False, it finds whether the point is inside or outside or on the contour (it returns +1, -1, 0 respectively).
+
+If you don't want to find the distance, make sure third argument is False, because, it is a time consuming process. So, making it False gives about 2-3X speedup.
+
+
+
+.. rubric:: 3. Match Shapes
+
+OpenCV comes with a function :ref:`cv2.matchShapes() <doxid-d3/dc0/group__imgproc__shape_1gaadc90cb16e2362c9bd6e7363e6e4c317>` which enables us to compare two shapes, or two contours and returns a metric showing the similarity. The lower the result, the better match it is. It is calculated based on the hu-moment values. Different measurement methods are explained in the docs.
+
+.. ref-code-block:: cpp
+
+	import cv2
+	import numpy as np
+	
+	img1 = cv2.imread('star.jpg',0)
+	img2 = cv2.imread('star2.jpg',0)
+	
+	ret, thresh = cv2.threshold(img1, 127, 255,0)
+	ret, thresh2 = cv2.threshold(img2, 127, 255,0)
+	im2,contours,hierarchy = cv2.findContours(thresh,2,1)
+	cnt1 = contours[0]
+	im2,contours,hierarchy = cv2.findContours(thresh2,2,1)
+	cnt2 = contours[0]
+	
+	ret = cv2.matchShapes(cnt1,cnt2,1,0.0)
+	print( ret )
+
+I tried matching shapes with different shapes given below:
+
+.. image:: matchshapes.jpg
+	:alt: image
+
+I got following results:
+
+* Matching Image A with itself = 0.0
+
+* Matching Image A with Image B = 0.001946
+
+* Matching Image A with Image C = 0.326911
+
+See, even image rotation doesn't affect much on this comparison.
+
+.. rubric:: Additional Resources
+
+.. rubric:: Exercises
+
+#. Check the documentation for :ref:`cv2.pointPolygonTest() <doxid-d3/dc0/group__imgproc__shape_1ga1a539e8db2135af2566103705d7a5722>`, you can find a nice image in Red and Blue color. It represents the distance from all pixels to the white curve on it. All pixels inside curve is blue depending on the distance. Similarly outside points are red. Contour edges are marked with White. So problem is simple. Write a code to create such a representation of distance.
+
+#. Compare images of digits or letters using :ref:`cv2.matchShapes() <doxid-d3/dc0/group__imgproc__shape_1gaadc90cb16e2362c9bd6e7363e6e4c317>`. ( That would be a simple step towards OCR )
+
+
+
+.. rubric:: See also:
+
+`Hu-Moments <http://en.wikipedia.org/wiki/Image_moment#Rotation_invariant_moments>`__ are seven moments invariant to translation, rotation and scale. Seventh one is skew-invariant. Those values can be found using :ref:`cv2.HuMoments() <doxid-d3/dc0/group__imgproc__shape_1gab001db45c1f1af6cbdbe64df04c4e944>` function.
+

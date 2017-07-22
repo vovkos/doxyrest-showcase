@@ -1,0 +1,180 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Feature Matching + Homography to find Objects &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Harris Corner Detection" href="page_tutorial_py_features_harris.html" />
+    <link rel="prev" title="Feature Matching" href="page_tutorial_py_matcher.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_features_harris.html" title="Harris Corner Detection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_matcher.html" title="Feature Matching"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" accesskey="U">Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_matcher.html"
+                        title="previous chapter">Feature Matching</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_features_harris.html"
+                        title="next chapter">Harris Corner Detection</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="feature-matching-homography-to-find-objects">
+<span id="doxid-d1-de0-tutorial-py-feature-homography"></span><span id="index-0"></span><h1>Feature Matching + Homography to find Objects</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will mix up the feature matching and findHomography from calib3d module to find known objects in a complex image.</li>
+</ul>
+<p class="rubric">Basics</p>
+<p>So what we did in last session? We used a queryImage, found some feature points in it, we took another trainImage, found the features in that image too and we found the best matches among them. In short, we found locations of some parts of an object in another cluttered image. This information is sufficient to find the object exactly on the trainImage.</p>
+<p>For that, we can use a function from calib3d module, ie <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga4abc2ece9fab9398f2e560d53c8c9780"><span class="std std-ref">cv2.findHomography()</span></a>. If we pass the set of points from both the images, it will find the perpective transformation of that object. Then we can use <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gad327659ac03e5fd6894b90025e6900a7"><span class="std std-ref">cv2.perspectiveTransform()</span></a> to find the object. It needs atleast four correct points to find the transformation.</p>
+<p>We have seen that there can be some possible errors while matching which may affect the result. To solve this problem, algorithm uses RANSAC or LEAST_MEDIAN (which can be decided by the flags). So good matches which provide correct estimation are called inliers and remaining are called outliers. <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga4abc2ece9fab9398f2e560d53c8c9780"><span class="std std-ref">cv2.findHomography()</span></a> returns a mask which specifies the inlier and outlier points.</p>
+<p>So let’s do it !!!</p>
+<p class="rubric">Code</p>
+<p>First, as usual, let’s find SIFT features in images and apply the ratio test to find the best matches.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">MIN_MATCH_COUNT</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;box.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>          <span class="err">#</span> <span class="n">queryImage</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;box_in_scene.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="err">#</span> <span class="n">trainImage</span>
+
+<span class="cp"># Initiate SIFT detector</span>
+<span class="n">sift</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">xfeatures2d</span><span class="p">.</span><span class="n">SIFT_create</span><span class="p">()</span>
+
+<span class="cp"># find the keypoints and descriptors with SIFT</span>
+<span class="n">kp1</span><span class="p">,</span> <span class="n">des1</span> <span class="o">=</span> <span class="n">sift</span><span class="p">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+<span class="n">kp2</span><span class="p">,</span> <span class="n">des2</span> <span class="o">=</span> <span class="n">sift</span><span class="p">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+
+<span class="n">FLANN_INDEX_KDTREE</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">index_params</span> <span class="o">=</span> <span class="n">dict</span><span class="p">(</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">FLANN_INDEX_KDTREE</span><span class="p">,</span> <span class="n">trees</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">search_params</span> <span class="o">=</span> <span class="n">dict</span><span class="p">(</span><span class="n">checks</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="n">flann</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">FlannBasedMatcher</span><span class="p">(</span><span class="n">index_params</span><span class="p">,</span> <span class="n">search_params</span><span class="p">)</span>
+
+<span class="n">matches</span> <span class="o">=</span> <span class="n">flann</span><span class="p">.</span><span class="n">knnMatch</span><span class="p">(</span><span class="n">des1</span><span class="p">,</span><span class="n">des2</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="cp"># store all the good matches as per Lowe&#39;s ratio test.</span>
+<span class="n">good</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span> <span class="n">in</span> <span class="nl">matches</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="mf">0.7</span><span class="o">*</span><span class="n">n</span><span class="p">.</span><span class="nl">distance</span><span class="p">:</span>
+        <span class="n">good</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+</pre>
+<p>Now we set a condition that atleast 10 matches (defined by MIN_MATCH_COUNT) are to be there to find the object. Otherwise simply show a message saying not enough matches are present.</p>
+<p>If enough matches are found, we extract the locations of matched keypoints in both the images. They are passed to find the perpective transformation. Once we get this 3x3 transformation matrix, we use it to transform the corners of queryImage to corresponding points in trainImage. Then we draw it.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">good</span><span class="p">)</span><span class="o">&gt;</span><span class="nl">MIN_MATCH_COUNT</span><span class="p">:</span>
+    <span class="n">src_pts</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([</span> <span class="n">kp1</span><span class="p">[</span><span class="n">m</span><span class="p">.</span><span class="n">queryIdx</span><span class="p">].</span><span class="n">pt</span> <span class="k">for</span> <span class="n">m</span> <span class="n">in</span> <span class="n">good</span> <span class="p">]).</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">dst_pts</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([</span> <span class="n">kp2</span><span class="p">[</span><span class="n">m</span><span class="p">.</span><span class="n">trainIdx</span><span class="p">].</span><span class="n">pt</span> <span class="k">for</span> <span class="n">m</span> <span class="n">in</span> <span class="n">good</span> <span class="p">]).</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">M</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">findHomography</span><span class="p">(</span><span class="n">src_pts</span><span class="p">,</span> <span class="n">dst_pts</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">RANSAC</span><span class="p">,</span><span class="mf">5.0</span><span class="p">)</span>
+    <span class="n">matchesMask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">.</span><span class="n">ravel</span><span class="p">().</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="n">h</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">img1</span><span class="p">.</span><span class="n">shape</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">([</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="n">h</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">h</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="p">]).</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">perspectiveTransform</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">img2</span><span class="p">,[</span><span class="n">np</span><span class="p">.</span><span class="n">int32</span><span class="p">(</span><span class="n">dst</span><span class="p">)],</span><span class="n">True</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+
+<span class="k">else</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span> <span class="s">&quot;Not enough matches are found - </span><span class="p">{}</span><span class="o">/</span><span class="p">{}</span><span class="s">&quot;.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">good</span><span class="p">),</span> <span class="n">MIN_MATCH_COUNT</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">matchesMask</span> <span class="o">=</span> <span class="n">None</span>
+</pre>
+<p>Finally we draw our inliers (if successfully found the object) or matching keypoints (if failed).</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">draw_params</span> <span class="o">=</span> <span class="n">dict</span><span class="p">(</span><span class="n">matchColor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="err">#</span> <span class="n">draw</span> <span class="n">matches</span> <span class="n">in</span> <span class="n">green</span> <span class="n">color</span>
+                   <span class="n">singlePointColor</span> <span class="o">=</span> <span class="n">None</span><span class="p">,</span>
+                   <span class="n">matchesMask</span> <span class="o">=</span> <span class="n">matchesMask</span><span class="p">,</span> <span class="err">#</span> <span class="n">draw</span> <span class="n">only</span> <span class="n">inliers</span>
+                   <span class="n">flags</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">img3</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">drawMatches</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="n">kp1</span><span class="p">,</span><span class="n">img2</span><span class="p">,</span><span class="n">kp2</span><span class="p">,</span><span class="n">good</span><span class="p">,</span><span class="n">None</span><span class="p">,</span><span class="o">**</span><span class="n">draw_params</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img3</span><span class="p">,</span> <span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>See the result below. Object is marked in white color in cluttered image:</p>
+<img alt="image" src="_images/homography_findobj.jpg" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_features_harris.html" title="Harris Corner Detection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_matcher.html" title="Feature Matching"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" >Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+.. index:: pair: page; Adding a Trackbar to our applications!
+.. _doxid-da/d6a/tutorial_trackbar:
+
+Adding a Trackbar to our applications!
+======================================
+
+* In the previous tutorials (about *linear blending* and the *brightness and contrast adjustments*) you might have noted that we needed to give some **input** to our programs, such as :math:`\alpha` and :math:`beta`. We accomplished that by entering this data using the Terminal
+
+* Well, it is time to use some fancy GUI tools. OpenCV provides some GUI utilities (*highgui.hpp*) for you. An example of this is a **Trackbar**
+  
+  .. image:: Adding_Trackbars_Tutorial_Trackbar.png
+
+* In this tutorial we will just modify our two previous programs so that they get the input information from the trackbar.
+
+.. rubric:: Goals
+
+In this tutorial you will learn how to:
+
+* Add a Trackbar in an OpenCV window by using :ref:`cv::createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`
+
+.. rubric:: Code
+
+Let's modify the program made in the tutorial :ref:`Adding (blending) two images using OpenCV <doxid-d5/dc4/tutorial_adding_images>`. We will let the user enter the :math:`\alpha` value by using the Trackbar. This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/HighGUI/AddingImagesTrackbar.cpp>`__
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include <stdio.h>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	const int alpha_slider_max = 100;
+	int alpha_slider;
+	double alpha;
+	double beta;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src1;
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src2;
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst;
+	
+	
+	static void on_trackbar( int, void* )
+	{
+	   alpha = (double) alpha_slider/alpha_slider_max ;
+	
+	   beta = ( 1.0 - alpha );
+	
+	   :ref:`addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`( src1, alpha, src2, beta, 0.0, dst);
+	
+	   :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Linear Blend", dst );
+	}
+	
+	int main( void )
+	{
+	   src1 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("../data/LinuxLogo.jpg");
+	   src2 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("../data/WindowsLogo.jpg");
+	
+	   if( src1.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() ) { printf("Error loading src1 \n"); return -1; }
+	   if( src2.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() ) { printf("Error loading src2 \n"); return -1; }
+	
+	   alpha_slider = 0;
+	
+	   :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("Linear Blend", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`); // Create Window
+	
+	   char TrackbarName[50];
+	   sprintf( TrackbarName, "Alpha x %d", alpha_slider_max );
+	   :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( TrackbarName, "Linear Blend", &alpha_slider, alpha_slider_max, on_trackbar );
+	
+	   on_trackbar( alpha_slider, 0 );
+	
+	   :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	   return 0;
+	}
+
+.. rubric:: Explanation
+
+We only analyze the code that is related to Trackbar:
+
+#. First, we load two images, which are going to be blended.
+   
+   .. ref-code-block:: cpp
+   
+   	src1 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("../data/LinuxLogo.jpg");
+   	src2 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("../data/WindowsLogo.jpg");
+
+#. To create a trackbar, first we have to create the window in which it is going to be located. So:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("Linear Blend", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`); // Create Window
+
+#. Now we can create the Trackbar:
+   
+   .. ref-code-block:: cpp
+   
+   	char TrackbarName[50];
+   	sprintf( TrackbarName, "Alpha x %d", alpha_slider_max );
+   	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( TrackbarName, "Linear Blend", &alpha_slider, alpha_slider_max, on_trackbar );
+   
+   Note the following:
+   
+   * Our Trackbar has a label **TrackbarName**
+   
+   * The Trackbar is located in the window named **Linear Blend**
+   
+   * The Trackbar values will be in the range from :math:`0` to **alpha_slider_max** (the minimum limit is always **zero**).
+   
+   * The numerical value of Trackbar is stored in **alpha_slider**
+   
+   * Whenever the user moves the Trackbar, the callback function **on_trackbar** is called
+
+#. Finally, we have to define the callback function **on_trackbar**
+   
+   .. ref-code-block:: cpp
+   
+   	
+   	static void on_trackbar( int, void* )
+   	{
+   	   alpha = (double) alpha_slider/alpha_slider_max ;
+   	
+   	   beta = ( 1.0 - alpha );
+   	
+   	   :ref:`addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`( src1, alpha, src2, beta, 0.0, dst);
+   	
+   	   :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Linear Blend", dst );
+   	}
+   
+   Note that:
+   
+   * We use the value of **alpha_slider** (integer) to get a double value for **alpha**.
+   
+   * **alpha_slider** is updated each time the trackbar is displaced by the user.
+   
+   * We define *src1*, *src2*, *dist*, *alpha*, *alpha_slider* and *beta* as global variables, so they can be used everywhere.
+
+.. rubric:: Result
+
+* Our program produces the following output:
+  
+  .. image:: Adding_Trackbars_Tutorial_Result_0.jpg
+
+* As a manner of practice, you can also add two trackbars for the program made in :ref:`Changing the contrast and brightness of an image! <doxid-d3/dc1/tutorial_basic_linear_transform>`. One trackbar to set :math:`\alpha` and another for set :math:`\beta`. The output might look like:
+  
+  .. image:: Adding_Trackbars_Tutorial_Result_1.jpg
+

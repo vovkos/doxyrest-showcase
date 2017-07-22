@@ -1,0 +1,123 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Understanding Features &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gui Features in OpenCV" href="page_tutorial_py_table_of_contents_gui.html" />
+    <link rel="prev" title="Shi-Tomasi Corner Detector &amp; Good Features to Track" href="page_tutorial_py_shi_tomasi.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_gui.html" title="Gui Features in OpenCV"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_shi_tomasi.html" title="Shi-Tomasi Corner Detector &amp; Good Features to Track"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" accesskey="U">Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_shi_tomasi.html"
+                        title="previous chapter">Shi-Tomasi Corner Detector &amp; Good Features to Track</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_gui.html"
+                        title="next chapter">Gui Features in OpenCV</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="understanding-features">
+<span id="doxid-df-d54-tutorial-py-features-meaning"></span><span id="index-0"></span><h1>Understanding Features</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter, we will just try to understand what are features, why are they important, why corners are important etc.</p>
+<p class="rubric">Explanation</p>
+<p>Most of you will have played the jigsaw puzzle games. You get a lot of small pieces of an image, where you need to assemble them correctly to form a big real image. <strong>The question is, how you do it?</strong> What about the projecting the same theory to a computer program so that computer can play jigsaw puzzles? If the computer can play jigsaw puzzles, why can’t we give a lot of real-life images of a good natural scenery to computer and tell it to stitch all those images to a big single image? If the computer can stitch several natural images to one, what about giving a lot of pictures of a building or any structure and tell computer to create a 3D model out of it?</p>
+<p>Well, the questions and imaginations continue. But it all depends on the most basic question: How do you play jigsaw puzzles? How do you arrange lots of scrambled image pieces into a big single image? How can you stitch a lot of natural images to a single image?</p>
+<p>The answer is, we are looking for specific patterns or specific features which are unique, can be easily tracked and can be easily compared. If we go for a definition of such a feature, we may find it difficult to express it in words, but we know what they are. If someone asks you to point out one good feature which can be compared across several images, you can point out one. That is why even small children can simply play these games. We search for these features in an image, find them, look for the same features in other images and align them. That’s it. (In jigsaw puzzle, we look more into continuity of different images). All these abilities are present in us inherently.</p>
+<p>So our one basic question expands to more in number, but becomes more specific. <strong>What are these features?</strong>. (The answer should be understandable also to a computer.)</p>
+<p>It is difficult to say how humans find these features. This is already programmed in our brain. But if we look deep into some pictures and search for different patterns, we will find something interesting. For example, take below image:</p>
+<img alt="image" src="_images/feature_building.jpg" />
+<p>The image is very simple. At the top of image, six small image patches are given. Question for you is to find the exact location of these patches in the original image. How many correct results can you find?</p>
+<p>A and B are flat surfaces and they are spread over a lot of area. It is difficult to find the exact location of these patches.</p>
+<p>C and D are much more simple. They are edges of the building. You can find an approximate location, but exact location is still difficult. This is because the pattern is same everywhere along the edge. At the edge, however, it is different. An edge is therefore better feature compared to flat area, but not good enough (It is good in jigsaw puzzle for comparing continuity of edges).</p>
+<p>Finally, E and F are some corners of the building. And they can be easily found. Because at the corners, wherever you move this patch, it will look different. So they can be considered as good features. So now we move into simpler (and widely used image) for better understanding.</p>
+<img alt="image" src="_images/feature_simple.png" />
+<p>Just like above, the blue patch is flat area and difficult to find and track. Wherever you move the blue patch it looks the same. The black patch has an edge. If you move it in vertical direction (i.e. along the gradient) it changes. Moved along the edge (parallel to edge), it looks the same. And for red patch, it is a corner. Wherever you move the patch, it looks different, means it is unique. So basically, corners are considered to be good features in an image. (Not just corners, in some cases blobs are considered good features).</p>
+<p>So now we answered our question, “what are these features?”. But next question arises. How do we find them? Or how do we find the corners?. We answered that in an intuitive way, i.e., look for the regions in images which have maximum variation when moved (by a small amount) in all regions around it. This would be projected into computer language in coming chapters. So finding these image features is called <strong>Feature Detection</strong>.</p>
+<p>We found the features in the images. Once you have found it, you should be able to find the same in the other images. How is this done? We take a region around the feature, we explain it in our own words, like “upper part is blue sky, lower part is region from a building, on that building there is
+glass etc” and you search for the same area in the other images. Basically, you are describing the feature. Similarly, a computer also should describe the region around the feature so that it can find it in other images. So called description is called <strong>Feature Description</strong>. Once you have the features and its description, you can find same features in all images and align them, stitch them together or do whatever you want.</p>
+<p>So in this module, we are looking to different algorithms in OpenCV to find features, describe them, match them etc.</p>
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_gui.html" title="Gui Features in OpenCV"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_shi_tomasi.html" title="Shi-Tomasi Corner Detector &amp; Good Features to Track"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" >Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

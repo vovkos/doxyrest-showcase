@@ -1,0 +1,1001 @@
+.. index:: pair: group; Matrix Reductions
+.. _doxid-d5/de6/group__cudaarithm__reduce:
+
+Matrix Reductions
+=================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// global functions
+
+	:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`
+	:ref:`cv::cuda::absSum<doxid-d5/de6/group__cudaarithm__reduce_1ga690fa79ba4426c53f7d2bebf3d37a32a>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	void
+	:ref:`cv::cuda::calcAbsSum<doxid-d5/de6/group__cudaarithm__reduce_1ga15c403b76ab2c4d7ed0f5edc09891b7e>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::calcNorm<doxid-d5/de6/group__cudaarithm__reduce_1ga39d2826990d29b7e4b69dbe02bdae2e1>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int normType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::calcNormDiff<doxid-d5/de6/group__cudaarithm__reduce_1ga9be3d9a7b6c5760955f37d1039d01265>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int normType = :ref:`NORM_L2<doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2>`,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::calcSqrSum<doxid-d5/de6/group__cudaarithm__reduce_1gac998c83597f6c206c78cee16aa87946f>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::calcSum<doxid-d5/de6/group__cudaarithm__reduce_1ga98a09144047f09f5cb1d6b6ea8e0856f>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	int
+	:ref:`cv::cuda::countNonZero<doxid-d5/de6/group__cudaarithm__reduce_1ga283f3efccb513dbcde9f1dbedb67f805>`(:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src);
+
+	void
+	:ref:`cv::cuda::countNonZero<doxid-d5/de6/group__cudaarithm__reduce_1ga55b5d553d28530fae0d9242438396521>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::findMinMax<doxid-d5/de6/group__cudaarithm__reduce_1gae7f5f2aa9f65314470a76fccdff887f2>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::findMinMaxLoc<doxid-d5/de6/group__cudaarithm__reduce_1ga93916bc473a62d215d1130fab84d090a>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` minMaxVals,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` loc,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::integral<doxid-d5/de6/group__cudaarithm__reduce_1ga07e5104eba4bf45212ac9dbc5bf72ba6>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` sum,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::meanStdDev<doxid-d5/de6/group__cudaarithm__reduce_1ga990a4db4c6d7e8f0f3a6685ba48fbddc>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mtx,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`& mean,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`& stddev
+		);
+
+	void
+	:ref:`cv::cuda::meanStdDev<doxid-d5/de6/group__cudaarithm__reduce_1gac0e8dc0bb32fda5afd32de0f18817587>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mtx,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::minMax<doxid-d5/de6/group__cudaarithm__reduce_1ga8d7de68c10717cf25e787e3c20d2dfee>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		double* minVal,
+		double* maxVal,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	void
+	:ref:`cv::cuda::minMaxLoc<doxid-d5/de6/group__cudaarithm__reduce_1ga5cacbc2a2323c4eaa81e7390c5d9f530>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		double* minVal,
+		double* maxVal,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`* minLoc,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`* maxLoc,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	double
+	:ref:`cv::cuda::norm<doxid-d5/de6/group__cudaarithm__reduce_1ga6c01988a58d92126a7c60a4ab76d8324>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		int normType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	double
+	:ref:`cv::cuda::norm<doxid-d5/de6/group__cudaarithm__reduce_1ga48b6298589b80a6915d076e2dcdbd11b>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		int normType = :ref:`NORM_L2<doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2>`
+		);
+
+	void
+	:ref:`cv::cuda::normalize<doxid-d5/de6/group__cudaarithm__reduce_1ga4da4738b9956a5baaa2f5f8c2fba438a>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		double alpha,
+		double beta,
+		int norm_type,
+		int dtype,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::rectStdDev<doxid-d5/de6/group__cudaarithm__reduce_1gac311484a4e57cab2ce2cfdc195fda7ee>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` sqr,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>` rect,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::reduce<doxid-d5/de6/group__cudaarithm__reduce_1ga21d57f661db7be093caf2c4378be2007>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mtx,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` vec,
+		int dim,
+		int reduceOp,
+		int dtype = -1,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::sqrIntegral<doxid-d5/de6/group__cudaarithm__reduce_1ga40c75196202706399a60bf6ba7a052ac>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` sqsum,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`
+	:ref:`cv::cuda::sqrSum<doxid-d5/de6/group__cudaarithm__reduce_1ga056c804ebf5d2eb9f6f35e3dcb01524c>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`
+	:ref:`cv::cuda::sum<doxid-d5/de6/group__cudaarithm__reduce_1ga1f582844670199281e8012733b50c582>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+.. _details-d5/de6/group__cudaarithm__reduce:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; absSum
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga690fa79ba4426c53f7d2bebf3d37a32a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`
+	cv::cuda::absSum(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Returns the sum of absolute values for matrix elements.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image of any depth except for CV_64F .
+
+	*
+		- mask
+
+		- optional operation mask; it must have the same size as src1 and CV_8UC1 type.
+
+.. index:: pair: function; calcAbsSum
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga15c403b76ab2c4d7ed0f5edc09891b7e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::calcAbsSum(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; calcNorm
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga39d2826990d29b7e4b69dbe02bdae2e1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::calcNorm(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int normType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; calcNormDiff
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga9be3d9a7b6c5760955f37d1039d01265:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::calcNormDiff(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int normType = :ref:`NORM_L2<doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2>`,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; calcSqrSum
+.. _doxid-d5/de6/group__cudaarithm__reduce_1gac998c83597f6c206c78cee16aa87946f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::calcSqrSum(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; calcSum
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga98a09144047f09f5cb1d6b6ea8e0856f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::calcSum(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; countNonZero
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga283f3efccb513dbcde9f1dbedb67f805:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cv::cuda::countNonZero(:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src)
+
+Counts non-zero matrix elements.
+
+The function does not work with CV_64F images on GPUs with the compute capability < 1.3.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Single-channel source image.
+
+
+
+.. rubric:: See also:
+
+:ref:`countNonZero <doxid-d5/de6/group__cudaarithm__reduce_1ga283f3efccb513dbcde9f1dbedb67f805>`
+
+.. index:: pair: function; countNonZero
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga55b5d553d28530fae0d9242438396521:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::countNonZero(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; findMinMax
+.. _doxid-d5/de6/group__cudaarithm__reduce_1gae7f5f2aa9f65314470a76fccdff887f2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::findMinMax(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; findMinMaxLoc
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga93916bc473a62d215d1130fab84d090a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::findMinMaxLoc(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` minMaxVals,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` loc,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; integral
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga07e5104eba4bf45212ac9dbc5bf72ba6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::integral(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` sum,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Computes an integral image.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Only CV_8UC1 images are supported for now.
+
+	*
+		- sum
+
+		- Integral image containing 32-bit unsigned integer values packed into CV_32SC1 .
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+
+
+.. rubric:: See also:
+
+:ref:`integral <doxid-d5/de6/group__cudaarithm__reduce_1ga07e5104eba4bf45212ac9dbc5bf72ba6>`
+
+.. index:: pair: function; meanStdDev
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga990a4db4c6d7e8f0f3a6685ba48fbddc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::meanStdDev(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mtx,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`& mean,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`& stddev
+		)
+
+Computes a mean value and a standard deviation of matrix elements.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- mtx
+
+		- Source matrix. CV_8UC1 matrices are supported for now.
+
+	*
+		- mean
+
+		- Mean value.
+
+	*
+		- stddev
+
+		- Standard deviation value.
+
+
+
+.. rubric:: See also:
+
+:ref:`meanStdDev <doxid-d5/de6/group__cudaarithm__reduce_1ga990a4db4c6d7e8f0f3a6685ba48fbddc>`
+
+.. index:: pair: function; meanStdDev
+.. _doxid-d5/de6/group__cudaarithm__reduce_1gac0e8dc0bb32fda5afd32de0f18817587:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::meanStdDev(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mtx,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; minMax
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga8d7de68c10717cf25e787e3c20d2dfee:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::minMax(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		double* minVal,
+		double* maxVal,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Finds global minimum and maximum matrix elements and returns their values.
+
+The function does not work with CV_64F images on GPUs with the compute capability < 1.3.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Single-channel source image.
+
+	*
+		- minVal
+
+		- Pointer to the returned minimum value. Use NULL if not required.
+
+	*
+		- maxVal
+
+		- Pointer to the returned maximum value. Use NULL if not required.
+
+	*
+		- mask
+
+		- Optional mask to select a sub-matrix.
+
+
+
+.. rubric:: See also:
+
+:ref:`minMaxLoc <doxid-d5/de6/group__cudaarithm__reduce_1ga5cacbc2a2323c4eaa81e7390c5d9f530>`
+
+.. index:: pair: function; minMaxLoc
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga5cacbc2a2323c4eaa81e7390c5d9f530:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::minMaxLoc(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		double* minVal,
+		double* maxVal,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`* minLoc,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`* maxLoc,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Finds global minimum and maximum matrix elements and returns their values with locations.
+
+The function does not work with CV_64F images on GPU with the compute capability < 1.3.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Single-channel source image.
+
+	*
+		- minVal
+
+		- Pointer to the returned minimum value. Use NULL if not required.
+
+	*
+		- maxVal
+
+		- Pointer to the returned maximum value. Use NULL if not required.
+
+	*
+		- minLoc
+
+		- Pointer to the returned minimum location. Use NULL if not required.
+
+	*
+		- maxLoc
+
+		- Pointer to the returned maximum location. Use NULL if not required.
+
+	*
+		- mask
+
+		- Optional mask to select a sub-matrix.
+
+
+
+.. rubric:: See also:
+
+:ref:`minMaxLoc <doxid-d5/de6/group__cudaarithm__reduce_1ga5cacbc2a2323c4eaa81e7390c5d9f530>`
+
+.. index:: pair: function; norm
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga6c01988a58d92126a7c60a4ab76d8324:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cv::cuda::norm(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		int normType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Returns the norm of a matrix (or difference of two matrices).
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src1
+
+		- Source matrix. Any matrices except 64F are supported.
+
+	*
+		- normType
+
+		- Norm type. NORM_L1 , NORM_L2 , and NORM_INF are supported for now.
+
+	*
+		- mask
+
+		- optional operation mask; it must have the same size as src1 and CV_8UC1 type.
+
+
+
+.. rubric:: See also:
+
+:ref:`norm <doxid-d5/de6/group__cudaarithm__reduce_1ga6c01988a58d92126a7c60a4ab76d8324>`
+
+.. index:: pair: function; norm
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga48b6298589b80a6915d076e2dcdbd11b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cv::cuda::norm(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		int normType = :ref:`NORM_L2<doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2>`
+		)
+
+Returns the difference of two matrices.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src1
+
+		- Source matrix. Any matrices except 64F are supported.
+
+	*
+		- src2
+
+		- Second source matrix (if any) with the same size and type as src1.
+
+	*
+		- normType
+
+		- Norm type. NORM_L1 , NORM_L2 , and NORM_INF are supported for now.
+
+
+
+.. rubric:: See also:
+
+:ref:`norm <doxid-d5/de6/group__cudaarithm__reduce_1ga6c01988a58d92126a7c60a4ab76d8324>`
+
+.. index:: pair: function; normalize
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga4da4738b9956a5baaa2f5f8c2fba438a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::normalize(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		double alpha,
+		double beta,
+		int norm_type,
+		int dtype,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Normalizes the norm or value range of an array.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Input array.
+
+	*
+		- dst
+
+		- Output array of the same size as src .
+
+	*
+		- alpha
+
+		- Norm value to normalize to or the lower range boundary in case of the range normalization.
+
+	*
+		- beta
+
+		- Upper range boundary in case of the range normalization; it is not used for the norm normalization.
+
+	*
+		- norm_type
+
+		- Normalization type ( NORM_MINMAX , NORM_L2 , NORM_L1 or NORM_INF ).
+
+	*
+		- dtype
+
+		- When negative, the output array has the same type as src; otherwise, it has the same number of channels as src and the depth = :ref:`CV_MAT_DEPTH(dtype) <doxid-d1/d1b/group__core__hal__interface_1ga39f3412d63cac68d4f1d138ab52a6fc8>`.
+
+	*
+		- mask
+
+		- Optional operation mask.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+
+
+.. rubric:: See also:
+
+:ref:`normalize <doxid-d5/de6/group__cudaarithm__reduce_1ga4da4738b9956a5baaa2f5f8c2fba438a>`
+
+.. index:: pair: function; rectStdDev
+.. _doxid-d5/de6/group__cudaarithm__reduce_1gac311484a4e57cab2ce2cfdc195fda7ee:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::rectStdDev(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` sqr,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>` rect,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Computes a standard deviation of integral images.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Only the CV_32SC1 type is supported.
+
+	*
+		- sqr
+
+		- Squared source image. Only the CV_32FC1 type is supported.
+
+	*
+		- dst
+
+		- Destination image with the same type and size as src .
+
+	*
+		- rect
+
+		- Rectangular window.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+.. index:: pair: function; reduce
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga21d57f661db7be093caf2c4378be2007:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::reduce(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mtx,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` vec,
+		int dim,
+		int reduceOp,
+		int dtype = -1,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Reduces a matrix to a vector.
+
+The function reduce reduces the matrix to a vector by treating the matrix rows/columns as a set of 1D vectors and performing the specified operation on the vectors until a single row/column is obtained. For example, the function can be used to compute horizontal and vertical projections of a raster image. In case of CV_REDUCE_SUM and CV_REDUCE_AVG , the output may have a larger element bit-depth to preserve accuracy. And multi-channel arrays are also supported in these two reduction modes.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- mtx
+
+		- Source 2D matrix.
+
+	*
+		- vec
+
+		- Destination vector. Its size and type is defined by dim and dtype parameters.
+
+	*
+		- dim
+
+		- Dimension index along which the matrix is reduced. 0 means that the matrix is reduced to a single row. 1 means that the matrix is reduced to a single column.
+
+	*
+		- reduceOp
+
+		- 
+		  Reduction operation that could be one of the following:
+		  
+		  * **CV_REDUCE_SUM** The output is the sum of all rows/columns of the matrix.
+		  
+		  * **CV_REDUCE_AVG** The output is the mean vector of all rows/columns of the matrix.
+		  
+		  * **CV_REDUCE_MAX** The output is the maximum (column/row-wise) of all rows/columns of the matrix.
+		  
+		  * **CV_REDUCE_MIN** The output is the minimum (column/row-wise) of all rows/columns of the matrix.
+
+	*
+		- dtype
+
+		- When it is negative, the destination vector will have the same type as the source matrix. Otherwise, its type will be CV_MAKE_TYPE(:ref:`CV_MAT_DEPTH(dtype) <doxid-d1/d1b/group__core__hal__interface_1ga39f3412d63cac68d4f1d138ab52a6fc8>`, mtx.channels()) .
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+
+
+.. rubric:: See also:
+
+:ref:`reduce <doxid-d5/de6/group__cudaarithm__reduce_1ga21d57f661db7be093caf2c4378be2007>`
+
+.. index:: pair: function; sqrIntegral
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga40c75196202706399a60bf6ba7a052ac:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::sqrIntegral(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` sqsum,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Computes a squared integral image.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Only CV_8UC1 images are supported for now.
+
+	*
+		- sqsum
+
+		- Squared integral image containing 64-bit unsigned integer values packed into CV_64FC1 .
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+.. index:: pair: function; sqrSum
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga056c804ebf5d2eb9f6f35e3dcb01524c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`
+	cv::cuda::sqrSum(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Returns the squared sum of matrix elements.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image of any depth except for CV_64F .
+
+	*
+		- mask
+
+		- optional operation mask; it must have the same size as src1 and CV_8UC1 type.
+
+.. index:: pair: function; sum
+.. _doxid-d5/de6/group__cudaarithm__reduce_1ga1f582844670199281e8012733b50c582:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`
+	cv::cuda::sum(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Returns the sum of matrix elements.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image of any depth except for CV_64F .
+
+	*
+		- mask
+
+		- optional operation mask; it must have the same size as src1 and CV_8UC1 type.
+
+
+
+.. rubric:: See also:
+
+:ref:`sum <doxid-d5/de6/group__cudaarithm__reduce_1ga1f582844670199281e8012733b50c582>`
+

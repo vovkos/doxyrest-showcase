@@ -1,0 +1,197 @@
+.. index:: pair: group; OpenGL support
+.. _doxid-df/d24/group__highgui__opengl:
+
+OpenGL support
+==============
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// global functions
+
+	void
+	:ref:`cv::imshow<doxid-df/d24/group__highgui__opengl_1gaae7e90aa3415c68dba22a5ff2cefc25d>`(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname,
+		const :ref:`ogl::Texture2D<doxid-d4/d91/classcv_1_1ogl_1_1_texture2_d>`& tex
+		);
+
+	void
+	:ref:`cv::setOpenGlContext<doxid-df/d24/group__highgui__opengl_1ga1168ad91e634e3e34e2295a3ba9a6244>`(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname);
+
+	void
+	:ref:`cv::setOpenGlDrawCallback<doxid-df/d24/group__highgui__opengl_1gaf80dcbc168a6ce40f6d1ad9d79a10bb8>`(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname,
+		:ref:`OpenGlDrawCallback<doxid-d7/dfc/group__highgui_1ga8bed4feb08f866e81514a31fdacaceee>` onOpenGlDraw,
+		void* userdata = 0
+		);
+
+	void
+	:ref:`cv::updateWindow<doxid-df/d24/group__highgui__opengl_1ga21b41f9217e40eb64eed79b4cecf595d>`(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname);
+
+.. _details-df/d24/group__highgui__opengl:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; imshow
+.. _doxid-df/d24/group__highgui__opengl_1gaae7e90aa3415c68dba22a5ff2cefc25d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::imshow(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname,
+		const :ref:`ogl::Texture2D<doxid-d4/d91/classcv_1_1ogl_1_1_texture2_d>`& tex
+		)
+
+Displays OpenGL 2D texture in the specified window.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- winname
+
+		- Name of the window.
+
+	*
+		- tex
+
+		- OpenGL 2D texture data.
+
+.. index:: pair: function; setOpenGlContext
+.. _doxid-df/d24/group__highgui__opengl_1ga1168ad91e634e3e34e2295a3ba9a6244:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::setOpenGlContext(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname)
+
+Sets the specified window as current OpenGL context.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- winname
+
+		- Name of the window.
+
+.. index:: pair: function; setOpenGlDrawCallback
+.. _doxid-df/d24/group__highgui__opengl_1gaf80dcbc168a6ce40f6d1ad9d79a10bb8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::setOpenGlDrawCallback(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname,
+		:ref:`OpenGlDrawCallback<doxid-d7/dfc/group__highgui_1ga8bed4feb08f866e81514a31fdacaceee>` onOpenGlDraw,
+		void* userdata = 0
+		)
+
+Sets a callback function to be called to draw on top of displayed image.
+
+The function setOpenGlDrawCallback can be used to draw 3D data on the window. See the example of callback function below:
+
+.. ref-code-block:: cpp
+
+	void on_opengl(void* param)
+	{
+	    glLoadIdentity();
+	
+	    glTranslated(0.0, 0.0, -1.0);
+	
+	    glRotatef( 55, 1, 0, 0 );
+	    glRotatef( 45, 0, 1, 0 );
+	    glRotatef( 0, 0, 0, 1 );
+	
+	    static const int coords[6][4][3] = {
+	        { { +1, -1, -1 }, { -1, -1, -1 }, { -1, +1, -1 }, { +1, +1, -1 } },
+	        { { +1, +1, -1 }, { -1, +1, -1 }, { -1, +1, +1 }, { +1, +1, +1 } },
+	        { { +1, -1, +1 }, { +1, -1, -1 }, { +1, +1, -1 }, { +1, +1, +1 } },
+	        { { -1, -1, -1 }, { -1, -1, +1 }, { -1, +1, +1 }, { -1, +1, -1 } },
+	        { { +1, -1, +1 }, { -1, -1, +1 }, { -1, -1, -1 }, { +1, -1, -1 } },
+	        { { -1, -1, +1 }, { +1, -1, +1 }, { +1, +1, +1 }, { -1, +1, +1 } }
+	    };
+	
+	    for (int i = 0; i < 6; ++i) {
+	                glColor3ub( i*20, 100+i*10, i*42 );
+	                glBegin(GL_QUADS);
+	                for (int j = 0; j < 4; ++j) {
+	                        glVertex3d(0.2 * coords[i][j][0], 0.2 * coords[i][j][1], 0.2 * coords[i][j][2]);
+	                }
+	                glEnd();
+	    }
+	}
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- winname
+
+		- Name of the window.
+
+	*
+		- onOpenGlDraw
+
+		- Pointer to the function to be called every frame. This function should be prototyped as void Foo(void\*) .
+
+	*
+		- userdata
+
+		- Pointer passed to the callback function.(**Optional**)
+
+.. index:: pair: function; updateWindow
+.. _doxid-df/d24/group__highgui__opengl_1ga21b41f9217e40eb64eed79b4cecf595d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::updateWindow(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& winname)
+
+Force window to redraw its context and call draw callback ( See :ref:`cv::setOpenGlDrawCallback <doxid-df/d24/group__highgui__opengl_1gaf80dcbc168a6ce40f6d1ad9d79a10bb8>`).
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- winname
+
+		- Name of the window.
+

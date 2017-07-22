@@ -1,0 +1,167 @@
+.. index:: pair: class; Poco::Net::MultipartReader
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader:
+
+class Poco::Net::MultipartReader
+================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class is used to split a MIME multipart message into its single parts. :ref:`More...<details-class_poco_1_1_net_1_1_multipart_reader>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <MultipartReader.h>
+	
+	class MultipartReader
+	{
+	public:
+		// construction
+	
+		:ref:`MultipartReader<doxid-class_poco_1_1_net_1_1_multipart_reader_1a6156634db32cedeb676f526cbe11dd1e>`(std::istream& istr);
+	
+		:ref:`MultipartReader<doxid-class_poco_1_1_net_1_1_multipart_reader_1aead0f113a9209815955c3ad75b82139b>`(
+			std::istream& istr,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& boundary
+			);
+
+		// methods
+	
+		void
+		:ref:`nextPart<doxid-class_poco_1_1_net_1_1_multipart_reader_1aba8888e842e4011b38892312d5bbae7b>`(:ref:`MessageHeader<doxid-class_poco_1_1_net_1_1_message_header>`& messageHeader);
+	
+		bool
+		:ref:`hasNextPart<doxid-class_poco_1_1_net_1_1_multipart_reader_1ad22900fd1a05c925da24a155d92d6536>`();
+	
+		std::istream&
+		:ref:`stream<doxid-class_poco_1_1_net_1_1_multipart_reader_1a478e4b793085b53838089522381c210e>`() const;
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`boundary<doxid-class_poco_1_1_net_1_1_multipart_reader_1afb4ef0b0245f3cdd9879922eba422fd7>`() const;
+
+	protected:
+		// methods
+	
+		void
+		:target:`findFirstBoundary<doxid-class_poco_1_1_net_1_1_multipart_reader_1a285b20522a420c9e081b86ad095311ac>`();
+	
+		void
+		:target:`guessBoundary<doxid-class_poco_1_1_net_1_1_multipart_reader_1ac073b2c0f8989b2d24c3b77394003b69>`();
+	
+		void
+		:target:`parseHeader<doxid-class_poco_1_1_net_1_1_multipart_reader_1a63c4caffb7a2df5ee3951324529ac930>`(:ref:`MessageHeader<doxid-class_poco_1_1_net_1_1_message_header>`& messageHeader);
+	
+		bool
+		:target:`readLine<doxid-class_poco_1_1_net_1_1_multipart_reader_1a828e0b71a32d7eacb922855db50d1de3>`(
+			std::string& line,
+			std::string::size_type n
+			);
+	};
+.. _details-class_poco_1_1_net_1_1_multipart_reader:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class is used to split a MIME multipart message into its single parts.
+
+The format of multipart messages is described in section 5.1 of RFC 2046.
+
+To split a multipart message into its parts, do the following:
+
+.. ref-code-block:: cpp
+
+	- Create a MultipartReader object, passing it
+	  an input stream and optionally a boundary string.
+	- while hasNextPart() returns true, call nextPart()
+	  and read the part from stream().
+
+Always ensure that you read all data from the part stream, otherwise the :ref:`MultipartReader <doxid-class_poco_1_1_net_1_1_multipart_reader>` will fail to find the next part.
+
+Construction
+------------
+
+.. index:: pair: function; MultipartReader
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader_1a6156634db32cedeb676f526cbe11dd1e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MultipartReader(std::istream& istr)
+
+Creates the :ref:`MultipartReader <doxid-class_poco_1_1_net_1_1_multipart_reader>` and attaches it to the given input stream.
+
+The boundary string is determined from the input stream. The message must not contain a preamble preceding the first encapsulation boundary.
+
+.. index:: pair: function; MultipartReader
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader_1aead0f113a9209815955c3ad75b82139b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MultipartReader(
+		std::istream& istr,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& boundary
+		)
+
+Creates the :ref:`MultipartReader <doxid-class_poco_1_1_net_1_1_multipart_reader>` and attaches it to the given input stream.
+
+The given boundary string is used to find message boundaries.
+
+Methods
+-------
+
+.. index:: pair: function; nextPart
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader_1aba8888e842e4011b38892312d5bbae7b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	nextPart(:ref:`MessageHeader<doxid-class_poco_1_1_net_1_1_message_header>`& messageHeader)
+
+Moves to the next part in the message and stores the part's header fields in messageHeader.
+
+Throws an MultipartException if there are no more parts available, or if no boundary line can be found in the input stream.
+
+.. index:: pair: function; hasNextPart
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader_1ad22900fd1a05c925da24a155d92d6536:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	hasNextPart()
+
+Returns true iff more parts are available.
+
+Before the first call to :ref:`nextPart() <doxid-class_poco_1_1_net_1_1_multipart_reader_1aba8888e842e4011b38892312d5bbae7b>`, returns always true.
+
+.. index:: pair: function; stream
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader_1a478e4b793085b53838089522381c210e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::istream&
+	stream() const
+
+Returns a reference to the reader's stream that can be used to read the current part.
+
+The returned reference will be valid until :ref:`nextPart() <doxid-class_poco_1_1_net_1_1_multipart_reader_1aba8888e842e4011b38892312d5bbae7b>` is called or the :ref:`MultipartReader <doxid-class_poco_1_1_net_1_1_multipart_reader>` object is destroyed.
+
+.. index:: pair: function; boundary
+.. _doxid-class_poco_1_1_net_1_1_multipart_reader_1afb4ef0b0245f3cdd9879922eba422fd7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+	boundary() const
+
+Returns the multipart boundary used by this reader.
+

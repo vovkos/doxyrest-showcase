@@ -1,0 +1,112 @@
+.. index:: pair: class; Poco::ActiveMethod<ResultType, void, OwnerType, StarterType>
+.. _doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4:
+
+template class Poco::ActiveMethod<ResultType, void, OwnerType, StarterType>
+===========================================================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An active method is a method that, when called, executes in its own thread. :ref:`More...<details-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ActiveMethod.h>
+	
+	template <
+		class ResultType,
+		class OwnerType,
+		class StarterType
+		>
+	class ActiveMethod<ResultType, void, OwnerType, StarterType>
+	{
+	public:
+		// typedefs
+	
+		typedef ResultType(OwnerType::* :target:`Callback<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a7a47988e26f9a72fe5a663caee57424a>`)(void);
+		typedef :ref:`ActiveResult<doxid-class_poco_1_1_active_result>`<ResultType> :target:`ActiveResultType<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a72ca2cb104460671cd951293313dc172>`;
+		typedef :ref:`ActiveRunnable<doxid-class_poco_1_1_active_runnable>`<ResultType, void, OwnerType> :target:`ActiveRunnableType<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a5bde804238ed050e627aba583854dc7e>`;
+
+		// construction
+	
+		:target:`ActiveMethod<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a5188751c65e8ad4e101faf4a3aa793da>`(
+			OwnerType* pOwner,
+			:ref:`Callback<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a7a47988e26f9a72fe5a663caee57424a>` method
+			);
+	
+		:target:`ActiveMethod<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a2a2cf56e4b114dc48c045f96445e008b>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`ActiveMethod<doxid-class_poco_1_1_active_method>`& other);
+
+		// methods
+	
+		:ref:`ActiveResultType<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a72ca2cb104460671cd951293313dc172>`
+		:ref:`operator()<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a811a5afda2dd690170236d8371ab0d8f>`(void);
+	
+		:ref:`ActiveMethod<doxid-class_poco_1_1_active_method>`&
+		:target:`operator=<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a3eff8f683239284d7677eba34daf3151>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`ActiveMethod<doxid-class_poco_1_1_active_method>`& other);
+	
+		void
+		:target:`swap<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a635f468f9a8543558543533b317f7efe>`(:ref:`ActiveMethod<doxid-class_poco_1_1_active_method>`& other);
+	};
+.. _details-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An active method is a method that, when called, executes in its own thread.
+
+:ref:`ActiveMethod <doxid-class_poco_1_1_active_method>` 's take exactly one argument and can return a value. To pass more than one argument to the method, use a struct. The following example shows how to add an :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>` to a class:
+
+.. ref-code-block:: cpp
+
+	class ActiveObject
+	{
+	public:
+	    ActiveObject():
+	        exampleActiveMethod(this, &ActiveObject::exampleActiveMethodImpl)
+	    {
+	    }
+	
+	    ActiveMethod<std::string, std::string, ActiveObject> exampleActiveMethod;
+	
+	protected:
+	    std::string exampleActiveMethodImpl(const std::string& arg)
+	    {
+	        ...
+	    }
+	};
+
+And following is an example that shows how to invoke an :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>`.
+
+.. ref-code-block:: cpp
+
+	ActiveObject myActiveObject;
+	ActiveResult<std::string> result = myActiveObject.exampleActiveMethod("foo");
+	...
+	result.wait();
+	std::cout << result.data() << std::endl;
+
+The way an :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>` is started can be changed by passing a StarterType template argument with a corresponding class. The default :ref:`ActiveStarter <doxid-class_poco_1_1_active_starter>` starts the method in its own thread, obtained from a thread pool.
+
+For an alternative implementation of StarterType, see :ref:`ActiveDispatcher <doxid-class_poco_1_1_active_dispatcher>`.
+
+For methods that do not require an argument or a return value, simply use void.
+
+Methods
+-------
+
+.. index:: pair: function; operator()
+.. _doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a811a5afda2dd690170236d8371ab0d8f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ActiveResultType<doxid-class_poco_1_1_active_method_3_01_result_type_00_01void_00_01_owner_type_00_01_starter_type_01_4_1a72ca2cb104460671cd951293313dc172>`
+	operator()(void)
+
+Invokes the :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>`.
+

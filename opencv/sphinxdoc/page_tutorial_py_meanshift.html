@@ -1,0 +1,239 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Meanshift and Camshift &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Optical Flow" href="page_tutorial_py_lucas_kanade.html" />
+    <link rel="prev" title="Background Subtraction" href="page_tutorial_py_bg_subtraction.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_lucas_kanade.html" title="Optical Flow"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_bg_subtraction.html" title="Background Subtraction"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_video.html" accesskey="U">Video Analysis</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_bg_subtraction.html"
+                        title="previous chapter">Background Subtraction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_lucas_kanade.html"
+                        title="next chapter">Optical Flow</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="meanshift-and-camshift">
+<span id="doxid-db-df8-tutorial-py-meanshift"></span><span id="index-0"></span><h1>Meanshift and Camshift</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will learn about Meanshift and Camshift algorithms to find and track objects in videos.</li>
+</ul>
+<p class="rubric">Meanshift</p>
+<p>The intuition behind the meanshift is simple. Consider you have a set of points. (It can be a pixel distribution like histogram backprojection). You are given a small window ( may be a circle) and you have to move that window to the area of maximum pixel density (or maximum number of points). It is illustrated in the simple image given below:</p>
+<img alt="image" src="_images/meanshift_basics.jpg" />
+<p>The initial window is shown in blue circle with the name “C1”. Its original center is marked in blue rectangle, named “C1_o”. But if you find the centroid of the points inside that window, you will get the point “C1_r” (marked in small blue circle) which is the real centroid of window. Surely they don’t match. So move your window such that circle of the new window matches with previous centroid. Again find the new centroid. Most probably, it won’t match. So move it again, and continue the iterations such that center of window and its centroid falls on the same location (or with a small desired error). So finally what you obtain is a window with maximum pixel distribution. It is marked with green circle, named “C2”. As you can see in image, it has maximum number of points. The whole process is demonstrated on a static image below:</p>
+<img alt="image" src="_images/meanshift_face.gif" />
+<p>So we normally pass the histogram backprojected image and initial target location. When the object moves, obviously the movement is reflected in histogram backprojected image. As a result, meanshift algorithm moves our window to the new location with maximum density.</p>
+<p class="rubric">Meanshift in OpenCV</p>
+<p>To use meanshift in OpenCV, first we need to setup the target, find its histogram so that we can backproject the target on each frame for calculation of meanshift. We also need to provide initial location of window. For histogram, only Hue is considered here. Also, to avoid false values due to low light, low light values are discarded using <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga48af0ab51e36436c5d04340e036ce981"><span class="std std-ref">cv2.inRange()</span></a> function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="sc">&#39;slow.flv&#39;</span><span class="p">)</span>
+
+<span class="cp"># take first frame of the video</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="cp"># setup initial location of window</span>
+<span class="n">r</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">w</span> <span class="o">=</span> <span class="mi">250</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">125</span>  <span class="err">#</span> <span class="n">simply</span> <span class="n">hardcoded</span> <span class="n">the</span> <span class="n">values</span>
+<span class="n">track_window</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="cp"># set up the ROI for tracking</span>
+<span class="n">roi</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="nl">r</span><span class="p">:</span><span class="n">r</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="nl">c</span><span class="p">:</span><span class="n">c</span><span class="o">+</span><span class="n">w</span><span class="p">]</span>
+<span class="n">hsv_roi</span> <span class="o">=</span>  <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">hsv_roi</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">60.</span><span class="p">,</span><span class="mf">32.</span><span class="p">)),</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">((</span><span class="mf">180.</span><span class="p">,</span><span class="mf">255.</span><span class="p">,</span><span class="mf">255.</span><span class="p">)))</span>
+<span class="n">roi_hist</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">hsv_roi</span><span class="p">],[</span><span class="mi">0</span><span class="p">],</span><span class="n">mask</span><span class="p">,[</span><span class="mi">180</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="p">])</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">roi_hist</span><span class="p">,</span><span class="n">roi_hist</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">)</span>
+
+<span class="cp"># Setup the termination criteria, either 10 iteration or move by atleast 1 pt</span>
+<span class="n">term_crit</span> <span class="o">=</span> <span class="p">(</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_EPS</span> <span class="o">|</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_COUNT</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">ret</span> <span class="p">,</span><span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="nl">True</span><span class="p">:</span>
+        <span class="n">hsv</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcBackProject</span><span class="p">([</span><span class="n">hsv</span><span class="p">],[</span><span class="mi">0</span><span class="p">],</span><span class="n">roi_hist</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="cp"># apply meanshift to get the new location</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">track_window</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">meanShift</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">track_window</span><span class="p">,</span> <span class="n">term_crit</span><span class="p">)</span>
+
+        <span class="cp"># Draw it on image</span>
+        <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span> <span class="o">=</span> <span class="n">track_window</span>
+        <span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">w</span><span class="p">,</span><span class="n">y</span><span class="o">+</span><span class="n">h</span><span class="p">),</span> <span class="mi">255</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;img2&#39;</span><span class="p">,</span><span class="n">img2</span><span class="p">)</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">chr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;.jpg&quot;</span><span class="p">,</span><span class="n">img2</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+</pre>
+<p>Three frames in a video I used is given below:</p>
+<img alt="image" src="_images/meanshift_result.jpg" />
+<p class="rubric">Camshift</p>
+<p>Did you closely watch the last result? There is a problem. Our window always has the same size when car is farther away and it is very close to camera. That is not good. We need to adapt the window size with size and rotation of the target. Once again, the solution came from “OpenCV Labs” and it is called CAMshift (Continuously Adaptive Meanshift) published by Gary Bradsky in his paper “Computer Vision Face Tracking for Use in a Perceptual User Interface” in 1988.</p>
+<p>It applies meanshift first. Once meanshift converges, it updates the size of the window as, <span class="math notranslate nohighlight">\(s = 2 \times \sqrt{\frac{M_{00}}{256}}\)</span>. It also calculates the orientation of best fitting ellipse to it. Again it applies the meanshift with new scaled search window and previous window location. The process is continued until required accuracy is met.</p>
+<img alt="image" src="_images/camshift_face.gif" />
+<p class="rubric">Camshift in OpenCV</p>
+<p>It is almost same as meanshift, but it returns a rotated rectangle (that is our result) and box parameters (used to be passed as search window in next iteration). See the code below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="sc">&#39;slow.flv&#39;</span><span class="p">)</span>
+
+<span class="cp"># take first frame of the video</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="cp"># setup initial location of window</span>
+<span class="n">r</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">w</span> <span class="o">=</span> <span class="mi">250</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">125</span>  <span class="err">#</span> <span class="n">simply</span> <span class="n">hardcoded</span> <span class="n">the</span> <span class="n">values</span>
+<span class="n">track_window</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="cp"># set up the ROI for tracking</span>
+<span class="n">roi</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="nl">r</span><span class="p">:</span><span class="n">r</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="nl">c</span><span class="p">:</span><span class="n">c</span><span class="o">+</span><span class="n">w</span><span class="p">]</span>
+<span class="n">hsv_roi</span> <span class="o">=</span>  <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">hsv_roi</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">60.</span><span class="p">,</span><span class="mf">32.</span><span class="p">)),</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">((</span><span class="mf">180.</span><span class="p">,</span><span class="mf">255.</span><span class="p">,</span><span class="mf">255.</span><span class="p">)))</span>
+<span class="n">roi_hist</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">hsv_roi</span><span class="p">],[</span><span class="mi">0</span><span class="p">],</span><span class="n">mask</span><span class="p">,[</span><span class="mi">180</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="p">])</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">roi_hist</span><span class="p">,</span><span class="n">roi_hist</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">)</span>
+
+<span class="cp"># Setup the termination criteria, either 10 iteration or move by atleast 1 pt</span>
+<span class="n">term_crit</span> <span class="o">=</span> <span class="p">(</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_EPS</span> <span class="o">|</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_COUNT</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">ret</span> <span class="p">,</span><span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="nl">True</span><span class="p">:</span>
+        <span class="n">hsv</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcBackProject</span><span class="p">([</span><span class="n">hsv</span><span class="p">],[</span><span class="mi">0</span><span class="p">],</span><span class="n">roi_hist</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="cp"># apply meanshift to get the new location</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">track_window</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">CamShift</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">track_window</span><span class="p">,</span> <span class="n">term_crit</span><span class="p">)</span>
+
+        <span class="cp"># Draw it on image</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">boxPoints</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">int0</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+        <span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">frame</span><span class="p">,[</span><span class="n">pts</span><span class="p">],</span><span class="n">True</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;img2&#39;</span><span class="p">,</span><span class="n">img2</span><span class="p">)</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">chr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;.jpg&quot;</span><span class="p">,</span><span class="n">img2</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+</pre>
+<p>Three frames of the result is shown below:</p>
+<img alt="image" src="_images/camshift_result.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>French Wikipedia page on <a class="reference external" href="http://fr.wikipedia.org/wiki/Camshift">Camshift</a>. (The two animations are taken from here)</li>
+<li><dl class="first docutils">
+<dt>Bradski, G.R., “Real time face and object tracking as a component of a perceptual user</dt>
+<dd>interface,” Applications of Computer Vision, 1998. WACV ‘98. Proceedings., Fourth IEEE Workshop on , vol., no., pp.214,219, 19-21 Oct 1998</dd>
+</dl>
+</li>
+</ol>
+<p class="rubric">Exercises</p>
+<ol class="arabic simple">
+<li>OpenCV comes with a Python sample on interactive demo of camshift. Use it, hack it, understand it.</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_lucas_kanade.html" title="Optical Flow"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_bg_subtraction.html" title="Background Subtraction"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_video.html" >Video Analysis</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

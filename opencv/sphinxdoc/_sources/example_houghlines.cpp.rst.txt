@@ -1,0 +1,100 @@
+.. index:: pair: example; houghlines.cpp
+.. _doxid-d2/d7b/houghlines_8cpp-example:
+
+houghlines.cpp
+==============
+
+An example using the Hough line detector
+
+.. ref-code-block:: cpp
+
+	#include <cmath>
+	#include <iostream>
+	
+	#include "opencv2/core.hpp"
+	#include <opencv2/core/utility.hpp>
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/cudaimgproc.hpp"
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`cv::cuda <doxid-d1/d1a/namespacecv_1_1cuda>`;
+	
+	static void help()
+	{
+	    cout << "This program demonstrates line finding with the Hough transform." << endl;
+	    cout << "Usage:" << endl;
+	    cout << "./gpu-example-houghlines <image_name>, Default is ../data/pic1.png\n" << endl;
+	}
+	
+	int main(int argc, const char* argv[])
+	{
+	    const string filename = argc >= 2 ? argv[1] : "../data/pic1.png";
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>`);
+	    if (src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`())
+	    {
+	        help();
+	        cout << "can not open " << filename << endl;
+	        return -1;
+	    }
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mask;
+	    :ref:`cv::Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`(src, mask, 100, 200, 3);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst_cpu;
+	    :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(mask, dst_cpu, :ref:`COLOR_GRAY2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a869da65c045477f2f17d39395df65b2d>`);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst_gpu = dst_cpu.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+	
+	    vector<Vec4i> lines_cpu;
+	    {
+	        const :ref:`int64 <doxid-d1/d1b/group__core__hal__interface_1ga7cde0074dfd288f2d70c0e035dacb28a>` start = :ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`();
+	
+	        :ref:`cv::HoughLinesP <doxid-dd/d1a/group__imgproc__feature_1ga8618180a5948286384e3b7ca02f6feeb>`(mask, lines_cpu, 1, CV_PI / 180, 50, 60, 5);
+	
+	        const double timeSec = (:ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`() - start) / :ref:`getTickFrequency <doxid-db/de0/group__core__utils_1ga705441a9ef01f47acdc55d87fbe5090c>`();
+	        cout << "CPU Time : " << timeSec * 1000 << " ms" << endl;
+	        cout << "CPU Found : " << lines_cpu.size() << endl;
+	    }
+	
+	    for (size_t i = 0; i < lines_cpu.size(); ++i)
+	    {
+	        :ref:`Vec4i <doxid-db/d93/classcv_1_1_vec>` l = lines_cpu[i];
+	        :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(dst_cpu, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[0], l[1]), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[2], l[3]), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 0, 255), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	    }
+	
+	    :ref:`GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>` d_src(mask);
+	    :ref:`GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>` d_lines;
+	    {
+	        const :ref:`int64 <doxid-d1/d1b/group__core__hal__interface_1ga7cde0074dfd288f2d70c0e035dacb28a>` start = :ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`();
+	
+	        :ref:`Ptr\<cuda::HoughSegmentDetector> <doxid-d2/d56/structcv_1_1_ptr>` hough = :ref:`cuda::createHoughSegmentDetector <doxid-d2/d15/group__cudaimgproc__hough_1ga5a5959a24e8cb4da131bcffbf56b13cd>`(1.0f, (float) (CV_PI / 180.0f), 50, 5);
+	
+	        hough->:ref:`detect <doxid-de/d0d/classcv_1_1cuda_1_1_hough_segment_detector_1a739bf84825ca455966d69dd75ca0ea6e>`(d_src, d_lines);
+	
+	        const double timeSec = (:ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`() - start) / :ref:`getTickFrequency <doxid-db/de0/group__core__utils_1ga705441a9ef01f47acdc55d87fbe5090c>`();
+	        cout << "GPU Time : " << timeSec * 1000 << " ms" << endl;
+	        cout << "GPU Found : " << d_lines.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>` << endl;
+	    }
+	    vector<Vec4i> lines_gpu;
+	    if (!d_lines.:ref:`empty <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a509710f61e3a7e13b5ebb2b40984900a>`())
+	    {
+	        lines_gpu.resize(d_lines.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>`);
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` h_lines(1, d_lines.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>`, :ref:`CV_32SC4 <doxid-d1/d1b/group__core__hal__interface_1gabb3078c1d583118ac40a8010292035fc>`, &lines_gpu[0]);
+	        d_lines.:ref:`download <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a027e74e4364ddfd9687b58aa5db8d4e8>`(h_lines);
+	    }
+	
+	    for (size_t i = 0; i < lines_gpu.size(); ++i)
+	    {
+	        :ref:`Vec4i <doxid-db/d93/classcv_1_1_vec>` l = lines_gpu[i];
+	        :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(dst_gpu, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[0], l[1]), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[2], l[3]), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 0, 255), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	    }
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("source", src);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("detected lines [CPU]", dst_cpu);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("detected lines [GPU]", dst_gpu);
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	
+	    return 0;
+	}

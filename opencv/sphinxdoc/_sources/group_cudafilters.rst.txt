@@ -1,0 +1,982 @@
+.. index:: pair: group; Image Filtering
+.. _doxid-dc/d66/group__cudafilters:
+
+Image Filtering
+===============
+
+.. toctree::
+	:hidden:
+
+	class_cv_cuda_Filter.rst
+
+Overview
+~~~~~~~~
+
+Functions and classes described in this section are used to perform various linear or non-linear filtering operations on 2D images. :ref:`More...<details-dc/d66/group__cudafilters>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// classes
+
+	class :ref:`cv::cuda::Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`;
+
+	// global functions
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createBoxFilter<doxid-dc/d66/group__cudafilters_1ga6ae218ea6d87e852021e448f9568c8bb>`(
+		int srcType,
+		int dstType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createBoxMaxFilter<doxid-dc/d66/group__cudafilters_1gaaf4740c51128d23a37f6f1b22cee49e8>`(
+		int srcType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createBoxMinFilter<doxid-dc/d66/group__cudafilters_1ga77fd36949bc8d92aabc120b4b1cfaafa>`(
+		int srcType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createColumnSumFilter<doxid-dc/d66/group__cudafilters_1gac13bf7c41a34bfde2a7f33ad8caacfdf>`(
+		int srcType,
+		int dstType,
+		int ksize,
+		int anchor = -1,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createDerivFilter<doxid-dc/d66/group__cudafilters_1ga14d76dc6982ce739c67198f52bc16ee1>`(
+		int srcType,
+		int dstType,
+		int dx,
+		int dy,
+		int ksize,
+		bool normalize = false,
+		double scale = 1,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createGaussianFilter<doxid-dc/d66/group__cudafilters_1gaa4df286369114cfd4b144ae211f6a6c8>`(
+		int srcType,
+		int dstType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		double sigma1,
+		double sigma2 = 0,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createLaplacianFilter<doxid-dc/d66/group__cudafilters_1ga53126e88bb7e6185dcd5628e28e42cd2>`(
+		int srcType,
+		int dstType,
+		int ksize = 1,
+		double scale = 1,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createLinearFilter<doxid-dc/d66/group__cudafilters_1ga03a9fb457e5bd34dfc6edfa6ffd803b0>`(
+		int srcType,
+		int dstType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` kernel,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createMorphologyFilter<doxid-dc/d66/group__cudafilters_1gae58694e07be6bdbae126f36c75c08ee6>`(
+		int op,
+		int srcType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` kernel,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1),
+		int iterations = 1
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createRowSumFilter<doxid-dc/d66/group__cudafilters_1gaf735de273ccb5072f3c27816fb97a53a>`(
+		int srcType,
+		int dstType,
+		int ksize,
+		int anchor = -1,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createScharrFilter<doxid-dc/d66/group__cudafilters_1ga4ac8df158e5771ddb0bd5c9091188ce6>`(
+		int srcType,
+		int dstType,
+		int dx,
+		int dy,
+		double scale = 1,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createSeparableLinearFilter<doxid-dc/d66/group__cudafilters_1gaf7b79a9a92992044f328dad07a52c4bf>`(
+		int srcType,
+		int dstType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` rowKernel,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` columnKernel,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1),
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	:ref:`cv::cuda::createSobelFilter<doxid-dc/d66/group__cudafilters_1gabf85fe61958bb21e93211a6fcc7c5c3b>`(
+		int srcType,
+		int dstType,
+		int dx,
+		int dy,
+		int ksize = 3,
+		double scale = 1,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		);
+
+.. _details-dc/d66/group__cudafilters:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Functions and classes described in this section are used to perform various linear or non-linear filtering operations on 2D images.
+
+* An example containing all basic morphology operators like erode and dilate can be found at opencv_source_code/samples/gpu/morphology.cpp
+
+Global Functions
+----------------
+
+.. index:: pair: function; createBoxFilter
+.. _doxid-dc/d66/group__cudafilters_1ga6ae218ea6d87e852021e448f9568c8bb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createBoxFilter(
+		int srcType,
+		int dstType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates a normalized 2D box filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input image type. Only CV_8UC1, CV_8UC4 and CV_32FC1 are supported for now.
+
+	*
+		- dstType
+
+		- Output image type. Only the same type as src is supported for now.
+
+	*
+		- ksize
+
+		- Kernel size.
+
+	*
+		- anchor
+
+		- Anchor point. The default value Point(-1, -1) means that the anchor is at the kernel center.
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+
+
+.. rubric:: See also:
+
+:ref:`boxFilter <doxid-d4/d86/group__imgproc__filter_1gad533230ebf2d42509547d514f7d3fbc3>`
+
+.. index:: pair: function; createBoxMaxFilter
+.. _doxid-dc/d66/group__cudafilters_1gaaf4740c51128d23a37f6f1b22cee49e8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createBoxMaxFilter(
+		int srcType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates the maximum filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input/output image type. Only CV_8UC1 and CV_8UC4 are supported.
+
+	*
+		- ksize
+
+		- Kernel size.
+
+	*
+		- anchor
+
+		- Anchor point. The default value (-1) means that the anchor is at the kernel center.
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+.. index:: pair: function; createBoxMinFilter
+.. _doxid-dc/d66/group__cudafilters_1ga77fd36949bc8d92aabc120b4b1cfaafa:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createBoxMinFilter(
+		int srcType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates the minimum filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input/output image type. Only CV_8UC1 and CV_8UC4 are supported.
+
+	*
+		- ksize
+
+		- Kernel size.
+
+	*
+		- anchor
+
+		- Anchor point. The default value (-1) means that the anchor is at the kernel center.
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+.. index:: pair: function; createColumnSumFilter
+.. _doxid-dc/d66/group__cudafilters_1gac13bf7c41a34bfde2a7f33ad8caacfdf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createColumnSumFilter(
+		int srcType,
+		int dstType,
+		int ksize,
+		int anchor = -1,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates a vertical 1D box filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input image type. Only CV_8UC1 type is supported for now.
+
+	*
+		- dstType
+
+		- Output image type. Only CV_32FC1 type is supported for now.
+
+	*
+		- ksize
+
+		- Kernel size.
+
+	*
+		- anchor
+
+		- Anchor point. The default value (-1) means that the anchor is at the kernel center.
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+.. index:: pair: function; createDerivFilter
+.. _doxid-dc/d66/group__cudafilters_1ga14d76dc6982ce739c67198f52bc16ee1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createDerivFilter(
+		int srcType,
+		int dstType,
+		int dx,
+		int dy,
+		int ksize,
+		bool normalize = false,
+		double scale = 1,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		)
+
+Creates a generalized Deriv operator.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Source image type.
+
+	*
+		- dstType
+
+		- Destination array type.
+
+	*
+		- dx
+
+		- Derivative order in respect of x.
+
+	*
+		- dy
+
+		- Derivative order in respect of y.
+
+	*
+		- ksize
+
+		- Aperture size. See getDerivKernels for details.
+
+	*
+		- normalize
+
+		- Flag indicating whether to normalize (scale down) the filter coefficients or not. See getDerivKernels for details.
+
+	*
+		- scale
+
+		- Optional scale factor for the computed derivative values. By default, no scaling is applied. For details, see getDerivKernels .
+
+	*
+		- rowBorderMode
+
+		- Pixel extrapolation method in the vertical direction. For details, see borderInterpolate.
+
+	*
+		- columnBorderMode
+
+		- Pixel extrapolation method in the horizontal direction.
+
+.. index:: pair: function; createGaussianFilter
+.. _doxid-dc/d66/group__cudafilters_1gaa4df286369114cfd4b144ae211f6a6c8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createGaussianFilter(
+		int srcType,
+		int dstType,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` ksize,
+		double sigma1,
+		double sigma2 = 0,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		)
+
+Creates a Gaussian filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Source image type.
+
+	*
+		- dstType
+
+		- Destination array type.
+
+	*
+		- ksize
+
+		- Aperture size. See getGaussianKernel for details.
+
+	*
+		- sigma1
+
+		- Gaussian sigma in the horizontal direction. See getGaussianKernel for details.
+
+	*
+		- sigma2
+
+		- Gaussian sigma in the vertical direction. If 0, then :math:`\texttt{sigma2}\leftarrow\texttt{sigma1}`.
+
+	*
+		- rowBorderMode
+
+		- Pixel extrapolation method in the vertical direction. For details, see borderInterpolate.
+
+	*
+		- columnBorderMode
+
+		- Pixel extrapolation method in the horizontal direction.
+
+
+
+.. rubric:: See also:
+
+:ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`
+
+.. index:: pair: function; createLaplacianFilter
+.. _doxid-dc/d66/group__cudafilters_1ga53126e88bb7e6185dcd5628e28e42cd2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createLaplacianFilter(
+		int srcType,
+		int dstType,
+		int ksize = 1,
+		double scale = 1,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates a Laplacian operator.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input image type. Supports CV_8U , CV_16U and CV_32F one and four channel image.
+
+	*
+		- dstType
+
+		- Output image type. Only the same type as src is supported for now.
+
+	*
+		- ksize
+
+		- Aperture size used to compute the second-derivative filters (see getDerivKernels). It must be positive and odd. Only ksize = 1 and ksize = 3 are supported.
+
+	*
+		- scale
+
+		- Optional scale factor for the computed Laplacian values. By default, no scaling is applied (see getDerivKernels ).
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+
+
+.. rubric:: See also:
+
+:ref:`Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>`
+
+.. index:: pair: function; createLinearFilter
+.. _doxid-dc/d66/group__cudafilters_1ga03a9fb457e5bd34dfc6edfa6ffd803b0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createLinearFilter(
+		int srcType,
+		int dstType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` kernel,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1),
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates a non-separable linear 2D filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input image type. Supports CV_8U , CV_16U and CV_32F one and four channel image.
+
+	*
+		- dstType
+
+		- Output image type. Only the same type as src is supported for now.
+
+	*
+		- kernel
+
+		- 2D array of filter coefficients.
+
+	*
+		- anchor
+
+		- Anchor point. The default value Point(-1, -1) means that the anchor is at the kernel center.
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+
+
+.. rubric:: See also:
+
+:ref:`filter2D <doxid-d4/d86/group__imgproc__filter_1ga27c049795ce870216ddfb366086b5a04>`
+
+.. index:: pair: function; createMorphologyFilter
+.. _doxid-dc/d66/group__cudafilters_1gae58694e07be6bdbae126f36c75c08ee6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createMorphologyFilter(
+		int op,
+		int srcType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` kernel,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1),
+		int iterations = 1
+		)
+
+Creates a 2D morphological filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- op
+
+		- 
+		  Type of morphological operation. The following types are possible:
+		  
+		  * **MORPH_ERODE** erode
+		  
+		  * **MORPH_DILATE** dilate
+		  
+		  * **MORPH_OPEN** opening
+		  
+		  * **MORPH_CLOSE** closing
+		  
+		  * **MORPH_GRADIENT** morphological gradient
+		  
+		  * **MORPH_TOPHAT** "top hat"
+		  
+		  * **MORPH_BLACKHAT** "black hat"
+
+	*
+		- srcType
+
+		- Input/output image type. Only CV_8UC1, CV_8UC4, CV_32FC1 and CV_32FC4 are supported.
+
+	*
+		- kernel
+
+		- 2D 8-bit structuring element for the morphological operation.
+
+	*
+		- anchor
+
+		- Anchor position within the structuring element. Negative values mean that the anchor is at the center.
+
+	*
+		- iterations
+
+		- Number of times erosion and dilation to be applied.
+
+
+
+.. rubric:: See also:
+
+:ref:`morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`
+
+.. index:: pair: function; createRowSumFilter
+.. _doxid-dc/d66/group__cudafilters_1gaf735de273ccb5072f3c27816fb97a53a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createRowSumFilter(
+		int srcType,
+		int dstType,
+		int ksize,
+		int anchor = -1,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Scalar<doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` borderVal = :ref:`Scalar::all<doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0)
+		)
+
+Creates a horizontal 1D box filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input image type. Only CV_8UC1 type is supported for now.
+
+	*
+		- dstType
+
+		- Output image type. Only CV_32FC1 type is supported for now.
+
+	*
+		- ksize
+
+		- Kernel size.
+
+	*
+		- anchor
+
+		- Anchor point. The default value (-1) means that the anchor is at the kernel center.
+
+	*
+		- borderMode
+
+		- Pixel extrapolation method. For details, see borderInterpolate .
+
+	*
+		- borderVal
+
+		- Default border value.
+
+.. index:: pair: function; createScharrFilter
+.. _doxid-dc/d66/group__cudafilters_1ga4ac8df158e5771ddb0bd5c9091188ce6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createScharrFilter(
+		int srcType,
+		int dstType,
+		int dx,
+		int dy,
+		double scale = 1,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		)
+
+Creates a vertical or horizontal Scharr operator.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Source image type.
+
+	*
+		- dstType
+
+		- Destination array type.
+
+	*
+		- dx
+
+		- Order of the derivative x.
+
+	*
+		- dy
+
+		- Order of the derivative y.
+
+	*
+		- scale
+
+		- Optional scale factor for the computed derivative values. By default, no scaling is applied. See getDerivKernels for details.
+
+	*
+		- rowBorderMode
+
+		- Pixel extrapolation method in the vertical direction. For details, see borderInterpolate.
+
+	*
+		- columnBorderMode
+
+		- Pixel extrapolation method in the horizontal direction.
+
+
+
+.. rubric:: See also:
+
+:ref:`Scharr <doxid-d4/d86/group__imgproc__filter_1gaa13106761eedf14798f37aa2d60404c9>`
+
+.. index:: pair: function; createSeparableLinearFilter
+.. _doxid-dc/d66/group__cudafilters_1gaf7b79a9a92992044f328dad07a52c4bf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createSeparableLinearFilter(
+		int srcType,
+		int dstType,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` rowKernel,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` columnKernel,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` anchor = :ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1),
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		)
+
+Creates a separable linear filter.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Source array type.
+
+	*
+		- dstType
+
+		- Destination array type.
+
+	*
+		- rowKernel
+
+		- Horizontal filter coefficients. Support kernels with size <= 32 .
+
+	*
+		- columnKernel
+
+		- Vertical filter coefficients. Support kernels with size <= 32 .
+
+	*
+		- anchor
+
+		- Anchor position within the kernel. Negative values mean that anchor is positioned at the aperture center.
+
+	*
+		- rowBorderMode
+
+		- Pixel extrapolation method in the vertical direction For details, see borderInterpolate.
+
+	*
+		- columnBorderMode
+
+		- Pixel extrapolation method in the horizontal direction.
+
+
+
+.. rubric:: See also:
+
+:ref:`sepFilter2D <doxid-d4/d86/group__imgproc__filter_1ga910e29ff7d7b105057d1625a4bf6318d>`
+
+.. index:: pair: function; createSobelFilter
+.. _doxid-dc/d66/group__cudafilters_1gabf85fe61958bb21e93211a6fcc7c5c3b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Filter<doxid-db/dde/classcv_1_1cuda_1_1_filter>`>
+	cv::cuda::createSobelFilter(
+		int srcType,
+		int dstType,
+		int dx,
+		int dy,
+		int ksize = 3,
+		double scale = 1,
+		int rowBorderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		int columnBorderMode = -1
+		)
+
+Creates a Sobel operator.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Source image type.
+
+	*
+		- dstType
+
+		- Destination array type.
+
+	*
+		- dx
+
+		- Derivative order in respect of x.
+
+	*
+		- dy
+
+		- Derivative order in respect of y.
+
+	*
+		- ksize
+
+		- Size of the extended Sobel kernel. Possible values are 1, 3, 5 or 7.
+
+	*
+		- scale
+
+		- Optional scale factor for the computed derivative values. By default, no scaling is applied. For details, see getDerivKernels .
+
+	*
+		- rowBorderMode
+
+		- Pixel extrapolation method in the vertical direction. For details, see borderInterpolate.
+
+	*
+		- columnBorderMode
+
+		- Pixel extrapolation method in the horizontal direction.
+
+
+
+.. rubric:: See also:
+
+:ref:`Sobel <doxid-d4/d86/group__imgproc__filter_1gacea54f142e81b6758cb6f375ce782c8d>`
+

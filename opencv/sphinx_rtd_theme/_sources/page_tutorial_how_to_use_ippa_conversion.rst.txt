@@ -1,0 +1,316 @@
+.. index:: pair: page; Intel® IPP Asynchronous C/C++ library in OpenCV
+.. _doxid-dc/d0e/tutorial_how_to_use_ippa_conversion:
+
+Intel® IPP Asynchronous C/C++ library in OpenCV
+================================================
+
+.. rubric:: Goal
+
+The tutorial demonstrates the `Intel® IPP Asynchronous C/C++ <http://software.intel.com/en-us/intel-ipp-preview>`__ library usage with OpenCV. The code example below illustrates implementation of the Sobel operation, accelerated with Intel® IPP Asynchronous C/C++ functions. In this code example, :ref:`cv::hpp::getMat <doxid-d6/dcf/group__core__ipp_1ga6b6a7a9c44efd50c8aaf9fb0866a363a>` and :ref:`cv::hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>` functions are used for data conversion between `hppiMatrix <http://software.intel.com/en-us/node/501660>`__ and Mat matrices.
+
+.. rubric:: Code
+
+You may also find the source code in the ``samples/cpp/tutorial_code/core/ippasync/ippasync_sample.cpp`` file of the OpenCV source library or download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/ippasync/ippasync_sample.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	#include <stdio.h>
+	
+	#include "opencv2/core/utility.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "cvconfig.h"
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	#ifdef HAVE_IPP_A
+	#include "opencv2/core/ippasync.hpp"
+	
+	#define CHECK_STATUS(STATUS, NAME)\
+	    if(STATUS!=HPP_STATUS_NO_ERROR){ printf("%s error %d\n", NAME, STATUS);\
+	    if (virtMatrix) {hppStatus delSts = hppiDeleteVirtualMatrices(accel, virtMatrix); CHECK_DEL_STATUS(delSts,"hppiDeleteVirtualMatrices");}\
+	    if (accel)      {hppStatus delSts = hppDeleteInstance(accel); CHECK_DEL_STATUS(delSts, "hppDeleteInstance");}\
+	    return -1;}
+	
+	#define CHECK_DEL_STATUS(STATUS, NAME)\
+	    if(STATUS!=HPP_STATUS_NO_ERROR){ printf("%s error %d\n", NAME, STATUS); return -1;}
+	
+	#endif
+	
+	static void help()
+	{
+	 printf("\nThis program shows how to use the conversion for IPP Async.\n"
+	"This example uses the Sobel filter.\n"
+	"You can use cv::Sobel or hppiSobel.\n"
+	"Usage: \n"
+	"./ipp_async_sobel [--camera]=<use camera,if this key is present>, \n"
+	"                  [--file_name]=<path to movie or image file>\n"
+	"                  [--accel]=<accelerator type: auto (default), cpu, gpu>\n\n");
+	}
+	
+	const char* keys =
+	{
+	    "{c  camera   |           | use camera or not}"
+	    "{fn file_name|../data/baboon.jpg | image file       }"
+	    "{a accel     |auto       | accelerator type: auto (default), cpu, gpu}"
+	};
+	
+	//this is a sample for hppiSobel functions
+	int main(int argc, const char** argv)
+	{
+	    help();
+	
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` cap;
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, keys);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image, gray, result;
+	
+	#ifdef HAVE_IPP_A
+	
+	    hppiMatrix* src,* dst;
+	    hppAccel accel = 0;
+	    hppAccelType accelType;
+	    hppStatus sts;
+	    hppiVirtualMatrix * virtMatrix;
+	
+	    bool useCamera = parser.has("camera");
+	    string file = parser.get<string>("file_name");
+	    string sAccel = parser.get<string>("accel");
+	
+	    parser.printMessage();
+	
+	    if( useCamera )
+	    {
+	        printf("used camera\n");
+	        cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(0);
+	    }
+	    else
+	    {
+	        printf("used image %s\n", file.c_str());
+	        cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(file.c_str());
+	    }
+	
+	    if( !cap.:ref:`isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`() )
+	    {
+	        printf("can not open camera or video file\n");
+	        return -1;
+	    }
+	
+	    accelType = sAccel == "cpu" ? HPP_ACCEL_TYPE_CPU:
+	                sAccel == "gpu" ? HPP_ACCEL_TYPE_GPU:
+	                                  HPP_ACCEL_TYPE_ANY;
+	
+	    //Create accelerator instance
+	    sts = hppCreateInstance(accelType, 0, &accel);
+	    CHECK_STATUS(sts, "hppCreateInstance");
+	
+	    accelType = hppQueryAccelType(accel);
+	
+	    sAccel = accelType == HPP_ACCEL_TYPE_CPU ? "cpu":
+	             accelType == HPP_ACCEL_TYPE_GPU ? "gpu":
+	             accelType == HPP_ACCEL_TYPE_GPU_VIA_DX9 ? "gpu dx9": "?";
+	
+	    printf("accelType %s\n", sAccel.c_str());
+	
+	    virtMatrix = hppiCreateVirtualMatrices(accel, 1);
+	
+	    for(;;)
+	    {
+	        cap >> image;
+	        if(image.empty())
+	            break;
+	
+	        :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( image, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+	
+	        result.:ref:`create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>`( image.rows, image.cols, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`);
+	
+	        double execTime = (double):ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`();
+	
+	        //convert Mat to hppiMatrix
+	        src = :ref:`hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>`(gray,accel);
+	        dst = :ref:`hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>`(result,accel);
+	
+	        sts = hppiSobel(accel,src, HPP_MASK_SIZE_3X3,HPP_NORM_L1,virtMatrix[0]);
+	        CHECK_STATUS(sts,"hppiSobel");
+	
+	        sts = hppiConvert(accel, virtMatrix[0], 0, HPP_RND_MODE_NEAR, dst, HPP_DATA_TYPE_8U);
+	        CHECK_STATUS(sts,"hppiConvert");
+	
+	        // Wait for tasks to complete
+	        sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
+	        CHECK_STATUS(sts, "hppWait");
+	
+	        execTime = ((double):ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`() - execTime)*1000./:ref:`getTickFrequency <doxid-db/de0/group__core__utils_1ga705441a9ef01f47acdc55d87fbe5090c>`();
+	
+	        printf("Time : %0.3fms\n", execTime);
+	
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", image);
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("rez", result);
+	
+	        :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(15);
+	
+	        sts =  hppiFreeMatrix(src);
+	        CHECK_DEL_STATUS(sts,"hppiFreeMatrix");
+	
+	        sts =  hppiFreeMatrix(dst);
+	        CHECK_DEL_STATUS(sts,"hppiFreeMatrix");
+	
+	    }
+	
+	    if (!useCamera)
+	        :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	    if (virtMatrix)
+	    {
+	        sts = hppiDeleteVirtualMatrices(accel, virtMatrix);
+	        CHECK_DEL_STATUS(sts,"hppiDeleteVirtualMatrices");
+	    }
+	
+	    if (accel)
+	    {
+	        sts = hppDeleteInstance(accel);
+	        CHECK_DEL_STATUS(sts, "hppDeleteInstance");
+	    }
+	
+	    printf("SUCCESS\n");
+	
+	#else
+	
+	    printf("IPP Async not supported\n");
+	
+	#endif
+	
+	    return 0;
+	}
+
+.. rubric:: Explanation
+
+#. Create parameters for OpenCV:
+   
+   .. ref-code-block:: cpp
+   
+   	VideoCapture cap;
+   	Mat image, gray, result;
+   
+   and IPP Async:
+   
+   .. ref-code-block:: cpp
+   
+   	hppiMatrix* src,* dst;
+   	hppAccel accel = 0;
+   	hppAccelType accelType;
+   	hppStatus sts;
+   	hppiVirtualMatrix * virtMatrix;
+
+#. Load input image or video. How to open and read video stream you can see in the :ref:`Video Input with OpenCV and similarity measurement <doxid-d5/dc4/tutorial_video_input_psnr_ssim>` tutorial.
+   
+   .. ref-code-block:: cpp
+   
+   	if( useCamera )
+   	{
+   	   printf("used camera\n");
+   	   cap.open(0);
+   	}
+   	else
+   	{
+   	   printf("used image %s\n", file.c_str());
+   	   cap.open(file.c_str());
+   	}
+   	
+   	if( !cap.isOpened() )
+   	{
+   	   printf("can not open camera or video file\n");
+   	   return -1;
+   	}
+
+#. Create accelerator instance using `hppCreateInstance <http://software.intel.com/en-us/node/501686>`__ :
+   
+   .. ref-code-block:: cpp
+   
+   	accelType = sAccel == "cpu" ? HPP_ACCEL_TYPE_CPU:
+   	            sAccel == "gpu" ? HPP_ACCEL_TYPE_GPU:
+   	                              HPP_ACCEL_TYPE_ANY;
+   	
+   	//Create accelerator instance
+   	sts = hppCreateInstance(accelType, 0, &accel);
+   	CHECK_STATUS(sts, "hppCreateInstance");
+
+#. Create an array of virtual matrices using `hppiCreateVirtualMatrices <http://software.intel.com/en-us/node/501700>`__ function.
+   
+   .. ref-code-block:: cpp
+   
+   	virtMatrix = hppiCreateVirtualMatrices(accel, 1);
+
+#. Prepare a matrix for input and output data:
+   
+   .. ref-code-block:: cpp
+   
+   	cap >> image;
+   	if(image.empty())
+   	   break;
+   	
+   	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( image, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+   	
+   	result.create( image.rows, image.cols, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`);
+
+#. Convert Mat to `hppiMatrix <http://software.intel.com/en-us/node/501660>`__ using :ref:`cv::hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>` and call `hppiSobel <http://software.intel.com/en-us/node/474701>`__ function.
+   
+   .. ref-code-block:: cpp
+   
+   	//convert Mat to hppiMatrix
+   	src = :ref:`getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>`(gray, accel);
+   	dst = :ref:`getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>`(result, accel);
+   	
+   	sts = hppiSobel(accel,src, HPP_MASK_SIZE_3X3,HPP_NORM_L1,virtMatrix[0]);
+   	CHECK_STATUS(sts,"hppiSobel");
+   	
+   	sts = hppiConvert(accel, virtMatrix[0], 0, HPP_RND_MODE_NEAR, dst, HPP_DATA_TYPE_8U);
+   	CHECK_STATUS(sts,"hppiConvert");
+   	
+   	// Wait for tasks to complete
+   	sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
+   	CHECK_STATUS(sts, "hppWait");
+   
+   We use `hppiConvert <http://software.intel.com/en-us/node/501746>`__ because `hppiSobel <http://software.intel.com/en-us/node/474701>`__ returns destination matrix with HPP_DATA_TYPE_16S data type for source matrix with HPP_DATA_TYPE_8U type. You should check hppStatus after each call IPP Async function.
+
+#. Create windows and show the images, the usual way.
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", image);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("rez", result);
+   	
+   	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(15);
+
+#. Delete hpp matrices.
+   
+   .. ref-code-block:: cpp
+   
+   	sts =  hppiFreeMatrix(src);
+   	CHECK_DEL_STATUS(sts,"hppiFreeMatrix");
+   	
+   	sts =  hppiFreeMatrix(dst);
+   	CHECK_DEL_STATUS(sts,"hppiFreeMatrix");
+
+#. Delete virtual matrices and accelerator instance.
+   
+   .. ref-code-block:: cpp
+   
+   	if (virtMatrix)
+   	{
+   	   sts = hppiDeleteVirtualMatrices(accel, virtMatrix);
+   	   CHECK_DEL_STATUS(sts,"hppiDeleteVirtualMatrices");
+   	}
+   	
+   	if (accel)
+   	{
+   	   sts = hppDeleteInstance(accel);
+   	   CHECK_DEL_STATUS(sts, "hppDeleteInstance");
+   	}
+
+.. rubric:: Result
+
+After compiling the code above we can execute it giving an image or video path and accelerator type as an argument. For this tutorial we use baboon.png image as input. The result is below.
+
+.. image:: How_To_Use_IPPA_Result.jpg
+

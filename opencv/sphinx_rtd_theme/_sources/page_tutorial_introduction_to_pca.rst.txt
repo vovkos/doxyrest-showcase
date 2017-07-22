@@ -1,0 +1,379 @@
+.. index:: pair: page; Introduction to Principal Component Analysis (PCA)
+.. _doxid-d1/dee/tutorial_introduction_to_pca:
+
+Introduction to Principal Component Analysis (PCA)
+==================================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV class :ref:`cv::PCA <doxid-d3/d39/classcv_1_1_p_c_a>` to calculate the orientation of an object.
+
+.. rubric:: What is PCA?
+
+Principal Component Analysis (PCA) is a statistical procedure that extracts the most important features of a dataset.
+
+.. image:: pca_line.png
+
+Consider that you have a set of 2D points as it is shown in the figure above. Each dimension corresponds to a feature you are interested in. Here some could argue that the points are set in a random order. However, if you have a better look you will see that there is a linear pattern (indicated by the blue line) which is hard to dismiss. A key point of PCA is the Dimensionality Reduction. Dimensionality Reduction is the process of reducing the number of the dimensions of the given dataset. For example, in the above case it is possible to approximate the set of points to a single line and therefore, reduce the dimensionality of the given points from 2D to 1D.
+
+Moreover, you could also see that the points vary the most along the blue line, more than they vary along the Feature 1 or Feature 2 axes. This means that if you know the position of a point along the blue line you have more information about the point than if you only knew where it was on Feature 1 axis or Feature 2 axis.
+
+Hence, PCA allows us to find the direction along which our data varies the most. In fact, the result of running PCA on the set of points in the diagram consist of 2 vectors called *eigenvectors* which are the *principal components* of the data set.
+
+.. image:: pca_eigen.png
+
+The size of each eigenvector is encoded in the corresponding eigenvalue and indicates how much the data vary along the principal component. The beginning of the eigenvectors is the center of all points in the data set. Applying PCA to N-dimensional data set yields N N-dimensional eigenvectors, N eigenvalues and 1 N-dimensional center point. Enough theory, let’s see how we can put these ideas into code.
+
+.. rubric:: How are the eigenvectors and eigenvalues computed?
+
+The goal is to transform a given data set **X** of dimension *p* to an alternative data set **Y** of smaller dimension *L*. Equivalently, we are seeking to find the matrix **Y**, where **Y** is the *Karhunen–Loève transform* (KLT) of matrix **X** :
+
+.. math::
+
+	\mathbf{Y} = \mathbb{K} \mathbb{L} \mathbb{T} \{\mathbf{X}\}
+
+**Organize the data set**
+
+Suppose you have data comprising a set of observations of *p* variables, and you want to reduce the data so that each observation can be described with only *L* variables, *L* <*p*. Suppose further, that the data are arranged as a set of *n* data vectors :math:`x_1...x_n` with each :math:`x_i` representing a single grouped observation of the *p* variables.
+
+* Write :math:`x_1...x_n` as row vectors, each of which has *p* columns.
+
+* Place the row vectors into a single matrix **X** of dimensions :math:`n\times p`.
+
+**Calculate the empirical mean**
+
+* Find the empirical mean along each dimension :math:`j = 1, ..., p`.
+
+* Place the calculated mean values into an empirical mean vector **u** of dimensions :math:`p\times 1`.
+  
+  .. math::
+  
+  	\mathbf{u[j]} = \frac{1}{n}\sum_{i=1}^{n}\mathbf{X[i,j]}
+
+**Calculate the deviations from the mean**
+
+Mean subtraction is an integral part of the solution towards finding a principal component basis that minimizes the mean square error of approximating the data. Hence, we proceed by centering the data as follows:
+
+* Subtract the empirical mean vector **u** from each row of the data matrix **X**.
+
+* Store mean-subtracted data in the :math:`n\times p` matrix **B**.
+  
+  .. math::
+  
+  	\mathbf{B} = \mathbf{X} - \mathbf{h}\mathbf{u^{T}}
+  
+  where **h** is an :math:`n\times 1` column vector of all 1s:
+  
+  .. math::
+  
+  	h[i] = 1, i = 1, ..., n
+
+**Find the covariance matrix**
+
+* Find the :math:`p\times p` empirical covariance matrix **C** from the outer product of matrix **B** with itself:
+  
+  .. math::
+  
+  	\mathbf{C} = \frac{1}{n-1} \mathbf{B^{*}} \cdot \mathbf{B}
+  
+  where \* is the conjugate transpose operator. Note that if B consists entirely of real numbers, which is the case in many applications, the "conjugate transpose" is the same as the regular transpose.
+
+**Find the eigenvectors and eigenvalues of the covariance matrix**
+
+* Compute the matrix **V** of eigenvectors which diagonalizes the covariance matrix **C** :
+  
+  .. math::
+  
+  	\mathbf{V^{-1}} \mathbf{C} \mathbf{V} = \mathbf{D}
+  
+  where **D** is the diagonal matrix of eigenvalues of **C**.
+
+* Matrix **D** will take the form of an :math:`p \times p` diagonal matrix:
+  
+  .. math::
+  
+  	D[k,l] = \left\{\begin{matrix} \lambda_k, k = l \\ 0, k \neq l \end{matrix}\right.
+  
+  here, :math:`\lambda_j` is the *j* -th eigenvalue of the covariance matrix **C**
+
+* Matrix **V**, also of dimension *p* x *p*, contains *p* column vectors, each of length *p*, which represent the *p* eigenvectors of the covariance matrix **C**.
+
+* The eigenvalues and eigenvectors are ordered and paired. The *j* th eigenvalue corresponds to the *j* th eigenvector.
+
+sources `[1] <https://robospace.wordpress.com/2013/10/09/object-orientation-principal-component-analysis-opencv/>`__, `[2] <http://en.wikipedia.org/wiki/Principal_component_analysis>`__ and special thanks to Svetlin Penkov for the original tutorial.
+
+
+
+.. rubric:: Source Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/tree/master/samples/cpp/tutorial_code/ml/introduction_to_pca/introduction_to_pca.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	
+	#include <iostream>
+	#include <opencv2/opencv.hpp>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	// Function declarations
+	void drawAxis(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`&, Point, Point, Scalar, const float);
+	double getOrientation(const vector<Point> &, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`&);
+	
+	void drawAxis(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& img, Point p, Point q, Scalar colour, const float scale = 0.2)
+	{
+	    double angle;
+	    double hypotenuse;
+	    angle = :ref:`atan2 <doxid-df/dfc/group__cudev_1ga1096ba687de70142e095cc791a8bcd65>`( (double) p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`, (double) p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` ); // angle in radians
+	    hypotenuse = :ref:`sqrt <doxid-d2/d75/namespacecv_1a682082a1892db64a2856403ec17ba297>`( (double) (p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`) * (p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`) + (p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`) * (p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`));
+	//    double degrees = angle * 180 / CV_PI; // convert radians to degrees (0-180 range)
+	//    cout << "Degrees: " << abs(degrees - 180) << endl; // angle in 0-360 degrees range
+	
+	    // Here we lengthen the arrow by a factor of scale
+	    q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = (int) (p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - scale * hypotenuse * :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(angle));
+	    q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = (int) (p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - scale * hypotenuse * :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(angle));
+	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, p, q, colour, 1, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+	
+	    // create the arrow hooks
+	    p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = (int) (q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` + 9 * :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(angle + CV_PI / 4));
+	    p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = (int) (q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` + 9 * :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(angle + CV_PI / 4));
+	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, p, q, colour, 1, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+	
+	    p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = (int) (q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` + 9 * :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(angle - CV_PI / 4));
+	    p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = (int) (q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` + 9 * :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(angle - CV_PI / 4));
+	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, p, q, colour, 1, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+	}
+	
+	double getOrientation(const vector<Point> &pts, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` &img)
+	{
+	    //Construct a buffer used by the pca analysis
+	    int sz = static_cast<int>(pts.size());
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` data_pts = :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(sz, 2, :ref:`CV_64FC1 <doxid-d1/d1b/group__core__hal__interface_1ga3b256d68c6002b6afd60ab9538d717a8>`);
+	    for (int i = 0; i < data_pts.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; ++i)
+	    {
+	        data_pts.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<double>(i, 0) = pts[i].x;
+	        data_pts.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<double>(i, 1) = pts[i].y;
+	    }
+	
+	    //Perform PCA analysis
+	    :ref:`PCA <doxid-d3/d39/classcv_1_1_p_c_a>` pca_analysis(data_pts, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`CV_PCA_DATA_AS_ROW <doxid-d2/df8/group__core__c_1ga8010c4e67ca59cfd17d7a965cea7d198>`);
+	
+	    //Store the center of the object
+	    Point cntr = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(static_cast<int>(pca_analysis.mean.at<double>(0, 0)),
+	                      static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+	
+	    //Store the eigenvalues and eigenvectors
+	    vector<Point2d> eigen_vecs(2);
+	    vector<double> eigen_val(2);
+	    for (int i = 0; i < 2; ++i)
+	    {
+	        eigen_vecs[i] = :ref:`Point2d <doxid-dc/d84/group__core__basic_1ga32986d8c6fd05949688352abd112509f>`(pca_analysis.eigenvectors.at<double>(i, 0),
+	                                pca_analysis.eigenvectors.at<double>(i, 1));
+	
+	        eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
+	    }
+	
+	    // Draw the principal components
+	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`(img, cntr, 3, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 0, 255), 2);
+	    Point p1 = cntr + 0.02 * :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(static_cast<int>(eigen_vecs[0].x * eigen_val[0]), static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
+	    Point p2 = cntr - 0.02 * :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(static_cast<int>(eigen_vecs[1].x * eigen_val[1]), static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
+	    drawAxis(img, cntr, p1, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 255, 0), 1);
+	    drawAxis(img, cntr, p2, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 255, 0), 5);
+	
+	    double angle = :ref:`atan2 <doxid-df/dfc/group__cudev_1ga1096ba687de70142e095cc791a8bcd65>`(eigen_vecs[0].y, eigen_vecs[0].x); // orientation in radians
+	
+	    return angle;
+	}
+	
+	int main(int, char** argv)
+	{
+	    // Load image
+	//    Mat src = imread("pca_test1.jpg");
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1]);
+	
+	    // Check if image is loaded successfully
+	    if(!src.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` || src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`())
+	    {
+	        cout << "Problem loading image!!!" << endl;
+	        return EXIT_FAILURE;
+	    }
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("src", src);
+	
+	    // Convert image to grayscale
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` gray;
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(src, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	
+	    // Convert image to binary
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` bw;
+	    :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(gray, bw, 50, 255, :ref:`CV_THRESH_BINARY <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>` | :ref:`CV_THRESH_OTSU <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa2456934f4f01402e80006a317ea2693e>`);
+	
+	    // Find all the contours in the thresholded image
+	    vector<Vec4i> hierarchy;
+	    vector<vector<Point> > contours;
+	    :ref:`findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>`(bw, contours, hierarchy, :ref:`CV_RETR_LIST <doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`, :ref:`CV_CHAIN_APPROX_NONE <doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a68069f66db6f6a3540948eed23bf0dcf>`);
+	
+	    for (size_t i = 0; i < contours.size(); ++i)
+	    {
+	        // Calculate the area of each contour
+	        double area = :ref:`contourArea <doxid-d3/dc0/group__imgproc__shape_1ga2c759ed9f497d4a618048a2f56dc97f1>`(contours[i]);
+	        // Ignore contours that are too small or too large
+	        if (area < 1e2 || 1e5 < area) continue;
+	
+	        // Draw each contour only for visualisation purposes
+	        :ref:`drawContours <doxid-d6/d6e/group__imgproc__draw_1ga746c0625f1781f1ffc9056259103edbc>`(src, contours, static_cast<int>(i), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 0, 255), 2, 8, hierarchy, 0);
+	        // Find the orientation of each shape
+	        getOrientation(contours[i], src);
+	    }
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("output", src);
+	
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	    return 0;
+	}
+
+Another example using PCA for dimensionality reduction while maintaining an amount of variance can be found at `opencv_source_code/samples/cpp/pca.cpp <https://github.com/opencv/tree/master/samples/cpp/pca.cpp>`__
+
+
+
+.. rubric:: Explanation
+
+#. **Read image and convert it to binary**
+   
+   Here we apply the necessary pre-processing procedures in order to be able to detect the objects of interest.
+   
+   .. ref-code-block:: cpp
+   
+   	    // Load image
+   	//    Mat src = imread("pca_test1.jpg");
+   	    Mat src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1]);
+   	
+   	    // Check if image is loaded successfully
+   	    if(!src.data || src.empty())
+   	    {
+   	        cout << "Problem loading image!!!" << endl;
+   	        return EXIT_FAILURE;
+   	    }
+   	
+   	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("src", src);
+   	
+   	    // Convert image to grayscale
+   	    Mat gray;
+   	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(src, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+   	
+   	    // Convert image to binary
+   	    Mat bw;
+   	    :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(gray, bw, 50, 255, :ref:`CV_THRESH_BINARY <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>` | :ref:`CV_THRESH_OTSU <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa2456934f4f01402e80006a317ea2693e>`);
+
+#. **Extract objects of interest**
+   
+   Then find and filter contours by size and obtain the orientation of the remaining ones.
+   
+   .. ref-code-block:: cpp
+   
+   	// Find all the contours in the thresholded image
+   	vector<Vec4i> hierarchy;
+   	vector<vector<Point> > contours;
+   	:ref:`findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>`(bw, contours, hierarchy, :ref:`CV_RETR_LIST <doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`, :ref:`CV_CHAIN_APPROX_NONE <doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a68069f66db6f6a3540948eed23bf0dcf>`);
+   
+   	for (size_t i = 0; i < contours.size(); ++i)
+   	{
+   	    // Calculate the area of each contour
+   	    double area = :ref:`contourArea <doxid-d3/dc0/group__imgproc__shape_1ga2c759ed9f497d4a618048a2f56dc97f1>`(contours[i]);
+   	    // Ignore contours that are too small or too large
+   	    if (area < 1e2 || 1e5 < area) continue;
+   
+   	    // Draw each contour only for visualisation purposes
+   	    :ref:`drawContours <doxid-d6/d6e/group__imgproc__draw_1ga746c0625f1781f1ffc9056259103edbc>`(src, contours, static_cast<int>(i), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 0, 255), 2, 8, hierarchy, 0);
+   	    // Find the orientation of each shape
+   	    getOrientation(contours[i], src);
+   	}
+
+#. **Extract orientation**
+   
+   Orientation is extracted by the call of getOrientation() function, which performs all the PCA procedure.
+   
+   .. ref-code-block:: cpp
+   
+   	//Construct a buffer used by the pca analysis
+   	int sz = static_cast<int>(pts.size());
+   	Mat data_pts = Mat(sz, 2, :ref:`CV_64FC1 <doxid-d1/d1b/group__core__hal__interface_1ga3b256d68c6002b6afd60ab9538d717a8>`);
+   	for (int i = 0; i < data_pts.rows; ++i)
+   	{
+   	    data_pts.at<double>(i, 0) = pts[i].x;
+   	    data_pts.at<double>(i, 1) = pts[i].y;
+   	}
+   
+   	//Perform PCA analysis
+   	PCA pca_analysis(data_pts, Mat(), :ref:`CV_PCA_DATA_AS_ROW <doxid-d2/df8/group__core__c_1ga8010c4e67ca59cfd17d7a965cea7d198>`);
+   
+   	//Store the center of the object
+   	Point cntr = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(static_cast<int>(pca_analysis.mean.at<double>(0, 0)),
+   	                  static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+   
+   	//Store the eigenvalues and eigenvectors
+   	vector<Point2d> eigen_vecs(2);
+   	vector<double> eigen_val(2);
+   	for (int i = 0; i < 2; ++i)
+   	{
+   	    eigen_vecs[i] = :ref:`Point2d <doxid-dc/d84/group__core__basic_1ga32986d8c6fd05949688352abd112509f>`(pca_analysis.eigenvectors.at<double>(i, 0),
+   	                            pca_analysis.eigenvectors.at<double>(i, 1));
+   
+   	    eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
+   	}
+   
+   First the data need to be arranged in a matrix with size n x 2, where n is the number of data points we have. Then we can perform that PCA analysis. The calculated mean (i.e. center of mass) is stored in the *cntr* variable and the eigenvectors and eigenvalues are stored in the corresponding std::vector’s.
+
+#. **Visualize result**
+   
+   The final result is visualized through the drawAxis() function, where the principal components are drawn in lines, and each eigenvector is multiplied by its eigenvalue and translated to the mean position.
+   
+   .. ref-code-block:: cpp
+   
+   	// Draw the principal components
+   	:ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`(img, cntr, 3, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 0, 255), 2);
+   	Point p1 = cntr + 0.02 * :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(static_cast<int>(eigen_vecs[0].x * eigen_val[0]), static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
+   	Point p2 = cntr - 0.02 * :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(static_cast<int>(eigen_vecs[1].x * eigen_val[1]), static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
+   	drawAxis(img, cntr, p1, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 255, 0), 1);
+   	drawAxis(img, cntr, p2, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 255, 0), 5);
+   
+   	double angle = :ref:`atan2 <doxid-df/dfc/group__cudev_1ga1096ba687de70142e095cc791a8bcd65>`(eigen_vecs[0].y, eigen_vecs[0].x); // orientation in radians
+   
+   
+   
+   .. ref-code-block:: cpp
+   
+   	    double angle;
+   	    double hypotenuse;
+   	    angle = :ref:`atan2 <doxid-df/dfc/group__cudev_1ga1096ba687de70142e095cc791a8bcd65>`( (double) p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`, (double) p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` ); // angle in radians
+   	    hypotenuse = :ref:`sqrt <doxid-d2/d75/namespacecv_1a682082a1892db64a2856403ec17ba297>`( (double) (p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`) * (p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`) + (p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`) * (p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`));
+   	//    double degrees = angle * 180 / CV_PI; // convert radians to degrees (0-180 range)
+   	//    cout << "Degrees: " << abs(degrees - 180) << endl; // angle in 0-360 degrees range
+   	
+   	    // Here we lengthen the arrow by a factor of scale
+   	    q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = (int) (p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` - scale * hypotenuse * :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(angle));
+   	    q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = (int) (p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` - scale * hypotenuse * :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(angle));
+   	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, p, q, colour, 1, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+   	
+   	    // create the arrow hooks
+   	    p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = (int) (q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` + 9 * :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(angle + CV_PI / 4));
+   	    p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = (int) (q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` + 9 * :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(angle + CV_PI / 4));
+   	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, p, q, colour, 1, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+   	
+   	    p.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = (int) (q.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` + 9 * :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(angle - CV_PI / 4));
+   	    p.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = (int) (q.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` + 9 * :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(angle - CV_PI / 4));
+   	    :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, p, q, colour, 1, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+   
+   
+   
+   .. rubric:: Results
+
+The code opens an image, finds the orientation of the detected objects of interest and then visualizes the result by drawing the contours of the detected objects of interest, the center point, and the x-axis, y-axis regarding the extracted orientation.
+
+.. image:: pca_test1.jpg
+
+.. image:: output.png
+

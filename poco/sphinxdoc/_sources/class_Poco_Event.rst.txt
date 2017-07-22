@@ -1,0 +1,154 @@
+.. index:: pair: class; Poco::Event
+.. _doxid-class_poco_1_1_event:
+
+class Poco::Event
+=================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An :ref:`Event <doxid-class_poco_1_1_event>` is a synchronization object that allows one thread to signal one or more other threads that a certain event has happened. :ref:`More...<details-class_poco_1_1_event>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Event.h>
+	
+	class Event: private :ref:`Poco::EventImpl<doxid-class_poco_1_1_event_impl>`
+	{
+	public:
+		// construction
+	
+		:ref:`Event<doxid-class_poco_1_1_event_1a04e703cf88e8d316f3a3ea384ff34d69>`(bool autoReset = true);
+
+		// methods
+	
+		void
+		:ref:`set<doxid-class_poco_1_1_event_1a99a0419c5b9481bfc28efb3fa21f7979>`();
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_event_1a0da7c72337aab427cdd62307d1bb8769>`();
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_event_1a5c029fccc88ed039b94698286b3e7b68>`(long milliseconds);
+	
+		bool
+		:ref:`tryWait<doxid-class_poco_1_1_event_1a510fe07cd7bcf07144ec704d8f3c8740>`(long milliseconds);
+	
+		void
+		:ref:`reset<doxid-class_poco_1_1_event_1a0e7754286f35bea15589ea72027acd0a>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	protected:
+		// methods
+	
+		void
+		:ref:`setImpl<doxid-class_poco_1_1_event_impl_1a3b222e22982c18c5aef6de544feb4d97>`();
+	
+		void
+		:ref:`waitImpl<doxid-class_poco_1_1_event_impl_1a2265d2d061554e8b3de926df9db83143>`();
+	
+		bool
+		:ref:`waitImpl<doxid-class_poco_1_1_event_impl_1afeea15250a3245f2b71b80a4118818cc>`(long milliseconds);
+	
+		void
+		:ref:`resetImpl<doxid-class_poco_1_1_event_impl_1a71cc5beecd0c236f48aec4b5945e5c42>`();
+
+.. _details-class_poco_1_1_event:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An :ref:`Event <doxid-class_poco_1_1_event>` is a synchronization object that allows one thread to signal one or more other threads that a certain event has happened.
+
+Usually, one thread signals an event, while one or more other threads wait for an event to become signalled.
+
+Construction
+------------
+
+.. index:: pair: function; Event
+.. _doxid-class_poco_1_1_event_1a04e703cf88e8d316f3a3ea384ff34d69:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Event(bool autoReset = true)
+
+Creates the event.
+
+If autoReset is true, the event is automatically reset after a :ref:`wait() <doxid-class_poco_1_1_event_1a0da7c72337aab427cdd62307d1bb8769>` successfully returns.
+
+Methods
+-------
+
+.. index:: pair: function; set
+.. _doxid-class_poco_1_1_event_1a99a0419c5b9481bfc28efb3fa21f7979:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	set()
+
+Signals the event.
+
+If autoReset is true, only one thread waiting for the event can resume execution. If autoReset is false, all waiting threads can resume execution.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_event_1a0da7c72337aab427cdd62307d1bb8769:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait()
+
+Waits for the event to become signalled.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_event_1a5c029fccc88ed039b94698286b3e7b68:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait(long milliseconds)
+
+Waits for the event to become signalled.
+
+Throws a TimeoutException if the event does not become signalled within the specified time interval.
+
+.. index:: pair: function; tryWait
+.. _doxid-class_poco_1_1_event_1a510fe07cd7bcf07144ec704d8f3c8740:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryWait(long milliseconds)
+
+Waits for the event to become signalled.
+
+Returns true if the event became signalled within the specified time interval, false otherwise.
+
+.. index:: pair: function; reset
+.. _doxid-class_poco_1_1_event_1a0e7754286f35bea15589ea72027acd0a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	reset()
+
+Resets the event to unsignalled state.
+

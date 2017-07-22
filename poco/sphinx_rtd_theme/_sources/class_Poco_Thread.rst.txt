@@ -1,0 +1,778 @@
+.. index:: pair: class; Poco::Thread
+.. _doxid-class_poco_1_1_thread:
+
+class Poco::Thread
+==================
+
+.. toctree::
+	:hidden:
+
+	enum_Poco_Thread_Policy.rst
+	enum_Poco_Thread_Priority.rst
+	class_Poco_Thread_FunctorRunnable.rst
+
+Overview
+~~~~~~~~
+
+This class implements a platform-independent wrapper to an operating system thread. :ref:`More...<details-class_poco_1_1_thread>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Thread.h>
+	
+	class Thread: private :ref:`Poco::ThreadImpl<doxid-class_poco_1_1_thread_impl>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`ThreadImpl::TIDImpl<doxid-class_poco_1_1_thread_impl_1a27bf8bc2e912b28523bdeb3fc7200b2e>` :target:`TID<doxid-class_poco_1_1_thread_1a6367b8c27dbcfa67671cccbf4cc6f534>`;
+		typedef void (*:target:`Callable<doxid-class_poco_1_1_thread_1aa6f317dd191055b3f942792ab5c0907f>`)(void *);
+
+		// enums
+	
+		enum :ref:`Policy<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181>`;
+		enum :ref:`Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>`;
+
+		// classes
+	
+		template <class Functor>
+		class :ref:`FunctorRunnable<doxid-class_poco_1_1_thread_1_1_functor_runnable>`;
+
+		// construction
+	
+		:ref:`Thread<doxid-class_poco_1_1_thread_1a0da5f19988bb80c5224869efa2e9983b>`();
+		:ref:`Thread<doxid-class_poco_1_1_thread_1a85b3c2a742e614dca855743fc2ce398c>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name);
+
+		// methods
+	
+		int
+		:ref:`id<doxid-class_poco_1_1_thread_1a8507bca4d40931839c72938bbbe3ab50>`() const;
+	
+		:ref:`TID<doxid-class_poco_1_1_thread_1a6367b8c27dbcfa67671cccbf4cc6f534>`
+		:ref:`tid<doxid-class_poco_1_1_thread_1abe00050a305042580ad119acdbfb7933>`() const;
+	
+		std::string
+		:ref:`name<doxid-class_poco_1_1_thread_1ac99a68c00d4f4598f68a90013cc449ab>`() const;
+	
+		std::string
+		:ref:`getName<doxid-class_poco_1_1_thread_1a54451fc32325f9ebe27ffe9aa1793b99>`() const;
+	
+		void
+		:ref:`setName<doxid-class_poco_1_1_thread_1a9902b2433b144f8c952d3bcbda64690e>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name);
+	
+		void
+		:ref:`setPriority<doxid-class_poco_1_1_thread_1ad6485a2be33e72f310f69785540a9ed2>`(:ref:`Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` prio);
+	
+		:ref:`Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>`
+		:ref:`getPriority<doxid-class_poco_1_1_thread_1ac461ca148c56c5c981689c9a2311efa0>`() const;
+	
+		void
+		:ref:`setOSPriority<doxid-class_poco_1_1_thread_1a3d03a36f5e5f6b1fa50f07a006fb6ae6>`(
+			int prio,
+			int policy = :ref:`POLICY_DEFAULT<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181af44ed6b58990c20bcf91997b2467964a>`
+			);
+	
+		int
+		:ref:`getOSPriority<doxid-class_poco_1_1_thread_1ab5097a3cbfe45546e6da10514a4f2eba>`() const;
+	
+		void
+		:ref:`setStackSize<doxid-class_poco_1_1_thread_1a4c5cd3cee84eac7e5f0d65594fe2260f>`(int size);
+	
+		int
+		:ref:`getStackSize<doxid-class_poco_1_1_thread_1a8ad80222cf21ede2a13e8071c0e5e6e0>`() const;
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_thread_1aca167199ed123ca70ef94b166806321a>`(:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target);
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_thread_1a34e89a9ea94689ee74b1b6ce07c3305a>`(
+			:ref:`Callable<doxid-class_poco_1_1_thread_impl_1aa6f317dd191055b3f942792ab5c0907f>` target,
+			void* pData = 0
+			);
+	
+		template <class Functor>
+		void
+		:ref:`startFunc<doxid-class_poco_1_1_thread_1a5ed598df7077f4bb03657ecb5a7730e6>`(Functor fn);
+	
+		void
+		:ref:`join<doxid-class_poco_1_1_thread_1add3db9ac5dca7796f431d60a52227cd8>`();
+	
+		void
+		:ref:`join<doxid-class_poco_1_1_thread_1a6426c1b79674d3064b66d424fd7d40d1>`(long milliseconds);
+	
+		bool
+		:ref:`tryJoin<doxid-class_poco_1_1_thread_1a67bfe559bb389ff4e2f4ca501c4e80fc>`(long milliseconds);
+	
+		bool
+		:ref:`isRunning<doxid-class_poco_1_1_thread_1a2520184f8365e5ed75d3bcc18422702d>`() const;
+	
+		void
+		:ref:`wakeUp<doxid-class_poco_1_1_thread_1aadac087896a05ef0887131364a68a0f9>`();
+	
+		static
+		int
+		:ref:`getMinOSPriority<doxid-class_poco_1_1_thread_1add3f8edcecc5b7061d52f31359b239db>`(int policy = :ref:`POLICY_DEFAULT<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181af44ed6b58990c20bcf91997b2467964a>`);
+	
+		static
+		int
+		:ref:`getMaxOSPriority<doxid-class_poco_1_1_thread_1aa0e0ecf0ca1110402c932d8bbc473715>`(int policy = :ref:`POLICY_DEFAULT<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181af44ed6b58990c20bcf91997b2467964a>`);
+	
+		static
+		bool
+		:ref:`trySleep<doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>`(long milliseconds);
+	
+		static
+		void
+		:ref:`sleep<doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7>`(long milliseconds);
+	
+		static
+		void
+		:ref:`yield<doxid-class_poco_1_1_thread_1a90836eeaccd6cea46d0e75409ffbe5e1>`();
+	
+		static
+		Thread*
+		:ref:`current<doxid-class_poco_1_1_thread_1aad37686e22459dfa5dc87be0deae8207>`();
+	
+		static
+		:ref:`TID<doxid-class_poco_1_1_thread_1a6367b8c27dbcfa67671cccbf4cc6f534>`
+		:ref:`currentTid<doxid-class_poco_1_1_thread_1a8e8a27fdc6c7e1e5be3c757e2faf309a>`();
+
+	protected:
+		// methods
+	
+		:ref:`ThreadLocalStorage<doxid-class_poco_1_1_thread_local_storage>`&
+		:ref:`tls<doxid-class_poco_1_1_thread_1ad2b551e7655b7ed3a42b2ee358cdb101>`();
+	
+		void
+		:ref:`clearTLS<doxid-class_poco_1_1_thread_1a93844082b36a7a7e051b57385cfc3670>`();
+	
+		std::string
+		:ref:`makeName<doxid-class_poco_1_1_thread_1a33277d1b9c0b71b44afde4b48f943495>`();
+	
+		static
+		int
+		:ref:`uniqueId<doxid-class_poco_1_1_thread_1a929fd1636c5299577f5963f616063bb6>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// typedefs
+	
+		typedef pthread_t :ref:`TIDImpl<doxid-class_poco_1_1_thread_impl_1a27bf8bc2e912b28523bdeb3fc7200b2e>`;
+		typedef int :ref:`TIDImpl<doxid-class_poco_1_1_thread_impl_1ab325e80c5c4de814191f9e89315ab874>`;
+		typedef unsigned(__stdcall* :ref:`Entry<doxid-class_poco_1_1_thread_impl_1ac1faa760066ba382a24b5cb077bf339a>`)(void *);
+		typedef DWORD :ref:`TIDImpl<doxid-class_poco_1_1_thread_impl_1a7f93d911ee45bd941d8bd1ab16fae930>`;
+		typedef void (*:ref:`Callable<doxid-class_poco_1_1_thread_impl_1aa6f317dd191055b3f942792ab5c0907f>`)(void *);
+		typedef DWORD(WINAPI* :ref:`Entry<doxid-class_poco_1_1_thread_impl_1a942ce27a7cd94d5d0f2b764c711ec833>`)(LPVOID);
+
+		// enums
+	
+		enum
+		{
+		    :ref:`DEFAULT_THREAD_STACK_SIZE<doxid-class_poco_1_1_thread_impl_1a4661b73c1eecdd7d70b5dd4369a8a1dea44da5fe6b69eb67a624a6976f5db6ea8>` = 65536,
+		};
+	
+		enum :ref:`Policy<doxid-class_poco_1_1_thread_impl_1a4f9e71cee5debb853a7100bbd5131c5f>`;
+		enum :ref:`Priority<doxid-class_poco_1_1_thread_impl_1a76f27af6aff88b074479f3e0569bfbf4>`;
+
+		// structs
+	
+		struct :ref:`CallbackData<doxid-struct_poco_1_1_thread_impl_1_1_callback_data>`;
+		struct :ref:`ThreadData<doxid-struct_poco_1_1_thread_impl_1_1_thread_data>`;
+
+		// classes
+	
+		class :ref:`CurrentThreadHolder<doxid-class_poco_1_1_thread_impl_1_1_current_thread_holder>`;
+
+		// methods
+	
+		:ref:`TIDImpl<doxid-class_poco_1_1_thread_impl_1a27bf8bc2e912b28523bdeb3fc7200b2e>`
+		:ref:`tidImpl<doxid-class_poco_1_1_thread_impl_1a42ccbd5d847c9be7a64e1bb180e7b826>`() const;
+	
+		void
+		:ref:`setOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1a43f158fdee2e9795bf8ae97edb4f1e35>`(
+			int prio,
+			int policy = SCHED_OTHER
+			);
+	
+		void
+		:ref:`startImpl<doxid-class_poco_1_1_thread_impl_1a9b0463282dcd1f58313c3297b9a35b8a>`(:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target);
+	
+		void
+		:ref:`startImpl<doxid-class_poco_1_1_thread_impl_1a5df4dd282a8c7c6586426aeec1bd1867>`(
+			:ref:`Callable<doxid-class_poco_1_1_thread_impl_1aa6f317dd191055b3f942792ab5c0907f>` target,
+			void* pData = 0
+			);
+	
+		:ref:`TIDImpl<doxid-class_poco_1_1_thread_impl_1a27bf8bc2e912b28523bdeb3fc7200b2e>`
+		:ref:`tidImpl<doxid-class_poco_1_1_thread_impl_1ad538ff3ef4a889fe967a95ce23583c52>`() const;
+	
+		void
+		:ref:`setPriorityImpl<doxid-class_poco_1_1_thread_impl_1a12cdcb635ca6910555e3db2aac96184a>`(int prio);
+	
+		int
+		:ref:`getPriorityImpl<doxid-class_poco_1_1_thread_impl_1a31adde6256d20fa7f7096ea5d66b50e4>`() const;
+	
+		void
+		:ref:`setOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1a4522fbad9fa6b8379048d7e36f9dea60>`(
+			int prio,
+			int policy = 0
+			);
+	
+		int
+		:ref:`getOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1a5b7a6e14ef81fdbd803830c1eb7944b9>`() const;
+	
+		void
+		:ref:`setStackSizeImpl<doxid-class_poco_1_1_thread_impl_1a396e3dd5f68c22b5c66e6795da25cefb>`(int size);
+	
+		int
+		:ref:`getStackSizeImpl<doxid-class_poco_1_1_thread_impl_1ae14b873d7d3f68f775e4e1912d4a9426>`() const;
+	
+		void
+		:ref:`startImpl<doxid-class_poco_1_1_thread_impl_1a589a3cdb6b4e97d095ecda3bce0b467c>`(:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<:ref:`Runnable<doxid-class_poco_1_1_runnable>`> pTarget);
+	
+		void
+		:ref:`joinImpl<doxid-class_poco_1_1_thread_impl_1a5563ed80f331a428647d31797559d77d>`();
+	
+		bool
+		:ref:`joinImpl<doxid-class_poco_1_1_thread_impl_1a3d28a382bfb8bfc35b7c8565629395c4>`(long milliseconds);
+	
+		bool
+		:ref:`isRunningImpl<doxid-class_poco_1_1_thread_impl_1ae2aaedb5278ed5b37352a0c61575d94f>`() const;
+	
+		static
+		int
+		:ref:`getMinOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1af88c0da1e541d7dae283b235e293c661>`(int policy);
+	
+		static
+		int
+		:ref:`getMaxOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1a67ba7b439f715d59f48bfe42e831cc79>`(int policy);
+	
+		static
+		void
+		:ref:`sleepImpl<doxid-class_poco_1_1_thread_impl_1a80f1b8f1419ee2eaed7942ed132b2f47>`(long milliseconds);
+	
+		static
+		void
+		:ref:`yieldImpl<doxid-class_poco_1_1_thread_impl_1a309b57d332d753305bcd5269573ee97f>`();
+	
+		static
+		int
+		:ref:`getMinOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1a9558403a693615daf52d95b85893b8cb>`(int policy);
+	
+		static
+		int
+		:ref:`getMaxOSPriorityImpl<doxid-class_poco_1_1_thread_impl_1ab8414c08a9ec11494ea6e72d50562d1c>`(int policy);
+	
+		static
+		void
+		:ref:`sleepImpl<doxid-class_poco_1_1_thread_impl_1aa4523ca88694c4f43d3514266e440148>`(long milliseconds);
+	
+		static
+		void
+		:ref:`yieldImpl<doxid-class_poco_1_1_thread_impl_1a59fb6a454b21f796a99215b446973d48>`();
+	
+		static
+		:ref:`ThreadImpl<doxid-class_poco_1_1_thread_impl>`*
+		:ref:`currentImpl<doxid-class_poco_1_1_thread_impl_1afef2fe6be52ce878fcc305da9b7a832c>`();
+	
+		static
+		:ref:`TIDImpl<doxid-class_poco_1_1_thread_impl_1a27bf8bc2e912b28523bdeb3fc7200b2e>`
+		:ref:`currentTidImpl<doxid-class_poco_1_1_thread_impl_1a5f86c3b044da9c34e9881bdfd33840f8>`();
+
+	protected:
+		// methods
+	
+		static
+		void*
+		:ref:`runnableEntry<doxid-class_poco_1_1_thread_impl_1a15282df51e7e159a002dffd2a04d3ae2>`(void* pThread);
+	
+		static
+		int
+		:ref:`mapPrio<doxid-class_poco_1_1_thread_impl_1a214013b7ae627d1246ea39bff1dd20d4>`(
+			int prio,
+			int policy = SCHED_OTHER
+			);
+	
+		static
+		int
+		:ref:`reverseMapPrio<doxid-class_poco_1_1_thread_impl_1af135bafb9f6efdc966607c071cd3c82e>`(
+			int osPrio,
+			int policy = SCHED_OTHER
+			);
+	
+		static
+		void
+		:ref:`runnableEntry<doxid-class_poco_1_1_thread_impl_1aa6b95b9fc63790e32e459a4c72d6602d>`(
+			void* pThread,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int
+			);
+	
+		static
+		void
+		:ref:`callableEntry<doxid-class_poco_1_1_thread_impl_1a9fafe54d5bd06e2808702532f5188c98>`(
+			void* pThread,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int,
+			int
+			);
+	
+		static
+		int
+		:ref:`mapPrio<doxid-class_poco_1_1_thread_impl_1a02c8b359b3fbd72cfd4adbce4a4e3e4b>`(int prio);
+	
+		static
+		int
+		:ref:`reverseMapPrio<doxid-class_poco_1_1_thread_impl_1a3658e44330c93d936d33000190c0e6c6>`(int osPrio);
+	
+		static
+		unsigned __stdcall
+		:ref:`runnableEntry<doxid-class_poco_1_1_thread_impl_1a42ab7c6640d019f1fa3fd595b6fed80a>`(void* pThread);
+	
+		static
+		DWORD WINAPI
+		:ref:`runnableEntry<doxid-class_poco_1_1_thread_impl_1a0b93608a8792c197c114bcf97c4a3833>`(LPVOID pThread);
+	
+		void
+		:ref:`createImpl<doxid-class_poco_1_1_thread_impl_1a2f12bf5a96ee4bec5fa024183fb9f15e>`(
+			:ref:`Entry<doxid-class_poco_1_1_thread_impl_1ac1faa760066ba382a24b5cb077bf339a>` ent,
+			void* pData
+			);
+	
+		void
+		:ref:`threadCleanup<doxid-class_poco_1_1_thread_impl_1a5c5436519370a9535bbb91f5d6e9a27c>`();
+
+.. _details-class_poco_1_1_thread:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements a platform-independent wrapper to an operating system thread.
+
+Every :ref:`Thread <doxid-class_poco_1_1_thread>` object gets a unique (within its process) numeric thread ID. Furthermore, a thread can be assigned a name. The name of a thread can be changed at any time.
+
+Construction
+------------
+
+.. index:: pair: function; Thread
+.. _doxid-class_poco_1_1_thread_1a0da5f19988bb80c5224869efa2e9983b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Thread()
+
+Creates a thread. Call :ref:`start() <doxid-class_poco_1_1_thread_1aca167199ed123ca70ef94b166806321a>` to start it.
+
+.. index:: pair: function; Thread
+.. _doxid-class_poco_1_1_thread_1a85b3c2a742e614dca855743fc2ce398c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Thread(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name)
+
+Creates a named thread. Call :ref:`start() <doxid-class_poco_1_1_thread_1aca167199ed123ca70ef94b166806321a>` to start it.
+
+Methods
+-------
+
+.. index:: pair: function; id
+.. _doxid-class_poco_1_1_thread_1a8507bca4d40931839c72938bbbe3ab50:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	id() const
+
+Returns the unique thread ID of the thread.
+
+.. index:: pair: function; tid
+.. _doxid-class_poco_1_1_thread_1abe00050a305042580ad119acdbfb7933:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`TID<doxid-class_poco_1_1_thread_1a6367b8c27dbcfa67671cccbf4cc6f534>`
+	tid() const
+
+Returns the native thread ID of the thread.
+
+.. index:: pair: function; name
+.. _doxid-class_poco_1_1_thread_1ac99a68c00d4f4598f68a90013cc449ab:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::string
+	name() const
+
+Returns the name of the thread.
+
+.. index:: pair: function; getName
+.. _doxid-class_poco_1_1_thread_1a54451fc32325f9ebe27ffe9aa1793b99:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::string
+	getName() const
+
+Returns the name of the thread.
+
+.. index:: pair: function; setName
+.. _doxid-class_poco_1_1_thread_1a9902b2433b144f8c952d3bcbda64690e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setName(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name)
+
+Sets the name of the thread.
+
+.. index:: pair: function; setPriority
+.. _doxid-class_poco_1_1_thread_1ad6485a2be33e72f310f69785540a9ed2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setPriority(:ref:`Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` prio)
+
+Sets the thread's priority.
+
+Some platform only allow changing a thread's priority if the process has certain privileges.
+
+.. index:: pair: function; getPriority
+.. _doxid-class_poco_1_1_thread_1ac461ca148c56c5c981689c9a2311efa0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>`
+	getPriority() const
+
+Returns the thread's priority.
+
+.. index:: pair: function; setOSPriority
+.. _doxid-class_poco_1_1_thread_1a3d03a36f5e5f6b1fa50f07a006fb6ae6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setOSPriority(
+		int prio,
+		int policy = :ref:`POLICY_DEFAULT<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181af44ed6b58990c20bcf91997b2467964a>`
+		)
+
+Sets the thread's priority, using an operating system specific priority value.
+
+Use :ref:`getMinOSPriority() <doxid-class_poco_1_1_thread_1add3f8edcecc5b7061d52f31359b239db>` and :ref:`getMaxOSPriority() <doxid-class_poco_1_1_thread_1aa0e0ecf0ca1110402c932d8bbc473715>` to obtain mininum and maximum priority values. Additionally, a scheduling policy can be specified. The policy is currently only used on POSIX platforms where the values SCHED_OTHER (default), SCHED_FIFO and SCHED_RR are supported.
+
+.. index:: pair: function; getOSPriority
+.. _doxid-class_poco_1_1_thread_1ab5097a3cbfe45546e6da10514a4f2eba:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	getOSPriority() const
+
+Returns the thread's priority, expressed as an operating system specific priority value.
+
+May return 0 if the priority has not been explicitly set.
+
+.. index:: pair: function; setStackSize
+.. _doxid-class_poco_1_1_thread_1a4c5cd3cee84eac7e5f0d65594fe2260f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setStackSize(int size)
+
+Sets the thread's stack size in bytes.
+
+Setting the stack size to 0 will use the default stack size. Typically, the real stack size is rounded up to the nearest page size multiple.
+
+.. index:: pair: function; getStackSize
+.. _doxid-class_poco_1_1_thread_1a8ad80222cf21ede2a13e8071c0e5e6e0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	getStackSize() const
+
+Returns the thread's stack size in bytes.
+
+If the default stack size is used, 0 is returned.
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_thread_1aca167199ed123ca70ef94b166806321a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target)
+
+Starts the thread with the given target.
+
+Note that the given :ref:`Runnable <doxid-class_poco_1_1_runnable>` object must remain valid during the entire lifetime of the thread, as only a reference to it is stored internally.
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_thread_1a34e89a9ea94689ee74b1b6ce07c3305a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(
+		:ref:`Callable<doxid-class_poco_1_1_thread_impl_1aa6f317dd191055b3f942792ab5c0907f>` target,
+		void* pData = 0
+		)
+
+Starts the thread with the given target and parameter.
+
+.. index:: pair: function; startFunc
+.. _doxid-class_poco_1_1_thread_1a5ed598df7077f4bb03657ecb5a7730e6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class Functor>
+	void
+	startFunc(Functor fn)
+
+Starts the thread with the given functor object or lambda.
+
+.. index:: pair: function; join
+.. _doxid-class_poco_1_1_thread_1add3db9ac5dca7796f431d60a52227cd8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	join()
+
+Waits until the thread completes execution.
+
+If multiple threads try to join the same thread, the result is undefined.
+
+.. index:: pair: function; join
+.. _doxid-class_poco_1_1_thread_1a6426c1b79674d3064b66d424fd7d40d1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	join(long milliseconds)
+
+Waits for at most the given interval for the thread to complete.
+
+Throws a TimeoutException if the thread does not complete within the specified time interval.
+
+.. index:: pair: function; tryJoin
+.. _doxid-class_poco_1_1_thread_1a67bfe559bb389ff4e2f4ca501c4e80fc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryJoin(long milliseconds)
+
+Waits for at most the given interval for the thread to complete.
+
+Returns true if the thread has finished, false otherwise.
+
+.. index:: pair: function; isRunning
+.. _doxid-class_poco_1_1_thread_1a2520184f8365e5ed75d3bcc18422702d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	isRunning() const
+
+Returns true if the thread is running.
+
+.. index:: pair: function; wakeUp
+.. _doxid-class_poco_1_1_thread_1aadac087896a05ef0887131364a68a0f9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wakeUp()
+
+Wakes up the thread which is in the state of interruptible sleep.
+
+For threads that are not suspended, calling this function has the effect of preventing the subsequent :ref:`trySleep() <doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>` call to put thread in a suspended state.
+
+.. index:: pair: function; getMinOSPriority
+.. _doxid-class_poco_1_1_thread_1add3f8edcecc5b7061d52f31359b239db:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	int
+	getMinOSPriority(int policy = :ref:`POLICY_DEFAULT<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181af44ed6b58990c20bcf91997b2467964a>`)
+
+Returns the minimum operating system-specific priority value, which can be passed to :ref:`setOSPriority() <doxid-class_poco_1_1_thread_1a3d03a36f5e5f6b1fa50f07a006fb6ae6>` for the given policy.
+
+.. index:: pair: function; getMaxOSPriority
+.. _doxid-class_poco_1_1_thread_1aa0e0ecf0ca1110402c932d8bbc473715:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	int
+	getMaxOSPriority(int policy = :ref:`POLICY_DEFAULT<doxid-class_poco_1_1_thread_1a894d20130e4f0c54a7f6310acb2df181af44ed6b58990c20bcf91997b2467964a>`)
+
+Returns the maximum operating system-specific priority value, which can be passed to :ref:`setOSPriority() <doxid-class_poco_1_1_thread_1a3d03a36f5e5f6b1fa50f07a006fb6ae6>` for the given policy.
+
+.. index:: pair: function; trySleep
+.. _doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	bool
+	trySleep(long milliseconds)
+
+Starts an interruptible sleep.
+
+When :ref:`trySleep() <doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>` is called, the thread will remain suspended until:
+
+.. ref-code-block:: cpp
+
+	- the timeout expires or 
+	- wakeUp() is called
+
+Function returns true if sleep attempt was completed, false if sleep was interrupted by a :ref:`wakeUp() <doxid-class_poco_1_1_thread_1aadac087896a05ef0887131364a68a0f9>` call. A frequent scenario where :ref:`trySleep() <doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>` /wakeUp() pair of functions is useful is with threads spending most of the time idle, with periodic activity between the idle times; trying to sleep (as opposed to sleeping) allows immediate ending of idle thread from the outside.
+
+The :ref:`trySleep() <doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>` and :ref:`wakeUp() <doxid-class_poco_1_1_thread_1aadac087896a05ef0887131364a68a0f9>` calls should be used with understanding that the suspended state is not a true sleep, but rather a state of waiting for an event, with timeout expiration. This makes order of calls significant; calling :ref:`wakeUp() <doxid-class_poco_1_1_thread_1aadac087896a05ef0887131364a68a0f9>` before calling :ref:`trySleep() <doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>` will prevent the next :ref:`trySleep() <doxid-class_poco_1_1_thread_1a42034bed42eb25ceb60ee39da88216b4>` call to actually suspend the thread (which, in some scenarios, may be desirable behavior).
+
+.. index:: pair: function; sleep
+.. _doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	sleep(long milliseconds)
+
+Suspends the current thread for the specified amount of time.
+
+.. index:: pair: function; yield
+.. _doxid-class_poco_1_1_thread_1a90836eeaccd6cea46d0e75409ffbe5e1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	yield()
+
+Yields cpu to other threads.
+
+.. index:: pair: function; current
+.. _doxid-class_poco_1_1_thread_1aad37686e22459dfa5dc87be0deae8207:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	Thread*
+	current()
+
+Returns the :ref:`Thread <doxid-class_poco_1_1_thread>` object for the currently active thread.
+
+If the current thread is the main thread, 0 is returned.
+
+.. index:: pair: function; currentTid
+.. _doxid-class_poco_1_1_thread_1a8e8a27fdc6c7e1e5be3c757e2faf309a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	:ref:`TID<doxid-class_poco_1_1_thread_1a6367b8c27dbcfa67671cccbf4cc6f534>`
+	currentTid()
+
+Returns the native thread ID for the current thread.
+
+.. index:: pair: function; tls
+.. _doxid-class_poco_1_1_thread_1ad2b551e7655b7ed3a42b2ee358cdb101:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ThreadLocalStorage<doxid-class_poco_1_1_thread_local_storage>`&
+	tls()
+
+Returns a reference to the thread's local storage.
+
+.. index:: pair: function; clearTLS
+.. _doxid-class_poco_1_1_thread_1a93844082b36a7a7e051b57385cfc3670:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	clearTLS()
+
+Clears the thread's local storage.
+
+.. index:: pair: function; makeName
+.. _doxid-class_poco_1_1_thread_1a33277d1b9c0b71b44afde4b48f943495:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::string
+	makeName()
+
+Creates a unique name for a thread.
+
+.. index:: pair: function; uniqueId
+.. _doxid-class_poco_1_1_thread_1a929fd1636c5299577f5963f616063bb6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	int
+	uniqueId()
+
+Creates and returns a unique id for a thread.
+

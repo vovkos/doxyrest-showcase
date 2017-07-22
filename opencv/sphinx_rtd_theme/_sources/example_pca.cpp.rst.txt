@@ -1,0 +1,199 @@
+.. index:: pair: example; pca.cpp
+.. _doxid-d2/dc0/pca_8cpp-example:
+
+pca.cpp
+=======
+
+An example using PCA for dimensionality reduction while maintaining an amount of variance
+
+.. ref-code-block:: cpp
+
+	/*
+	* pca.cpp
+	*
+	*  Author:
+	*  Kevin Hughes <kevinhughes27[at]gmail[dot]com>
+	*
+	*  Special Thanks to:
+	*  Philipp Wagner <bytefish[at]gmx[dot]de>
+	*
+	* This program demonstrates how to use OpenCV PCA with a
+	* specified amount of variance to retain. The effect
+	* is illustrated further by using a trackbar to
+	* change the value for retained varaince.
+	*
+	* The program takes as input a text file with each line
+	* begin the full path to an image. PCA will be performed
+	* on this list of images. The author recommends using
+	* the first 15 faces of the AT&T face data set:
+	* http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
+	*
+	* so for example your input text file would look like this:
+	*
+	*        <path_to_at&t_faces>/orl_faces/s1/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s2/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s3/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s4/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s5/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s6/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s7/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s8/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s9/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s10/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s11/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s12/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s13/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s14/1.pgm
+	*        <path_to_at&t_faces>/orl_faces/s15/1.pgm
+	*
+	*/
+	
+	#include <iostream>
+	#include <fstream>
+	#include <sstream>
+	
+	#include <opencv2/core.hpp>
+	#include "opencv2/imgcodecs.hpp"
+	#include <opencv2/highgui.hpp>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	// Functions
+	static void read_imgList(const string& filename, vector<Mat>& images) {
+	    std::ifstream file(filename.c_str(), ifstream::in);
+	    if (!file) {
+	        string error_message = "No valid input file was given, please check the given filename.";
+	        :ref:`CV_Error <doxid-db/de0/group__core__utils_1ga5b48c333c777666e076bd7052799f891>`(:ref:`Error::StsBadArg <doxid-d6/d43/namespacecv_1_1_error_1a759fa1af92f7aa7377c76ffb142abccaaf587497af64537041ee62c04a92b755d>`, error_message);
+	    }
+	    string :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`;
+	    while (getline(file, line)) {
+	        images.push_back(:ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(line, 0));
+	    }
+	}
+	
+	static  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` formatImagesForPCA(const vector<Mat> &data)
+	{
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst(static_cast<int>(data.size()), data[0].rows*data[0].cols, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	    for(unsigned int i = 0; i < data.size(); i++)
+	    {
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image_row = data[i].clone().reshape(1,1);
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` row_i = dst.:ref:`row <doxid-db/de6/classcv_1_1_mat_1a4b22e1c23af7a7f2eef8fa478cfa7434>`(i);
+	        image_row.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(row_i,:ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	    }
+	    return dst;
+	}
+	
+	static :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` toGrayscale(InputArray _src) {
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src = _src.:ref:`getMat <doxid-d6/d3a/classcv_1_1___input_array_1a9c09739ca3e0ce212e2ab8374aa2f195>`();
+	    // only allow one channel
+	    if(src.:ref:`channels <doxid-db/de6/classcv_1_1_mat_1aa11336b9ac538e0475d840657ce164be>`() != 1) {
+	        :ref:`CV_Error <doxid-db/de0/group__core__utils_1ga5b48c333c777666e076bd7052799f891>`(:ref:`Error::StsBadArg <doxid-d6/d43/namespacecv_1_1_error_1a759fa1af92f7aa7377c76ffb142abccaaf587497af64537041ee62c04a92b755d>`, "Only Matrices with one channel are supported");
+	    }
+	    // create and return normalized image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst;
+	    :ref:`cv::normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(_src, dst, 0, 255, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	    return dst;
+	}
+	
+	struct params
+	{
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` data;
+	    int ch;
+	    int rows;
+	    :ref:`PCA <doxid-d3/d39/classcv_1_1_p_c_a>` pca;
+	    string winName;
+	};
+	
+	static void onTrackbar(int pos, void* ptr)
+	{
+	    cout << "Retained Variance = " << pos << "%   ";
+	    cout << "re-calculating PCA..." << std::flush;
+	
+	    double var = pos / 100.0;
+	
+	    struct params *p = (struct params *)ptr;
+	
+	    p->pca = :ref:`PCA <doxid-d3/d39/classcv_1_1_p_c_a>`(p->data, :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`PCA::DATA_AS_ROW <doxid-d3/d39/classcv_1_1_p_c_a_1ae8a94a2add0555b0414e85c08ff67f50a159399e962048f705645483ca16e9fd6>`, var);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` point = p->pca.project(p->data.row(0));
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` reconstruction = p->pca.backProject(point);
+	    reconstruction = reconstruction.:ref:`reshape <doxid-db/de6/classcv_1_1_mat_1a4eb96e3251417fa88b78e2abd6cfd7d8>`(p->ch, p->rows);
+	    reconstruction = toGrayscale(reconstruction);
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`(p->winName, reconstruction);
+	    cout << "done!   # of principal components: " << p->pca.eigenvectors.rows << endl;
+	}
+	
+	
+	// Main
+	int main(int argc, char** argv)
+	{
+	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{@input||image list}{help h||show help message}");
+	    if (parser.has("help"))
+	    {
+	        parser.printMessage();
+	        exit(0);
+	    }
+	    // Get the path to your CSV.
+	    string imgList = parser.get<string>("@input");
+	    if (imgList.empty())
+	    {
+	        parser.printMessage();
+	        exit(1);
+	    }
+	
+	    // vector to hold the images
+	    vector<Mat> images;
+	
+	    // Read in the data. This can fail if not valid
+	    try {
+	        read_imgList(imgList, images);
+	    } catch (:ref:`cv::Exception <doxid-d7/d6f/classcv_1_1_exception>`& e) {
+	        cerr << "Error opening file \"" << imgList << "\". Reason: " << e.:ref:`msg <doxid-d7/d6f/classcv_1_1_exception_1a7ead458b4fc88ebca20b231383c49845>` << endl;
+	        exit(1);
+	    }
+	
+	    // Quit if there are not enough images for this demo.
+	    if(images.size() <= 1) {
+	        string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
+	        :ref:`CV_Error <doxid-db/de0/group__core__utils_1ga5b48c333c777666e076bd7052799f891>`(:ref:`Error::StsError <doxid-d6/d43/namespacecv_1_1_error_1a759fa1af92f7aa7377c76ffb142abccaacf93e97abba2e7defa74fe5b99e122ac>`, error_message);
+	    }
+	
+	    // Reshape and stack images into a rowMatrix
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` data = formatImagesForPCA(images);
+	
+	    // perform PCA
+	    :ref:`PCA <doxid-d3/d39/classcv_1_1_p_c_a>` pca(data, :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`PCA::DATA_AS_ROW <doxid-d3/d39/classcv_1_1_p_c_a_1ae8a94a2add0555b0414e85c08ff67f50a159399e962048f705645483ca16e9fd6>`, 0.95); // trackbar is initially set here, also this is a common value for retainedVariance
+	
+	    // Demonstration of the effect of retainedVariance on the first image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` point = pca.project(data.:ref:`row <doxid-db/de6/classcv_1_1_mat_1a4b22e1c23af7a7f2eef8fa478cfa7434>`(0)); // project into the eigenspace, thus the image becomes a "point"
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` reconstruction = pca.backProject(point); // re-create the image from the "point"
+	    reconstruction = reconstruction.:ref:`reshape <doxid-db/de6/classcv_1_1_mat_1a4eb96e3251417fa88b78e2abd6cfd7d8>`(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
+	    reconstruction = toGrayscale(reconstruction); // re-scale for displaying purposes
+	
+	    // init highgui window
+	    string winName = "Reconstruction | press 'q' to quit";
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`(winName, :ref:`WINDOW_NORMAL <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3a29e45c5af696f73ce5e153601e5ca0f1>`);
+	
+	    // params struct to pass to the trackbar handler
+	    params p;
+	    p.data = data;
+	    p.ch = images[0].channels();
+	    p.rows = images[0].rows;
+	    p.pca = pca;
+	    p.winName = winName;
+	
+	    // create the tracbar
+	    int pos = 95;
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("Retained Variance (%)", winName, &pos, 100, onTrackbar, (void*)&p);
+	
+	    // display until user presses q
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`(winName, reconstruction);
+	
+	    char key = 0;
+	    while(key != 'q')
+	        key = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	
+	   return 0;
+	}

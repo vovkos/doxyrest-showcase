@@ -1,0 +1,186 @@
+.. index:: pair: example; ffilldemo.cpp
+.. _doxid-d5/d26/ffilldemo_8cpp-example:
+
+ffilldemo.cpp
+=============
+
+An example using the FloodFill technique
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/videoio.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout << "\nThis program demonstrated the floodFill() function\n"
+	            "Call:\n"
+	            "./ffilldemo [image_name -- Default: ../data/fruits.jpg]\n" << endl;
+	
+	    cout << "Hot keys: \n"
+	            "\tESC - quit the program\n"
+	            "\tc - switch color/grayscale mode\n"
+	            "\tm - switch mask mode\n"
+	            "\tr - restore the original image\n"
+	            "\ts - use null-range floodfill\n"
+	            "\tf - use gradient floodfill with fixed(absolute) range\n"
+	            "\tg - use gradient floodfill with floating(relative) range\n"
+	            "\t4 - use 4-connectivity mode\n"
+	            "\t8 - use 8-connectivity mode\n" << endl;
+	}
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image0, image, gray, mask;
+	int ffillMode = 1;
+	int loDiff = 20, upDiff = 20;
+	int connectivity = 4;
+	int isColor = true;
+	bool useMask = false;
+	int newMaskVal = 255;
+	
+	static void onMouse( int event, int x, int y, int, void* )
+	{
+	    if( event != :ref:`EVENT_LBUTTONDOWN <doxid-d7/dfc/group__highgui_1gga927593befdddc7e7013602bca9b079b0ad3419100fc2d7688c6dbe3da030fbfd9>` )
+	        return;
+	
+	    Point seed = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(x,y);
+	    int lo = ffillMode == 0 ? 0 : loDiff;
+	    int up = ffillMode == 0 ? 0 : upDiff;
+	    int flags = connectivity + (newMaskVal << 8) +
+	                (ffillMode == 1 ? :ref:`FLOODFILL_FIXED_RANGE <doxid-d7/d1b/group__imgproc__misc_1ggab87810a476a9cb660435a4cd7871c9eba8aafb7a6a87df91c7624d44f4b092fe3>` : 0);
+	    int b = (unsigned):ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`() & 255;
+	    int g = (unsigned):ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`() & 255;
+	    int r = (unsigned):ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`() & 255;
+	    :ref:`Rect <doxid-d6/db0/classcv_1_1_rect__>` ccomp;
+	
+	    Scalar newVal = isColor ? :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(b, g, r) : Scalar(r*0.299 + g*0.587 + b*0.114);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst = isColor ? image : gray;
+	    int area;
+	
+	    if( useMask )
+	    {
+	        :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(mask, mask, 1, 128, :ref:`THRESH_BINARY <doxid-d7/d1b/group__imgproc__misc_1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59>`);
+	        area = :ref:`floodFill <doxid-d7/d1b/group__imgproc__misc_1gaf1f55a048f8a45bc3383586e80b1f0d0>`(dst, mask, seed, newVal, &ccomp, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(lo, lo, lo),
+	                  :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(up, up, up), flags);
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "mask", mask );
+	    }
+	    else
+	    {
+	        area = :ref:`floodFill <doxid-d7/d1b/group__imgproc__misc_1gaf1f55a048f8a45bc3383586e80b1f0d0>`(dst, seed, newVal, &ccomp, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(lo, lo, lo),
+	                  :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(up, up, up), flags);
+	    }
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", dst);
+	    cout << area << " pixels were repainted\n";
+	}
+	
+	
+	int main( int argc, char** argv )
+	{
+	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser (argc, argv,
+	        "{help h | | show help message}{@image|../data/fruits.jpg| input image}"
+	    );
+	    if (parser.has("help"))
+	    {
+	        parser.printMessage();
+	        return 0;
+	    }
+	    string filename = parser.get<string>("@image");
+	    image0 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, 1);
+	
+	    if( image0.empty() )
+	    {
+	        cout << "Image empty\n";
+	        parser.printMessage();
+	        return 0;
+	    }
+	    help();
+	    image0.copyTo(image);
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(image0, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	    mask.:ref:`create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>`(image0.rows+2, image0.cols+2, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "image", 0 );
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "lo_diff", "image", &loDiff, 255, 0 );
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "up_diff", "image", &upDiff, 255, 0 );
+	
+	    :ref:`setMouseCallback <doxid-d7/dfc/group__highgui_1ga89e7806b0a616f6f1d502bd8c183ad3e>`( "image", onMouse, 0 );
+	
+	    for(;;)
+	    {
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", isColor ? image : gray);
+	
+	        char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	        if( c == 27 )
+	        {
+	            cout << "Exiting ...\n";
+	            break;
+	        }
+	        switch( c )
+	        {
+	        case 'c':
+	            if( isColor )
+	            {
+	                cout << "Grayscale mode is set\n";
+	                :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(image0, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	                mask = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	                isColor = false;
+	            }
+	            else
+	            {
+	                cout << "Color mode is set\n";
+	                image0.copyTo(image);
+	                mask = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	                isColor = true;
+	            }
+	            break;
+	        case 'm':
+	            if( useMask )
+	            {
+	                :ref:`destroyWindow <doxid-d7/dfc/group__highgui_1ga851ccdd6961022d1d5b4c4f255dbab34>`( "mask" );
+	                useMask = false;
+	            }
+	            else
+	            {
+	                :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "mask", 0 );
+	                mask = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	                :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("mask", mask);
+	                useMask = true;
+	            }
+	            break;
+	        case 'r':
+	            cout << "Original image is restored\n";
+	            image0.copyTo(image);
+	            :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(image, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	            mask = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	            break;
+	        case 's':
+	            cout << "Simple floodfill mode is set\n";
+	            ffillMode = 0;
+	            break;
+	        case 'f':
+	            cout << "Fixed Range floodfill mode is set\n";
+	            ffillMode = 1;
+	            break;
+	        case 'g':
+	            cout << "Gradient (floating range) floodfill mode is set\n";
+	            ffillMode = 2;
+	            break;
+	        case '4':
+	            cout << "4-connectivity mode is set\n";
+	            connectivity = 4;
+	            break;
+	        case '8':
+	            cout << "8-connectivity mode is set\n";
+	            connectivity = 8;
+	            break;
+	        }
+	    }
+	
+	    return 0;
+	}

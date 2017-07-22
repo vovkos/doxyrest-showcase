@@ -1,0 +1,540 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Back Projection &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic Thresholding Operations" href="page_tutorial_threshold.html" />
+    <link rel="prev" title="Affine Transformations" href="page_tutorial_warp_affine.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_copyMakeBorder.html">Adding borders to your images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_warp_affine.html">Affine Transformations</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Back Projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold.html">Basic Thresholding Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_canny_detector.html">Canny Edge Detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hull.html">Convex Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html">Creating Bounding boxes and circles for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html">Creating Bounding rotated boxes and ellipses for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_erosion_dilatation.html">Eroding and Dilating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html">Extract horizontal and vertical lines by using morphological operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_find_contours.html">Finding contours in your image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_calculation.html">Histogram Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_comparison.html">Histogram Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_equalization.html">Histogram Equalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hitOrMiss.html">Hit-or-Miss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_circle.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_lines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moments.html">Image Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_distance_transform.html">Image Segmentation with Distance Transform and Watershed Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_laplace_operator.html">Laplace Operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_filter_2d.html">Making your own linear filters!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_opening_closing_hats.html">More Morphology Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_point_polygon_test.html">Point Polygon Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_remap.html">Remapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html">Smoothing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_sobel_derivatives.html">Sobel Derivatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_template_matching.html">Template Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold_inRange.html">Thresholding Operations using inRange</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a> &raquo;</li>
+        
+      <li>Back Projection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="back-projection">
+<span id="doxid-da-d7f-tutorial-back-projection"></span><span id="index-0"></span><h1>Back Projection</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn:</p>
+<ul class="simple">
+<li>What is Back Projection and why it is useful</li>
+<li>How to use the OpenCV function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga3a0af640716b456c3d14af8aee12e3ca"><span class="std std-ref">cv::calcBackProject</span></a> to calculate Back Projection</li>
+<li>How to mix different channels of an image by using the OpenCV function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga51d768c270a1cdd3497255017c4504be"><span class="std std-ref">cv::mixChannels</span></a></li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">What is Back Projection?</p>
+<ul class="simple">
+<li>Back Projection is a way of recording how well the pixels of a given image fit the distribution of pixels in a histogram model.</li>
+<li>To make it simpler: For Back Projection, you calculate the histogram model of a feature and then use it to find this feature in an image.</li>
+<li>Application example: If you have a histogram of flesh color (say, a Hue-Saturation histogram ), then you can use it to find flesh color areas in an image:</li>
+</ul>
+<p class="rubric">How does it work?</p>
+<ul>
+<li><p class="first">We explain this by using the skin example:</p>
+</li>
+<li><p class="first">Let’s say you have gotten a skin histogram (Hue-Saturation) based on the image below. The histogram besides is going to be our <em>model histogram</em> (which we know represents a sample of skin tonality). You applied some mask to capture only the histogram of the skin area:</p>
+<img alt="T0" src="_images/Back_Projection_Theory0.jpg" />
+<img alt="T1" src="_images/Back_Projection_Theory1.jpg" />
+</li>
+<li><p class="first">Now, let’s imagine that you get another hand image (Test Image) like the one below: (with its respective histogram):</p>
+<img alt="T2" src="_images/Back_Projection_Theory2.jpg" />
+<img alt="T3" src="_images/Back_Projection_Theory3.jpg" />
+</li>
+<li><p class="first">What we want to do is to use our <em>model histogram</em> (that we know represents a skin tonality) to detect skin areas in our Test Image. Here are the steps</p>
+<ol class="arabic">
+<li><p class="first">In each pixel of our Test Image (i.e. <span class="math notranslate nohighlight">\(p(i,j)\)</span>), collect the data and find the correspondent bin location for that pixel (i.e. <span class="math notranslate nohighlight">\(( h_{i,j}, s_{i,j} )\)</span>).</p>
+</li>
+<li><p class="first">Lookup the <em>model histogram</em> in the correspondent bin - <span class="math notranslate nohighlight">\(( h_{i,j}, s_{i,j} )\)</span> - and read the bin value.</p>
+</li>
+<li><p class="first">Store this bin value in a new image (<em>BackProjection</em>). Also, you may consider to normalize the <em>model histogram</em> first, so the output for the Test Image can be visible for you.</p>
+</li>
+<li><p class="first">Applying the steps above, we get the following BackProjection image for our Test Image:</p>
+<img alt="_images/Back_Projection_Theory4.jpg" src="_images/Back_Projection_Theory4.jpg" />
+</li>
+<li><p class="first">In terms of statistics, the values stored in <em>BackProjection</em> represent the <em>probability</em> that a pixel in <em>Test Image</em> belongs to a skin area, based on the <em>model histogram</em> that we use. For instance in our Test image, the brighter areas are more probable to be skin area (as they actually are), whereas the darker areas have less probability (notice that these “dark” areas belong to surfaces that have some shadow on it, which in turns affects the detection).</p>
+</li>
+</ol>
+</li>
+</ul>
+<p class="rubric">Code</p>
+<ul>
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Loads an image</li>
+<li>Convert the original to HSV format and separate only <em>Hue</em> channel to be used for the Histogram (using the OpenCV function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga51d768c270a1cdd3497255017c4504be"><span class="std std-ref">cv::mixChannels</span></a>)</li>
+<li>Let the user to enter the number of bins to be used in the calculation of the histogram.</li>
+<li>Calculate the histogram (and update it if the bins change) and the backprojection of the same image.</li>
+<li>Display the backprojection and the histogram in windows.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Downloadable code</strong> :</p>
+<ol class="arabic simple">
+<li>Click <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/calcBackProject_Demo1.cpp">here</a> for the basic version (explained in this tutorial).</li>
+<li>For stuff slightly fancier (using H-S histograms and floodFill to define a mask for the skin area) you can check the <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/calcBackProject_Demo2.cpp">improved demo</a></li>
+<li>…or you can always check out the classical <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/camshiftdemo.cpp">camshiftdemo</a> in samples.</li>
+</ol>
+</li>
+<li><p class="first"><strong>Code at glance:</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">;</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">hsv</span><span class="p">;</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">hue</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">Hist_and_Backproj</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">);</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Usage: ./calcBackProject_Demo1 &lt;path_to_image&gt;&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+      <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">hsv</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0aa4a7f0ecf2e94150699e48c79139ee12"><span class="std std-ref">COLOR_BGR2HSV</span></a><span></span> <span class="p">);</span>
+
+  <span class="n">hue</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a55ced2c8d844d683ea9a725c60037ad0"><span class="std std-ref">create</span></a><span></span><span class="p">(</span> <span class="n">hsv</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <span class="n">hsv</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a8da9f853b6f3a29d738572fd1ffc44c0"><span class="std std-ref">depth</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+  <span class="kt">int</span> <span class="n">ch</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">};</span>
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga51d768c270a1cdd3497255017c4504be"><span class="std std-ref">mixChannels</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">hsv</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_image</span> <span class="o">=</span> <span class="s">&quot;Source image&quot;</span><span class="p">;</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_image</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;* Hue  bins: &quot;</span><span class="p">,</span> <span class="n">window_image</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bins</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="n">Hist_and_Backproj</span> <span class="p">);</span>
+  <span class="n">Hist_and_Backproj</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_image</span><span class="p">,</span> <span class="n">src</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">Hist_and_Backproj</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">MatND</span> <span class="n">hist</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">histSize</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><span class="std std-ref">MAX</span></a><span></span><span class="p">(</span> <span class="n">bins</span><span class="p">,</span> <span class="mi">2</span> <span class="p">);</span>
+  <span class="kt">float</span> <span class="n">hue_range</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span> <span class="p">};</span>
+  <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">ranges</span> <span class="o">=</span> <span class="p">{</span> <span class="n">hue_range</span> <span class="p">};</span>
+
+  <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">hue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">(),</span> <span class="n">hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ranges</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">false</span> <span class="p">);</span>
+  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span> <span class="n">hist</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+
+  <span class="n">MatND</span> <span class="n">backproj</span><span class="p">;</span>
+  <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga3a0af640716b456c3d14af8aee12e3ca"><span class="std std-ref">calcBackProject</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">hue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="n">backproj</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ranges</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">true</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;BackProj&quot;</span><span class="p">,</span> <span class="n">backproj</span> <span class="p">);</span>
+
+  <span class="kt">int</span> <span class="n">w</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span> <span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">bin_w</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">w</span> <span class="o">/</span> <span class="n">histSize</span> <span class="p">);</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">histImg</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">Mat::zeros</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">bins</span><span class="p">;</span> <span class="n">i</span> <span class="o">++</span> <span class="p">)</span>
+     <span class="p">{</span> <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">histImg</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">i</span><span class="o">*</span><span class="n">bin_w</span><span class="p">,</span> <span class="n">h</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">bin_w</span><span class="p">,</span> <span class="n">h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="n">hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">h</span><span class="o">/</span><span class="mf">255.0</span> <span class="p">)</span> <span class="p">),</span> <span class="n">Scalar</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Histogram&quot;</span><span class="p">,</span> <span class="n">histImg</span> <span class="p">);</span>
+
+<span class="p">}</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Declare the matrices to store our images and initialize the number of bins to be used by our histogram:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">src</span><span class="p">;</span> <span class="n">Mat</span> <span class="n">hsv</span><span class="p">;</span> <span class="n">Mat</span> <span class="n">hue</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">Read the input image and transform it to HSV format:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span> <span class="p">);</span>
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">hsv</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0aa4a7f0ecf2e94150699e48c79139ee12"><span class="std std-ref">COLOR_BGR2HSV</span></a><span></span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">For this tutorial, we will use only the Hue value for our 1-D histogram (check out the fancier code in the links above if you want to use the more standard H-S histogram, which yields better results):</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">hue</span><span class="p">.</span><span class="n">create</span><span class="p">(</span> <span class="n">hsv</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">hsv</span><span class="p">.</span><span class="n">depth</span><span class="p">()</span> <span class="p">);</span>
+<span class="kt">int</span> <span class="n">ch</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">};</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga51d768c270a1cdd3497255017c4504be"><span class="std std-ref">mixChannels</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">hsv</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+</pre>
+<p>as you see, we use the function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga51d768c270a1cdd3497255017c4504be"><span class="std std-ref">cv::mixChannels</span></a> to get only the channel 0 (Hue) from the hsv image. It gets the following parameters:</p>
+<ul class="simple">
+<li><strong>&amp;hsv:</strong> The source array from which the channels will be copied</li>
+<li><strong>1:</strong> The number of source arrays</li>
+<li><strong>&amp;hue:</strong> The destination array of the copied channels</li>
+<li><strong>1:</strong> The number of destination arrays</li>
+<li><strong>ch[] = {0,0}:</strong> The array of index pairs indicating how the channels are copied. In this case, the Hue(0) channel of &amp;hsv is being copied to the 0 channel of &amp;hue (1-channel)</li>
+<li><strong>1:</strong> Number of index pairs</li>
+</ul>
+</li>
+<li><p class="first">Create a Trackbar for the user to enter the bin values. Any change on the Trackbar means a call to the <strong>Hist_and_Backproj</strong> callback function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">char</span><span class="o">*</span> <span class="n">window_image</span> <span class="o">=</span> <span class="s">&quot;Source image&quot;</span><span class="p">;</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_image</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;* Hue  bins: &quot;</span><span class="p">,</span> <span class="n">window_image</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bins</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="n">Hist_and_Backproj</span> <span class="p">);</span>
+<span class="n">Hist_and_Backproj</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Show the image and wait for the user to exit the program:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_image</span><span class="p">,</span> <span class="n">src</span> <span class="p">);</span>
+
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first"><strong>Hist_and_Backproj function:</strong> Initialize the arguments needed for <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">cv::calcHist</span></a>. The number of bins comes from the Trackbar:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">Hist_and_Backproj</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">MatND</span> <span class="n">hist</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">histSize</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><span class="std std-ref">MAX</span></a><span></span><span class="p">(</span> <span class="n">bins</span><span class="p">,</span> <span class="mi">2</span> <span class="p">);</span>
+  <span class="kt">float</span> <span class="n">hue_range</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">180</span> <span class="p">};</span>
+  <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">ranges</span> <span class="o">=</span> <span class="p">{</span> <span class="n">hue_range</span> <span class="p">};</span>
+</pre>
+</li>
+<li><p class="first">Calculate the Histogram and normalize it to the range <span class="math notranslate nohighlight">\([0,255]\)</span></p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">hue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Mat</span><span class="p">(),</span> <span class="n">hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ranges</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">false</span> <span class="p">);</span>
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span> <span class="n">hist</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Get the Backprojection of the same image by calling the function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga3a0af640716b456c3d14af8aee12e3ca"><span class="std std-ref">cv::calcBackProject</span></a></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">MatND</span> <span class="n">backproj</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga3a0af640716b456c3d14af8aee12e3ca"><span class="std std-ref">calcBackProject</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">hue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="n">backproj</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ranges</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">true</span> <span class="p">);</span>
+</pre>
+<p>all the arguments are known (the same as used to calculate the histogram), only we add the backproj matrix, which will store the backprojection of the source image (&amp;hue)</p>
+</li>
+<li><p class="first">Display backproj:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;BackProj&quot;</span><span class="p">,</span> <span class="n">backproj</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Draw the 1-D Hue histogram of the image:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">w</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span> <span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">bin_w</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">w</span> <span class="o">/</span> <span class="n">histSize</span> <span class="p">);</span>
+<span class="n">Mat</span> <span class="n">histImg</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">zeros</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+
+<span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">bins</span><span class="p">;</span> <span class="n">i</span> <span class="o">++</span> <span class="p">)</span>
+   <span class="p">{</span> <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">histImg</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">i</span><span class="o">*</span><span class="n">bin_w</span><span class="p">,</span> <span class="n">h</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">bin_w</span><span class="p">,</span> <span class="n">h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="n">hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">h</span><span class="o">/</span><span class="mf">255.0</span> <span class="p">)</span> <span class="p">),</span> <span class="n">Scalar</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span> <span class="p">}</span>
+
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Histogram&quot;</span><span class="p">,</span> <span class="n">histImg</span> <span class="p">);</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<p>Here are the output by using a sample image ( guess what? Another hand ). You can play with the bin values and you will observe how it affects the results:</p>
+<img alt="R0" src="_images/Back_Projection1_Source_Image.jpg" />
+<img alt="R1" src="_images/Back_Projection1_Histogram.jpg" />
+<img alt="R2" src="_images/Back_Projection1_BackProj.jpg" />
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_threshold.html" class="btn btn-neutral float-right" title="Basic Thresholding Operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_warp_affine.html" class="btn btn-neutral float-left" title="Affine Transformations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

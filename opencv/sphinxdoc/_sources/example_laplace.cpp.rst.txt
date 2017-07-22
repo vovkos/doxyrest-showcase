@@ -1,0 +1,104 @@
+.. index:: pair: example; laplace.cpp
+.. _doxid-de/db2/laplace_8cpp-example:
+
+laplace.cpp
+===========
+
+An example using Laplace transformations for edge detection
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/videoio.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	
+	#include <ctype.h>
+	#include <stdio.h>
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout <<
+	            "\nThis program demonstrates Laplace point/edge detection using OpenCV function Laplacian()\n"
+	            "It captures from the camera of your choice: 0, 1, ... default 0\n"
+	            "Call:\n"
+	            "./laplace -c=<camera #, default 0> -p=<index of the frame to be decoded/captured next>\n" << endl;
+	}
+	
+	enum {GAUSSIAN, BLUR, MEDIAN};
+	
+	int sigma = 3;
+	int smoothType = GAUSSIAN;
+	
+	int main( int argc, char** argv )
+	{
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` cap;
+	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{help h | | }{ c | 0 | }{ p | | }");
+	    if ( parser.has("help") )
+	    {
+	        help();
+	        return 0;
+	    }
+	    if( parser.get<string>("c").size() == 1 && isdigit(parser.get<string>("c")[0]) )
+	        cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(parser.get<int>("c"));
+	    else
+	        cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(parser.get<string>("c"));
+	    if( cap.:ref:`isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`() )
+	        cout << "Video " << parser.get<string>("c") <<
+	            ": width=" << cap.:ref:`get <doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>`(:ref:`CAP_PROP_FRAME_WIDTH <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad>`) <<
+	            ", height=" << cap.:ref:`get <doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>`(:ref:`CAP_PROP_FRAME_HEIGHT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e>`) <<
+	            ", nframes=" << cap.:ref:`get <doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>`(:ref:`CAP_PROP_FRAME_COUNT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2>`) << endl;
+	    if( parser.has("p") )
+	    {
+	        int pos = parser.get<int>("p");
+	        if (!parser.check())
+	        {
+	            parser.printErrors();
+	            return -1;
+	        }
+	        cout << "seeking to frame #" << pos << endl;
+	        cap.:ref:`set <doxid-df/dcb/classcv_1_1_video_capture_1a8c6d8c2d37505b5ca61ffd4bb54e9a7c>`(:ref:`CAP_PROP_POS_FRAMES <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068>`, pos);
+	    }
+	
+	    if( !cap.:ref:`isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`() )
+	    {
+	        cout << "Could not initialize capturing...\n";
+	        return -1;
+	    }
+	
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Laplacian", 0 );
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "Sigma", "Laplacian", &sigma, 15, 0 );
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` smoothed, laplace, result;
+	
+	    for(;;)
+	    {
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame;
+	        cap >> frame;
+	        if( frame.empty() )
+	            break;
+	
+	        int ksize = (sigma*5)|1;
+	        if(smoothType == GAUSSIAN)
+	            :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(frame, smoothed, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(ksize, ksize), sigma, sigma);
+	        else if(smoothType == BLUR)
+	            :ref:`blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`(frame, smoothed, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(ksize, ksize));
+	        else
+	            :ref:`medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>`(frame, smoothed, ksize);
+	
+	        :ref:`Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>`(smoothed, laplace, :ref:`CV_16S <doxid-d1/d1b/group__core__hal__interface_1ga9d2ee1a8334733dea7482a47a88e0f87>`, 5);
+	        :ref:`convertScaleAbs <doxid-d2/de8/group__core__array_1ga3460e9c9f37b563ab9dd550c4d8c4e7d>`(laplace, result, (sigma+1)*0.25);
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Laplacian", result);
+	
+	        char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(30);
+	        if( c == ' ' )
+	            smoothType = smoothType == GAUSSIAN ? BLUR : smoothType == BLUR ? MEDIAN : GAUSSIAN;
+	        if( c == 'q' || c == 'Q' || c == 27 )
+	            break;
+	    }
+	
+	    return 0;
+	}

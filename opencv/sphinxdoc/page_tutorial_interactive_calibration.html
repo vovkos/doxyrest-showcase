@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Interactive camera calibration application &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Real Time pose estimation of a textured object" href="page_tutorial_real_time_pose.html" />
+    <link rel="prev" title="Camera calibration with square chessboard" href="page_tutorial_camera_calibration_square_chess.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_real_time_pose.html" title="Real Time pose estimation of a textured object"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_camera_calibration_square_chess.html" title="Camera calibration with square chessboard"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_calib3d.html" accesskey="U">Camera calibration and 3D reconstruction (calib3d module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_camera_calibration_square_chess.html"
+                        title="previous chapter">Camera calibration with square chessboard</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_real_time_pose.html"
+                        title="next chapter">Real Time pose estimation of a textured object</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="interactive-camera-calibration-application">
+<span id="doxid-d7-d21-tutorial-interactive-calibration"></span><span id="index-0"></span><h1>Interactive camera calibration application</h1>
+<p>According to classical calibration technique user must collect all data first and when run <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga3207604e4b1a1758aa66acb6ed5aa65d"><span class="std std-ref">cv::calibrateCamera</span></a> function to obtain camera parameters. If average re-projection error is huge or if estimated parameters seems to be wrong, process of selection or collecting data and starting of <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga3207604e4b1a1758aa66acb6ed5aa65d"><span class="std std-ref">cv::calibrateCamera</span></a> repeats.</p>
+<p>Interactive calibration process assumes that after each new data portion user can see results and errors estimation, also he can delete last data portion and finally, when dataset for calibration is big enough starts process of auto data selection.</p>
+<p class="rubric">Main application features</p>
+<p>The sample application will:</p>
+<ul class="simple">
+<li>Determine the distortion matrix and confidence interval for each element</li>
+<li>Determine the camera matrix and confidence interval for each element</li>
+<li>Take input from camera or video file</li>
+<li>Read configuration from XML file</li>
+<li>Save the results into XML file</li>
+<li>Calculate re-projection error</li>
+<li>Reject patterns views on sharp angles to prevent appear of ill-conditioned jacobian blocks</li>
+<li>Auto switch calibration flags (fix aspect ratio and elements of distortion matrix if needed)</li>
+<li>Auto detect when calibration is done by using several criteria</li>
+<li>Auto capture of static patterns (user doesn’t need press any keys to capture frame, just don’t move pattern for a second)</li>
+</ul>
+<p>Supported patterns:</p>
+<ul class="simple">
+<li>Black-white chessboard</li>
+<li>Asymmetrical circle pattern</li>
+<li>Dual asymmetrical circle pattern</li>
+<li>chAruco (chessboard with Aruco markers)</li>
+</ul>
+<p class="rubric">Description of parameters</p>
+<p>Application has two groups of parameters: primary (passed through command line) and advances (passed through XML file).</p>
+<p class="rubric">Primary parameters:</p>
+<p>All of this parameters are passed to application through a command line.</p>
+<p>-[parameter]=[default value]: description</p>
+<ul class="simple">
+<li>-v=[filename]: get video from filename, default input camera with id=0</li>
+<li>-ci=[0]: get video from camera with specified id</li>
+<li>-flip=[false]: vertical flip of input frames</li>
+<li>-t=[circles]: pattern for calibration (circles, chessboard, dualCircles, chAruco)</li>
+<li>-sz=[16.3]: distance between two nearest centers of circles or squares on calibration board</li>
+<li>-dst=[295] distance between white and black parts of daulCircles pattern</li>
+<li>-w=[width]: width of pattern (in corners or circles)</li>
+<li>-h=[height]: height of pattern (in corners or circles)</li>
+<li>-of=[camParams.xml]: output file name</li>
+<li>-ft=[true]: auto tuning of calibration flags</li>
+<li>-vis=[grid]: captured boards visualization (grid, window)</li>
+<li>-d=[0.8]: delay between captures in seconds</li>
+<li>-pf=[defaultConfig.xml]: advanced application parameters file</li>
+</ul>
+<p class="rubric">Advanced parameters:</p>
+<p>By default values of advanced parameters are stored in defaultConfig.xml</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span><span class="o">?&gt;</span>
+<span class="o">&lt;</span><span class="n">opencv_storage</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">charuco_dict</span><span class="o">&gt;</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">charuco_dict</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">charuco_square_lenght</span><span class="o">&gt;</span><span class="mi">200</span><span class="o">&lt;/</span><span class="n">charuco_square_lenght</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">charuco_marker_size</span><span class="o">&gt;</span><span class="mi">100</span><span class="o">&lt;/</span><span class="n">charuco_marker_size</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">calibration_step</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">calibration_step</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">max_frames_num</span><span class="o">&gt;</span><span class="mi">30</span><span class="o">&lt;/</span><span class="n">max_frames_num</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">min_frames_num</span><span class="o">&gt;</span><span class="mi">10</span><span class="o">&lt;/</span><span class="n">min_frames_num</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">solver_eps</span><span class="o">&gt;</span><span class="mf">1e-7</span><span class="o">&lt;/</span><span class="n">solver_eps</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">solver_max_iters</span><span class="o">&gt;</span><span class="mi">30</span><span class="o">&lt;/</span><span class="n">solver_max_iters</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">fast_solver</span><span class="o">&gt;</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">fast_solver</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">frame_filter_conv_param</span><span class="o">&gt;</span><span class="mf">0.1</span><span class="o">&lt;/</span><span class="n">frame_filter_conv_param</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">camera_resolution</span><span class="o">&gt;</span><span class="mi">1280</span> <span class="mi">720</span><span class="o">&lt;/</span><span class="n">camera_resolution</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">opencv_storage</span><span class="o">&gt;</span>
+</pre>
+<ul class="simple">
+<li><em>charuco_dict</em> : name of special dictionary, which has been used for generation of chAruco pattern</li>
+<li><em>charuco_square_lenght</em> : size of square on chAruco board (in pixels)</li>
+<li><em>charuco_marker_size</em> : size of Aruco markers on chAruco board (in pixels)</li>
+<li><em>calibration_step</em> : interval in frames between launches of <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga3207604e4b1a1758aa66acb6ed5aa65d"><span class="std std-ref">cv::calibrateCamera</span></a></li>
+<li><em>max_frames_num</em> : if number of frames for calibration is greater then this value frames filter starts working. After filtration size of calibration dataset is equals to <em>max_frames_num</em></li>
+<li><em>min_frames_num</em> : if number of frames is greater then this value turns on auto flags tuning, undistorted view and quality evaluation</li>
+<li><em>solver_eps</em> : precision of Levenberg-Marquardt solver in <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga3207604e4b1a1758aa66acb6ed5aa65d"><span class="std std-ref">cv::calibrateCamera</span></a></li>
+<li><em>solver_max_iters</em> : iterations limit of solver</li>
+<li><em>fast_solver</em> : if this value is nonzero and Lapack is found QR decomposition is used instead of SVD in solver. QR faster than SVD, but potentially less precise</li>
+<li><em>frame_filter_conv_param</em> : parameter which used in linear convolution of bicriterial frames filter</li>
+<li><em>camera_resolution</em> : resolution of camera which is used for calibration</li>
+</ul>
+<p><strong>Note:</strong> <em>charuco_dict</em>, <em>charuco_square_lenght</em> and <em>charuco_marker_size</em> are used for chAruco pattern generation (see Aruco module description for details: <a class="reference external" href="https://github.com/opencv/opencv_contrib/tree/master/modules/aruco/tutorials">Aruco tutorials</a>)</p>
+<p>Default chAruco pattern:</p>
+<img alt="_images/charuco_board.png" src="_images/charuco_board.png" />
+<p class="rubric">Dual circles pattern</p>
+<p>To make this pattern you need standard OpenCV circles pattern and binary inverted one. Place two patterns on one plane in order when all horizontal lines of circles in one pattern are continuations of similar lines in another. Measure distance between patterns as shown at picture below pass it as <strong>dst</strong> command line parameter. Also measure distance between centers of nearest circles and pass this value as <strong>sz</strong> command line parameter.</p>
+<img alt="_images/dualCircles.jpg" src="_images/dualCircles.jpg" />
+<p>This pattern is very sensitive to quality of production and measurements.</p>
+<p class="rubric">Data filtration</p>
+<p>When size of calibration dataset is greater then <em>max_frames_num</em> starts working data filter. It tries to remove “bad” frames from dataset. Filter removes the frame on which <span class="math notranslate nohighlight">\(loss\_function\)</span> takes maximum.</p>
+<div class="math notranslate nohighlight">
+\[loss\_function(i)=\alpha RMS(i)+(1-\alpha)reducedGridQuality(i)\]</div>
+<p><strong>RMS</strong> is an average re-projection error calculated for frame <em>i</em>, <strong>reducedGridQuality</strong> is scene coverage quality evaluation without frame <em>i</em>. <span class="math notranslate nohighlight">\(\alpha\)</span> is equals to <strong>frame_filter_conv_param</strong>.</p>
+<p class="rubric">Calibration process</p>
+<p>To start calibration just run application. Place pattern ahead the camera and fixate pattern in some pose. After that wait for capturing (will be shown message like “Frame #i captured”). Current focal distance and re-projection error will be shown at the main screen. Move pattern to the next position and repeat procedure. Try to cover image plane uniformly and don’t show pattern on sharp angles to the image plane.</p>
+<img alt="_images/screen_charuco.jpg" src="_images/screen_charuco.jpg" />
+<p>If calibration seems to be successful (confidence intervals and average re-projection error are small, frame coverage quality and number of pattern views are big enough) application will show a message like on screen below.</p>
+<img alt="_images/screen_finish.jpg" src="_images/screen_finish.jpg" />
+<p>Hot keys:</p>
+<ul class="simple">
+<li>Esc exit application</li>
+<li>s save current data to XML file</li>
+<li>r delete last frame</li>
+<li>d delete all frames</li>
+<li>u enable/disable applying of undistortion</li>
+<li>v switch visualization mode</li>
+</ul>
+<p class="rubric">Results</p>
+<p>As result you will get camera parameters and confidence intervals for them.</p>
+<p>Example of output XML file:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span><span class="o">?&gt;</span>
+<span class="o">&lt;</span><span class="n">opencv_storage</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">calibrationDate</span><span class="o">&gt;</span><span class="s">&quot;Thu 07 Apr 2016 04:23:03 PM MSK&quot;</span><span class="o">&lt;/</span><span class="n">calibrationDate</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">framesCount</span><span class="o">&gt;</span><span class="mi">21</span><span class="o">&lt;/</span><span class="n">framesCount</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">cameraResolution</span><span class="o">&gt;</span>
+  <span class="mi">1280</span> <span class="mi">720</span><span class="o">&lt;/</span><span class="n">cameraResolution</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">cameraMatrix</span> <span class="n">type_id</span><span class="o">=</span><span class="s">&quot;opencv-matrix&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">rows</span><span class="o">&gt;</span><span class="mi">3</span><span class="o">&lt;/</span><span class="n">rows</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="mi">3</span><span class="o">&lt;/</span><span class="n">cols</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">dt</span><span class="o">&gt;</span><span class="n">d</span><span class="o">&lt;/</span><span class="n">dt</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+    <span class="mf">1.2519588293098975e+03</span> <span class="mf">0.</span> <span class="mf">6.6684948780852471e+02</span> <span class="mf">0.</span>
+    <span class="mf">1.2519588293098975e+03</span> <span class="mf">3.6298123112613683e+02</span> <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">1.</span><span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;&lt;/</span><span class="n">cameraMatrix</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">cameraMatrix_std_dev</span> <span class="n">type_id</span><span class="o">=</span><span class="s">&quot;opencv-matrix&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">rows</span><span class="o">&gt;</span><span class="mi">4</span><span class="o">&lt;/</span><span class="n">rows</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">cols</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">dt</span><span class="o">&gt;</span><span class="n">d</span><span class="o">&lt;/</span><span class="n">dt</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+    <span class="mf">0.</span> <span class="mf">1.2887048808572649e+01</span> <span class="mf">2.8536856683866230e+00</span>
+    <span class="mf">2.8341737483430314e+00</span><span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;&lt;/</span><span class="n">cameraMatrix_std_dev</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">dist_coeffs</span> <span class="n">type_id</span><span class="o">=</span><span class="s">&quot;opencv-matrix&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">rows</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">rows</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="mi">5</span><span class="o">&lt;/</span><span class="n">cols</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">dt</span><span class="o">&gt;</span><span class="n">d</span><span class="o">&lt;/</span><span class="n">dt</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+    <span class="mf">1.3569117181595716e-01</span> <span class="o">-</span><span class="mf">8.2513063822554633e-01</span> <span class="mf">0.</span> <span class="mf">0.</span>
+    <span class="mf">1.6412101575010554e+00</span><span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;&lt;/</span><span class="n">dist_coeffs</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">dist_coeffs_std_dev</span> <span class="n">type_id</span><span class="o">=</span><span class="s">&quot;opencv-matrix&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">rows</span><span class="o">&gt;</span><span class="mi">5</span><span class="o">&lt;/</span><span class="n">rows</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">cols</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">dt</span><span class="o">&gt;</span><span class="n">d</span><span class="o">&lt;/</span><span class="n">dt</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+    <span class="mf">1.5570675523402111e-02</span> <span class="mf">8.7229075437543435e-02</span> <span class="mf">0.</span> <span class="mf">0.</span>
+    <span class="mf">1.8382427901856876e-01</span><span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;&lt;/</span><span class="n">dist_coeffs_std_dev</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">avg_reprojection_error</span><span class="o">&gt;</span><span class="mf">4.2691743074130178e-01</span><span class="o">&lt;/</span><span class="n">avg_reprojection_error</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">opencv_storage</span><span class="o">&gt;</span>
+</pre>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_real_time_pose.html" title="Real Time pose estimation of a textured object"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_camera_calibration_square_chess.html" title="Camera calibration with square chessboard"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_calib3d.html" >Camera calibration and 3D reconstruction (calib3d module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

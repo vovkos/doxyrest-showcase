@@ -1,0 +1,121 @@
+.. index:: pair: class; Poco::PoolableObjectFactory
+.. _doxid-class_poco_1_1_poolable_object_factory:
+
+template class Poco::PoolableObjectFactory
+==========================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`PoolableObjectFactory <doxid-class_poco_1_1_poolable_object_factory>` is responsible for creating and resetting objects managed by an :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>`. :ref:`More...<details-class_poco_1_1_poolable_object_factory>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ObjectPool.h>
+	
+	template <
+		class C,
+		class P = C*
+		>
+	class PoolableObjectFactory
+	{
+	public:
+		// methods
+	
+		P
+		:ref:`createObject<doxid-class_poco_1_1_poolable_object_factory_1a1c96b0b89af99871aafd2c7f81f4f31a>`();
+	
+		bool
+		:ref:`validateObject<doxid-class_poco_1_1_poolable_object_factory_1aa22bd6fe96108daec7fb8c7a63339b70>`(P pObject);
+	
+		void
+		:ref:`activateObject<doxid-class_poco_1_1_poolable_object_factory_1a74fd3f730b9fa36c7a78bad6a332e46f>`(P pObject);
+	
+		void
+		:ref:`deactivateObject<doxid-class_poco_1_1_poolable_object_factory_1a0a9bef351a5ab543c2e76cf432a615fb>`(P pObject);
+	
+		void
+		:ref:`destroyObject<doxid-class_poco_1_1_poolable_object_factory_1aff89e50d307e63fcf8ce4d7580e5c4ff>`(P pObject);
+	};
+.. _details-class_poco_1_1_poolable_object_factory:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`PoolableObjectFactory <doxid-class_poco_1_1_poolable_object_factory>` is responsible for creating and resetting objects managed by an :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>`.
+
+Together with an :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>`, a :ref:`PoolableObjectFactory <doxid-class_poco_1_1_poolable_object_factory>` is used as a policy class to change the behavior of the :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>` when creating new objects, returning used objects back to the pool and destroying objects, when the pool itself is destroyed or shrinked.
+
+Methods
+-------
+
+.. index:: pair: function; createObject
+.. _doxid-class_poco_1_1_poolable_object_factory_1a1c96b0b89af99871aafd2c7f81f4f31a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	P
+	createObject()
+
+Create and return a new object.
+
+.. index:: pair: function; validateObject
+.. _doxid-class_poco_1_1_poolable_object_factory_1aa22bd6fe96108daec7fb8c7a63339b70:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	validateObject(P pObject)
+
+Checks whether the object is still valid and can be reused.
+
+Returns true if the object is valid, false otherwise.
+
+To maintain the integrity of the pool, this method must not throw an exception.
+
+.. index:: pair: function; activateObject
+.. _doxid-class_poco_1_1_poolable_object_factory_1a74fd3f730b9fa36c7a78bad6a332e46f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	activateObject(P pObject)
+
+Called before an object is handed out by the pool.
+
+Also called for newly created objects, before they are given out for the first time.
+
+.. index:: pair: function; deactivateObject
+.. _doxid-class_poco_1_1_poolable_object_factory_1a0a9bef351a5ab543c2e76cf432a615fb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	deactivateObject(P pObject)
+
+Called after an object has been given back to the pool and the object is still valid (a prior call to :ref:`validateObject() <doxid-class_poco_1_1_poolable_object_factory_1aa22bd6fe96108daec7fb8c7a63339b70>` returned true).
+
+To maintain the integrity of the pool, this method must not throw an exception.
+
+.. index:: pair: function; destroyObject
+.. _doxid-class_poco_1_1_poolable_object_factory_1aff89e50d307e63fcf8ce4d7580e5c4ff:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	destroyObject(P pObject)
+
+Destroy an object.
+
+To maintain the integrity of the pool, this method must not throw an exception.
+

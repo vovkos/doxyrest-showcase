@@ -1,0 +1,182 @@
+.. index:: pair: class; Poco::Any
+.. _doxid-class_poco_1_1_any:
+
+class Poco::Any
+===============
+
+.. toctree::
+	:hidden:
+
+	class_Poco_Any_Holder.rst
+	class_Poco_Any_ValueHolder.rst
+
+Overview
+~~~~~~~~
+
+An :ref:`Any <doxid-class_poco_1_1_any>` class represents a general type and is capable of storing any type, supporting type-safe extraction of the internally stored data. :ref:`More...<details-class_poco_1_1_any>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Any.h>
+	
+	class Any
+	{
+	public:
+		// classes
+	
+		template <typename ValueType>
+		class :ref:`Holder<doxid-class_poco_1_1_any_1_1_holder>`;
+	
+		class :ref:`ValueHolder<doxid-class_poco_1_1_any_1_1_value_holder>`;
+
+		// construction
+	
+		:ref:`Any<doxid-class_poco_1_1_any_1ac5744002e072bf78cad18f6850be36f2>`();
+	
+		template <typename ValueType>
+		:ref:`Any<doxid-class_poco_1_1_any_1a6272658e4e23b59da7aa90afd1b11f69>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` ValueType& value);
+	
+		:ref:`Any<doxid-class_poco_1_1_any_1a68293069280b233d26c6e6feba2b49f1>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Any& other);
+
+		// methods
+	
+		Any&
+		:ref:`swap<doxid-class_poco_1_1_any_1a4cf7ac92d4a20354233c452ad26c8a76>`(Any& other);
+	
+		template <typename ValueType>
+		Any&
+		:ref:`operator=<doxid-class_poco_1_1_any_1a8490c5b33991ec8cbcf43ac67f7eb978>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` ValueType& rhs);
+	
+		Any&
+		:ref:`operator=<doxid-class_poco_1_1_any_1a981994356ece2366f588b2e5e9d88540>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Any& rhs);
+	
+		bool
+		:ref:`empty<doxid-class_poco_1_1_any_1a1058a57722be58cd8dc829ec5613a35f>`() const;
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::type_info&
+		:ref:`type<doxid-class_poco_1_1_any_1aa4148f21e717bc99f649e6d2103c2d2c>`() const;
+	};
+.. _details-class_poco_1_1_any:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An :ref:`Any <doxid-class_poco_1_1_any>` class represents a general type and is capable of storing any type, supporting type-safe extraction of the internally stored data.
+
+Code taken from the Boost 1.33.1 library. Original copyright by Kevlin Henney. Modified for :ref:`Poco <doxid-namespace_poco>` by Applied Informatics.
+
+Modified for small object optimization support (optionally supported through conditional compilation) by Alex Fabijanic.
+
+Construction
+------------
+
+.. index:: pair: function; Any
+.. _doxid-class_poco_1_1_any_1ac5744002e072bf78cad18f6850be36f2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Any()
+
+Creates an empty any type.
+
+.. index:: pair: function; Any
+.. _doxid-class_poco_1_1_any_1a6272658e4e23b59da7aa90afd1b11f69:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename ValueType>
+	Any(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` ValueType& value)
+
+Creates an any which stores the init parameter inside.
+
+Example:
+
+.. ref-code-block:: cpp
+
+	Any a(13); 
+	Any a(string("12345"));
+
+.. index:: pair: function; Any
+.. _doxid-class_poco_1_1_any_1a68293069280b233d26c6e6feba2b49f1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Any(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Any& other)
+
+Copy constructor, works with both empty and initialized :ref:`Any <doxid-class_poco_1_1_any>` values.
+
+Methods
+-------
+
+.. index:: pair: function; swap
+.. _doxid-class_poco_1_1_any_1a4cf7ac92d4a20354233c452ad26c8a76:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Any&
+	swap(Any& other)
+
+Swaps the content of the two Anys.
+
+When small object optimizaton is enabled, swap only has no-throw guarantee when both (\*this and other) objects are allocated on the heap.
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_any_1a8490c5b33991ec8cbcf43ac67f7eb978:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename ValueType>
+	Any&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` ValueType& rhs)
+
+Assignment operator for all types != :ref:`Any <doxid-class_poco_1_1_any>`.
+
+Example:
+
+.. ref-code-block:: cpp
+
+	Any a = 13; 
+	Any a = string("12345");
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_any_1a981994356ece2366f588b2e5e9d88540:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Any&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Any& rhs)
+
+Assignment operator for :ref:`Any <doxid-class_poco_1_1_any>`.
+
+.. index:: pair: function; empty
+.. _doxid-class_poco_1_1_any_1a1058a57722be58cd8dc829ec5613a35f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	empty() const
+
+Returns true if the :ref:`Any <doxid-class_poco_1_1_any>` is empty.
+
+.. index:: pair: function; type
+.. _doxid-class_poco_1_1_any_1aa4148f21e717bc99f649e6d2103c2d2c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::type_info&
+	type() const
+
+Returns the type information of the stored content.
+
+If the :ref:`Any <doxid-class_poco_1_1_any>` is empty typeid(void) is returned. It is recommended to always query an :ref:`Any <doxid-class_poco_1_1_any>` for its type info before trying to extract data via an AnyCast/RefAnyCast.
+

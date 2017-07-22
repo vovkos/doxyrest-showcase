@@ -1,0 +1,266 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>OpenCV iOS - Video Processing &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OpenCV iOS Hello" href="page_tutorial_hello.html" />
+    <link rel="prev" title="OpenCV iOS - Image Processing" href="page_tutorial_image_manipulation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_hello.html" title="OpenCV iOS Hello"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_image_manipulation.html" title="OpenCV iOS - Image Processing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_ios.html" accesskey="U">OpenCV iOS</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_image_manipulation.html"
+                        title="previous chapter">OpenCV iOS - Image Processing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_hello.html"
+                        title="next chapter">OpenCV iOS Hello</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="opencv-ios-video-processing">
+<span id="doxid-db-dc8-tutorial-video-processing"></span><span id="index-0"></span><h1>OpenCV iOS - Video Processing</h1>
+<p>This tutorial explains how to process video frames using the iPhone’s camera and OpenCV.</p>
+<p class="rubric">Prerequisites:</p>
+<ul class="simple">
+<li>Xcode 4.3 or higher</li>
+<li>Basic knowledge of iOS programming (Objective-C, Interface Builder)</li>
+</ul>
+<p class="rubric">Including OpenCV library in your iOS project</p>
+<p>The OpenCV library comes as a so-called framework, which you can directly drag-and-drop into your XCode project. Download the latest binary from <a class="reference external" href="http://sourceforge.net/projects/opencvlibrary/files/opencv-ios/">http://sourceforge.net/projects/opencvlibrary/files/opencv-ios/</a>. Alternatively follow this guide <a class="reference internal" href="page_tutorial_ios_install.html#doxid-d5-da3-tutorial-ios-install"><span class="std std-ref">Installation in iOS</span></a> to compile the framework manually. Once you have the framework, just drag-and-drop into XCode:</p>
+<img alt="_images/xcode_hello_ios_framework_drag_and_drop.png" src="_images/xcode_hello_ios_framework_drag_and_drop.png" />
+<p>Also you have to locate the prefix header that is used for all header files in the project. The file is typically located at “ProjectName/Supporting Files/ProjectName-Prefix.pch”. There, you have add an include statement to import the opencv library. However, make sure you include opencv before you include UIKit and Foundation, because else you will get some weird compile errors that some macros like min and max are defined multiple times. For example the prefix header could look like the following:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//</span>
+<span class="c1">// Prefix header for all source files of the &#39;VideoFilters&#39; target in the &#39;VideoFilters&#39; project</span>
+<span class="c1">//</span>
+
+<span class="cp">#import &lt;Availability.h&gt;</span>
+
+<span class="cp">#ifndef __IPHONE_4_0</span>
+<span class="cp">#warning &quot;This project uses features only available in iOS SDK 4.0 and later.&quot;</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+<span class="cp">#import &lt;opencv2/opencv.hpp&gt;</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifdef __OBJC__</span>
+    <span class="cp">#import &lt;UIKit/UIKit.h&gt;</span>
+    <span class="cp">#import &lt;Foundation/Foundation.h&gt;</span>
+<span class="cp">#endif</span>
+</pre>
+<p class="rubric">Example video frame processing project</p>
+<p class="rubric">User Interface</p>
+<p>First, we create a simple iOS project, for example Single View Application. Then, we create and add an UIImageView and UIButton to start the camera and display the video frames. The storyboard could look like that:</p>
+<img alt="_images/xcode_hello_ios_viewcontroller_layout.png" src="_images/xcode_hello_ios_viewcontroller_layout.png" />
+<p>Make sure to add and connect the IBOutlets and IBActions to the corresponding ViewController:</p>
+<pre class="highlight literal-block">
+<span></span><span class="err">@</span><span class="n">interface</span> <span class="nl">ViewController</span> <span class="p">:</span> <span class="n">UIViewController</span>
+<span class="p">{</span>
+    <span class="n">IBOutlet</span> <span class="n">UIImageView</span><span class="o">*</span> <span class="n">imageView</span><span class="p">;</span>
+    <span class="n">IBOutlet</span> <span class="n">UIButton</span><span class="o">*</span> <span class="n">button</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">-</span> <span class="p">(</span><span class="n">IBAction</span><span class="p">)</span><span class="nl">actionStart</span><span class="p">:(</span><span class="n">id</span><span class="p">)</span><span class="n">sender</span><span class="p">;</span>
+
+<span class="err">@</span><span class="n">end</span>
+</pre>
+<p class="rubric">Adding the Camera</p>
+<p>We add a camera controller to the view controller and initialize it when the view has loaded:</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#import &lt;opencv2/videoio/cap_ios.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">cv</span><span class="p">;</span>
+
+
+<span class="err">@</span><span class="n">interface</span> <span class="nl">ViewController</span> <span class="p">:</span> <span class="n">UIViewController</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+    <span class="n">CvVideoCamera</span><span class="o">*</span> <span class="n">videoCamera</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="err">@</span><span class="n">property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">retain</span><span class="p">)</span> <span class="n">CvVideoCamera</span><span class="o">*</span> <span class="n">videoCamera</span><span class="p">;</span>
+
+<span class="err">@</span><span class="n">end</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">viewDidLoad</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="n">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+    <span class="c1">// Do any additional setup after loading the view, typically from a nib.</span>
+
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CvVideoCamera</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithParentView</span><span class="p">:</span><span class="n">imageView</span><span class="p">];</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span><span class="p">.</span><span class="n">defaultAVCaptureDevicePosition</span> <span class="o">=</span> <span class="n">AVCaptureDevicePositionFront</span><span class="p">;</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span><span class="p">.</span><span class="n">defaultAVCaptureSessionPreset</span> <span class="o">=</span> <span class="n">AVCaptureSessionPreset352x288</span><span class="p">;</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span><span class="p">.</span><span class="n">defaultAVCaptureVideoOrientation</span> <span class="o">=</span> <span class="n">AVCaptureVideoOrientationPortrait</span><span class="p">;</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span><span class="p">.</span><span class="n">defaultFPS</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span><span class="p">.</span><span class="n">grayscale</span> <span class="o">=</span> <span class="n">NO</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>In this case, we initialize the camera and provide the imageView as a target for rendering each frame. <a class="reference internal" href="class_CvVideoCamera.html#doxid-d5-d1f-interface-cv-video-camera"><span class="std std-ref">CvVideoCamera</span></a> is basically a wrapper around AVFoundation, so we provie as properties some of the AVFoundation camera options. For example we want to use the front camera, set the video size to 352x288 and a video orientation (the video camera normally outputs in landscape mode, which results in transposed data when you design a portrait application).</p>
+<p>The property defaultFPS sets the FPS of the camera. If the processing is less fast than the desired FPS, frames are automatically dropped.</p>
+<p>The property grayscale=YES results in a different colorspace, namely “YUV (YpCbCr 4:2:0)”, while grayscale=NO will output 32 bit BGRA.</p>
+<p>Additionally, we have to manually add framework dependencies of the opencv framework. Finally, you should have at least the following frameworks in your project:</p>
+<ul>
+<li><p class="first">opencv2</p>
+</li>
+<li><p class="first">Accelerate</p>
+</li>
+<li><p class="first">AssetsLibrary</p>
+</li>
+<li><p class="first">AVFoundation</p>
+</li>
+<li><p class="first">CoreGraphics</p>
+</li>
+<li><p class="first">CoreImage</p>
+</li>
+<li><p class="first">CoreMedia</p>
+</li>
+<li><p class="first">CoreVideo</p>
+</li>
+<li><p class="first">QuartzCore</p>
+</li>
+<li><p class="first">UIKit</p>
+</li>
+<li><p class="first">Foundation</p>
+<img alt="_images/xcode_hello_ios_frameworks_add_dependencies.png" src="_images/xcode_hello_ios_frameworks_add_dependencies.png" />
+</li>
+</ul>
+<p class="rubric">Processing frames</p>
+<p>We follow the delegation pattern, which is very common in iOS, to provide access to each camera frame. Basically, the View Controller has to implement the CvVideoCameraDelegate protocol and has to be set as delegate to the video camera:</p>
+<pre class="highlight literal-block">
+<span></span><span class="err">@</span><span class="n">interface</span> <span class="nl">ViewController</span> <span class="p">:</span> <span class="n">UIViewController</span><span class="o">&lt;</span><span class="n">CvVideoCameraDelegate</span><span class="o">&gt;</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">viewDidLoad</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CvVideoCamera</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithParentView</span><span class="p">:</span><span class="n">imageView</span><span class="p">];</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#pragma mark - Protocol CvVideoCameraDelegate</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">processImage</span><span class="p">:(</span><span class="n">Mat</span><span class="o">&amp;</span><span class="p">)</span><span class="n">image</span><span class="p">;</span>
+<span class="p">{</span>
+    <span class="c1">// Do some OpenCV stuff with the image</span>
+<span class="p">}</span>
+<span class="cp">#endif</span>
+</pre>
+<p>Note that we are using C++ here (<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a>). Important: You have to rename the view controller’s extension .m into .mm, so that the compiler compiles it under the assumption of Objective-C++ (Objective-C and C++ mixed). Then, __cplusplus is defined when the compiler is processing the file for C++ code. Therefore, we put our code within a block where __cplusplus is defined.</p>
+<p class="rubric">Basic video processing</p>
+<p>From here you can start processing video frames. For example the following snippet color-inverts the image:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">processImage</span><span class="p">:(</span><span class="n">Mat</span><span class="o">&amp;</span><span class="p">)</span><span class="n">image</span><span class="p">;</span>
+<span class="p">{</span>
+    <span class="c1">// Do some OpenCV stuff with the image</span>
+    <span class="n">Mat</span> <span class="n">image_copy</span><span class="p">;</span>
+    <span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image_copy</span><span class="p">,</span> <span class="n">COLOR_BGR2GRAY</span><span class="p">);</span>
+
+    <span class="c1">// invert image</span>
+    <span class="n">bitwise_not</span><span class="p">(</span><span class="n">image_copy</span><span class="p">,</span> <span class="n">image_copy</span><span class="p">);</span>
+
+    <span class="c1">//Convert BGR to BGRA (three channel to four channel)</span>
+    <span class="n">Mat</span> <span class="n">bgr</span><span class="p">;</span>
+    <span class="n">cvtColor</span><span class="p">(</span><span class="n">image_copy</span><span class="p">,</span> <span class="n">bgr</span><span class="p">,</span> <span class="n">COLOR_GRAY2BGR</span><span class="p">);</span>
+
+    <span class="n">cvtColor</span><span class="p">(</span><span class="n">bgr</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">COLOR_BGR2BGRA</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Start!</p>
+<p>Finally, we have to tell the camera to actually start/stop working. The following code will start the camera when you press the button, assuming you connected the UI properly:</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#pragma mark - UI Actions</span>
+
+<span class="o">-</span> <span class="p">(</span><span class="n">IBAction</span><span class="p">)</span><span class="nl">actionStart</span><span class="p">:(</span><span class="n">id</span><span class="p">)</span><span class="n">sender</span><span class="p">;</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">videoCamera</span> <span class="n">start</span><span class="p">];</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Hints</p>
+<p>Try to avoid costly matrix copy operations as much as you can, especially if you are aiming for real-time. As the image data is passed as reference, work in-place, if possible.</p>
+<p>When you are working on grayscale data, turn set grayscale = YES as the YUV colorspace gives you directly access the luminance plane.</p>
+<p>The Accelerate framework provides some CPU-accelerated DSP filters, which come handy in your case.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_hello.html" title="OpenCV iOS Hello"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_image_manipulation.html" title="OpenCV iOS - Image Processing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_ios.html" >OpenCV iOS</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

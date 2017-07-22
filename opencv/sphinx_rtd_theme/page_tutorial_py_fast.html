@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FAST Algorithm for Corner Detection &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Feature Matching" href="page_tutorial_py_matcher.html" />
+    <link rel="prev" title="BRIEF (Binary Robust Independent Elementary Features)" href="page_tutorial_py_brief.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_photo.html">Computational Photography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_core.html">Core Operations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_brief.html">BRIEF (Binary Robust Independent Elementary Features)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">FAST Algorithm for Corner Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_matcher.html">Feature Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_feature_homography.html">Feature Matching + Homography to find Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_features_harris.html">Harris Corner Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_sift_intro.html">Introduction to SIFT (Scale-Invariant Feature Transform)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_surf_intro.html">Introduction to SURF (Speeded-Up Robust Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_orb.html">ORB (Oriented FAST and Rotated BRIEF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_shi_tomasi.html">Shi-Tomasi Corner Detector &amp; Good Features to Track</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_features_meaning.html">Understanding Features</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_gui.html">Gui Features in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_setup.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_ml.html">Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_objdetect.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_bindings.html">OpenCV-Python Bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_video.html">Video Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a> &raquo;</li>
+        
+      <li>FAST Algorithm for Corner Detection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="fast-algorithm-for-corner-detection">
+<span id="doxid-df-d0c-tutorial-py-fast"></span><span id="index-0"></span><h1>FAST Algorithm for Corner Detection</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will understand the basics of FAST algorithm</li>
+<li>We will find corners using OpenCV functionalities for FAST algorithm.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>We saw several feature detectors and many of them are really good. But when looking from a real-time application point of view, they are not fast enough. One best example would be SLAM (Simultaneous Localization and Mapping) mobile robot which have limited computational resources.</p>
+<p>As a solution to this, FAST (Features from Accelerated Segment Test) algorithm was proposed by Edward Rosten and Tom Drummond in their paper “Machine learning for high-speed corner detection” in 2006 (Later revised it in 2010). A basic summary of the algorithm is presented below. Refer original paper for more details (All the images are taken from original paper).</p>
+<p class="rubric">Feature Detection using FAST</p>
+<ol class="arabic">
+<li><p class="first">Select a pixel <span class="math notranslate nohighlight">\(p\)</span> in the image which is to be identified as an interest point or not. Let its intensity be <span class="math notranslate nohighlight">\(I_p\)</span>.</p>
+</li>
+<li><p class="first">Select appropriate threshold value <span class="math notranslate nohighlight">\(t\)</span>.</p>
+</li>
+<li><p class="first">Consider a circle of 16 pixels around the pixel under test. (See the image below)</p>
+<img alt="image" src="_images/fast_speedtest.jpg" />
+</li>
+<li><p class="first">Now the pixel <span class="math notranslate nohighlight">\(p\)</span> is a corner if there exists a set of <span class="math notranslate nohighlight">\(n\)</span> contiguous pixels in the circle (of 16 pixels) which are all brighter than <span class="math notranslate nohighlight">\(I_p + t\)</span>, or all darker than <span class="math notranslate nohighlight">\(I_p − t\)</span>. (Shown as white dash lines in the above image). <span class="math notranslate nohighlight">\(n\)</span> was chosen to be 12.</p>
+</li>
+<li><p class="first">A <strong>high-speed test</strong> was proposed to exclude a large number of non-corners. This test examines only the four pixels at 1, 9, 5 and 13 (First 1 and 9 are tested if they are too brighter or darker. If so, then checks 5 and 13). If <span class="math notranslate nohighlight">\(p\)</span> is a corner, then at least three of these must all be brighter than <span class="math notranslate nohighlight">\(I_p + t\)</span> or darker than <span class="math notranslate nohighlight">\(I_p − t\)</span>. If neither of these is the case, then <span class="math notranslate nohighlight">\(p\)</span> cannot be a corner. The full segment test criterion can then be applied to the passed candidates by examining all pixels in the circle. This detector in itself exhibits high performance, but there are several weaknesses:</p>
+<ul class="simple">
+<li>It does not reject as many candidates for n &lt; 12.</li>
+<li>The choice of pixels is not optimal because its efficiency depends on ordering of the questions and distribution of corner appearances.</li>
+<li>Results of high-speed tests are thrown away.</li>
+<li>Multiple features are detected adjacent to one another.</li>
+</ul>
+</li>
+</ol>
+<p>First 3 points are addressed with a machine learning approach. Last one is addressed using non-maximal suppression.</p>
+<p class="rubric">Machine Learning a Corner Detector</p>
+<ol class="arabic">
+<li><p class="first">Select a set of images for training (preferably from the target application domain)</p>
+</li>
+<li><p class="first">Run FAST algorithm in every images to find feature points.</p>
+</li>
+<li><p class="first">For every feature point, store the 16 pixels around it as a vector. Do it for all the images to get feature vector <span class="math notranslate nohighlight">\(P\)</span>.</p>
+</li>
+<li><p class="first">Each pixel (say <span class="math notranslate nohighlight">\(x\)</span>) in these 16 pixels can have one of the following three states:</p>
+<img alt="image" src="_images/fast_eqns.jpg" />
+</li>
+<li><p class="first">Depending on these states, the feature vector <span class="math notranslate nohighlight">\(P\)</span> is subdivided into 3 subsets, <span class="math notranslate nohighlight">\(P_d\)</span>, <span class="math notranslate nohighlight">\(P_s\)</span>, <span class="math notranslate nohighlight">\(P_b\)</span>.</p>
+</li>
+<li><p class="first">Define a new boolean variable, <span class="math notranslate nohighlight">\(K_p\)</span>, which is true if <span class="math notranslate nohighlight">\(p\)</span> is a corner and false otherwise.</p>
+</li>
+<li><p class="first">Use the ID3 algorithm (decision tree classifier) to query each subset using the variable <span class="math notranslate nohighlight">\(K_p\)</span> for the knowledge about the true class. It selects the <span class="math notranslate nohighlight">\(x\)</span> which yields the most information about whether the candidate pixel is a corner, measured by the entropy of <span class="math notranslate nohighlight">\(K_p\)</span>.</p>
+</li>
+<li><p class="first">This is recursively applied to all the subsets until its entropy is zero.</p>
+</li>
+<li><p class="first">The decision tree so created is used for fast detection in other images.</p>
+</li>
+</ol>
+<p class="rubric">Non-maximal Suppression</p>
+<p>Detecting multiple interest points in adjacent locations is another problem. It is solved by using Non-maximum Suppression.</p>
+<ol class="arabic simple">
+<li>Compute a score function, <span class="math notranslate nohighlight">\(V\)</span> for all the detected feature points. <span class="math notranslate nohighlight">\(V\)</span> is the sum of absolute difference between <span class="math notranslate nohighlight">\(p\)</span> and 16 surrounding pixels values.</li>
+<li>Consider two adjacent keypoints and compute their <span class="math notranslate nohighlight">\(V\)</span> values.</li>
+<li>Discard the one with lower <span class="math notranslate nohighlight">\(V\)</span> value.</li>
+</ol>
+<p class="rubric">Summary</p>
+<p>It is several times faster than other existing corner detectors.</p>
+<p>But it is not robust to high levels of noise. It is dependant on a threshold.</p>
+<p class="rubric">FAST Feature Detector in OpenCV</p>
+<p>It is called as any other feature detector in OpenCV. If you want, you can specify the threshold, whether non-maximum suppression to be applied or not, the neighborhood to be used etc.</p>
+<p>For the neighborhood, three flags are defined, cv2.FAST_FEATURE_DETECTOR_TYPE_5_8, cv2.FAST_FEATURE_DETECTOR_TYPE_7_12 and cv2.FAST_FEATURE_DETECTOR_TYPE_9_16. Below is a simple code on how to detect and draw the FAST feature points.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;simple.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># Initiate FAST object with default values</span>
+<span class="n">fast</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">FastFeatureDetector_create</span><span class="p">()</span>
+
+<span class="cp"># find and draw the keypoints</span>
+<span class="n">kp</span> <span class="o">=</span> <span class="n">fast</span><span class="p">.</span><span class="n">detect</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">drawKeypoints</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="cp"># Print all default params</span>
+<span class="n">print</span><span class="p">(</span> <span class="s">&quot;Threshold: {}&quot;</span><span class="p">.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">fast</span><span class="p">.</span><span class="n">getThreshold</span><span class="p">())</span> <span class="p">)</span>
+<span class="n">print</span><span class="p">(</span> <span class="s">&quot;nonmaxSuppression:{}&quot;</span><span class="p">.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">fast</span><span class="p">.</span><span class="n">getNonmaxSuppression</span><span class="p">())</span> <span class="p">)</span>
+<span class="n">print</span><span class="p">(</span> <span class="s">&quot;neighborhood: {}&quot;</span><span class="p">.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">fast</span><span class="p">.</span><span class="n">getType</span><span class="p">())</span> <span class="p">)</span>
+<span class="n">print</span><span class="p">(</span> <span class="s">&quot;Total Keypoints with nonmaxSuppression: {}&quot;</span><span class="p">.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">kp</span><span class="p">))</span> <span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;fast_true.png&#39;</span><span class="p">,</span><span class="n">img2</span><span class="p">)</span>
+
+<span class="cp"># Disable nonmaxSuppression</span>
+<span class="n">fast</span><span class="p">.</span><span class="n">setNonmaxSuppression</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">kp</span> <span class="o">=</span> <span class="n">fast</span><span class="p">.</span><span class="n">detect</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span> <span class="s">&quot;Total Keypoints without nonmaxSuppression: {}&quot;</span><span class="p">.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">kp</span><span class="p">))</span> <span class="p">)</span>
+
+<span class="n">img3</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">drawKeypoints</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;fast_false.png&#39;</span><span class="p">,</span><span class="n">img3</span><span class="p">)</span>
+</pre>
+<p>See the results. First image shows FAST with nonmaxSuppression and second one without nonmaxSuppression:</p>
+<img alt="image" src="_images/fast_kp.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>Edward Rosten and Tom Drummond, “Machine learning for high speed corner detection” in 9th European Conference on Computer Vision, vol. 1, 2006, pp. 430–443.</li>
+<li><dl class="first docutils">
+<dt>Edward Rosten, Reid Porter, and Tom Drummond, “Faster and better: a machine learning approach to</dt>
+<dd>corner detection” in IEEE Trans. Pattern Analysis and Machine Intelligence, 2010, vol 32, pp. 105-119.</dd>
+</dl>
+</li>
+</ol>
+<p class="rubric">Exercises</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_py_matcher.html" class="btn btn-neutral float-right" title="Feature Matching" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_py_brief.html" class="btn btn-neutral float-left" title="BRIEF (Binary Robust Independent Elementary Features)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

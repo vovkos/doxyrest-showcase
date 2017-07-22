@@ -1,0 +1,156 @@
+.. index:: pair: class; Poco::ActiveDispatcher
+.. _doxid-class_poco_1_1_active_dispatcher:
+
+class Poco::ActiveDispatcher
+============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class is used to implement an active object with strictly serialized method execution. :ref:`More...<details-class_poco_1_1_active_dispatcher>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ActiveDispatcher.h>
+	
+	class ActiveDispatcher: protected :ref:`Poco::Runnable<doxid-class_poco_1_1_runnable>`
+	{
+	public:
+		// construction
+	
+		:ref:`ActiveDispatcher<doxid-class_poco_1_1_active_dispatcher_1acaa13e87174af3fadda370791a1e6872>`();
+		:ref:`ActiveDispatcher<doxid-class_poco_1_1_active_dispatcher_1a3d5bad1801b0b6f92f535156a3f853a6>`(:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` prio);
+
+		// methods
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_active_dispatcher_1ae9c87e4086704ce82b47364fcd2bd985>`(:ref:`ActiveRunnableBase::Ptr<doxid-class_poco_1_1_active_runnable_base_1af57e768bbd594dd87fe479bd7ce3633f>` pRunnable);
+	
+		void
+		:ref:`cancel<doxid-class_poco_1_1_active_dispatcher_1a05f2d506e621767de92b4bf0223c82f7>`();
+
+	protected:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_active_dispatcher_1a7599bbd5b416f86f4dab6ff8c78f3db3>`();
+	
+		void
+		:target:`stop<doxid-class_poco_1_1_active_dispatcher_1ac299c35d86a2ff53e7c393a93015e295>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>`() = 0;
+
+.. _details-class_poco_1_1_active_dispatcher:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class is used to implement an active object with strictly serialized method execution.
+
+An active object, which is an ordinary object containing :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>` members, executes all active methods in their own thread. This behavior does not fit the "classic" definition of an active object, which serializes the execution of active methods (in other words, only one active method can be running at any given time).
+
+Using this class as a base class, the serializing behavior for active objects can be implemented.
+
+The following example shows how this is done:
+
+.. ref-code-block:: cpp
+
+	class ActiveObject: public ActiveDispatcher
+	{
+	public:
+	    ActiveObject():
+	        exampleActiveMethod(this, &ActiveObject::exampleActiveMethodImpl)
+	    {
+	    }
+	
+	    ActiveMethod<std::string, std::string, ActiveObject, ActiveStarter<ActiveDispatcher> > exampleActiveMethod;
+	
+	protected:
+	    std::string exampleActiveMethodImpl(const std::string& arg)
+	    {
+	        ...
+	    }
+	};
+
+The only things different from the example in :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>` is that the ActiveObject in this case inherits from :ref:`ActiveDispatcher <doxid-class_poco_1_1_active_dispatcher>`, and that the :ref:`ActiveMethod <doxid-class_poco_1_1_active_method>` template for exampleActiveMethod has an additional parameter, specifying the specialized :ref:`ActiveStarter <doxid-class_poco_1_1_active_starter>` for :ref:`ActiveDispatcher <doxid-class_poco_1_1_active_dispatcher>`.
+
+Construction
+------------
+
+.. index:: pair: function; ActiveDispatcher
+.. _doxid-class_poco_1_1_active_dispatcher_1acaa13e87174af3fadda370791a1e6872:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ActiveDispatcher()
+
+Creates the :ref:`ActiveDispatcher <doxid-class_poco_1_1_active_dispatcher>`.
+
+.. index:: pair: function; ActiveDispatcher
+.. _doxid-class_poco_1_1_active_dispatcher_1a3d5bad1801b0b6f92f535156a3f853a6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ActiveDispatcher(:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` prio)
+
+Creates the :ref:`ActiveDispatcher <doxid-class_poco_1_1_active_dispatcher>` and sets the priority of its thread.
+
+Methods
+-------
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_active_dispatcher_1ae9c87e4086704ce82b47364fcd2bd985:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(:ref:`ActiveRunnableBase::Ptr<doxid-class_poco_1_1_active_runnable_base_1af57e768bbd594dd87fe479bd7ce3633f>` pRunnable)
+
+Adds the :ref:`Runnable <doxid-class_poco_1_1_runnable>` to the dispatch queue.
+
+.. index:: pair: function; cancel
+.. _doxid-class_poco_1_1_active_dispatcher_1a05f2d506e621767de92b4bf0223c82f7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cancel()
+
+Cancels all queued methods.
+
+.. index:: pair: function; run
+.. _doxid-class_poco_1_1_active_dispatcher_1a7599bbd5b416f86f4dab6ff8c78f3db3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	run()
+
+Do whatever the thread needs to do.
+
+Must be overridden by subclasses.
+

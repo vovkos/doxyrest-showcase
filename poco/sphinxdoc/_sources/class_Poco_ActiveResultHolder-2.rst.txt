@@ -1,0 +1,208 @@
+.. index:: pair: class; Poco::ActiveResultHolder
+.. _doxid-class_poco_1_1_active_result_holder:
+
+template class Poco::ActiveResultHolder
+=======================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class holds the result of an asynchronous method invocation. :ref:`More...<details-class_poco_1_1_active_result_holder>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ActiveResult.h>
+	
+	template <class ResultType>
+	class ActiveResultHolder: public :ref:`Poco::RefCountedObject<doxid-class_poco_1_1_ref_counted_object>`
+	{
+	public:
+		// methods
+	
+		ResultType&
+		:ref:`data<doxid-class_poco_1_1_active_result_holder_1addde49962814655f71551febccd66be7>`();
+	
+		void
+		:target:`data<doxid-class_poco_1_1_active_result_holder_1ad9937b4607536c95ad2a226303c1e0e4>`(ResultType* pData);
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_active_result_holder_1a3cc73efb5b363f9de55d6427d06b741e>`();
+	
+		bool
+		:ref:`tryWait<doxid-class_poco_1_1_active_result_holder_1a04beca2ffa3215fa8fe64fe170c41766>`(long milliseconds);
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_active_result_holder_1a39042b1e58ff7effd2e195cd5601285f>`(long milliseconds);
+	
+		void
+		:ref:`notify<doxid-class_poco_1_1_active_result_holder_1a8a5dab5dee70f49649e7869b6464780f>`();
+	
+		bool
+		:ref:`failed<doxid-class_poco_1_1_active_result_holder_1a6f0adcf7907b92689e078df9ea0747dd>`() const;
+	
+		std::string
+		:ref:`error<doxid-class_poco_1_1_active_result_holder_1a2811e1dc292aa846d3ee4efc54e8b0ea>`() const;
+	
+		:ref:`Exception<doxid-class_poco_1_1_exception>`*
+		:ref:`exception<doxid-class_poco_1_1_active_result_holder_1a638e81243ae136e6c15172b5f5b8cbe7>`() const;
+	
+		void
+		:ref:`error<doxid-class_poco_1_1_active_result_holder_1a9ec9ddb91aac696d2f9e0357b56252b4>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc);
+	
+		void
+		:ref:`error<doxid-class_poco_1_1_active_result_holder_1a09799cc4d7a4113ee90a714ea871ac40>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& msg);
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		void
+		:ref:`duplicate<doxid-class_poco_1_1_ref_counted_object_1a13296da57127169ed0709b3dde86bf0d>`() const;
+	
+		void
+		:ref:`release<doxid-class_poco_1_1_ref_counted_object_1a14bf204923a6ba4b97df6f8fdb9deb72>`() const;
+	
+		int
+		:ref:`referenceCount<doxid-class_poco_1_1_ref_counted_object_1a45b62ccd833bcb06055399c2d889eb35>`() const;
+
+.. _details-class_poco_1_1_active_result_holder:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class holds the result of an asynchronous method invocation.
+
+It is used to pass the result from the execution thread back to the invocation thread. The class uses reference counting for memory management. Do not use this class directly, use :ref:`ActiveResult <doxid-class_poco_1_1_active_result>` instead.
+
+Methods
+-------
+
+.. index:: pair: function; data
+.. _doxid-class_poco_1_1_active_result_holder_1addde49962814655f71551febccd66be7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ResultType&
+	data()
+
+Returns a reference to the actual result.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_active_result_holder_1a3cc73efb5b363f9de55d6427d06b741e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait()
+
+Pauses the caller until the result becomes available.
+
+.. index:: pair: function; tryWait
+.. _doxid-class_poco_1_1_active_result_holder_1a04beca2ffa3215fa8fe64fe170c41766:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryWait(long milliseconds)
+
+Waits up to the specified interval for the result to become available.
+
+Returns true if the result became available, false otherwise.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_active_result_holder_1a39042b1e58ff7effd2e195cd5601285f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait(long milliseconds)
+
+Waits up to the specified interval for the result to become available.
+
+Throws a TimeoutException if the result did not became available.
+
+.. index:: pair: function; notify
+.. _doxid-class_poco_1_1_active_result_holder_1a8a5dab5dee70f49649e7869b6464780f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	notify()
+
+Notifies the invoking thread that the result became available.
+
+.. index:: pair: function; failed
+.. _doxid-class_poco_1_1_active_result_holder_1a6f0adcf7907b92689e078df9ea0747dd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	failed() const
+
+Returns true if the active method failed (and threw an exception).
+
+Information about the exception can be obtained by calling :ref:`error() <doxid-class_poco_1_1_active_result_holder_1a2811e1dc292aa846d3ee4efc54e8b0ea>`.
+
+.. index:: pair: function; error
+.. _doxid-class_poco_1_1_active_result_holder_1a2811e1dc292aa846d3ee4efc54e8b0ea:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::string
+	error() const
+
+If the active method threw an exception, a textual representation of the exception is returned.
+
+An empty string is returned if the active method completed successfully.
+
+.. index:: pair: function; exception
+.. _doxid-class_poco_1_1_active_result_holder_1a638e81243ae136e6c15172b5f5b8cbe7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Exception<doxid-class_poco_1_1_exception>`*
+	exception() const
+
+If the active method threw an exception, a clone of the exception object is returned, otherwise null.
+
+.. index:: pair: function; error
+.. _doxid-class_poco_1_1_active_result_holder_1a9ec9ddb91aac696d2f9e0357b56252b4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	error(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc)
+
+Sets the exception.
+
+.. index:: pair: function; error
+.. _doxid-class_poco_1_1_active_result_holder_1a09799cc4d7a4113ee90a714ea871ac40:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	error(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& msg)
+
+Sets the exception.
+

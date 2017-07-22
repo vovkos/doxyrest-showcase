@@ -1,0 +1,168 @@
+.. index:: pair: class; Poco::Util::Subsystem
+.. _doxid-class_poco_1_1_util_1_1_subsystem:
+
+class Poco::Util::Subsystem
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Subsystems extend an application in a modular way. :ref:`More...<details-class_poco_1_1_util_1_1_subsystem>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Subsystem.h>
+	
+	class Subsystem: public :ref:`Poco::RefCountedObject<doxid-class_poco_1_1_ref_counted_object>`
+	{
+	public:
+		// methods
+	
+		virtual
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char*
+		:ref:`name<doxid-class_poco_1_1_util_1_1_subsystem_1a5ae9dd61f69ee662d46e5c5c9cd82427>`() const = 0;
+
+	protected:
+		// methods
+	
+		virtual
+		void
+		:ref:`initialize<doxid-class_poco_1_1_util_1_1_subsystem_1a6382a1288ce62ab39b4cf715733e34d1>`(:ref:`Application<doxid-class_poco_1_1_util_1_1_application>`& app) = 0;
+	
+		virtual
+		void
+		:ref:`uninitialize<doxid-class_poco_1_1_util_1_1_subsystem_1a302a6967d4fc46e0b20e5a30dc854737>`() = 0;
+	
+		virtual
+		void
+		:ref:`reinitialize<doxid-class_poco_1_1_util_1_1_subsystem_1a19b564e4e05a76edd4b5d7f269042277>`(:ref:`Application<doxid-class_poco_1_1_util_1_1_application>`& app);
+	
+		virtual
+		void
+		:ref:`defineOptions<doxid-class_poco_1_1_util_1_1_subsystem_1a76c464d69ab21cc9ee4bebb5b29822fc>`(:ref:`OptionSet<doxid-class_poco_1_1_util_1_1_option_set>`& options);
+	};
+
+	// direct descendants
+
+	class :ref:`Application<doxid-class_poco_1_1_util_1_1_application>`;
+	class :ref:`LoggingSubsystem<doxid-class_poco_1_1_util_1_1_logging_subsystem>`;
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		void
+		:ref:`duplicate<doxid-class_poco_1_1_ref_counted_object_1a13296da57127169ed0709b3dde86bf0d>`() const;
+	
+		void
+		:ref:`release<doxid-class_poco_1_1_ref_counted_object_1a14bf204923a6ba4b97df6f8fdb9deb72>`() const;
+	
+		int
+		:ref:`referenceCount<doxid-class_poco_1_1_ref_counted_object_1a45b62ccd833bcb06055399c2d889eb35>`() const;
+
+.. _details-class_poco_1_1_util_1_1_subsystem:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Subsystems extend an application in a modular way.
+
+The :ref:`Subsystem <doxid-class_poco_1_1_util_1_1_subsystem>` class provides a common interface for subsystems so that subsystems can be automatically initialized at startup and uninitialized at shutdown.
+
+Subsystems should also support dynamic reconfiguration, so that they can be reconfigured anytime during the life of a running application.
+
+The degree to which dynamic reconfiguration is supported is up to the actual subsystem implementation. It can range from ignoring the reconfiguration request (not recommended), to changing certain settings that affect the performance, to a complete reinitialization.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_util_1_1_subsystem_1a5ded54ee2c588c0079dc4fec35c74f0e:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	~Subsystem()
+
+Destroys the :ref:`Subsystem <doxid-class_poco_1_1_util_1_1_subsystem>`.
+
+Methods
+-------
+
+.. index:: pair: function; name
+.. _doxid-class_poco_1_1_util_1_1_subsystem_1a5ae9dd61f69ee662d46e5c5c9cd82427:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char*
+	name() const = 0
+
+Returns the name of the subsystem.
+
+Must be implemented by subclasses.
+
+.. index:: pair: function; initialize
+.. _doxid-class_poco_1_1_util_1_1_subsystem_1a6382a1288ce62ab39b4cf715733e34d1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	initialize(:ref:`Application<doxid-class_poco_1_1_util_1_1_application>`& app) = 0
+
+Initializes the subsystem.
+
+.. index:: pair: function; uninitialize
+.. _doxid-class_poco_1_1_util_1_1_subsystem_1a302a6967d4fc46e0b20e5a30dc854737:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	uninitialize() = 0
+
+Uninitializes the subsystem.
+
+.. index:: pair: function; reinitialize
+.. _doxid-class_poco_1_1_util_1_1_subsystem_1a19b564e4e05a76edd4b5d7f269042277:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	reinitialize(:ref:`Application<doxid-class_poco_1_1_util_1_1_application>`& app)
+
+Re-initializes the subsystem.
+
+The default implementation just calls :ref:`uninitialize() <doxid-class_poco_1_1_util_1_1_subsystem_1a302a6967d4fc46e0b20e5a30dc854737>` followed by :ref:`initialize() <doxid-class_poco_1_1_util_1_1_subsystem_1a6382a1288ce62ab39b4cf715733e34d1>`. Actual implementations might want to use a less radical and possibly more performant approach.
+
+.. index:: pair: function; defineOptions
+.. _doxid-class_poco_1_1_util_1_1_subsystem_1a76c464d69ab21cc9ee4bebb5b29822fc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	defineOptions(:ref:`OptionSet<doxid-class_poco_1_1_util_1_1_option_set>`& options)
+
+Called before the :ref:`Application <doxid-class_poco_1_1_util_1_1_application>` 's command line processing begins.
+
+If a subsystem wants to support command line arguments, it must override this method. The default implementation does not define any options.
+
+To effectively handle options, a subsystem should either bind the option to a configuration property or specify a callback to handle the option.
+

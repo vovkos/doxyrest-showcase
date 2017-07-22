@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Background Subtraction &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Meanshift and Camshift" href="page_tutorial_py_meanshift.html" />
+    <link rel="prev" title="Video Analysis" href="page_tutorial_py_table_of_contents_video.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_photo.html">Computational Photography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_core.html">Core Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_gui.html">Gui Features in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_setup.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_ml.html">Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_objdetect.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_bindings.html">OpenCV-Python Bindings</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_py_table_of_contents_video.html">Video Analysis</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Background Subtraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_meanshift.html">Meanshift and Camshift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_lucas_kanade.html">Optical Flow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_table_of_contents_video.html">Video Analysis</a> &raquo;</li>
+        
+      <li>Background Subtraction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="background-subtraction">
+<span id="doxid-db-d5c-tutorial-py-bg-subtraction"></span><span id="index-0"></span><h1>Background Subtraction</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will familiarize with the background subtraction methods available in OpenCV.</li>
+</ul>
+<p class="rubric">Basics</p>
+<p>Background subtraction is a major preprocessing steps in many vision based applications. For example, consider the cases like visitor counter where a static camera takes the number of visitors entering or leaving the room, or a traffic camera extracting information about the vehicles etc. In all these cases, first you need to extract the person or vehicles alone. Technically, you need to extract the moving foreground from static background.</p>
+<p>If you have an image of background alone, like image of the room without visitors, image of the road without vehicles etc, it is an easy job. Just subtract the new image from the background. You get the foreground objects alone. But in most of the cases, you may not have such an image, so we need to extract the background from whatever images we have. It become more complicated when there is shadow of the vehicles. Since shadow is also moving, simple subtraction will mark that also as foreground. It complicates things.</p>
+<p>Several algorithms were introduced for this purpose. OpenCV has implemented three such algorithms which is very easy to use. We will see them one-by-one.</p>
+<p class="rubric">BackgroundSubtractorMOG</p>
+<p>It is a Gaussian Mixture-based Background/Foreground Segmentation Algorithm. It was introduced in the paper “An improved adaptive background mixture model for real-time tracking with shadow
+detection” by P. KadewTraKuPong and R. Bowden in 2001. It uses a method to model each background pixel by a mixture of K Gaussian distributions (K = 3 to 5). The weights of the mixture represent the time proportions that those colours stay in the scene. The probable background colours are the ones which stay longer and more static.</p>
+<p>While coding, we need to create a background object using the function, <a class="reference internal" href="group_cudabgsegm.html#doxid-d6-d17-group-cudabgsegm-1ga6742648a654585013544eaa300f77b57"><span class="std std-ref">cv2.createBackgroundSubtractorMOG()</span></a>. It has some optional parameters like length of history, number of gaussian mixtures, threshold etc. It is all set to some default values. Then inside the video loop, use backgroundsubtractor.apply() method to get the foreground mask.</p>
+<p>See a simple example below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="sc">&#39;vtest.avi&#39;</span><span class="p">)</span>
+
+<span class="n">fgbg</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">createBackgroundSubtractorMOG</span><span class="p">()</span>
+
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">fgmask</span> <span class="o">=</span> <span class="n">fgbg</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">fgmask</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>( All the results are shown at the end for comparison).</p>
+<p class="rubric">BackgroundSubtractorMOG2</p>
+<p>It is also a Gaussian Mixture-based Background/Foreground Segmentation Algorithm. It is based on two papers by Z.Zivkovic, “Improved adaptive Gausian mixture model for background subtraction” in 2004 and “Efficient Adaptive Density Estimation per Image Pixel for the Task of Background Subtraction” in 2006. One important feature of this algorithm is that it selects the appropriate number of gaussian distribution for each pixel. (Remember, in last case, we took a K gaussian distributions throughout the algorithm). It provides better adaptibility to varying scenes due illumination changes etc.</p>
+<p>As in previous case, we have to create a background subtractor object. Here, you have an option of selecting whether shadow to be detected or not. If detectShadows = True (which is so by default), it detects and marks shadows, but decreases the speed. Shadows will be marked in gray color.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="sc">&#39;vtest.avi&#39;</span><span class="p">)</span>
+
+<span class="n">fgbg</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">createBackgroundSubtractorMOG2</span><span class="p">()</span>
+
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">fgmask</span> <span class="o">=</span> <span class="n">fgbg</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">fgmask</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>(Results given at the end)</p>
+<p class="rubric">BackgroundSubtractorGMG</p>
+<p>This algorithm combines statistical background image estimation and per-pixel Bayesian segmentation. It was introduced by Andrew B. Godbehere, Akihiro Matsukawa, Ken Goldberg in their paper “Visual Tracking of Human Visitors under Variable-Lighting Conditions for a Responsive Audio Art Installation” in 2012. As per the paper, the system ran a successful interactive audio art installation called “Are We There Yet?” from March 31 - July 31 2011 at the Contemporary Jewish Museum in San Francisco, California.</p>
+<p>It uses first few (120 by default) frames for background modelling. It employs probabilistic foreground segmentation algorithm that identifies possible foreground objects using Bayesian inference. The estimates are adaptive; newer observations are more heavily weighted than old observations to accommodate variable illumination. Several morphological filtering operations like closing and opening are done to remove unwanted noise. You will get a black window during first few frames.</p>
+<p>It would be better to apply morphological opening to the result to remove the noises.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="sc">&#39;vtest.avi&#39;</span><span class="p">)</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">getStructuringElement</span><span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">MORPH_ELLIPSE</span><span class="p">,(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">fgbg</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">createBackgroundSubtractorGMG</span><span class="p">()</span>
+
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">fgmask</span> <span class="o">=</span> <span class="n">fgbg</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">fgmask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">morphologyEx</span><span class="p">(</span><span class="n">fgmask</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">MORPH_OPEN</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">fgmask</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p class="rubric">Results</p>
+<p><strong>Original Frame</strong></p>
+<p>Below image shows the 200th frame of a video</p>
+<img alt="image" src="_images/resframe.jpg" />
+<p><strong>Result of BackgroundSubtractorMOG</strong></p>
+<img alt="image" src="_images/resmog.jpg" />
+<p><strong>Result of BackgroundSubtractorMOG2</strong></p>
+<p>Gray color region shows shadow region.</p>
+<img alt="image" src="_images/resmog2.jpg" />
+<p><strong>Result of BackgroundSubtractorGMG</strong></p>
+<p>Noise is removed with morphological opening.</p>
+<img alt="image" src="_images/resgmg.jpg" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_py_meanshift.html" class="btn btn-neutral float-right" title="Meanshift and Camshift" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_py_table_of_contents_video.html" class="btn btn-neutral float-left" title="Video Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

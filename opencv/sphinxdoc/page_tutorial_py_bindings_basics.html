@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>How OpenCV-Python Bindings Works? &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Video Analysis" href="page_tutorial_py_table_of_contents_video.html" />
+    <link rel="prev" title="OpenCV-Python Bindings" href="page_tutorial_py_table_of_contents_bindings.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_video.html" title="Video Analysis"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_bindings.html" title="OpenCV-Python Bindings"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_bindings.html" accesskey="U">OpenCV-Python Bindings</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_bindings.html"
+                        title="previous chapter">OpenCV-Python Bindings</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_video.html"
+                        title="next chapter">Video Analysis</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-opencv-python-bindings-works">
+<span id="doxid-da-d49-tutorial-py-bindings-basics"></span><span id="index-0"></span><h1>How OpenCV-Python Bindings Works?</h1>
+<p class="rubric">Goal</p>
+<p>Learn:</p>
+<ul class="simple">
+<li>How OpenCV-Python bindings are generated?</li>
+<li>How to extend new OpenCV modules to Python?</li>
+</ul>
+<p class="rubric">How OpenCV-Python bindings are generated?</p>
+<p>In OpenCV, all algorithms are implemented in C++. But these algorithms can be used from different languages like Python, Java etc. This is made possible by the bindings generators. These generators create a bridge between C++ and Python which enables users to call C++ functions from Python. To get a complete picture of what is happening in background, a good knowledge of Python/C API is required. A simple example on extending C++ functions to Python can be found in official Python documentation[1]. So extending all functions in OpenCV to Python by writing their wrapper functions manually is a time-consuming task. So OpenCV does it in a more intelligent way. OpenCV generates these wrapper functions automatically from the C++ headers using some Python scripts which are located in modules/python/src2. We will look into what they do.</p>
+<p>First, modules/python/CMakeFiles.txt is a CMake script which checks the modules to be extended to Python. It will automatically check all the modules to be extended and grab their header files. These header files contain list of all classes, functions, constants etc. for that particular modules.</p>
+<p>Second, these header files are passed to a Python script, modules/python/src2/gen2.py. This is the Python bindings generator script. It calls another Python script modules/python/src2/hdr_parser.py. This is the header parser script. This header parser splits the complete header file into small Python lists. So these lists contain all details about a particular function, class etc. For example, a function will be parsed to get a list containing function name, return type, input arguments, argument types etc. Final list contains details of all the functions, structs, classes etc. in that header file.</p>
+<p>But header parser doesn’t parse all the functions/classes in the header file. The developer has to specify which functions should be exported to Python. For that, there are certain macros added to the beginning of these declarations which enables the header parser to identify functions to be parsed. These macros are added by the developer who programs the particular function. In short, the developer decides which functions should be extended to Python and which are not. Details of those macros will be given in next session.</p>
+<p>So header parser returns a final big list of parsed functions. Our generator script (gen2.py) will create wrapper functions for all the functions/classes/enums/structs parsed by header parser (You can find these header files during compilation in the build/modules/python/ folder as pyopencv_generated_*.h files). But there may be some basic OpenCV datatypes like Mat, Vec4i, Size. They need to be extended manually. For example, a Mat type should be extended to Numpy array, Size should be extended to a tuple of two integers etc. Similarly, there may be some complex structs/classes/functions etc. which need to be extended manually. All such manual wrapper functions are placed in modules/python/src2/cv2.cpp.</p>
+<p>So now only thing left is the compilation of these wrapper files which gives us <strong>cv2</strong> module. So when you call a function, say res = equalizeHist(img1,img2) in Python, you pass two numpy arrays and you expect another numpy array as the output. So these numpy arrays are converted to <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a> and then calls the <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga7e54091f0c937d49bf84152a16f76d6e"><span class="std std-ref">equalizeHist()</span></a> function in C++. Final result, res will be converted back into a Numpy array. So in short, almost all operations are done in C++ which gives us almost same speed as that of C++.</p>
+<p>So this is the basic version of how OpenCV-Python bindings are generated.</p>
+<p class="rubric">How to extend new modules to Python?</p>
+<p>Header parser parse the header files based on some wrapper macros added to function declaration. Enumeration constants don’t need any wrapper macros. They are automatically wrapped. But remaining functions, classes etc. need wrapper macros.</p>
+<p>Functions are extended using CV_EXPORTS_W macro. An example is shown below.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga67ea671a3582ce612ac3c281e067f480"><span class="std std-ref">CV_EXPORTS_W</span></a><span></span> <span class="kt">void</span> <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga7e54091f0c937d49bf84152a16f76d6e"><span class="std std-ref">equalizeHist</span></a><span></span><span class="p">(</span> <span class="n">InputArray</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span> <span class="p">);</span>
+</pre>
+<p>Header parser can understand the input and output arguments from keywords like InputArray, OutputArray etc. But sometimes, we may need to hardcode inputs and outputs. For that, macros like CV_OUT, CV_IN_OUT etc. are used.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga67ea671a3582ce612ac3c281e067f480"><span class="std std-ref">CV_EXPORTS_W</span></a><span></span> <span class="kt">void</span> <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1ga8ce13c24081bbc7151e9326f412190f1"><span class="std std-ref">minEnclosingCircle</span></a><span></span><span class="p">(</span> <span class="n">InputArray</span> <span class="n">points</span><span class="p">,</span>
+                                     <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga4e999bc21cb894d3ed789f3f0bc26778"><span class="std std-ref">CV_OUT</span></a><span></span> <span class="n">Point2f</span><span class="o">&amp;</span> <span class="n">center</span><span class="p">,</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga4e999bc21cb894d3ed789f3f0bc26778"><span class="std std-ref">CV_OUT</span></a><span></span> <span class="kt">float</span><span class="o">&amp;</span> <span class="n">radius</span> <span class="p">);</span>
+</pre>
+<p>For large classes also, CV_EXPORTS_W is used. To extend class methods, CV_WRAP is used. Similarly, CV_PROP is used for class fields.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">class</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga67ea671a3582ce612ac3c281e067f480"><span class="std std-ref">CV_EXPORTS_W</span></a><span></span> <span class="nl">CLAHE</span> <span class="p">:</span> <span class="k">public</span> <span class="n">Algorithm</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae435babf3ce7cca990524b23adf6b4a3"><span class="std std-ref">CV_WRAP</span></a><span></span> <span class="k">virtual</span> <span class="kt">void</span> <span class="n">apply</span><span class="p">(</span><span class="n">InputArray</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae435babf3ce7cca990524b23adf6b4a3"><span class="std std-ref">CV_WRAP</span></a><span></span> <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">setClipLimit</span><span class="p">(</span><span class="kt">double</span> <span class="n">clipLimit</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae435babf3ce7cca990524b23adf6b4a3"><span class="std std-ref">CV_WRAP</span></a><span></span> <span class="k">virtual</span> <span class="kt">double</span> <span class="nf">getClipLimit</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>Overloaded functions can be extended using CV_EXPORTS_AS. But we need to pass a new name so that each function will be called by that name in Python. Take the case of integral function below. Three functions are available, so each one is named with a suffix in Python. Similarly CV_WRAP_AS can be used to wrap overloaded methods.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga67ea671a3582ce612ac3c281e067f480"><span class="std std-ref">CV_EXPORTS_W</span></a><span></span> <span class="kt">void</span> <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga78d53bcbe1710d0f7034e89fd0d43259"><span class="std std-ref">integral</span></a><span></span><span class="p">(</span> <span class="n">InputArray</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sum</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sdepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga288d5d11e4d8675aab962ec2b2066855"><span class="std std-ref">CV_EXPORTS_AS</span></a><span></span><span class="p">(</span><span class="n">integral2</span><span class="p">)</span> <span class="kt">void</span> <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga78d53bcbe1710d0f7034e89fd0d43259"><span class="std std-ref">integral</span></a><span></span><span class="p">(</span> <span class="n">InputArray</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sum</span><span class="p">,</span>
+                                        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sqsum</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sdepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sqdepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga288d5d11e4d8675aab962ec2b2066855"><span class="std std-ref">CV_EXPORTS_AS</span></a><span></span><span class="p">(</span><span class="n">integral3</span><span class="p">)</span> <span class="kt">void</span> <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga78d53bcbe1710d0f7034e89fd0d43259"><span class="std std-ref">integral</span></a><span></span><span class="p">(</span> <span class="n">InputArray</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sum</span><span class="p">,</span>
+                                        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sqsum</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">tilted</span><span class="p">,</span>
+                                        <span class="kt">int</span> <span class="n">sdepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sqdepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+</pre>
+<p>Small classes/structs are extended using CV_EXPORTS_W_SIMPLE. These structs are passed by value to C++ functions. Examples are KeyPoint, Match etc. Their methods are extended by CV_WRAP and fields are extended by CV_PROP_RW.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">class</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga13d649e3f5582a106caaa98f187dd34b"><span class="std std-ref">CV_EXPORTS_W_SIMPLE</span></a><span></span> <span class="n">DMatch</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae435babf3ce7cca990524b23adf6b4a3"><span class="std std-ref">CV_WRAP</span></a><span></span> <span class="n">DMatch</span><span class="p">();</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae435babf3ce7cca990524b23adf6b4a3"><span class="std std-ref">CV_WRAP</span></a><span></span> <span class="n">DMatch</span><span class="p">(</span><span class="kt">int</span> <span class="n">_queryIdx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">_trainIdx</span><span class="p">,</span> <span class="kt">float</span> <span class="n">_distance</span><span class="p">);</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae435babf3ce7cca990524b23adf6b4a3"><span class="std std-ref">CV_WRAP</span></a><span></span> <span class="n">DMatch</span><span class="p">(</span><span class="kt">int</span> <span class="n">_queryIdx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">_trainIdx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">_imgIdx</span><span class="p">,</span> <span class="kt">float</span> <span class="n">_distance</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">int</span> <span class="n">queryIdx</span><span class="p">;</span> <span class="c1">// query descriptor index</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">int</span> <span class="n">trainIdx</span><span class="p">;</span> <span class="c1">// train descriptor index</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">int</span> <span class="n">imgIdx</span><span class="p">;</span>   <span class="c1">// train image index</span>
+
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">float</span> <span class="n">distance</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<p>Some other small classes/structs can be exported using CV_EXPORTS_W_MAP where it is exported to a Python native dictionary. Moments() is an example of it.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">class</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaff7195942cab00fc5eafdd8ed777fac5"><span class="std std-ref">CV_EXPORTS_W_MAP</span></a><span></span> <span class="n">Moments</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">double</span>  <span class="n">m00</span><span class="p">,</span> <span class="n">m10</span><span class="p">,</span> <span class="n">m01</span><span class="p">,</span> <span class="n">m20</span><span class="p">,</span> <span class="n">m11</span><span class="p">,</span> <span class="n">m02</span><span class="p">,</span> <span class="n">m30</span><span class="p">,</span> <span class="n">m21</span><span class="p">,</span> <span class="n">m12</span><span class="p">,</span> <span class="n">m03</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">double</span>  <span class="n">mu20</span><span class="p">,</span> <span class="n">mu11</span><span class="p">,</span> <span class="n">mu02</span><span class="p">,</span> <span class="n">mu30</span><span class="p">,</span> <span class="n">mu21</span><span class="p">,</span> <span class="n">mu12</span><span class="p">,</span> <span class="n">mu03</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga9e800d960e0fc30e7f83c67c98e69ed2"><span class="std std-ref">CV_PROP_RW</span></a><span></span> <span class="kt">double</span>  <span class="n">nu20</span><span class="p">,</span> <span class="n">nu11</span><span class="p">,</span> <span class="n">nu02</span><span class="p">,</span> <span class="n">nu30</span><span class="p">,</span> <span class="n">nu21</span><span class="p">,</span> <span class="n">nu12</span><span class="p">,</span> <span class="n">nu03</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<p>So these are the major extension macros available in OpenCV. Typically, a developer has to put proper macros in their appropriate positions. Rest is done by generator scripts. Sometimes, there may be an exceptional cases where generator scripts cannot create the wrappers. Such functions need to be handled manually, to do this write your own pyopencv_*.hpp extending headers and put them into misc/python subdirectory of your module. But most of the time, a code written according to OpenCV coding guidelines will be automatically wrapped by generator scripts.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_video.html" title="Video Analysis"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_bindings.html" title="OpenCV-Python Bindings"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_bindings.html" >OpenCV-Python Bindings</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

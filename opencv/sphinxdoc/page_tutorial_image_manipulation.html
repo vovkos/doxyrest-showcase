@@ -1,0 +1,201 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>OpenCV iOS - Image Processing &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OpenCV iOS - Video Processing" href="page_tutorial_video_processing.html" />
+    <link rel="prev" title="OpenCV iOS" href="page_tutorial_table_of_content_ios.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_video_processing.html" title="OpenCV iOS - Video Processing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_ios.html" title="OpenCV iOS"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_ios.html" accesskey="U">OpenCV iOS</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_ios.html"
+                        title="previous chapter">OpenCV iOS</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_video_processing.html"
+                        title="next chapter">OpenCV iOS - Video Processing</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="opencv-ios-image-processing">
+<span id="doxid-d3-def-tutorial-image-manipulation"></span><span id="index-0"></span><h1>OpenCV iOS - Image Processing</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial we will learn how to do basic image processing using OpenCV in iOS.</p>
+<p class="rubric">Introduction</p>
+<p>In <em>OpenCV</em> all the image processing operations are usually carried out on the <em>Mat</em> structure. In iOS however, to render an image on screen it have to be an instance of the <em>UIImage</em> class. To convert an <em>OpenCV Mat</em> to an <em>UIImage</em> we use the <em>Core Graphics</em> framework available in iOS. Below is the code needed to covert back and forth between Mat’s and UIImage’s.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span> <span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="o">::</span><span class="n">Mat</span><span class="p">)</span><span class="nl">cvMatFromUIImage</span><span class="p">:(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="n">image</span>
+<span class="p">{</span>
+  <span class="n">CGColorSpaceRef</span> <span class="n">colorSpace</span> <span class="o">=</span> <span class="n">CGImageGetColorSpace</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">CGImage</span><span class="p">);</span>
+  <span class="n">CGFloat</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
+  <span class="n">CGFloat</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4519ad2827f771db8260c61207b782df"><span class="std std-ref">CV_8UC4</span></a><span></span><span class="p">);</span> <span class="c1">// 8 bits per component, 4 channels (color channels + alpha)</span>
+
+  <span class="n">CGContextRef</span> <span class="n">contextRef</span> <span class="o">=</span> <span class="n">CGBitmapContextCreate</span><span class="p">(</span><a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">.</span><a class="reference internal" href="struct_CvMat.html#doxid-d6-dda-struct-cv-mat-1ac7caba321cf1d2512b0d11ccc6bd3df4"><span class="std std-ref">data</span></a><span></span><span class="p">,</span>                 <span class="c1">// Pointer to  data</span>
+                                                 <span class="n">cols</span><span class="p">,</span>                       <span class="c1">// Width of bitmap</span>
+                                                 <span class="n">rows</span><span class="p">,</span>                       <span class="c1">// Height of bitmap</span>
+                                                 <span class="mi">8</span><span class="p">,</span>                          <span class="c1">// Bits per component</span>
+                                                 <a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">.</span><a class="reference internal" href="struct_CvMat.html#doxid-d6-dda-struct-cv-mat-1a79ac05ef6fed1529e6d4b444c7c5234c"><span class="std std-ref">step</span></a><span></span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>              <span class="c1">// Bytes per row</span>
+                                                 <span class="n">colorSpace</span><span class="p">,</span>                 <span class="c1">// Colorspace</span>
+                                                 <span class="n">kCGImageAlphaNoneSkipLast</span> <span class="o">|</span>
+                                                 <span class="n">kCGBitmapByteOrderDefault</span><span class="p">);</span> <span class="c1">// Bitmap info flags</span>
+
+  <span class="n">CGContextDrawImage</span><span class="p">(</span><span class="n">contextRef</span><span class="p">,</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">rows</span><span class="p">),</span> <span class="n">image</span><span class="p">.</span><span class="n">CGImage</span><span class="p">);</span>
+  <span class="n">CGContextRelease</span><span class="p">(</span><span class="n">contextRef</span><span class="p">);</span>
+
+  <span class="k">return</span> <a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span> <span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="o">::</span><span class="n">Mat</span><span class="p">)</span><span class="nl">cvMatGrayFromUIImage</span><span class="p">:(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="n">image</span>
+<span class="p">{</span>
+  <span class="n">CGColorSpaceRef</span> <span class="n">colorSpace</span> <span class="o">=</span> <span class="n">CGImageGetColorSpace</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">CGImage</span><span class="p">);</span>
+  <span class="n">CGFloat</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
+  <span class="n">CGFloat</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span><span class="p">);</span> <span class="c1">// 8 bits per component, 1 channels</span>
+
+  <span class="n">CGContextRef</span> <span class="n">contextRef</span> <span class="o">=</span> <span class="n">CGBitmapContextCreate</span><span class="p">(</span><a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">.</span><a class="reference internal" href="struct_CvMat.html#doxid-d6-dda-struct-cv-mat-1ac7caba321cf1d2512b0d11ccc6bd3df4"><span class="std std-ref">data</span></a><span></span><span class="p">,</span>                 <span class="c1">// Pointer to data</span>
+                                                 <span class="n">cols</span><span class="p">,</span>                       <span class="c1">// Width of bitmap</span>
+                                                 <span class="n">rows</span><span class="p">,</span>                       <span class="c1">// Height of bitmap</span>
+                                                 <span class="mi">8</span><span class="p">,</span>                          <span class="c1">// Bits per component</span>
+                                                 <a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">.</span><a class="reference internal" href="struct_CvMat.html#doxid-d6-dda-struct-cv-mat-1a79ac05ef6fed1529e6d4b444c7c5234c"><span class="std std-ref">step</span></a><span></span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>              <span class="c1">// Bytes per row</span>
+                                                 <span class="n">colorSpace</span><span class="p">,</span>                 <span class="c1">// Colorspace</span>
+                                                 <span class="n">kCGImageAlphaNoneSkipLast</span> <span class="o">|</span>
+                                                 <span class="n">kCGBitmapByteOrderDefault</span><span class="p">);</span> <span class="c1">// Bitmap info flags</span>
+
+  <span class="n">CGContextDrawImage</span><span class="p">(</span><span class="n">contextRef</span><span class="p">,</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">rows</span><span class="p">),</span> <span class="n">image</span><span class="p">.</span><span class="n">CGImage</span><span class="p">);</span>
+  <span class="n">CGContextRelease</span><span class="p">(</span><span class="n">contextRef</span><span class="p">);</span>
+
+  <span class="k">return</span> <a class="reference internal" href="group_core_c.html#doxid-d2-df8-group-core-c-1ga079f05560fccce67a652486159e74eed"><span class="std std-ref">cvMat</span></a><span></span><span class="p">;</span>
+ <span class="p">}</span>
+</pre>
+<p>After the processing we need to convert it back to UIImage. The code below can handle both gray-scale and color image conversions (determined by the number of channels in the <em>if</em> statement).</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">greyMat</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cv::cvtColor</span></a><span></span><span class="p">(</span><span class="n">inputMat</span><span class="p">,</span> <span class="n">greyMat</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span><span class="p">);</span>
+</pre>
+<p>After the processing we need to convert it back to UIImage.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span><span class="p">(</span><span class="n">UIImage</span> <span class="o">*</span><span class="p">)</span><span class="nl">UIImageFromCVMat</span><span class="p">:(</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="o">::</span><span class="n">Mat</span><span class="p">)</span><span class="n">cvMat</span>
+<span class="p">{</span>
+  <span class="n">NSData</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSData</span> <span class="nl">dataWithBytes</span><span class="p">:</span><span class="n">cvMat</span><span class="p">.</span><span class="n">data</span> <span class="nl">length</span><span class="p">:</span><span class="n">cvMat</span><span class="p">.</span><span class="n">elemSize</span><span class="p">()</span><span class="o">*</span><span class="n">cvMat</span><span class="p">.</span><span class="n">total</span><span class="p">()];</span>
+  <span class="n">CGColorSpaceRef</span> <span class="n">colorSpace</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">cvMat</span><span class="p">.</span><span class="n">elemSize</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">colorSpace</span> <span class="o">=</span> <span class="n">CGColorSpaceCreateDeviceGray</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">colorSpace</span> <span class="o">=</span> <span class="n">CGColorSpaceCreateDeviceRGB</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="n">CGDataProviderRef</span> <span class="n">provider</span> <span class="o">=</span> <span class="n">CGDataProviderCreateWithCFData</span><span class="p">((</span><span class="n">__bridge</span> <span class="n">CFDataRef</span><span class="p">)</span><span class="n">data</span><span class="p">);</span>
+
+  <span class="c1">// Creating CGImage from cv::Mat</span>
+  <span class="n">CGImageRef</span> <span class="n">imageRef</span> <span class="o">=</span> <span class="n">CGImageCreate</span><span class="p">(</span><span class="n">cvMat</span><span class="p">.</span><span class="n">cols</span><span class="p">,</span>                                 <span class="c1">//width</span>
+                                     <span class="n">cvMat</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span>                                 <span class="c1">//height</span>
+                                     <span class="mi">8</span><span class="p">,</span>                                          <span class="c1">//bits per component</span>
+                                     <span class="mi">8</span> <span class="o">*</span> <span class="n">cvMat</span><span class="p">.</span><span class="n">elemSize</span><span class="p">(),</span>                       <span class="c1">//bits per pixel</span>
+                                     <span class="n">cvMat</span><span class="p">.</span><span class="n">step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>                            <span class="c1">//bytesPerRow</span>
+                                     <span class="n">colorSpace</span><span class="p">,</span>                                 <span class="c1">//colorspace</span>
+                                     <span class="n">kCGImageAlphaNone</span><span class="o">|</span><span class="n">kCGBitmapByteOrderDefault</span><span class="p">,</span><span class="c1">// bitmap info</span>
+                                     <span class="n">provider</span><span class="p">,</span>                                   <span class="c1">//CGDataProviderRef</span>
+                                     <span class="nb">NULL</span><span class="p">,</span>                                       <span class="c1">//decode</span>
+                                     <span class="nb">false</span><span class="p">,</span>                                      <span class="c1">//should interpolate</span>
+                                     <span class="n">kCGRenderingIntentDefault</span>                   <span class="c1">//intent</span>
+                                     <span class="p">);</span>
+
+
+  <span class="c1">// Getting UIImage from CGImage</span>
+  <span class="n">UIImage</span> <span class="o">*</span><span class="n">finalImage</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIImage</span> <span class="nl">imageWithCGImage</span><span class="p">:</span><span class="n">imageRef</span><span class="p">];</span>
+  <span class="n">CGImageRelease</span><span class="p">(</span><span class="n">imageRef</span><span class="p">);</span>
+  <span class="n">CGDataProviderRelease</span><span class="p">(</span><span class="n">provider</span><span class="p">);</span>
+  <span class="n">CGColorSpaceRelease</span><span class="p">(</span><span class="n">colorSpace</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">finalImage</span><span class="p">;</span>
+ <span class="p">}</span>
+</pre>
+<p class="rubric">Output</p>
+<img alt="_images/output.jpg" src="_images/output.jpg" />
+<p>Check out an instance of running code with more Image Effects on <a class="reference external" href="http://www.youtube.com/watch?v=Ko3K_xdhJ1I">YouTube</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_video_processing.html" title="OpenCV iOS - Video Processing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_ios.html" title="OpenCV iOS"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_ios.html" >OpenCV iOS</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Harris Corner Detection &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction to SIFT (Scale-Invariant Feature Transform)" href="page_tutorial_py_sift_intro.html" />
+    <link rel="prev" title="Feature Matching + Homography to find Objects" href="page_tutorial_py_feature_homography.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_sift_intro.html" title="Introduction to SIFT (Scale-Invariant Feature Transform)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_feature_homography.html" title="Feature Matching + Homography to find Objects"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" accesskey="U">Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_feature_homography.html"
+                        title="previous chapter">Feature Matching + Homography to find Objects</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_sift_intro.html"
+                        title="next chapter">Introduction to SIFT (Scale-Invariant Feature Transform)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="harris-corner-detection">
+<span id="doxid-dc-d0d-tutorial-py-features-harris"></span><span id="index-0"></span><h1>Harris Corner Detection</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will understand the concepts behind Harris Corner Detection.</li>
+<li>We will see the functions: <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cv2.cornerHarris()</span></a>, <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga354e0d7c86d0d9da75de9b9701a9a87e"><span class="std std-ref">cv2.cornerSubPix()</span></a></li>
+</ul>
+<p class="rubric">Theory</p>
+<p>In last chapter, we saw that corners are regions in the image with large variation in intensity in all the directions. One early attempt to find these corners was done by <strong>Chris Harris &amp; Mike Stephens</strong> in their paper <strong>A Combined Corner and Edge Detector</strong> in 1988, so now it is called Harris Corner Detector. He took this simple idea to a mathematical form. It basically finds the difference in intensity for a displacement of <span class="math notranslate nohighlight">\((u,v)\)</span> in all directions. This is expressed as below:</p>
+<div class="math notranslate nohighlight">
+\[E(u,v) = \sum_{x,y} \underbrace{w(x,y)}_\text{window function} \, [\underbrace{I(x+u,y+v)}_\text{shifted intensity}-\underbrace{I(x,y)}_\text{intensity}]^2\]</div>
+<p>Window function is either a rectangular window or gaussian window which gives weights to pixels underneath.</p>
+<p>We have to maximize this function <span class="math notranslate nohighlight">\(E(u,v)\)</span> for corner detection. That means, we have to maximize the second term. Applying Taylor Expansion to above equation and using some mathematical steps (please refer any standard text books you like for full derivation), we get the final equation as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}E(u,v) \approx \begin{bmatrix} u &amp; v \end{bmatrix} M \begin{bmatrix} u \\ v \end{bmatrix}\end{split}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M = \sum_{x,y} w(x,y) \begin{bmatrix}I_x I_x &amp; I_x I_y \\ I_x I_y &amp; I_y I_y \end{bmatrix}\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(I_x\)</span> and <span class="math notranslate nohighlight">\(I_y\)</span> are image derivatives in x and y directions respectively. (Can be easily found out using <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">cv2.Sobel()</span></a>).</p>
+<p>Then comes the main part. After this, they created a score, basically an equation, which will determine if a window can contain a corner or not.</p>
+<div class="math notranslate nohighlight">
+\[R = det(M) - k(trace(M))^2\]</div>
+<p>where</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(det(M) = \lambda_1 \lambda_2\)</span></li>
+<li><span class="math notranslate nohighlight">\(trace(M) = \lambda_1 + \lambda_2\)</span></li>
+<li><span class="math notranslate nohighlight">\(\lambda_1\)</span> and <span class="math notranslate nohighlight">\(\lambda_2\)</span> are the eigen values of M</li>
+</ul>
+<p>So the values of these eigen values decide whether a region is corner, edge or flat.</p>
+<ul class="simple">
+<li>When <span class="math notranslate nohighlight">\(|R|\)</span> is small, which happens when <span class="math notranslate nohighlight">\(\lambda_1\)</span> and <span class="math notranslate nohighlight">\(\lambda_2\)</span> are small, the region is flat.</li>
+<li>When <span class="math notranslate nohighlight">\(R&lt;0\)</span>, which happens when <span class="math notranslate nohighlight">\(\lambda_1 &gt;&gt; \lambda_2\)</span> or vice versa, the region is edge.</li>
+<li>When <span class="math notranslate nohighlight">\(R\)</span> is large, which happens when <span class="math notranslate nohighlight">\(\lambda_1\)</span> and <span class="math notranslate nohighlight">\(\lambda_2\)</span> are large and <span class="math notranslate nohighlight">\(\lambda_1 \sim \lambda_2\)</span>, the region is a corner.</li>
+</ul>
+<p>It can be represented in a nice picture as follows:</p>
+<img alt="image" src="_images/harris_region.jpg" />
+<p>So the result of Harris Corner Detection is a grayscale image with these scores. Thresholding for a suitable give you the corners in the image. We will do it with a simple image.</p>
+<p class="rubric">Harris Corner Detector in OpenCV</p>
+<p>OpenCV has the function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cv2.cornerHarris()</span></a> for this purpose. Its arguments are :</p>
+<ul class="simple">
+<li><strong>img</strong> - Input image, it should be grayscale and float32 type.</li>
+<li><strong>blockSize</strong> - It is the size of neighbourhood considered for corner detection</li>
+<li><strong>ksize</strong> - Aperture parameter of Sobel derivative used.</li>
+<li><strong>k</strong> - Harris detector free parameter in the equation.</li>
+</ul>
+<p>See the example below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="sc">&#39;chessboard.png&#39;</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+<span class="n">gray</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cornerHarris</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">0.04</span><span class="p">)</span>
+
+<span class="cp">#result is dilated for marking the corners, not important</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+
+<span class="cp"># Threshold for an optimal value, it may vary depending on the image.</span>
+<span class="n">img</span><span class="p">[</span><span class="n">dst</span><span class="o">&gt;</span><span class="mf">0.01</span><span class="o">*</span><span class="n">dst</span><span class="p">.</span><span class="n">max</span><span class="p">()]</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">]</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;dst&#39;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>Below are the three results:</p>
+<img alt="image" src="_images/harris_result.jpg" />
+<p class="rubric">Corner with SubPixel Accuracy</p>
+<p>Sometimes, you may need to find the corners with maximum accuracy. OpenCV comes with a function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga354e0d7c86d0d9da75de9b9701a9a87e"><span class="std std-ref">cv2.cornerSubPix()</span></a> which further refines the corners detected with sub-pixel accuracy. Below is an example. As usual, we need to find the harris corners first. Then we pass the centroids of these corners (There may be a bunch of pixels at a corner, we take their centroid) to refine them. Harris corners are marked in red pixels and refined corners are marked in green pixels. For this function, we have to define the criteria when to stop the iteration. We stop it after a specified number of iteration or a certain accuracy is achieved, whichever occurs first. We also need to define the size of neighbourhood it would search for corners.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="sc">&#39;chessboard2.jpg&#39;</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+<span class="cp"># find Harris corners</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cornerHarris</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">0.04</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="mf">0.01</span><span class="o">*</span><span class="n">dst</span><span class="p">.</span><span class="n">max</span><span class="p">(),</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+
+<span class="cp"># find centroids</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">connectedComponentsWithStats</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+
+<span class="cp"># define the criteria to stop and refine the corners</span>
+<span class="n">criteria</span> <span class="o">=</span> <span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_EPS</span> <span class="o">+</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_MAX_ITER</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+<span class="n">corners</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cornerSubPix</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">(</span><span class="n">centroids</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">criteria</span><span class="p">)</span>
+
+<span class="cp"># Now draw them</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">centroids</span><span class="p">,</span><span class="n">corners</span><span class="p">))</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">int0</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="n">img</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">]</span>
+<span class="n">img</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;subpixel5.png&#39;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
+</pre>
+<p>Below is the result, where some important locations are shown in zoomed window to visualize:</p>
+<img alt="image" src="_images/subpixel3.png" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_sift_intro.html" title="Introduction to SIFT (Scale-Invariant Feature Transform)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_feature_homography.html" title="Feature Matching + Homography to find Objects"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" >Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

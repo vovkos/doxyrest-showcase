@@ -1,0 +1,258 @@
+.. index:: pair: page; High level stitching API (Stitcher class)
+.. _doxid-d8/d19/tutorial_stitcher:
+
+High level stitching API (Stitcher class)
+=========================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* use the high-level stitching API for stitching provided by
+  
+  * :ref:`cv::Stitcher <doxid-d7/d79/classcv_1_1_stitcher>`
+
+* learn how to use preconfigured Stitcher configurations to stitch images using different camera models.
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/samples/cpp/stitching.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	/*M///////////////////////////////////////////////////////////////////////////////////////
+	//
+	//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+	//
+	//  By downloading, copying, installing or using the software you agree to this license.
+	//  If you do not agree to this license, do not download, install,
+	//  copy or use the software.
+	//
+	//
+	//                          License Agreement
+	//                For Open Source Computer Vision Library
+	//
+	// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
+	// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+	// Third party copyrights are property of their respective owners.
+	//
+	// Redistribution and use in source and binary forms, with or without modification,
+	// are permitted provided that the following conditions are met:
+	//
+	//   * Redistribution's of source code must retain the above copyright notice,
+	//     this list of conditions and the following disclaimer.
+	//
+	//   * Redistribution's in binary form must reproduce the above copyright notice,
+	//     this list of conditions and the following disclaimer in the documentation
+	//     and/or other materials provided with the distribution.
+	//
+	//   * The name of the copyright holders may not be used to endorse or promote products
+	//     derived from this software without specific prior written permission.
+	//
+	// This software is provided by the copyright holders and contributors "as is" and
+	// any express or implied warranties, including, but not limited to, the implied
+	// warranties of merchantability and fitness for a particular purpose are disclaimed.
+	// In no event shall the Intel Corporation or contributors be liable for any direct,
+	// indirect, incidental, special, exemplary, or consequential damages
+	// (including, but not limited to, procurement of substitute goods or services;
+	// loss of use, data, or profits; or business interruption) however caused
+	// and on any theory of liability, whether in contract, strict liability,
+	// or tort (including negligence or otherwise) arising in any way out of
+	// the use of this software, even if advised of the possibility of such damage.
+	//
+	//M*/
+	
+	#include <iostream>
+	#include <fstream>
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/stitching.hpp"
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	bool try_use_gpu = false;
+	:ref:`Stitcher::Mode <doxid-d7/d79/classcv_1_1_stitcher_1a114713924ec05a0309f4df7e918c0324>` mode = Stitcher::PANORAMA;
+	vector<Mat> imgs;
+	string result_name = "result.jpg";
+	
+	void printUsage();
+	int parseCmdArgs(int argc, char** argv);
+	
+	int main(int argc, char* argv[])
+	{
+	    int retval = parseCmdArgs(argc, argv);
+	    if (retval) return -1;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` pano;
+	    :ref:`Ptr\<Stitcher> <doxid-d2/d56/structcv_1_1_ptr>` stitcher = Stitcher::create(mode, try_use_gpu);
+	    :ref:`Stitcher::Status <doxid-d7/d79/classcv_1_1_stitcher_1a507409ce9435dd89857469d12ec06b45>` status = stitcher->:ref:`stitch <doxid-d7/d79/classcv_1_1_stitcher_1a37ee5bacf229e9d0fb9f97c8f5ed1acd>`(imgs, pano);
+	
+	    if (status != Stitcher::OK)
+	    {
+	        cout << "Can't stitch images, error code = " << int(status) << endl;
+	        return -1;
+	    }
+	
+	    :ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`(result_name, pano);
+	    return 0;
+	}
+	
+	
+	void printUsage()
+	{
+	    cout <<
+	        "Images stitcher.\n\n"
+	        "stitching img1 img2 [...imgN]\n\n"
+	        "Flags:\n"
+	        "  --try_use_gpu (yes|no)\n"
+	        "      Try to use GPU. The default value is 'no'. All default values\n"
+	        "      are for CPU mode.\n"
+	        "  --mode (panorama|scans)\n"
+	        "      Determines configuration of stitcher. The default is 'panorama',\n"
+	        "      mode suitable for creating photo panoramas. Option 'scans' is suitable\n"
+	        "      for stitching materials under affine transformation, such as scans.\n"
+	        "  --output <result_img>\n"
+	        "      The default is 'result.jpg'.\n";
+	}
+	
+	
+	int parseCmdArgs(int argc, char** argv)
+	{
+	    if (argc == 1)
+	    {
+	        printUsage();
+	        return -1;
+	    }
+	    for (int i = 1; i < argc; ++i)
+	    {
+	        if (string(argv[i]) == "--help" || string(argv[i]) == "/?")
+	        {
+	            printUsage();
+	            return -1;
+	        }
+	        else if (string(argv[i]) == "--try_use_gpu")
+	        {
+	            if (string(argv[i + 1]) == "no")
+	                try_use_gpu = false;
+	            else if (string(argv[i + 1]) == "yes")
+	                try_use_gpu = true;
+	            else
+	            {
+	                cout << "Bad --try_use_gpu flag value\n";
+	                return -1;
+	            }
+	            i++;
+	        }
+	        else if (string(argv[i]) == "--output")
+	        {
+	            result_name = argv[i + 1];
+	            i++;
+	        }
+	        else if (string(argv[i]) == "--mode")
+	        {
+	            if (string(argv[i + 1]) == "panorama")
+	                mode = Stitcher::PANORAMA;
+	            else if (string(argv[i + 1]) == "scans")
+	                mode = Stitcher::SCANS;
+	            else
+	            {
+	                cout << "Bad --mode flag value\n";
+	                return -1;
+	            }
+	            i++;
+	        }
+	        else
+	        {
+	            :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[i]);
+	            if (img.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`())
+	            {
+	                cout << "Can't read image '" << argv[i] << "'\n";
+	                return -1;
+	            }
+	            imgs.push_back(img);
+	        }
+	    }
+	    return 0;
+	}
+
+.. rubric:: Explanation
+
+The most important code part is:
+
+.. ref-code-block:: cpp
+
+	Mat pano;
+	Ptr<Stitcher> stitcher = Stitcher::create(mode, try_use_gpu);
+	Stitcher::Status status = stitcher->stitch(imgs, pano);
+	
+	if (status != Stitcher::OK)
+	{
+	    cout << "Can't stitch images, error code = " << int(status) << endl;
+	    return -1;
+	}
+
+A new instance of stitcher is created and the :ref:`cv::Stitcher::stitch <doxid-d7/d79/classcv_1_1_stitcher_1a37ee5bacf229e9d0fb9f97c8f5ed1acd>` will do all the hard work.
+
+:ref:`cv::Stitcher::create <doxid-d7/d79/classcv_1_1_stitcher_1acb32106b3b3e7870d4b39082ab58a26e>` can create stitcher in one of the predefined configurations (argument ``mode``). See :ref:`cv::Stitcher::Mode <doxid-d7/d79/classcv_1_1_stitcher_1a114713924ec05a0309f4df7e918c0324>` for details. These configurations will setup multiple stitcher properties to operate in one of predefined scenarios. After you create stitcher in one of predefined configurations you can adjust stitching by setting any of the stitcher properties.
+
+If you have cuda device :ref:`cv::Stitcher <doxid-d7/d79/classcv_1_1_stitcher>` can be configured to offload certain operations to GPU. If you prefer this configuration set ``try_use_gpu`` to true. OpenCL acceleration will be used transparently based on global OpenCV settings regardless of this flag.
+
+Stitching might fail for several reasons, you should always check if everything went good and resulting pano is stored in ``pano``. See :ref:`cv::Stitcher::Status <doxid-d7/d79/classcv_1_1_stitcher_1a507409ce9435dd89857469d12ec06b45>` documentation for possible error codes.
+
+.. rubric:: Camera models
+
+There are currently 2 camera models implemented in stitching pipeline.
+
+* *Homography model* expecting perspective transformations between images implemented in :ref:`cv::detail::BestOf2NearestMatcher <doxid-d1/d16/classcv_1_1detail_1_1_best_of2_nearest_matcher>` :ref:`cv::detail::HomographyBasedEstimator <doxid-da/d96/classcv_1_1detail_1_1_homography_based_estimator>` :ref:`cv::detail::BundleAdjusterReproj <doxid-d4/d9d/classcv_1_1detail_1_1_bundle_adjuster_reproj>` :ref:`cv::detail::BundleAdjusterRay <doxid-d2/d79/classcv_1_1detail_1_1_bundle_adjuster_ray>`
+
+* *Affine model* expecting affine transformation with 6 DOF or 4 DOF implemented in :ref:`cv::detail::AffineBestOf2NearestMatcher <doxid-d3/dc2/classcv_1_1detail_1_1_affine_best_of2_nearest_matcher>` :ref:`cv::detail::AffineBasedEstimator <doxid-d1/da3/classcv_1_1detail_1_1_affine_based_estimator>` :ref:`cv::detail::BundleAdjusterAffine <doxid-d6/d86/classcv_1_1detail_1_1_bundle_adjuster_affine>` :ref:`cv::detail::BundleAdjusterAffinePartial <doxid-da/d8b/classcv_1_1detail_1_1_bundle_adjuster_affine_partial>` :ref:`cv::AffineWarper <doxid-d2/d53/classcv_1_1_affine_warper>`
+
+Homography model is useful for creating photo panoramas captured by camera, while affine-based model can be used to stitch scans and object captured by specialized devices.
+
+Certain detailed settings of :ref:`cv::Stitcher <doxid-d7/d79/classcv_1_1_stitcher>` might not make sense. Especially you should not mix classes implementing affine model and classes implementing Homography model, as they work with different transformations.
+
+
+
+.. rubric:: Try it out
+
+If you enabled building samples you can found binary under ``build/bin/cpp-example-stitching``. This example is a console application, run it without arguments to see help. ``opencv_extra`` provides some sample data for testing all available configurations.
+
+to try panorama mode run:
+
+.. ref-code-block:: cpp
+
+	./cpp-example-stitching --mode panorama <path to opencv_extra>/testdata/stitching/boat*
+
+
+
+.. image:: boat.jpg
+
+to try scans mode run (dataset from home-grade scanner):
+
+.. ref-code-block:: cpp
+
+	./cpp-example-stitching --mode scans <path to opencv_extra>/testdata/stitching/newspaper*
+
+
+
+.. image:: newspaper.jpg
+
+or (dataset from professional book scanner):
+
+.. ref-code-block:: cpp
+
+	./cpp-example-stitching --mode scans <path to opencv_extra>/testdata/stitching/budapest*
+
+
+
+.. image:: budapest.jpg
+
+Examples above expects POSIX platform, on windows you have to provide all files names explicitly (e.g. ``boat1.jpg`` ``boat2.jpg``...) as windows command line does not support ``*`` expansion.
+
+
+
+.. rubric:: See also
+
+If you want to study internals of the stitching pipeline or you want to experiment with detailed configuration see `stitching_detailed.cpp <https://github.com/opencv/opencv/tree/master/samples/cpp/stitching_detailed.cpp>`__ in ``opencv/samples/cpp`` folder.
+

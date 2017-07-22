@@ -1,0 +1,130 @@
+.. index:: pair: page; Cascade Classifier
+.. _doxid-db/d28/tutorial_cascade_classifier:
+
+Cascade Classifier
+==================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the :ref:`cv::CascadeClassifier <doxid-dd/d5f/classcv_1_1_cascade_classifier>` class to detect objects in a video stream. Particularly, we will use the functions:
+  
+  * :ref:`cv::CascadeClassifier::load <doxid-dd/d5f/classcv_1_1_cascade_classifier_1a1a5884c8cc749422f9eb77c2471958bc>` to load a .xml classifier file. It can be either a Haar or a LBP classifer
+  
+  * :ref:`cv::CascadeClassifier::detectMultiScale <doxid-dd/d5f/classcv_1_1_cascade_classifier_1aaf8181cb63968136476ec4204ffca498>` to perform the detection.
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/objectDetection/objectDetection.cpp>`__
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/objdetect.hpp"
+	#include "opencv2/videoio.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	
+	#include <iostream>
+	#include <stdio.h>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	void detectAndDisplay( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame );
+	
+	:ref:`String <doxid-dc/d0e/classcv_1_1_string>` face_cascade_name, eyes_cascade_name;
+	:ref:`CascadeClassifier <doxid-dd/d5f/classcv_1_1_cascade_classifier>` face_cascade;
+	:ref:`CascadeClassifier <doxid-dd/d5f/classcv_1_1_cascade_classifier>` eyes_cascade;
+	:ref:`String <doxid-dc/d0e/classcv_1_1_string>` window_name = "Capture - Face detection";
+	
+	int main( int argc, const char** argv )
+	{
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv,
+	        "{help h||}"
+	        "{face_cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}"
+	        "{eyes_cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}");
+	
+	    cout << "\nThis program demonstrates using the cv::CascadeClassifier class to detect objects (Face + eyes) in a video stream.\n"
+	            "You can use Haar or LBP features.\n\n";
+	    parser.printMessage();
+	
+	    face_cascade_name = parser.get<string>("face_cascade");
+	    eyes_cascade_name = parser.get<string>("eyes_cascade");
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` capture;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame;
+	
+	    //-- 1. Load the cascades
+	    if( !face_cascade.:ref:`load <doxid-dd/d5f/classcv_1_1_cascade_classifier_1a1a5884c8cc749422f9eb77c2471958bc>`( face_cascade_name ) ){ printf("--(!)Error loading face cascade\n"); return -1; };
+	    if( !eyes_cascade.:ref:`load <doxid-dd/d5f/classcv_1_1_cascade_classifier_1a1a5884c8cc749422f9eb77c2471958bc>`( eyes_cascade_name ) ){ printf("--(!)Error loading eyes cascade\n"); return -1; };
+	
+	    //-- 2. Read the video stream
+	    capture.open( 0 );
+	    if ( ! capture.isOpened() ) { printf("--(!)Error opening video capture\n"); return -1; }
+	
+	    while ( capture.read(frame) )
+	    {
+	        if( frame.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+	        {
+	            printf(" --(!) No captured frame -- Break!");
+	            break;
+	        }
+	
+	        //-- 3. Apply the classifier to the frame
+	        detectAndDisplay( frame );
+	
+	        char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(10);
+	        if( c == 27 ) { break; } // escape
+	    }
+	    return 0;
+	}
+	
+	void detectAndDisplay( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame )
+	{
+	    std::vector<Rect> faces;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame_gray;
+	
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( frame, frame_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+	    :ref:`equalizeHist <doxid-d6/dc7/group__imgproc__hist_1ga7e54091f0c937d49bf84152a16f76d6e>`( frame_gray, frame_gray );
+	
+	    //-- Detect faces
+	    face_cascade.:ref:`detectMultiScale <doxid-dd/d5f/classcv_1_1_cascade_classifier_1aaf8181cb63968136476ec4204ffca498>`( frame_gray, faces, 1.1, 2, 0|:ref:`CASCADE_SCALE_IMAGE <doxid-d5/d54/group__objdetect_1ggaf9da076edb99cf8cb211c313b3f0fbe7a1d35c5234686c05c075d224efc91d673>`, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(30, 30) );
+	
+	    for ( size_t i = 0; i < faces.size(); i++ )
+	    {
+	        Point center( faces[i].x + faces[i].width/2, faces[i].y + faces[i].height/2 );
+	        :ref:`ellipse <doxid-d6/d6e/group__imgproc__draw_1ga28b2267d35786f5f890ca167236cbc69>`( frame, center, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( faces[i].width/2, faces[i].height/2 ), 0, 0, 360, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 255, 0, 255 ), 4, 8, 0 );
+	
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` faceROI = frame_gray( faces[i] );
+	        std::vector<Rect> eyes;
+	
+	        //-- In each face, detect eyes
+	        eyes_cascade.:ref:`detectMultiScale <doxid-dd/d5f/classcv_1_1_cascade_classifier_1aaf8181cb63968136476ec4204ffca498>`( faceROI, eyes, 1.1, 2, 0 |:ref:`CASCADE_SCALE_IMAGE <doxid-d5/d54/group__objdetect_1ggaf9da076edb99cf8cb211c313b3f0fbe7a1d35c5234686c05c075d224efc91d673>`, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(30, 30) );
+	
+	        for ( size_t j = 0; j < eyes.size(); j++ )
+	        {
+	            Point eye_center( faces[i].x + eyes[j].x + eyes[j].width/2, faces[i].y + eyes[j].y + eyes[j].height/2 );
+	            int radius = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( (eyes[j].width + eyes[j].height)*0.25 );
+	            :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( frame, eye_center, radius, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 255, 0, 0 ), 4, 8, 0 );
+	        }
+	    }
+	    //-- Show what you got
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, frame );
+	}
+
+.. rubric:: Explanation
+
+.. rubric:: Result
+
+#. Here is the result of running the code above and using as input the video stream of a build-in webcam:
+   
+   .. image:: Cascade_Classifier_Tutorial_Result_Haar.jpg
+   
+   Be sure the program will find the path of files *haarcascade_frontalface_alt.xml* and *haarcascade_eye_tree_eyeglasses.xml*. They are located in *opencv/data/haarcascades*
+
+#. This is the result of using the file *lbpcascade_frontalface.xml* (LBP trained) for the face detection. For the eyes we keep using the file used in the tutorial.
+   
+   .. image:: Cascade_Classifier_Tutorial_Result_LBP.jpg
+

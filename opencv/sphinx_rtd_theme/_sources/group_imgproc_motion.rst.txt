@@ -1,0 +1,432 @@
+.. index:: pair: group; Motion Analysis and Object Tracking
+.. _doxid-d7/df3/group__imgproc__motion:
+
+Motion Analysis and Object Tracking
+===================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// global functions
+
+	void
+	:ref:`cv::accumulate<doxid-d7/df3/group__imgproc__motion_1ga1a567a79901513811ff3b9976923b199>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	void
+	:ref:`cv::accumulateProduct<doxid-d7/df3/group__imgproc__motion_1ga82518a940ecfda49460f66117ac82520>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	void
+	:ref:`cv::accumulateSquare<doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	void
+	:ref:`cv::accumulateWeighted<doxid-d7/df3/group__imgproc__motion_1ga4f9552b541187f61f6818e8d2d826bc7>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		double alpha,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		);
+
+	void
+	:ref:`cv::createHanningWindow<doxid-d7/df3/group__imgproc__motion_1ga80e5c3de52f6bab3a7c1e60e89308e1b>`(
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` winSize,
+		int type
+		);
+
+	:ref:`Point2d<doxid-dc/d84/group__core__basic_1ga32986d8c6fd05949688352abd112509f>`
+	:ref:`cv::phaseCorrelate<doxid-d7/df3/group__imgproc__motion_1ga552420a2ace9ef3fb053cd630fdb4952>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` window = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		double* response = 0
+		);
+
+.. _details-d7/df3/group__imgproc__motion:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; accumulate
+.. _doxid-d7/df3/group__imgproc__motion_1ga1a567a79901513811ff3b9976923b199:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::accumulate(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Adds an image to the accumulator.
+
+The function adds src or some of its elements to dst :
+
+.. math::
+
+	\texttt{dst} (x,y) \leftarrow \texttt{dst} (x,y) + \texttt{src} (x,y) \quad \text{if} \quad \texttt{mask} (x,y) \ne 0
+
+The function supports multi-channel images. Each channel is processed independently.
+
+The functions accumulate\* can be used, for example, to collect statistics of a scene background viewed by a still camera and for the further foreground-background segmentation.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Input image of type :ref:`CV_8UC(n) <doxid-d1/d1b/group__core__hal__interface_1ga78c5506f62d99edd7e83aba259250394>`, :ref:`CV_16UC(n) <doxid-d1/d1b/group__core__hal__interface_1ga76d22d2e9b90571328923e17f0f8af2a>`, :ref:`CV_32FC(n) <doxid-d1/d1b/group__core__hal__interface_1ga56e67b727727f2f9b73a4b62f0c4b2b5>` or :ref:`CV_64FC(n) <doxid-d1/d1b/group__core__hal__interface_1ga4213eb262159eb6da4edf8c9255e8244>`, where n is a positive integer.
+
+	*
+		- dst
+
+		- Accumulator image with the same number of channels as input image, and a depth of CV_32F or CV_64F.
+
+	*
+		- mask
+
+		- Optional operation mask.
+
+
+
+.. rubric:: See also:
+
+:ref:`accumulateSquare <doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c>`, :ref:`accumulateProduct <doxid-d7/df3/group__imgproc__motion_1ga82518a940ecfda49460f66117ac82520>`, :ref:`accumulateWeighted <doxid-d7/df3/group__imgproc__motion_1ga4f9552b541187f61f6818e8d2d826bc7>`
+
+.. index:: pair: function; accumulateProduct
+.. _doxid-d7/df3/group__imgproc__motion_1ga82518a940ecfda49460f66117ac82520:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::accumulateProduct(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Adds the per-element product of two input images to the accumulator.
+
+The function adds the product of two images or their selected regions to the accumulator dst :
+
+.. math::
+
+	\texttt{dst} (x,y) \leftarrow \texttt{dst} (x,y) + \texttt{src1} (x,y) \cdot \texttt{src2} (x,y) \quad \text{if} \quad \texttt{mask} (x,y) \ne 0
+
+The function supports multi-channel images. Each channel is processed independently.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src1
+
+		- First input image, 1- or 3-channel, 8-bit or 32-bit floating point.
+
+	*
+		- src2
+
+		- Second input image of the same type and the same size as src1 .
+
+	*
+		- dst
+
+		- Accumulator with the same number of channels as input images, 32-bit or 64-bit floating-point.
+
+	*
+		- mask
+
+		- Optional operation mask.
+
+
+
+.. rubric:: See also:
+
+:ref:`accumulate <doxid-d7/df3/group__imgproc__motion_1ga1a567a79901513811ff3b9976923b199>`, :ref:`accumulateSquare <doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c>`, :ref:`accumulateWeighted <doxid-d7/df3/group__imgproc__motion_1ga4f9552b541187f61f6818e8d2d826bc7>`
+
+.. index:: pair: function; accumulateSquare
+.. _doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::accumulateSquare(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Adds the square of a source image to the accumulator.
+
+The function adds the input image src or its selected region, raised to a power of 2, to the accumulator dst :
+
+.. math::
+
+	\texttt{dst} (x,y) \leftarrow \texttt{dst} (x,y) + \texttt{src} (x,y)^2 \quad \text{if} \quad \texttt{mask} (x,y) \ne 0
+
+The function supports multi-channel images. Each channel is processed independently.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Input image as 1- or 3-channel, 8-bit or 32-bit floating point.
+
+	*
+		- dst
+
+		- Accumulator image with the same number of channels as input image, 32-bit or 64-bit floating-point.
+
+	*
+		- mask
+
+		- Optional operation mask.
+
+
+
+.. rubric:: See also:
+
+:ref:`accumulateSquare <doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c>`, :ref:`accumulateProduct <doxid-d7/df3/group__imgproc__motion_1ga82518a940ecfda49460f66117ac82520>`, :ref:`accumulateWeighted <doxid-d7/df3/group__imgproc__motion_1ga4f9552b541187f61f6818e8d2d826bc7>`
+
+.. index:: pair: function; accumulateWeighted
+.. _doxid-d7/df3/group__imgproc__motion_1ga4f9552b541187f61f6818e8d2d826bc7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::accumulateWeighted(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`InputOutputArray<doxid-dc/d84/group__core__basic_1gaf77c9a14ef956c50c1efd4547f444e63>` dst,
+		double alpha,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` mask = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`()
+		)
+
+Updates a running average.
+
+The function calculates the weighted sum of the input image src and the accumulator dst so that dst becomes a running average of a frame sequence:
+
+.. math::
+
+	\texttt{dst} (x,y) \leftarrow (1- \texttt{alpha} ) \cdot \texttt{dst} (x,y) + \texttt{alpha} \cdot \texttt{src} (x,y) \quad \text{if} \quad \texttt{mask} (x,y) \ne 0
+
+That is, alpha regulates the update speed (how fast the accumulator "forgets" about earlier images). The function supports multi-channel images. Each channel is processed independently.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Input image as 1- or 3-channel, 8-bit or 32-bit floating point.
+
+	*
+		- dst
+
+		- Accumulator image with the same number of channels as input image, 32-bit or 64-bit floating-point.
+
+	*
+		- alpha
+
+		- Weight of the input image.
+
+	*
+		- mask
+
+		- Optional operation mask.
+
+
+
+.. rubric:: See also:
+
+:ref:`accumulate <doxid-d7/df3/group__imgproc__motion_1ga1a567a79901513811ff3b9976923b199>`, :ref:`accumulateSquare <doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c>`, :ref:`accumulateProduct <doxid-d7/df3/group__imgproc__motion_1ga82518a940ecfda49460f66117ac82520>`
+
+.. index:: pair: function; createHanningWindow
+.. _doxid-d7/df3/group__imgproc__motion_1ga80e5c3de52f6bab3a7c1e60e89308e1b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::createHanningWindow(
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` winSize,
+		int type
+		)
+
+This function computes a Hanning window coefficients in two dimensions.
+
+See (`http://en.wikipedia.org/wiki/Hann_function <http://en.wikipedia.org/wiki/Hann_function>`__) and (`http://en.wikipedia.org/wiki/Window_function <http://en.wikipedia.org/wiki/Window_function>`__) for more information.
+
+An example is shown below:
+
+.. ref-code-block:: cpp
+
+	// create hanning window of size 100x100 and type CV_32F
+	Mat hann;
+	createHanningWindow(hann, Size(100, 100), CV_32F);
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- dst
+
+		- Destination array to place Hann coefficients in
+
+	*
+		- winSize
+
+		- The window size specifications
+
+	*
+		- type
+
+		- Created array type
+
+.. index:: pair: function; phaseCorrelate
+.. _doxid-d7/df3/group__imgproc__motion_1ga552420a2ace9ef3fb053cd630fdb4952:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Point2d<doxid-dc/d84/group__core__basic_1ga32986d8c6fd05949688352abd112509f>`
+	cv::phaseCorrelate(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src2,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` window = :ref:`noArray<doxid-dc/d84/group__core__basic_1gad9287b23bba2fed753b36ef561ae7346>`(),
+		double* response = 0
+		)
+
+The function is used to detect translational shifts that occur between two images.
+
+The operation takes advantage of the Fourier shift theorem for detecting the translational shift in the frequency domain. It can be used for fast image registration as well as motion estimation. For more information please see `http://en.wikipedia.org/wiki/Phase_correlation <http://en.wikipedia.org/wiki/Phase_correlation>`__
+
+Calculates the cross-power spectrum of two supplied source arrays. The arrays are padded if needed with getOptimalDFTSize.
+
+The function performs the following equations:
+
+* First it applies a Hanning window (see `http://en.wikipedia.org/wiki/Hann_function <http://en.wikipedia.org/wiki/Hann_function>`__) to each image to remove possible edge effects. This window is cached until the array size changes to speed up processing time.
+
+* Next it computes the forward DFTs of each source array:
+  
+  .. math::
+  
+  	\mathbf{G}_a = \mathcal{F}\{src_1\}, \; \mathbf{G}_b = \mathcal{F}\{src_2\}
+  
+  where :math:`\mathcal{F}` is the forward DFT.
+
+* It then computes the cross-power spectrum of each frequency domain array:
+  
+  .. math::
+  
+  	R = \frac{ \mathbf{G}_a \mathbf{G}_b^*}{|\mathbf{G}_a \mathbf{G}_b^*|}
+
+* Next the cross-correlation is converted back into the time domain via the inverse DFT:
+  
+  .. math::
+  
+  	r = \mathcal{F}^{-1}\{R\}
+
+* Finally, it computes the peak location and computes a 5x5 weighted centroid around the peak to achieve sub-pixel accuracy.
+  
+  .. math::
+  
+  	(\Delta x, \Delta y) = \texttt{weightedCentroid} \{\arg \max_{(x, y)}\{r\}\}
+
+* If non-zero, the response parameter is computed as the sum of the elements of r within the 5x5 centroid around the peak location. It is normalized to a maximum of 1 (meaning there is a single peak) and will be smaller when there are multiple peaks.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src1
+
+		- Source floating point array (CV_32FC1 or CV_64FC1)
+
+	*
+		- src2
+
+		- Source floating point array (CV_32FC1 or CV_64FC1)
+
+	*
+		- window
+
+		- Floating point array with windowing coefficients to reduce edge effects (optional).
+
+	*
+		- response
+
+		- Signal power within the 5x5 centroid around the peak, between 0 and 1 (optional).
+
+
+
+.. rubric:: Returns:
+
+detected phase shift (sub-pixel) between the two arrays.
+
+
+
+.. rubric:: See also:
+
+:ref:`dft <doxid-d2/de8/group__core__array_1gadd6cf9baf2b8b704a11b5f04aaf4f39d>`, :ref:`getOptimalDFTSize <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>`, :ref:`idft <doxid-d2/de8/group__core__array_1gaa708aa2d2e57a508f968eb0f69aa5ff1>`, :ref:`mulSpectrums <doxid-d2/de8/group__core__array_1ga3ab38646463c59bf0ce962a9d51db64f>` :ref:`createHanningWindow <doxid-d7/df3/group__imgproc__motion_1ga80e5c3de52f6bab3a7c1e60e89308e1b>`
+

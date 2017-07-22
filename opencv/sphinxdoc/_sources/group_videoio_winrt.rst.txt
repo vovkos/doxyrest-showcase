@@ -1,0 +1,160 @@
+.. index:: pair: group; WinRT glue for video I/O
+.. _doxid-dd/d01/group__videoio__winrt:
+
+WinRT glue for video I/O
+========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// enums
+
+	enum
+	{
+	    :target:`cv::@105::OPEN_CAMERA<doxid-dd/d01/group__videoio__winrt_1ggae253527fb2e417b9157e9c5d5561809fa0138ded351ab41c87d216bf128bcc1b7>`          = 300,
+	    :target:`cv::@105::CLOSE_CAMERA<doxid-dd/d01/group__videoio__winrt_1ggae253527fb2e417b9157e9c5d5561809fa5a4ff95ee598bda6d396d9c2170b2583>`,
+	    :target:`cv::@105::UPDATE_IMAGE_ELEMENT<doxid-dd/d01/group__videoio__winrt_1ggae253527fb2e417b9157e9c5d5561809fa8905331d148c6456bb412654b366886a>`,
+	    :target:`cv::@105::SHOW_TRACKBAR<doxid-dd/d01/group__videoio__winrt_1ggae253527fb2e417b9157e9c5d5561809fac59c8b93c4987d5342beea897023e8e8>`,
+	};
+
+	// global functions
+
+	void
+	:ref:`cv::winrt_imshow<doxid-dd/d01/group__videoio__winrt_1gae38c075896983dfe2de0d6bc5b15ace8>`();
+
+	void
+	:ref:`cv::winrt_onVisibilityChanged<doxid-dd/d01/group__videoio__winrt_1gaf781e41ae34a6993e0c7094bb7d5d6c8>`(bool visible);
+
+	void
+	:ref:`cv::winrt_setFrameContainer<doxid-dd/d01/group__videoio__winrt_1ga1415c645960c00ec5f3878365bf9a348>`(::Windows::UI::Xaml::Controls::Image^ image);
+
+	template <typename ... Args>
+	void
+	:target:`cv::winrt_startMessageLoop<doxid-dd/d01/group__videoio__winrt_1gac0bbefb5e7954d63596698905f20b2ed>`(
+		std::function<void(Args...)>&& callback,
+		Args... args
+		);
+
+	template <typename ... Args>
+	void
+	:target:`cv::winrt_startMessageLoop<doxid-dd/d01/group__videoio__winrt_1ga029eab168c861bcb6f10802de9150d66>`(
+		void  callback Args...,
+		Args... args
+		);
+
+	template void
+	:ref:`cv::winrt_startMessageLoop<doxid-dd/d01/group__videoio__winrt_1ga1d21b5d97771470f128859c8bc648f87>`(void  callback void);
+
+.. _details-dd/d01/group__videoio__winrt:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; winrt_imshow
+.. _doxid-dd/d01/group__videoio__winrt_1gae38c075896983dfe2de0d6bc5b15ace8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::winrt_imshow()
+
+Must be called to update attached image source. Code sample is available for :ref:`winrt_startMessageLoop() <doxid-dd/d01/group__videoio__winrt_1gac0bbefb5e7954d63596698905f20b2ed>`.
+
+.. index:: pair: function; winrt_onVisibilityChanged
+.. _doxid-dd/d01/group__videoio__winrt_1gaf781e41ae34a6993e0c7094bb7d5d6c8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::winrt_onVisibilityChanged(bool visible)
+
+Must be called from WinRT specific callback to handle image grabber state. Here is how the class can be used:
+
+.. ref-code-block:: cpp
+
+	MainPage::MainPage()
+	{
+	    // ...
+	    Window::Current->VisibilityChanged += ref new Windows::UI::Xaml::WindowVisibilityChangedEventHandler(this, &Application::MainPage::OnVisibilityChanged);
+	    // ...
+	}
+	
+	void Application::MainPage::OnVisibilityChanged(Platform::Object ^sender,
+	    Windows::UI::Core::VisibilityChangedEventArgs ^e)
+	{
+	    cv::winrt_onVisibilityChanged(e->Visible);
+	}
+
+.. index:: pair: function; winrt_setFrameContainer
+.. _doxid-dd/d01/group__videoio__winrt_1ga1415c645960c00ec5f3878365bf9a348:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::winrt_setFrameContainer(::Windows::UI::Xaml::Controls::Image^ image)
+
+Must be called to assign WinRT control holding image you're working with. Code sample is available for :ref:`winrt_startMessageLoop() <doxid-dd/d01/group__videoio__winrt_1gac0bbefb5e7954d63596698905f20b2ed>`.
+
+.. index:: pair: function; winrt_startMessageLoop
+.. _doxid-dd/d01/group__videoio__winrt_1ga1d21b5d97771470f128859c8bc648f87:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template void
+	cv::winrt_startMessageLoop(void  callback void)
+
+Starts (1) frame-grabbing loop and (2) message loop
+
+#. Function passed as an argument must implement common OCV reading frames pattern (see :ref:`cv::VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` documentation) AND call cv::winrt_imgshow().
+
+#. Message processing loop required to overcome WinRT container and type conversion restrictions. OCV provides default implementation Here is how the class can be used:
+   
+   .. ref-code-block:: cpp
+   
+   	void cvMain()
+   	{
+   	    Mat frame;
+   	    VideoCapture cam;
+   	    cam.open(0);
+   	
+   	    while (1)
+   	    {
+   	        cam >> frame;
+   	
+   	        // don't reprocess the same frame again
+   	        if (!cam.grab()) continue;
+   	
+   	        // your processing logic goes here
+   	
+   	        // obligatory step to get XAML image component updated
+   	        winrt_imshow();
+   	    }
+   	}
+   	
+   	MainPage::MainPage()
+   	{
+   	    InitializeComponent();
+   	
+   	    cv::winrt_setFrameContainer(cvImage);
+   	    cv::winrt_startMessageLoop(cvMain);
+   	}
+

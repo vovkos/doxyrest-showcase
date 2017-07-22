@@ -1,0 +1,200 @@
+.. index:: pair: class; Poco::NotificationCenter
+.. _doxid-class_poco_1_1_notification_center:
+
+class Poco::NotificationCenter
+==============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` is essentially a notification dispatcher. :ref:`More...<details-class_poco_1_1_notification_center>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <NotificationCenter.h>
+	
+	class NotificationCenter
+	{
+	public:
+		// methods
+	
+		void
+		:ref:`addObserver<doxid-class_poco_1_1_notification_center_1a36fa984a40c2080ea5a8b2b9c5da3680>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer);
+	
+		void
+		:ref:`removeObserver<doxid-class_poco_1_1_notification_center_1aa47beb5100bdf9767d7e6f414fbb0f03>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer);
+	
+		bool
+		:ref:`hasObserver<doxid-class_poco_1_1_notification_center_1a631e3a5114b3cf3396c9944cb3442506>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer) const;
+	
+		void
+		:ref:`postNotification<doxid-class_poco_1_1_notification_center_1a536fefa90d14a43ae79d257b74742ac4>`(:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification);
+	
+		bool
+		:ref:`hasObservers<doxid-class_poco_1_1_notification_center_1ab78e01011c82464a58886b9edf616857>`() const;
+	
+		std::size_t
+		:ref:`countObservers<doxid-class_poco_1_1_notification_center_1a9f4ee966ef5af7994779e5486366cf59>`() const;
+	
+		static
+		NotificationCenter&
+		:ref:`defaultCenter<doxid-class_poco_1_1_notification_center_1aa00128fcf2fb07e0383857181686c1c8>`();
+	};
+.. _details-class_poco_1_1_notification_center:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` is essentially a notification dispatcher.
+
+It notifies all observers of notifications meeting specific criteria. This information is encapsulated in :ref:`Notification <doxid-class_poco_1_1_notification>` objects. Client objects register themselves with the notification center as observers of specific notifications posted by other objects. When an event occurs, an object posts an appropriate notification to the notification center. The notification center invokes the registered method on each matching observer, passing the notification as argument.
+
+The order in which observers receive notifications is undefined. It is possible for the posting object and the observing object to be the same. The :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` delivers notifications to observers synchronously. In other words the :ref:`postNotification() <doxid-class_poco_1_1_notification_center_1a536fefa90d14a43ae79d257b74742ac4>` method does not return until all observers have received and processed the notification. If an observer throws an exception while handling a notification, the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` stops dispatching the notification and :ref:`postNotification() <doxid-class_poco_1_1_notification_center_1a536fefa90d14a43ae79d257b74742ac4>` rethrows the exception.
+
+In a multithreaded scenario, notifications are always delivered in the thread in which the notification was posted, which may not be the same thread in which an observer registered itself.
+
+The :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` class is basically a C++ implementation of the NSNotificationCenter class found in Apple's Cocoa (or OpenStep).
+
+While handling a notification, an observer can unregister itself from the notification center, or it can register or unregister other observers. Observers added during a dispatch cycle will not receive the current notification.
+
+The method receiving the notification must be implemented as
+
+.. ref-code-block:: cpp
+
+	void handleNotification(MyNotification* pNf);
+
+The handler method gets co-ownership of the :ref:`Notification <doxid-class_poco_1_1_notification>` object and must release it when done. This is best done with an :ref:`AutoPtr <doxid-class_poco_1_1_auto_ptr>` :
+
+.. ref-code-block:: cpp
+
+	void MyClass::handleNotification(MyNotification* pNf)
+	{
+	    AutoPtr<MyNotification> nf(pNf);
+	    ...
+	}
+
+Alternatively, the :ref:`NObserver <doxid-class_poco_1_1_n_observer>` class template can be used to register a callback method. In this case, the callback method receives the :ref:`Notification <doxid-class_poco_1_1_notification>` in an :ref:`AutoPtr <doxid-class_poco_1_1_auto_ptr>` and thus does not have to deal with object ownership issues:
+
+.. ref-code-block:: cpp
+
+	void MyClass::handleNotification(const AutoPtr<MyNotification>& pNf)
+	{
+	    ...
+	}
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_notification_center_1a60097d098670f87fa06ea2701d4464b9:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~NotificationCenter()
+
+Destroys the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+Methods
+-------
+
+.. index:: pair: function; addObserver
+.. _doxid-class_poco_1_1_notification_center_1a36fa984a40c2080ea5a8b2b9c5da3680:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	addObserver(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer)
+
+Registers an observer with the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+Usage:
+
+.. ref-code-block:: cpp
+
+	Observer<MyClass, MyNotification> obs(*this, &MyClass::handleNotification);
+	notificationCenter.addObserver(obs);
+
+Alternatively, the :ref:`NObserver <doxid-class_poco_1_1_n_observer>` template class can be used instead of :ref:`Observer <doxid-class_poco_1_1_observer>`.
+
+.. index:: pair: function; removeObserver
+.. _doxid-class_poco_1_1_notification_center_1aa47beb5100bdf9767d7e6f414fbb0f03:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	removeObserver(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer)
+
+Unregisters an observer with the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+.. index:: pair: function; hasObserver
+.. _doxid-class_poco_1_1_notification_center_1a631e3a5114b3cf3396c9944cb3442506:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	hasObserver(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer) const
+
+Returns true if the observer is registered with this :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+.. index:: pair: function; postNotification
+.. _doxid-class_poco_1_1_notification_center_1a536fefa90d14a43ae79d257b74742ac4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	postNotification(:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification)
+
+Posts a notification to the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+The :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` then delivers the notification to all interested observers. If an observer throws an exception, dispatching terminates and the exception is rethrown to the caller. Ownership of the notification object is claimed and the notification is released before returning. Therefore, a call like
+
+.. ref-code-block:: cpp
+
+	notificationCenter.postNotification(new MyNotification);
+
+does not result in a memory leak.
+
+.. index:: pair: function; hasObservers
+.. _doxid-class_poco_1_1_notification_center_1ab78e01011c82464a58886b9edf616857:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	hasObservers() const
+
+Returns true iff there is at least one registered observer.
+
+Can be used to improve performance if an expensive notification shall only be created and posted if there are any observers.
+
+.. index:: pair: function; countObservers
+.. _doxid-class_poco_1_1_notification_center_1a9f4ee966ef5af7994779e5486366cf59:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::size_t
+	countObservers() const
+
+Returns the number of registered observers.
+
+.. index:: pair: function; defaultCenter
+.. _doxid-class_poco_1_1_notification_center_1aa00128fcf2fb07e0383857181686c1c8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	NotificationCenter&
+	defaultCenter()
+
+Returns a reference to the default :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+

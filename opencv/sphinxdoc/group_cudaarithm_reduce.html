@@ -1,0 +1,844 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Matrix Reductions &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Per-element Operations" href="group_cudaarithm_elem.html" />
+    <link rel="prev" title="class cv::cuda::LookUpTable" href="class_cv_cuda_LookUpTable.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="group_cudaarithm_elem.html" title="Per-element Operations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="class_cv_cuda_LookUpTable.html" title="class cv::cuda::LookUpTable"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="group_core.html" >Core functionality</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="group_core_opengl.html" >OpenGL interoperability</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="group_cuda.html" >CUDA-accelerated Computer Vision</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="group_cudaarithm.html" accesskey="U">Operations on Matrices</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Matrix Reductions</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="class_cv_cuda_LookUpTable.html"
+                        title="previous chapter">class cv::cuda::LookUpTable</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="group_cudaarithm_elem.html"
+                        title="next chapter">Per-element Operations</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="matrix-reductions">
+<span id="doxid-d5-de6-group-cudaarithm-reduce"></span><span id="index-0"></span><h1>Matrix Reductions</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// global functions</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga690fa79ba4426c53f7d2bebf3d37a32a"><span class="std std-ref">cv::cuda::absSum</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga15c403b76ab2c4d7ed0f5edc09891b7e"><span class="std std-ref">cv::cuda::calcAbsSum</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga39d2826990d29b7e4b69dbe02bdae2e1"><span class="std std-ref">cv::cuda::calcNorm</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga9be3d9a7b6c5760955f37d1039d01265"><span class="std std-ref">cv::cuda::calcNormDiff</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2"><span class="std std-ref">NORM_L2</span></a><span></span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1gac998c83597f6c206c78cee16aa87946f"><span class="std std-ref">cv::cuda::calcSqrSum</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga98a09144047f09f5cb1d6b6ea8e0856f"><span class="std std-ref">cv::cuda::calcSum</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga283f3efccb513dbcde9f1dbedb67f805"><span class="std std-ref">cv::cuda::countNonZero</span></a><span></span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga55b5d553d28530fae0d9242438396521"><span class="std std-ref">cv::cuda::countNonZero</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1gae7f5f2aa9f65314470a76fccdff887f2"><span class="std std-ref">cv::cuda::findMinMax</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga93916bc473a62d215d1130fab84d090a"><span class="std std-ref">cv::cuda::findMinMaxLoc</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">minMaxVals</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">loc</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga07e5104eba4bf45212ac9dbc5bf72ba6"><span class="std std-ref">cv::cuda::integral</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sum</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga990a4db4c6d7e8f0f3a6685ba48fbddc"><span class="std std-ref">cv::cuda::meanStdDev</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mtx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&amp;</span> <span class="n">mean</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&amp;</span> <span class="n">stddev</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1gac0e8dc0bb32fda5afd32de0f18817587"><span class="std std-ref">cv::cuda::meanStdDev</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mtx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga8d7de68c10717cf25e787e3c20d2dfee"><span class="std std-ref">cv::cuda::minMax</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">minVal</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">maxVal</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga5cacbc2a2323c4eaa81e7390c5d9f530"><span class="std std-ref">cv::cuda::minMaxLoc</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">minVal</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">maxVal</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">*</span> <span class="n">minLoc</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">*</span> <span class="n">maxLoc</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">double</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga6c01988a58d92126a7c60a4ab76d8324"><span class="std std-ref">cv::cuda::norm</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">double</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga48b6298589b80a6915d076e2dcdbd11b"><span class="std std-ref">cv::cuda::norm</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2"><span class="std std-ref">NORM_L2</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga4da4738b9956a5baaa2f5f8c2fba438a"><span class="std std-ref">cv::cuda::normalize</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">beta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">norm_type</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">dtype</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1gac311484a4e57cab2ce2cfdc195fda7ee"><span class="std std-ref">cv::cuda::rectStdDev</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">sqr</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span> <span class="n">rect</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga21d57f661db7be093caf2c4378be2007"><span class="std std-ref">cv::cuda::reduce</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mtx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">vec</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">dim</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">reduceOp</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">dtype</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga40c75196202706399a60bf6ba7a052ac"><span class="std std-ref">cv::cuda::sqrIntegral</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sqsum</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga056c804ebf5d2eb9f6f35e3dcb01524c"><span class="std std-ref">cv::cuda::sqrSum</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span>
+<a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga1f582844670199281e8012733b50c582"><span class="std std-ref">cv::cuda::sum</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d5-de6-group-cudaarithm-reduce"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga690fa79ba4426c53f7d2bebf3d37a32a">
+<span id="index-1"></span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">absSum</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Returns the sum of absolute values for matrix elements.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image of any depth except for CV_64F .</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>optional operation mask; it must have the same size as src1 and CV_8UC1 type.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga15c403b76ab2c4d7ed0f5edc09891b7e">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcAbsSum</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga39d2826990d29b7e4b69dbe02bdae2e1">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcNorm</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga9be3d9a7b6c5760955f37d1039d01265">
+<span id="index-4"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcNormDiff</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2"><span class="std std-ref">NORM_L2</span></a><span></span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1gac998c83597f6c206c78cee16aa87946f">
+<span id="index-5"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcSqrSum</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga98a09144047f09f5cb1d6b6ea8e0856f">
+<span id="index-6"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcSum</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga283f3efccb513dbcde9f1dbedb67f805">
+<span id="index-7"></span><span></span><span class="kt">int</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">countNonZero</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">)</span>
+</pre>
+<p>Counts non-zero matrix elements.</p>
+<p>The function does not work with CV_64F images on GPUs with the compute capability &lt; 1.3.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Single-channel source image.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga283f3efccb513dbcde9f1dbedb67f805"><span class="std std-ref">countNonZero</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga55b5d553d28530fae0d9242438396521">
+<span id="index-8"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">countNonZero</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1gae7f5f2aa9f65314470a76fccdff887f2">
+<span id="index-9"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">findMinMax</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga93916bc473a62d215d1130fab84d090a">
+<span id="index-10"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">findMinMaxLoc</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">minMaxVals</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">loc</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga07e5104eba4bf45212ac9dbc5bf72ba6">
+<span id="index-11"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">integral</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sum</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes an integral image.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image. Only CV_8UC1 images are supported for now.</td>
+</tr>
+<tr class="row-even"><td>sum</td>
+<td>Integral image containing 32-bit unsigned integer values packed into CV_32SC1 .</td>
+</tr>
+<tr class="row-odd"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga07e5104eba4bf45212ac9dbc5bf72ba6"><span class="std std-ref">integral</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga990a4db4c6d7e8f0f3a6685ba48fbddc">
+<span id="index-12"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">meanStdDev</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mtx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&amp;</span> <span class="n">mean</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="o">&amp;</span> <span class="n">stddev</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes a mean value and a standard deviation of matrix elements.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>mtx</td>
+<td>Source matrix. CV_8UC1 matrices are supported for now.</td>
+</tr>
+<tr class="row-even"><td>mean</td>
+<td>Mean value.</td>
+</tr>
+<tr class="row-odd"><td>stddev</td>
+<td>Standard deviation value.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga990a4db4c6d7e8f0f3a6685ba48fbddc"><span class="std std-ref">meanStdDev</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1gac0e8dc0bb32fda5afd32de0f18817587">
+<span id="index-13"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">meanStdDev</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mtx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga8d7de68c10717cf25e787e3c20d2dfee">
+<span id="index-14"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">minMax</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">minVal</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">maxVal</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds global minimum and maximum matrix elements and returns their values.</p>
+<p>The function does not work with CV_64F images on GPUs with the compute capability &lt; 1.3.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Single-channel source image.</td>
+</tr>
+<tr class="row-even"><td>minVal</td>
+<td>Pointer to the returned minimum value. Use NULL if not required.</td>
+</tr>
+<tr class="row-odd"><td>maxVal</td>
+<td>Pointer to the returned maximum value. Use NULL if not required.</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>Optional mask to select a sub-matrix.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga5cacbc2a2323c4eaa81e7390c5d9f530"><span class="std std-ref">minMaxLoc</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga5cacbc2a2323c4eaa81e7390c5d9f530">
+<span id="index-15"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">minMaxLoc</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">minVal</span><span class="p">,</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">maxVal</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">*</span> <span class="n">minLoc</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">*</span> <span class="n">maxLoc</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds global minimum and maximum matrix elements and returns their values with locations.</p>
+<p>The function does not work with CV_64F images on GPU with the compute capability &lt; 1.3.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Single-channel source image.</td>
+</tr>
+<tr class="row-even"><td>minVal</td>
+<td>Pointer to the returned minimum value. Use NULL if not required.</td>
+</tr>
+<tr class="row-odd"><td>maxVal</td>
+<td>Pointer to the returned maximum value. Use NULL if not required.</td>
+</tr>
+<tr class="row-even"><td>minLoc</td>
+<td>Pointer to the returned minimum location. Use NULL if not required.</td>
+</tr>
+<tr class="row-odd"><td>maxLoc</td>
+<td>Pointer to the returned maximum location. Use NULL if not required.</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>Optional mask to select a sub-matrix.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga5cacbc2a2323c4eaa81e7390c5d9f530"><span class="std std-ref">minMaxLoc</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga6c01988a58d92126a7c60a4ab76d8324">
+<span id="index-16"></span><span></span><span class="kt">double</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">norm</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Returns the norm of a matrix (or difference of two matrices).</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src1</td>
+<td>Source matrix. Any matrices except 64F are supported.</td>
+</tr>
+<tr class="row-even"><td>normType</td>
+<td>Norm type. NORM_L1 , NORM_L2 , and NORM_INF are supported for now.</td>
+</tr>
+<tr class="row-odd"><td>mask</td>
+<td>optional operation mask; it must have the same size as src1 and CV_8UC1 type.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga6c01988a58d92126a7c60a4ab76d8324"><span class="std std-ref">norm</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga48b6298589b80a6915d076e2dcdbd11b">
+<span id="index-17"></span><span></span><span class="kt">double</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">norm</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">normType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2"><span class="std std-ref">NORM_L2</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Returns the difference of two matrices.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src1</td>
+<td>Source matrix. Any matrices except 64F are supported.</td>
+</tr>
+<tr class="row-even"><td>src2</td>
+<td>Second source matrix (if any) with the same size and type as src1.</td>
+</tr>
+<tr class="row-odd"><td>normType</td>
+<td>Norm type. NORM_L1 , NORM_L2 , and NORM_INF are supported for now.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga6c01988a58d92126a7c60a4ab76d8324"><span class="std std-ref">norm</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga4da4738b9956a5baaa2f5f8c2fba438a">
+<span id="index-18"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">normalize</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">beta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">norm_type</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">dtype</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Normalizes the norm or value range of an array.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input array.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Output array of the same size as src .</td>
+</tr>
+<tr class="row-odd"><td>alpha</td>
+<td>Norm value to normalize to or the lower range boundary in case of the range normalization.</td>
+</tr>
+<tr class="row-even"><td>beta</td>
+<td>Upper range boundary in case of the range normalization; it is not used for the norm normalization.</td>
+</tr>
+<tr class="row-odd"><td>norm_type</td>
+<td>Normalization type ( NORM_MINMAX , NORM_L2 , NORM_L1 or NORM_INF ).</td>
+</tr>
+<tr class="row-even"><td>dtype</td>
+<td>When negative, the output array has the same type as src; otherwise, it has the same number of channels as src and the depth = <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga39f3412d63cac68d4f1d138ab52a6fc8"><span class="std std-ref">CV_MAT_DEPTH(dtype)</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>mask</td>
+<td>Optional operation mask.</td>
+</tr>
+<tr class="row-even"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga4da4738b9956a5baaa2f5f8c2fba438a"><span class="std std-ref">normalize</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1gac311484a4e57cab2ce2cfdc195fda7ee">
+<span id="index-19"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">rectStdDev</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">sqr</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span> <span class="n">rect</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes a standard deviation of integral images.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image. Only the CV_32SC1 type is supported.</td>
+</tr>
+<tr class="row-even"><td>sqr</td>
+<td>Squared source image. Only the CV_32FC1 type is supported.</td>
+</tr>
+<tr class="row-odd"><td>dst</td>
+<td>Destination image with the same type and size as src .</td>
+</tr>
+<tr class="row-even"><td>rect</td>
+<td>Rectangular window.</td>
+</tr>
+<tr class="row-odd"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga21d57f661db7be093caf2c4378be2007">
+<span id="index-20"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">reduce</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mtx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">vec</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">dim</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">reduceOp</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">dtype</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Reduces a matrix to a vector.</p>
+<p>The function reduce reduces the matrix to a vector by treating the matrix rows/columns as a set of 1D vectors and performing the specified operation on the vectors until a single row/column is obtained. For example, the function can be used to compute horizontal and vertical projections of a raster image. In case of CV_REDUCE_SUM and CV_REDUCE_AVG , the output may have a larger element bit-depth to preserve accuracy. And multi-channel arrays are also supported in these two reduction modes.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>mtx</td>
+<td>Source 2D matrix.</td>
+</tr>
+<tr class="row-even"><td>vec</td>
+<td>Destination vector. Its size and type is defined by dim and dtype parameters.</td>
+</tr>
+<tr class="row-odd"><td>dim</td>
+<td>Dimension index along which the matrix is reduced. 0 means that the matrix is reduced to a single row. 1 means that the matrix is reduced to a single column.</td>
+</tr>
+<tr class="row-even"><td>reduceOp</td>
+<td><p class="first">Reduction operation that could be one of the following:</p>
+<ul class="last simple">
+<li><strong>CV_REDUCE_SUM</strong> The output is the sum of all rows/columns of the matrix.</li>
+<li><strong>CV_REDUCE_AVG</strong> The output is the mean vector of all rows/columns of the matrix.</li>
+<li><strong>CV_REDUCE_MAX</strong> The output is the maximum (column/row-wise) of all rows/columns of the matrix.</li>
+<li><strong>CV_REDUCE_MIN</strong> The output is the minimum (column/row-wise) of all rows/columns of the matrix.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>dtype</td>
+<td>When it is negative, the destination vector will have the same type as the source matrix. Otherwise, its type will be CV_MAKE_TYPE(<a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga39f3412d63cac68d4f1d138ab52a6fc8"><span class="std std-ref">CV_MAT_DEPTH(dtype)</span></a>, mtx.channels()) .</td>
+</tr>
+<tr class="row-even"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga21d57f661db7be093caf2c4378be2007"><span class="std std-ref">reduce</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga40c75196202706399a60bf6ba7a052ac">
+<span id="index-21"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">sqrIntegral</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">sqsum</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes a squared integral image.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image. Only CV_8UC1 images are supported for now.</td>
+</tr>
+<tr class="row-even"><td>sqsum</td>
+<td>Squared integral image containing 64-bit unsigned integer values packed into CV_64FC1 .</td>
+</tr>
+<tr class="row-odd"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga056c804ebf5d2eb9f6f35e3dcb01524c">
+<span id="index-22"></span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">sqrSum</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Returns the squared sum of matrix elements.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image of any depth except for CV_64F .</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>optional operation mask; it must have the same size as src1 and CV_8UC1 type.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-de6-group-cudaarithm-reduce-1ga1f582844670199281e8012733b50c582">
+<span id="index-23"></span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">sum</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Returns the sum of matrix elements.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image of any depth except for CV_64F .</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>optional operation mask; it must have the same size as src1 and CV_8UC1 type.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d5-de6-group-cudaarithm-reduce-1ga1f582844670199281e8012733b50c582"><span class="std std-ref">sum</span></a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="group_cudaarithm_elem.html" title="Per-element Operations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="class_cv_cuda_LookUpTable.html" title="class cv::cuda::LookUpTable"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="group_core.html" >Core functionality</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="group_core_opengl.html" >OpenGL interoperability</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="group_cuda.html" >CUDA-accelerated Computer Vision</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="group_cudaarithm.html" >Operations on Matrices</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

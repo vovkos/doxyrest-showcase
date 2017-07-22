@@ -1,0 +1,208 @@
+.. index:: pair: class; Poco::Pipe
+.. _doxid-class_poco_1_1_pipe:
+
+class Poco::Pipe
+================
+
+.. toctree::
+	:hidden:
+
+	enum_Poco_Pipe_CloseMode.rst
+
+Overview
+~~~~~~~~
+
+This class implements an anonymous pipe. :ref:`More...<details-class_poco_1_1_pipe>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Pipe.h>
+	
+	class Pipe
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`PipeImpl::Handle<doxid-class_poco_1_1_pipe_impl_1a87a6afb95a87ca82b6c1acc08355b001>` :ref:`Handle<doxid-class_poco_1_1_pipe_1abf09a7da9dbed1cf1bd386f9b32ad16c>`;
+
+		// enums
+	
+		enum :ref:`CloseMode<doxid-class_poco_1_1_pipe_1a6d518fd6e5cbd07845170e9f3968965e>`;
+
+		// construction
+	
+		:ref:`Pipe<doxid-class_poco_1_1_pipe_1afa03962f25fe7a2b0636126c8fe6e139>`();
+		:ref:`Pipe<doxid-class_poco_1_1_pipe_1a7d576c8db94a09ca6cd7665d22c7fc4c>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Pipe& pipe);
+
+		// methods
+	
+		Pipe&
+		:ref:`operator=<doxid-class_poco_1_1_pipe_1aeccea64ffdeffff9e49d9bc6f61941c8>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Pipe& pipe);
+	
+		int
+		:ref:`writeBytes<doxid-class_poco_1_1_pipe_1a56b39715ddb14d885f4cc125c95d165a>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* buffer,
+			int length
+			);
+	
+		int
+		:ref:`readBytes<doxid-class_poco_1_1_pipe_1a02d6619c17a04c116f8ee66aeb3e41ac>`(
+			void* buffer,
+			int length
+			);
+	
+		:ref:`Handle<doxid-class_poco_1_1_pipe_1abf09a7da9dbed1cf1bd386f9b32ad16c>`
+		:ref:`readHandle<doxid-class_poco_1_1_pipe_1adf9ca4506470026b288faaf4bba0d8f5>`() const;
+	
+		:ref:`Handle<doxid-class_poco_1_1_pipe_1abf09a7da9dbed1cf1bd386f9b32ad16c>`
+		:ref:`writeHandle<doxid-class_poco_1_1_pipe_1a402ff2f51e0d0886971d3db709c8d8a7>`() const;
+	
+		void
+		:ref:`close<doxid-class_poco_1_1_pipe_1a1e7653e9eca98d9307b6c03884b3c0a9>`(:ref:`CloseMode<doxid-class_poco_1_1_pipe_1a6d518fd6e5cbd07845170e9f3968965e>` mode = :ref:`CLOSE_BOTH<doxid-class_poco_1_1_pipe_1a6d518fd6e5cbd07845170e9f3968965ea0a284537193457f0579776224cfb80ee>`);
+	};
+.. _details-class_poco_1_1_pipe:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements an anonymous pipe.
+
+Pipes are a common method of inter-process communication - on Unix, pipes are the oldest form of IPC.
+
+A pipe is a half-duplex communication channel, which means that data only flows in one direction. Pipes have a read-end and a write-end. One process writes to the pipe and another process reads the data written by its peer. Read and write operations are always synchronous. A read will block until data is available and a write will block until the reader reads the data.
+
+The sendBytes() and :ref:`readBytes() <doxid-class_poco_1_1_pipe_1a02d6619c17a04c116f8ee66aeb3e41ac>` methods of :ref:`Pipe <doxid-class_poco_1_1_pipe>` are usually used through a :ref:`PipeOutputStream <doxid-class_poco_1_1_pipe_output_stream>` or :ref:`PipeInputStream <doxid-class_poco_1_1_pipe_input_stream>` and are not called directly.
+
+:ref:`Pipe <doxid-class_poco_1_1_pipe>` objects have value semantics; the actual work is delegated to a reference-counted :ref:`PipeImpl <doxid-class_poco_1_1_pipe_impl>` object.
+
+Typedefs
+--------
+
+.. index:: pair: typedef; Handle
+.. _doxid-class_poco_1_1_pipe_1abf09a7da9dbed1cf1bd386f9b32ad16c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	typedef :ref:`PipeImpl::Handle<doxid-class_poco_1_1_pipe_impl_1a87a6afb95a87ca82b6c1acc08355b001>` Handle
+
+The read/write handle or file descriptor.
+
+Construction
+------------
+
+.. index:: pair: function; Pipe
+.. _doxid-class_poco_1_1_pipe_1afa03962f25fe7a2b0636126c8fe6e139:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Pipe()
+
+Creates the :ref:`Pipe <doxid-class_poco_1_1_pipe>`.
+
+Throws a CreateFileException if the pipe cannot be created.
+
+.. index:: pair: function; Pipe
+.. _doxid-class_poco_1_1_pipe_1a7d576c8db94a09ca6cd7665d22c7fc4c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Pipe(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Pipe& pipe)
+
+Creates the :ref:`Pipe <doxid-class_poco_1_1_pipe>` using the :ref:`PipeImpl <doxid-class_poco_1_1_pipe_impl>` from another one.
+
+Methods
+-------
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_pipe_1aeccea64ffdeffff9e49d9bc6f61941c8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Pipe&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` Pipe& pipe)
+
+Releases the :ref:`Pipe <doxid-class_poco_1_1_pipe>` 's :ref:`PipeImpl <doxid-class_poco_1_1_pipe_impl>` and assigns another one.
+
+.. index:: pair: function; writeBytes
+.. _doxid-class_poco_1_1_pipe_1a56b39715ddb14d885f4cc125c95d165a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	writeBytes(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* buffer,
+		int length
+		)
+
+Sends the contents of the given buffer through the pipe.
+
+Blocks until the receiver is ready to read the data.
+
+Returns the number of bytes sent.
+
+Throws a WriteFileException if the data cannot be written.
+
+.. index:: pair: function; readBytes
+.. _doxid-class_poco_1_1_pipe_1a02d6619c17a04c116f8ee66aeb3e41ac:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	readBytes(
+		void* buffer,
+		int length
+		)
+
+Receives data from the pipe and stores it in buffer.
+
+Up to length bytes are received. Blocks until data becomes available.
+
+Returns the number of bytes received, or 0 if the pipe has been closed.
+
+Throws a ReadFileException if nothing can be read.
+
+.. index:: pair: function; readHandle
+.. _doxid-class_poco_1_1_pipe_1adf9ca4506470026b288faaf4bba0d8f5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Handle<doxid-class_poco_1_1_pipe_1abf09a7da9dbed1cf1bd386f9b32ad16c>`
+	readHandle() const
+
+Returns the read handle or file descriptor for the :ref:`Pipe <doxid-class_poco_1_1_pipe>`.
+
+For internal use only.
+
+.. index:: pair: function; writeHandle
+.. _doxid-class_poco_1_1_pipe_1a402ff2f51e0d0886971d3db709c8d8a7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Handle<doxid-class_poco_1_1_pipe_1abf09a7da9dbed1cf1bd386f9b32ad16c>`
+	writeHandle() const
+
+Returns the write handle or file descriptor for the :ref:`Pipe <doxid-class_poco_1_1_pipe>`.
+
+For internal use only.
+
+.. index:: pair: function; close
+.. _doxid-class_poco_1_1_pipe_1a1e7653e9eca98d9307b6c03884b3c0a9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	close(:ref:`CloseMode<doxid-class_poco_1_1_pipe_1a6d518fd6e5cbd07845170e9f3968965e>` mode = :ref:`CLOSE_BOTH<doxid-class_poco_1_1_pipe_1a6d518fd6e5cbd07845170e9f3968965ea0a284537193457f0579776224cfb80ee>`)
+
+Depending on the argument, closes either the reading end, the writing end, or both ends of the :ref:`Pipe <doxid-class_poco_1_1_pipe>`.
+

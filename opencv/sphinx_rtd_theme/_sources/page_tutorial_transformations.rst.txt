@@ -1,0 +1,179 @@
+.. index:: pair: page; Transformations
+.. _doxid-d7/d72/tutorial_transformations:
+
+Transformations
+===============
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to
+
+* How to use makeTransformToGlobal to compute pose
+
+* How to use makeCameraPose and Viz3d::setViewerPose
+
+* How to visualize camera position by axes and by viewing frustum
+
+.. rubric:: Code
+
+You can download the code from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/viz/transformations.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	
+	#include <opencv2/viz.hpp>
+	#include <iostream>
+	#include <fstream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout
+	    << "--------------------------------------------------------------------------"   << endl
+	    << "This program shows how to use makeTransformToGlobal() to compute required pose,"
+	    << "how to use makeCameraPose and Viz3d::setViewerPose. You can observe the scene "
+	    << "from camera point of view (C) or global point of view (G)"                    << endl
+	    << "Usage:"                                                                       << endl
+	    << "./transformations [ G | C ]"                                                 << endl
+	    << endl;
+	}
+	
+	static :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` cvcloud_load()
+	{
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` cloud(1, 1889, :ref:`CV_32FC3 <doxid-d1/d1b/group__core__hal__interface_1ga0610d99405b809062622588c25ed5c8f>`);
+	    ifstream ifs("bunny.ply");
+	
+	    string str;
+	    for(size_t i = 0; i < 12; ++i)
+	        getline(ifs, str);
+	
+	    Point3f* data = cloud.ptr<:ref:`cv::Point3f <doxid-d4/d29/classcv_1_1_point3__>`>();
+	    float dummy1, dummy2;
+	    for(size_t i = 0; i < 1889; ++i)
+	        ifs >> data[i].x >> data[i].y >> data[i].z >> dummy1 >> dummy2;
+	
+	    cloud *= 5.0f;
+	    return cloud;
+	}
+	
+	int main(int argn, char **argv)
+	{
+	    help();
+	
+	    if (argn < 2)
+	    {
+	        cout << "Missing arguments." << endl;
+	        return 1;
+	    }
+	
+	    bool camera_pov = (argv[1][0] == 'C');
+	
+	    :ref:`viz::Viz3d <doxid-dd/d47/classcv_1_1viz_1_1_viz3d>` myWindow("Coordinate Frame");
+	
+	    myWindow.showWidget("Coordinate Widget", :ref:`viz::WCoordinateSystem <doxid-d2/d31/classcv_1_1viz_1_1_w_coordinate_system>`());
+	
+	    :ref:`Vec3f <doxid-db/d93/classcv_1_1_vec>` cam_pos(3.0f,3.0f,3.0f), cam_focal_point(3.0f,3.0f,2.0f), cam_y_dir(-1.0f,0.0f,0.0f);
+	
+	    :ref:`Affine3f <doxid-d3/d84/classcv_1_1_affine3>` cam_pose = :ref:`viz::makeCameraPose <doxid-d1/d19/group__viz_1gab04d43faa448940bb58754af6356955b>`(cam_pos, cam_focal_point, cam_y_dir);
+	
+	    :ref:`Affine3f <doxid-d3/d84/classcv_1_1_affine3>` :ref:`transform <doxid-d2/de8/group__core__array_1ga393164aa54bb9169ce0a8cc44e08ff22>` = :ref:`viz::makeTransformToGlobal <doxid-d1/d19/group__viz_1ga16ef52f42849f13a36b715d488ce5b9f>`(:ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(0.0f,-1.0f,0.0f), :ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(-1.0f,0.0f,0.0f), :ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(0.0f,0.0f,-1.0f), cam_pos);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` bunny_cloud = cvcloud_load();
+	    :ref:`viz::WCloud <doxid-df/d84/classcv_1_1viz_1_1_w_cloud>` cloud_widget(bunny_cloud, :ref:`viz::Color::green <doxid-df/d5b/classcv_1_1viz_1_1_color_1a7b6c40bb6c8a6aec8f28a358913db3e2>`());
+	
+	    :ref:`Affine3f <doxid-d3/d84/classcv_1_1_affine3>` cloud_pose = :ref:`Affine3f <doxid-d0/de1/group__core_1gae10a81cba3f3232648be48e28759a7bc>`().translate(:ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(0.0f,0.0f,3.0f));
+	    :ref:`Affine3f <doxid-d3/d84/classcv_1_1_affine3>` cloud_pose_global = transform * cloud_pose;
+	
+	    if (!camera_pov)
+	    {
+	        :ref:`viz::WCameraPosition <doxid-d7/d84/classcv_1_1viz_1_1_w_camera_position>` cpw(0.5); // Coordinate axes
+	        :ref:`viz::WCameraPosition <doxid-d7/d84/classcv_1_1viz_1_1_w_camera_position>` cpw_frustum(:ref:`Vec2f <doxid-dc/d84/group__core__basic_1ga392bb4f8a6b9e0dde07f31dc28e73319>`(0.889484, 0.523599)); // Camera frustum
+	        myWindow.showWidget("CPW", cpw, cam_pose);
+	        myWindow.showWidget("CPW_FRUSTUM", cpw_frustum, cam_pose);
+	    }
+	
+	    myWindow.showWidget("bunny", cloud_widget, cloud_pose_global);
+	
+	    if (camera_pov)
+	        myWindow.setViewerPose(cam_pose);
+	
+	    myWindow.spin();
+	
+	    return 0;
+	}
+
+.. rubric:: Explanation
+
+Here is the general structure of the program:
+
+* Create a visualization window.
+  
+  .. ref-code-block:: cpp
+  
+  	viz::Viz3d myWindow("Transformations");
+
+* Get camera pose from camera position, camera focal point and y direction.
+  
+  .. ref-code-block:: cpp
+  
+  	Point3f cam_pos(3.0f,3.0f,3.0f), cam_focal_point(3.0f,3.0f,2.0f), cam_y_dir(-1.0f,0.0f,0.0f);
+  	
+  	:ref:`Affine3f <doxid-d0/de1/group__core_1gae10a81cba3f3232648be48e28759a7bc>` cam_pose = :ref:`viz::makeCameraPose <doxid-d1/d19/group__viz_1gab04d43faa448940bb58754af6356955b>`(cam_pos, cam_focal_point, cam_y_dir);
+
+* Obtain transform matrix knowing the axes of camera coordinate system.
+  
+  .. ref-code-block:: cpp
+  
+  	:ref:`Affine3f <doxid-d0/de1/group__core_1gae10a81cba3f3232648be48e28759a7bc>` transform = :ref:`viz::makeTransformToGlobal <doxid-d1/d19/group__viz_1ga16ef52f42849f13a36b715d488ce5b9f>`(:ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(0.0f,-1.0f,0.0f), :ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(-1.0f,0.0f,0.0f), :ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(0.0f,0.0f,-1.0f), cam_pos);
+
+* Create a cloud widget from bunny.ply file
+  
+  .. ref-code-block:: cpp
+  
+  	Mat bunny_cloud = cvcloud_load();
+  	viz::WCloud cloud_widget(bunny_cloud, viz::Color::green());
+
+* Given the pose in camera coordinate system, estimate the global pose.
+  
+  .. ref-code-block:: cpp
+  
+  	:ref:`Affine3f <doxid-d0/de1/group__core_1gae10a81cba3f3232648be48e28759a7bc>` cloud_pose = :ref:`Affine3f <doxid-d0/de1/group__core_1gae10a81cba3f3232648be48e28759a7bc>`().translate(:ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`(0.0f,0.0f,3.0f));
+  	:ref:`Affine3f <doxid-d0/de1/group__core_1gae10a81cba3f3232648be48e28759a7bc>` cloud_pose_global = transform * cloud_pose;
+
+* If the view point is set to be global, visualize camera coordinate frame and viewing frustum.
+  
+  .. ref-code-block:: cpp
+  
+  	if (!camera_pov)
+  	{
+  	    viz::WCameraPosition cpw(0.5); // Coordinate axes
+  	    viz::WCameraPosition cpw_frustum(:ref:`Vec2f <doxid-dc/d84/group__core__basic_1ga392bb4f8a6b9e0dde07f31dc28e73319>`(0.889484, 0.523599)); // Camera frustum
+  	    myWindow.showWidget("CPW", cpw, cam_pose);
+  	    myWindow.showWidget("CPW_FRUSTUM", cpw_frustum, cam_pose);
+  	}
+
+* Visualize the cloud widget with the estimated global pose
+  
+  .. ref-code-block:: cpp
+  
+  	myWindow.showWidget("bunny", cloud_widget, cloud_pose_global);
+
+* If the view point is set to be camera's, set viewer pose to **cam_pose**.
+  
+  .. ref-code-block:: cpp
+  
+  	if (camera_pov)
+  	    myWindow.setViewerPose(cam_pose);
+
+.. rubric:: Results
+
+#. Here is the result from the camera point of view.
+   
+   .. image:: camera_view_point.png
+
+#. Here is the result from global point of view.
+   
+   .. image:: global_view_point.png
+

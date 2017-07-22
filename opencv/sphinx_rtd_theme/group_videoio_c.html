@@ -1,0 +1,908 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>C API for video I/O &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Flags for video I/O" href="group_videoio_flags_base.html" />
+    <link rel="prev" title="Additional flags for video I/O API backends" href="group_videoio_flags_others.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_videoio.html">Video I/O</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_videoio_flags_others.html">Additional flags for video I/O API backends</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">C API for video I/O</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#typedefs">Typedefs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#macros">Macros</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_videoio_flags_base.html">Flags for video I/O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_videoio_winrt.html">WinRT glue for video I/O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_videoio_ios.html">iOS glue for video I/O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_VideoCapture.html">class cv::VideoCapture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_VideoWriter.html">class cv::VideoWriter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_videoio.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_videoio.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_videoio.html">Video I/O</a> &raquo;</li>
+        
+      <li>C API for video I/O</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="c-api-for-video-i-o">
+<span id="doxid-dd-d01-group-videoio-c"></span><span id="index-0"></span><h1>C API for video I/O</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// typedefs</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span> <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span> <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// enums</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a8c6c1159fb332c7979612de8bcb91a24">&#64;106::CV_CAP_ANY</span><span></span>           <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a4c0e2d7a879de72885d62b25e7d8dcd1">&#64;106::CV_CAP_MIL</span><span></span>           <span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058aa0008d5518630f11edcc89932faa4ae7">&#64;106::CV_CAP_VFW</span><span></span>           <span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a87450bb56b956f2827481136f12931db">&#64;106::CV_CAP_V4L</span><span></span>           <span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a7619979f22b83c3695514e53c70502ef">&#64;106::CV_CAP_V4L2</span><span></span>          <span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ab3ace127777cb648cbbb69b7e6ee042a">&#64;106::CV_CAP_FIREWARE</span><span></span>      <span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058afb532e7f06faf0a8e4f82e212c9792ba">&#64;106::CV_CAP_FIREWIRE</span><span></span>      <span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a8a89020f8b2b3e3710df43a6f80f2132">&#64;106::CV_CAP_IEEE1394</span><span></span>      <span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ab35d49ab388ec69c57df25a82e437cf5">&#64;106::CV_CAP_DC1394</span><span></span>        <span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a71b2b79b7aa058452f38e92f4b32bdfa">&#64;106::CV_CAP_CMU1394</span><span></span>       <span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058afe72d5428c2cdc6f6f60e85616a9afef">&#64;106::CV_CAP_STEREO</span><span></span>        <span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a2e3f0b52e72ccccef55a28ac66abd709">&#64;106::CV_CAP_TYZX</span><span></span>          <span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a4367056fced60ee18b4fc1e936f2a774">&#64;106::CV_TYZX_LEFT</span><span></span>         <span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a8e17b8965049b75413f5f2ee012bce0d">&#64;106::CV_TYZX_RIGHT</span><span></span>        <span class="o">=</span><span class="mi">401</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a1d27b30ada023b6a3ac76d290ac089da">&#64;106::CV_TYZX_COLOR</span><span></span>        <span class="o">=</span><span class="mi">402</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a85190efebe85617ddc73efa0d49d755d">&#64;106::CV_TYZX_Z</span><span></span>            <span class="o">=</span><span class="mi">403</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ae622ba873292d0d10b722a329f00afd1">&#64;106::CV_CAP_QT</span><span></span>            <span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a061243c2ad12fbd89518a4ca8c58f79f">&#64;106::CV_CAP_UNICAP</span><span></span>        <span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058aea0bc33d3c5708e92d5d15797b5597ce">&#64;106::CV_CAP_DSHOW</span><span></span>         <span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ab4816c7459764d2fe2c61fe72c0e84e2">&#64;106::CV_CAP_MSMF</span><span></span>          <span class="o">=</span><span class="mi">1400</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a5b3b2cd8b6f9233c0d9b63bb8d121842">&#64;106::CV_CAP_PVAPI</span><span></span>         <span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ac8916b3936e6f0833354de33f8097ffc">&#64;106::CV_CAP_OPENNI</span><span></span>        <span class="o">=</span><span class="mi">900</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058aa3a0a0afd1ee738119b10f694b7bb98b">&#64;106::CV_CAP_OPENNI_ASUS</span><span></span>   <span class="o">=</span><span class="mi">910</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a068234f0b10de926ed6e28528ae2ab2a">&#64;106::CV_CAP_ANDROID</span><span></span>       <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ac7bd3e443cf79485269e352d1ff7a83a">&#64;106::CV_CAP_ANDROID_BACK</span><span></span>  <span class="o">=</span><span class="n">CV_CAP_ANDROID</span><span class="o">+</span><span class="mi">99</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a2bb3bd7c0baa42fcb1a8325481f695d8">&#64;106::CV_CAP_ANDROID_FRONT</span><span></span> <span class="o">=</span><span class="n">CV_CAP_ANDROID</span><span class="o">+</span><span class="mi">98</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ac3943d1caa66f5d89c4d5af1104ade35">&#64;106::CV_CAP_XIAPI</span><span></span>         <span class="o">=</span><span class="mi">1100</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058afbef6cda792bf7cec891a983ca60be35">&#64;106::CV_CAP_AVFOUNDATION</span><span></span>  <span class="o">=</span> <span class="mi">1200</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a27be50689f72be92e1c069c8e54efe00">&#64;106::CV_CAP_GIGANETIX</span><span></span>     <span class="o">=</span> <span class="mi">1300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a04ab1bd77887a4e36c64801adda8f037">&#64;106::CV_CAP_INTELPERC</span><span></span>     <span class="o">=</span> <span class="mi">1500</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058af8a16d3088be1d19075878562be17cf7">&#64;106::CV_CAP_OPENNI2</span><span></span>       <span class="o">=</span> <span class="mi">1600</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058aea4a373fd4080e33daf86cb8c4142a13">&#64;106::CV_CAP_GPHOTO2</span><span></span>       <span class="o">=</span> <span class="mi">1700</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058ab2b7a41f4729e516a683811692d5b56d">&#64;106::CV_CAP_GSTREAMER</span><span></span>     <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a9c91532b6f3cdc6776c29bd6b9d0d331">&#64;106::CV_CAP_FFMPEG</span><span></span>        <span class="o">=</span> <span class="mi">1900</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a37ec0b6c856439770aa9f2eb51983291">&#64;106::CV_CAP_IMAGES</span><span></span>        <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a7fdf87a26a99f530f0866520c1d2e12b">&#64;106::CV_CAP_ARAVIS</span><span></span>        <span class="o">=</span> <span class="mi">2100</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058aac12d82bd0c157a21444a7f4cd3c4a41">&#64;106::CV_CAP_OCV_MJPEG</span><span></span>     <span class="o">=</span> <span class="mi">2200</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad4cc901632869d29a55b6f15139fcc98">&#64;107::CV_CAP_PROP_DC1394_OFF</span><span></span>                           <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada16d1301cda3836e73e0f77e7e5abc203">&#64;107::CV_CAP_PROP_DC1394_MODE_MANUAL</span><span></span>                   <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada95dd8afbc220aca5d160e305cc90740e">&#64;107::CV_CAP_PROP_DC1394_MODE_AUTO</span><span></span>                     <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada071bd4db97a39e3a2d24bd068035c4a2">&#64;107::CV_CAP_PROP_DC1394_MODE_ONE_PUSH_AUTO</span><span></span>            <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5afcdcd3b5aca0148a22735f1a2dba1c">&#64;107::CV_CAP_PROP_POS_MSEC</span><span></span>                             <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5352facf062934b88e7df97baa588991">&#64;107::CV_CAP_PROP_POS_FRAMES</span><span></span>                           <span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada119679c09a034db63346505d145532ba">&#64;107::CV_CAP_PROP_POS_AVI_RATIO</span><span></span>                        <span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada68627fd1d6c0a445299c63a296665509">&#64;107::CV_CAP_PROP_FRAME_WIDTH</span><span></span>                          <span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4b04e148bea455483e666784e9594d3e">&#64;107::CV_CAP_PROP_FRAME_HEIGHT</span><span></span>                         <span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5f91733759094693912575b0e4e41f6b">&#64;107::CV_CAP_PROP_FPS</span><span></span>                                  <span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafb31f512f21b566c39cf2b4432a0b791">&#64;107::CV_CAP_PROP_FOURCC</span><span></span>                               <span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5e829ce3564dcb6c11be64b0b4b7f7ea">&#64;107::CV_CAP_PROP_FRAME_COUNT</span><span></span>                          <span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad986c8dd7b0e40c86d8aa735f02137df">&#64;107::CV_CAP_PROP_FORMAT</span><span></span>                               <span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada88a58f8b9198aaf51e25cbcc83ab7bac">&#64;107::CV_CAP_PROP_MODE</span><span></span>                                 <span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada547cd2e7a8cfb28140bd2d4277bd037a">&#64;107::CV_CAP_PROP_BRIGHTNESS</span><span></span>                           <span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada820549c08841c2ddbbf81ce28b6fb564">&#64;107::CV_CAP_PROP_CONTRAST</span><span></span>                             <span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadadf404efa88027ebf2b681fb901fcf952">&#64;107::CV_CAP_PROP_SATURATION</span><span></span>                           <span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad23d98b509ab62bc954891f3fba0acfc">&#64;107::CV_CAP_PROP_HUE</span><span></span>                                  <span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaaf1ca1404cf3e86a0a88de1b4596a47e">&#64;107::CV_CAP_PROP_GAIN</span><span></span>                                 <span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafc6727b5ad23ed0c7708453abca7ebc5">&#64;107::CV_CAP_PROP_EXPOSURE</span><span></span>                             <span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabe32051a52bfed2581aec9409ac4a539">&#64;107::CV_CAP_PROP_CONVERT_RGB</span><span></span>                          <span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0888b57abe529da18b6c8959c059d3a3">&#64;107::CV_CAP_PROP_WHITE_BALANCE_BLUE_U</span><span></span>                 <span class="o">=</span><span class="mi">17</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada50b355b30a13f4893b02812a17bed2d8">&#64;107::CV_CAP_PROP_RECTIFICATION</span><span></span>                        <span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada688eaff5439da82b793671339a2eb17a">&#64;107::CV_CAP_PROP_MONOCHROME</span><span></span>                           <span class="o">=</span><span class="mi">19</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac2585a98332e62c1890ec1fad360cffe">&#64;107::CV_CAP_PROP_SHARPNESS</span><span></span>                            <span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2ac314f597fb8f2d6ace20536ff87544">&#64;107::CV_CAP_PROP_AUTO_EXPOSURE</span><span></span>                        <span class="o">=</span><span class="mi">21</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad7ef2750f0ec2fa85ed901b44b4feec2">&#64;107::CV_CAP_PROP_GAMMA</span><span></span>                                <span class="o">=</span><span class="mi">22</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada558b0a0e4298c8e96606702345123579">&#64;107::CV_CAP_PROP_TEMPERATURE</span><span></span>                          <span class="o">=</span><span class="mi">23</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae940ce7c645ca967fea684cc229faa83">&#64;107::CV_CAP_PROP_TRIGGER</span><span></span>                              <span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5357fcf931b923efa0f3ad1efc9baef8">&#64;107::CV_CAP_PROP_TRIGGER_DELAY</span><span></span>                        <span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada925b5a1e6412893e681e82cc430a12b2">&#64;107::CV_CAP_PROP_WHITE_BALANCE_RED_V</span><span></span>                  <span class="o">=</span><span class="mi">26</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada407051873b9a28d5f7daeba017b894bd">&#64;107::CV_CAP_PROP_ZOOM</span><span></span>                                 <span class="o">=</span><span class="mi">27</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada20d7366b54a8120ec887a85c17114b14">&#64;107::CV_CAP_PROP_FOCUS</span><span></span>                                <span class="o">=</span><span class="mi">28</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacfba0f98d9117c313c3f9f0e783f3705">&#64;107::CV_CAP_PROP_GUID</span><span></span>                                 <span class="o">=</span><span class="mi">29</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada299011879cacebd922d96120d2ffb273">&#64;107::CV_CAP_PROP_ISO_SPEED</span><span></span>                            <span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada11684025d542bffceba9a8afb753bbb0">&#64;107::CV_CAP_PROP_MAX_DC1394</span><span></span>                           <span class="o">=</span><span class="mi">31</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada400bae1c23c9779477236f8d344a1a24">&#64;107::CV_CAP_PROP_BACKLIGHT</span><span></span>                            <span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada39480725847bc2ad6625f68f9a869475">&#64;107::CV_CAP_PROP_PAN</span><span></span>                                  <span class="o">=</span><span class="mi">33</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada8d1cae4d14561f33e384054378fa1e30">&#64;107::CV_CAP_PROP_TILT</span><span></span>                                 <span class="o">=</span><span class="mi">34</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada58f0933c67dbaf277d318c860eed4941">&#64;107::CV_CAP_PROP_ROLL</span><span></span>                                 <span class="o">=</span><span class="mi">35</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada555bc11e96dc1e9932f0e0984f76bca0">&#64;107::CV_CAP_PROP_IRIS</span><span></span>                                 <span class="o">=</span><span class="mi">36</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada50d34d13d1246f5751849b452b816546">&#64;107::CV_CAP_PROP_SETTINGS</span><span></span>                             <span class="o">=</span><span class="mi">37</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada02bbec3f18130dd0312b27f00696ad34">&#64;107::CV_CAP_PROP_BUFFERSIZE</span><span></span>                           <span class="o">=</span><span class="mi">38</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada280ec1b0125f758c3d67230092acb138">&#64;107::CV_CAP_PROP_AUTOFOCUS</span><span></span>                            <span class="o">=</span><span class="mi">39</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada338a497b3db53d7b2da87a1571c8f913">&#64;107::CV_CAP_PROP_SAR_NUM</span><span></span>                              <span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada1cc5ed34febf32e7cc3eca84424951f8">&#64;107::CV_CAP_PROP_SAR_DEN</span><span></span>                              <span class="o">=</span><span class="mi">41</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada8f329c082f02cbe505bba72cbd179808">&#64;107::CV_CAP_PROP_AUTOGRAB</span><span></span>                             <span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafd561b51d6e96f47929018462a68d770">&#64;107::CV_CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING</span><span></span>       <span class="o">=</span><span class="mi">1025</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada7be721b253ea488c0a04efb87f2cfe62">&#64;107::CV_CAP_PROP_PREVIEW_FORMAT</span><span></span>                       <span class="o">=</span><span class="mi">1026</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada914ba943cd90106947e30048725a6121">&#64;107::CV_CAP_OPENNI_DEPTH_GENERATOR</span><span></span>                    <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">31</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab5843c71e637836127110268d2d2e708">&#64;107::CV_CAP_OPENNI_IMAGE_GENERATOR</span><span></span>                    <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">30</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada256c1465670f0284d259c14e42459589">&#64;107::CV_CAP_OPENNI_IR_GENERATOR</span><span></span>                       <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">29</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3689aca456da4ee480c5fa5fdcaa2b91">&#64;107::CV_CAP_OPENNI_GENERATORS_MASK</span><span></span>                    <span class="o">=</span> <span class="n">CV_CAP_OPENNI_DEPTH_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_OPENNI_IMAGE_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_OPENNI_IR_GENERATOR</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafa8fbbd1767ef4ef316b43a72cf6ff77">&#64;107::CV_CAP_PROP_OPENNI_OUTPUT_MODE</span><span></span>                   <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada80f10cff672c623e56c26a2139730ba0">&#64;107::CV_CAP_PROP_OPENNI_FRAME_MAX_DEPTH</span><span></span>               <span class="o">=</span> <span class="mi">101</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadadd1d25547ea91597b3084699f67f8f94">&#64;107::CV_CAP_PROP_OPENNI_BASELINE</span><span></span>                      <span class="o">=</span> <span class="mi">102</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad466b1800bf757a1cc3ddde6fa3c353b">&#64;107::CV_CAP_PROP_OPENNI_FOCAL_LENGTH</span><span></span>                  <span class="o">=</span> <span class="mi">103</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3707590005a8b3d3675d6a810afb1527">&#64;107::CV_CAP_PROP_OPENNI_REGISTRATION</span><span></span>                  <span class="o">=</span> <span class="mi">104</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6bb09683baca7f1f1488e95dcd7ff84e">&#64;107::CV_CAP_PROP_OPENNI_REGISTRATION_ON</span><span></span>               <span class="o">=</span> <span class="n">CV_CAP_PROP_OPENNI_REGISTRATION</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad4a29004028cdf3115b3df92dca57bb8">&#64;107::CV_CAP_PROP_OPENNI_APPROX_FRAME_SYNC</span><span></span>             <span class="o">=</span> <span class="mi">105</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac5e97ed8d50b3e6d27e04023219e13b4">&#64;107::CV_CAP_PROP_OPENNI_MAX_BUFFER_SIZE</span><span></span>               <span class="o">=</span> <span class="mi">106</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab00ccc6045d49907676a78abb554b299">&#64;107::CV_CAP_PROP_OPENNI_CIRCLE_BUFFER</span><span></span>                 <span class="o">=</span> <span class="mi">107</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafd49357f3e9903a42c02d433946ef678">&#64;107::CV_CAP_PROP_OPENNI_MAX_TIME_DURATION</span><span></span>             <span class="o">=</span> <span class="mi">108</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0d97998c669cddac38552dd8c519ac04">&#64;107::CV_CAP_PROP_OPENNI_GENERATOR_PRESENT</span><span></span>             <span class="o">=</span> <span class="mi">109</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae8e03aeda545fb8ea2b058e93e1ac798">&#64;107::CV_CAP_PROP_OPENNI2_SYNC</span><span></span>                         <span class="o">=</span> <span class="mi">110</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6178198dba39919c6eb162e820e41565">&#64;107::CV_CAP_PROP_OPENNI2_MIRROR</span><span></span>                       <span class="o">=</span> <span class="mi">111</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4511f8afa4e80d5ce14211fd9672bf98">&#64;107::CV_CAP_OPENNI_IMAGE_GENERATOR_PRESENT</span><span></span>            <span class="o">=</span> <span class="n">CV_CAP_OPENNI_IMAGE_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_GENERATOR_PRESENT</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadadedd0dee71ac2bb80e62ae5386945ebe">&#64;107::CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE</span><span></span>        <span class="o">=</span> <span class="n">CV_CAP_OPENNI_IMAGE_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_OUTPUT_MODE</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab3000744bf962fecec52fd929f223ab3">&#64;107::CV_CAP_OPENNI_DEPTH_GENERATOR_PRESENT</span><span></span>            <span class="o">=</span> <span class="n">CV_CAP_OPENNI_DEPTH_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_GENERATOR_PRESENT</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada387c7ab2b4bdf0be8275314a639def95">&#64;107::CV_CAP_OPENNI_DEPTH_GENERATOR_BASELINE</span><span></span>           <span class="o">=</span> <span class="n">CV_CAP_OPENNI_DEPTH_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_BASELINE</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacaf419b6ddbfaa0f7d9115d0d5cb957d">&#64;107::CV_CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH</span><span></span>       <span class="o">=</span> <span class="n">CV_CAP_OPENNI_DEPTH_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_FOCAL_LENGTH</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabad7508ff10c70ac422006dd3f64cc81">&#64;107::CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION</span><span></span>       <span class="o">=</span> <span class="n">CV_CAP_OPENNI_DEPTH_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_REGISTRATION</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2208a3a4536229092f81022c1991265b">&#64;107::CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON</span><span></span>    <span class="o">=</span> <span class="n">CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada1d6fbe738b1f8a24e1f6982b72d65a56">&#64;107::CV_CAP_OPENNI_IR_GENERATOR_PRESENT</span><span></span>               <span class="o">=</span> <span class="n">CV_CAP_OPENNI_IR_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_PROP_OPENNI_GENERATOR_PRESENT</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada664dbe61654399e43f84b13f8b127bc5">&#64;107::CV_CAP_GSTREAMER_QUEUE_LENGTH</span><span></span>                    <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad044a8132d0cb56c0ce0b776ad7beca6">&#64;107::CV_CAP_PROP_PVAPI_MULTICASTIP</span><span></span>                    <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada1481d5a9916344c92c10c0836f6bd430">&#64;107::CV_CAP_PROP_PVAPI_FRAMESTARTTRIGGERMODE</span><span></span>          <span class="o">=</span> <span class="mi">301</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada1fd830340b8f07bd812e85ee14dc886e">&#64;107::CV_CAP_PROP_PVAPI_DECIMATIONHORIZONTAL</span><span></span>           <span class="o">=</span> <span class="mi">302</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada18fdcc3b440ced590f36393ceff8d63e">&#64;107::CV_CAP_PROP_PVAPI_DECIMATIONVERTICAL</span><span></span>             <span class="o">=</span> <span class="mi">303</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada078ab7b79b9d02daf05e880e955d504b">&#64;107::CV_CAP_PROP_PVAPI_BINNINGX</span><span></span>                       <span class="o">=</span> <span class="mi">304</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad4a59808bed730dc2d72a5ccb495a5f1">&#64;107::CV_CAP_PROP_PVAPI_BINNINGY</span><span></span>                       <span class="o">=</span> <span class="mi">305</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada865df2b3345eca1073fac1322af5b788">&#64;107::CV_CAP_PROP_PVAPI_PIXELFORMAT</span><span></span>                    <span class="o">=</span> <span class="mi">306</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada791a74cbfb84529ace9f9e8e175bdd4b">&#64;107::CV_CAP_PROP_XI_DOWNSAMPLING</span><span></span>                      <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2ea34fbcb74452dbca3847560665bdbe">&#64;107::CV_CAP_PROP_XI_DATA_FORMAT</span><span></span>                       <span class="o">=</span> <span class="mi">401</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada195b6d4f1872982783c80abeff0d3987">&#64;107::CV_CAP_PROP_XI_OFFSET_X</span><span></span>                          <span class="o">=</span> <span class="mi">402</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0fdb941f3cd5a67c18380d97d24828ad">&#64;107::CV_CAP_PROP_XI_OFFSET_Y</span><span></span>                          <span class="o">=</span> <span class="mi">403</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada34377a93453b6a0ca6be81ef349fbe28">&#64;107::CV_CAP_PROP_XI_TRG_SOURCE</span><span></span>                        <span class="o">=</span> <span class="mi">404</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5ab3656bc66478dfce29b742c775161f">&#64;107::CV_CAP_PROP_XI_TRG_SOFTWARE</span><span></span>                      <span class="o">=</span> <span class="mi">405</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada8139dbf7a5e97591efe55e931f7b8abf">&#64;107::CV_CAP_PROP_XI_GPI_SELECTOR</span><span></span>                      <span class="o">=</span> <span class="mi">406</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafe556a71585fa98b2eeb64ee365c05e5">&#64;107::CV_CAP_PROP_XI_GPI_MODE</span><span></span>                          <span class="o">=</span> <span class="mi">407</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada275710913fd5dd421ea9596fc9b80895">&#64;107::CV_CAP_PROP_XI_GPI_LEVEL</span><span></span>                         <span class="o">=</span> <span class="mi">408</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada562c1a3bfe498ef88dd0b36e106cfdbd">&#64;107::CV_CAP_PROP_XI_GPO_SELECTOR</span><span></span>                      <span class="o">=</span> <span class="mi">409</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafd25c8bad572760339c8d96c637326f8">&#64;107::CV_CAP_PROP_XI_GPO_MODE</span><span></span>                          <span class="o">=</span> <span class="mi">410</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab6096bbbfb3ad6261ed6d2f622e566dc">&#64;107::CV_CAP_PROP_XI_LED_SELECTOR</span><span></span>                      <span class="o">=</span> <span class="mi">411</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada76e0c823e705fd857dd996ca031d91b2">&#64;107::CV_CAP_PROP_XI_LED_MODE</span><span></span>                          <span class="o">=</span> <span class="mi">412</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab1b4efd06eb3ac7468dbf1a0d813cd93">&#64;107::CV_CAP_PROP_XI_MANUAL_WB</span><span></span>                         <span class="o">=</span> <span class="mi">413</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada120190d3d8a84ca736c647a17aca6412">&#64;107::CV_CAP_PROP_XI_AUTO_WB</span><span></span>                           <span class="o">=</span> <span class="mi">414</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaa574de021589ba1f62cc7229bcbd1440">&#64;107::CV_CAP_PROP_XI_AEAG</span><span></span>                              <span class="o">=</span> <span class="mi">415</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6f6a6b15507af9fa3c6addc1a441fd29">&#64;107::CV_CAP_PROP_XI_EXP_PRIORITY</span><span></span>                      <span class="o">=</span> <span class="mi">416</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad0fe9a0b4eb53afa280678147c5dd932">&#64;107::CV_CAP_PROP_XI_AE_MAX_LIMIT</span><span></span>                      <span class="o">=</span> <span class="mi">417</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6f74642c148b4268857d5d16df517b2d">&#64;107::CV_CAP_PROP_XI_AG_MAX_LIMIT</span><span></span>                      <span class="o">=</span> <span class="mi">418</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad53bb71effcaea98d43d4aae80ae84d9">&#64;107::CV_CAP_PROP_XI_AEAG_LEVEL</span><span></span>                        <span class="o">=</span> <span class="mi">419</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac52208af24e4c0a8d6af2efb0b3dcf73">&#64;107::CV_CAP_PROP_XI_TIMEOUT</span><span></span>                           <span class="o">=</span> <span class="mi">420</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada80d66b32ba78bd45205629340197f35a">&#64;107::CV_CAP_PROP_XI_EXPOSURE</span><span></span>                          <span class="o">=</span> <span class="mi">421</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5583bd9f47432848b88335bb2c78d391">&#64;107::CV_CAP_PROP_XI_EXPOSURE_BURST_COUNT</span><span></span>              <span class="o">=</span> <span class="mi">422</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada19bc838ba94aec73a3d49dcf3a392f5b">&#64;107::CV_CAP_PROP_XI_GAIN_SELECTOR</span><span></span>                     <span class="o">=</span> <span class="mi">423</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada21797ae42ac6c3eb1c6ccb796cf58abf">&#64;107::CV_CAP_PROP_XI_GAIN</span><span></span>                              <span class="o">=</span> <span class="mi">424</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada57fa62ef431a8e156babf2e1f0f6394d">&#64;107::CV_CAP_PROP_XI_DOWNSAMPLING_TYPE</span><span></span>                 <span class="o">=</span> <span class="mi">426</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada66c9df9af9329dedd9590dda24c94ff4">&#64;107::CV_CAP_PROP_XI_BINNING_SELECTOR</span><span></span>                  <span class="o">=</span> <span class="mi">427</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada17d6786c9c8c79c951bdfbcad8267b59">&#64;107::CV_CAP_PROP_XI_BINNING_VERTICAL</span><span></span>                  <span class="o">=</span> <span class="mi">428</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3e0b559bc7f6845abcd09336c76ea666">&#64;107::CV_CAP_PROP_XI_BINNING_HORIZONTAL</span><span></span>                <span class="o">=</span> <span class="mi">429</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6c1b8b7e3d5440e03d0ac0ec7a26fc31">&#64;107::CV_CAP_PROP_XI_BINNING_PATTERN</span><span></span>                   <span class="o">=</span> <span class="mi">430</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada99dbb8ef7f4542f49e385ec786af9095">&#64;107::CV_CAP_PROP_XI_DECIMATION_SELECTOR</span><span></span>               <span class="o">=</span> <span class="mi">431</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaedebc07113c2cb81743e5daa80085c53">&#64;107::CV_CAP_PROP_XI_DECIMATION_VERTICAL</span><span></span>               <span class="o">=</span> <span class="mi">432</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada22f650fff4f252a1aa9f0bc224735599">&#64;107::CV_CAP_PROP_XI_DECIMATION_HORIZONTAL</span><span></span>             <span class="o">=</span> <span class="mi">433</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabce315fbf92f85c3b614112acb5836ef">&#64;107::CV_CAP_PROP_XI_DECIMATION_PATTERN</span><span></span>                <span class="o">=</span> <span class="mi">434</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada07d1467cf81259287c31e4321b121e60">&#64;107::CV_CAP_PROP_XI_TEST_PATTERN_GENERATOR_SELECTOR</span><span></span>   <span class="o">=</span> <span class="mi">587</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad5b751f78d4d9fb9e5db631b7287443f">&#64;107::CV_CAP_PROP_XI_TEST_PATTERN</span><span></span>                      <span class="o">=</span> <span class="mi">588</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad31acfdf2e8e5790ab19442dadddd58b">&#64;107::CV_CAP_PROP_XI_IMAGE_DATA_FORMAT</span><span></span>                 <span class="o">=</span> <span class="mi">435</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada44df080845080114158138cc2247b32f">&#64;107::CV_CAP_PROP_XI_SHUTTER_TYPE</span><span></span>                      <span class="o">=</span> <span class="mi">436</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaad9db7cc8e6bc4af83fd52309cfbc45b">&#64;107::CV_CAP_PROP_XI_SENSOR_TAPS</span><span></span>                       <span class="o">=</span> <span class="mi">437</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada61d10b5e022635c2c8d415d0a136eab1">&#64;107::CV_CAP_PROP_XI_AEAG_ROI_OFFSET_X</span><span></span>                 <span class="o">=</span> <span class="mi">439</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada9bb14e18f70545aee3409c1acd071547">&#64;107::CV_CAP_PROP_XI_AEAG_ROI_OFFSET_Y</span><span></span>                 <span class="o">=</span> <span class="mi">440</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada43adda2196f858e00405d306c16a22a0">&#64;107::CV_CAP_PROP_XI_AEAG_ROI_WIDTH</span><span></span>                    <span class="o">=</span> <span class="mi">441</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada75e7ffc723036ece321b88d84a90898f">&#64;107::CV_CAP_PROP_XI_AEAG_ROI_HEIGHT</span><span></span>                   <span class="o">=</span> <span class="mi">442</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0e92bf27740e1794c5c30d58b0d12e58">&#64;107::CV_CAP_PROP_XI_BPC</span><span></span>                               <span class="o">=</span> <span class="mi">445</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada99f8cd9a1de3bc6d1703f4eff78b0958">&#64;107::CV_CAP_PROP_XI_WB_KR</span><span></span>                             <span class="o">=</span> <span class="mi">448</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada96900ddebf87baf5a80306b53a9a433e">&#64;107::CV_CAP_PROP_XI_WB_KG</span><span></span>                             <span class="o">=</span> <span class="mi">449</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada64cb374e6d4b79cc4818c0e62298df4c">&#64;107::CV_CAP_PROP_XI_WB_KB</span><span></span>                             <span class="o">=</span> <span class="mi">450</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada9b98d84ec0fdaeae55045538ff6f173e">&#64;107::CV_CAP_PROP_XI_WIDTH</span><span></span>                             <span class="o">=</span> <span class="mi">451</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac16a9772bf1743f632e0cf9e000e5357">&#64;107::CV_CAP_PROP_XI_HEIGHT</span><span></span>                            <span class="o">=</span> <span class="mi">452</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4f33c118200a47a1a40a21e9a369cca9">&#64;107::CV_CAP_PROP_XI_REGION_SELECTOR</span><span></span>                   <span class="o">=</span> <span class="mi">589</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada605ae9234febcc626adbe458b05367d1">&#64;107::CV_CAP_PROP_XI_REGION_MODE</span><span></span>                       <span class="o">=</span> <span class="mi">595</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada45216350c8b751e39b69a9e1cf53c708">&#64;107::CV_CAP_PROP_XI_LIMIT_BANDWIDTH</span><span></span>                   <span class="o">=</span> <span class="mi">459</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabfe2a7637c531d4c1d4075ef7df46a98">&#64;107::CV_CAP_PROP_XI_SENSOR_DATA_BIT_DEPTH</span><span></span>             <span class="o">=</span> <span class="mi">460</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae58adee3f0df5652b0b0272e58ff6340">&#64;107::CV_CAP_PROP_XI_OUTPUT_DATA_BIT_DEPTH</span><span></span>             <span class="o">=</span> <span class="mi">461</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada7951d83ed7cb449e40d2a786f36be5e1">&#64;107::CV_CAP_PROP_XI_IMAGE_DATA_BIT_DEPTH</span><span></span>              <span class="o">=</span> <span class="mi">462</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaeade827f66987577fe02b02cfb4cbba1">&#64;107::CV_CAP_PROP_XI_OUTPUT_DATA_PACKING</span><span></span>               <span class="o">=</span> <span class="mi">463</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0aa5bdf222b6a530a7d03a8befd451bc">&#64;107::CV_CAP_PROP_XI_OUTPUT_DATA_PACKING_TYPE</span><span></span>          <span class="o">=</span> <span class="mi">464</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada7b0eb5242779dae2b6f5375a3aa50ba0">&#64;107::CV_CAP_PROP_XI_IS_COOLED</span><span></span>                         <span class="o">=</span> <span class="mi">465</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadafd695317a8db713dadca03c7957e40f0">&#64;107::CV_CAP_PROP_XI_COOLING</span><span></span>                           <span class="o">=</span> <span class="mi">466</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf5e80f9385e1421611d527ecdedfc99b">&#64;107::CV_CAP_PROP_XI_TARGET_TEMP</span><span></span>                       <span class="o">=</span> <span class="mi">467</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabdbde48c5ba403c35fcc093117c1a59f">&#64;107::CV_CAP_PROP_XI_CHIP_TEMP</span><span></span>                         <span class="o">=</span> <span class="mi">468</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada065069eb3af7baf427175f5a2b32d1fa">&#64;107::CV_CAP_PROP_XI_HOUS_TEMP</span><span></span>                         <span class="o">=</span> <span class="mi">469</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada015324230ad32ecd68c4494df52486af">&#64;107::CV_CAP_PROP_XI_HOUS_BACK_SIDE_TEMP</span><span></span>               <span class="o">=</span> <span class="mi">590</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4beb40c41332c0bf16644c67b2e7f80f">&#64;107::CV_CAP_PROP_XI_SENSOR_BOARD_TEMP</span><span></span>                 <span class="o">=</span> <span class="mi">596</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacf8288f480d73a1766795e4502f235dc">&#64;107::CV_CAP_PROP_XI_CMS</span><span></span>                               <span class="o">=</span> <span class="mi">470</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2e58d3802d0051f2f513b0b56ce7fe93">&#64;107::CV_CAP_PROP_XI_APPLY_CMS</span><span></span>                         <span class="o">=</span> <span class="mi">471</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3f4d908364b311d9883752bba0643591">&#64;107::CV_CAP_PROP_XI_IMAGE_IS_COLOR</span><span></span>                    <span class="o">=</span> <span class="mi">474</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5a006bd33960e399bc236b9a807ac721">&#64;107::CV_CAP_PROP_XI_COLOR_FILTER_ARRAY</span><span></span>                <span class="o">=</span> <span class="mi">475</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada630a35a2098e446a5568a29f3b03c8bf">&#64;107::CV_CAP_PROP_XI_GAMMAY</span><span></span>                            <span class="o">=</span> <span class="mi">476</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac90a2a970a875409b07876f8edca6c92">&#64;107::CV_CAP_PROP_XI_GAMMAC</span><span></span>                            <span class="o">=</span> <span class="mi">477</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad1991bc133dff87aacc1da4e09d611f9">&#64;107::CV_CAP_PROP_XI_SHARPNESS</span><span></span>                         <span class="o">=</span> <span class="mi">478</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacb72af70eba6aebb1b42f6cdc847dd88">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_00</span><span></span>                      <span class="o">=</span> <span class="mi">479</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada006bf3b3cedf381dab2e319153c6c6d2">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_01</span><span></span>                      <span class="o">=</span> <span class="mi">480</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac2bc88e2c3932f13ba3bb962dee980fe">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_02</span><span></span>                      <span class="o">=</span> <span class="mi">481</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada984ced4cb83c5c97127df810d2263472">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_03</span><span></span>                      <span class="o">=</span> <span class="mi">482</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf6bc4dc18b2b378a59d698cc6a860f8e">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_10</span><span></span>                      <span class="o">=</span> <span class="mi">483</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada1ec0b5a7bbf278c67c74109c53db7f0e">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_11</span><span></span>                      <span class="o">=</span> <span class="mi">484</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf4e7d319fc5ad6f3b017a6804c6db291">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_12</span><span></span>                      <span class="o">=</span> <span class="mi">485</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf70ae8e21768962d4391c53c562604fb">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_13</span><span></span>                      <span class="o">=</span> <span class="mi">486</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada942f55316c54c4f90d5e6dc85346544d">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_20</span><span></span>                      <span class="o">=</span> <span class="mi">487</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada1ec81ed321c61d5b22ed3f5bcf1e38fc">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_21</span><span></span>                      <span class="o">=</span> <span class="mi">488</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad6d4127ca8c025442eb5d7f8cbe9790b">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_22</span><span></span>                      <span class="o">=</span> <span class="mi">489</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaa546757f4dace56a12125e59fdb2efa9">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_23</span><span></span>                      <span class="o">=</span> <span class="mi">490</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3fe7f6c4f16affd1682262d036d0d737">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_30</span><span></span>                      <span class="o">=</span> <span class="mi">491</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabe97002311fa89c8402490b540ce87b0">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_31</span><span></span>                      <span class="o">=</span> <span class="mi">492</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaba5b8eec255e8be79da505afefdd4f4d">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_32</span><span></span>                      <span class="o">=</span> <span class="mi">493</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaea062bf9fb53959a1b720bf3417aaec4">&#64;107::CV_CAP_PROP_XI_CC_MATRIX_33</span><span></span>                      <span class="o">=</span> <span class="mi">494</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada309cefe213c7ba507e9fe39b90dbc082">&#64;107::CV_CAP_PROP_XI_DEFAULT_CC_MATRIX</span><span></span>                 <span class="o">=</span> <span class="mi">495</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaee4c3d1901222e41db5868d13949b507">&#64;107::CV_CAP_PROP_XI_TRG_SELECTOR</span><span></span>                      <span class="o">=</span> <span class="mi">498</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabaa5d71c7c5bda2f65c824302e7be448">&#64;107::CV_CAP_PROP_XI_ACQ_FRAME_BURST_COUNT</span><span></span>             <span class="o">=</span> <span class="mi">499</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf5d8ee0450c0f8798c54a8e01b1c01fd">&#64;107::CV_CAP_PROP_XI_DEBOUNCE_EN</span><span></span>                       <span class="o">=</span> <span class="mi">507</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada325bbcfbaab936befbc622a000f0699a">&#64;107::CV_CAP_PROP_XI_DEBOUNCE_T0</span><span></span>                       <span class="o">=</span> <span class="mi">508</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada81b767e30ad9cf78a892fccd5156b266">&#64;107::CV_CAP_PROP_XI_DEBOUNCE_T1</span><span></span>                       <span class="o">=</span> <span class="mi">509</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3a65a628032265c17fee32ceadab497b">&#64;107::CV_CAP_PROP_XI_DEBOUNCE_POL</span><span></span>                      <span class="o">=</span> <span class="mi">510</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaa1a699e8e7b226eba5a8ee2d91448e6b">&#64;107::CV_CAP_PROP_XI_LENS_MODE</span><span></span>                         <span class="o">=</span> <span class="mi">511</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada254898145bd6d44eb75129a21f7f5cdd">&#64;107::CV_CAP_PROP_XI_LENS_APERTURE_VALUE</span><span></span>               <span class="o">=</span> <span class="mi">512</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf28c72de1c8ffa263a9b837dda320479">&#64;107::CV_CAP_PROP_XI_LENS_FOCUS_MOVEMENT_VALUE</span><span></span>         <span class="o">=</span> <span class="mi">513</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad1aae178a510558d5f648b6bf77dc9fe">&#64;107::CV_CAP_PROP_XI_LENS_FOCUS_MOVE</span><span></span>                   <span class="o">=</span> <span class="mi">514</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6fe596304a5da3c35198b39ae9eaec0c">&#64;107::CV_CAP_PROP_XI_LENS_FOCUS_DISTANCE</span><span></span>               <span class="o">=</span> <span class="mi">515</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3f0c85a56764588e5b08840f1fee6c9e">&#64;107::CV_CAP_PROP_XI_LENS_FOCAL_LENGTH</span><span></span>                 <span class="o">=</span> <span class="mi">516</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada36e583436543557e9e8da7e77f3ba1af">&#64;107::CV_CAP_PROP_XI_LENS_FEATURE_SELECTOR</span><span></span>             <span class="o">=</span> <span class="mi">517</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae0d717c87423a9f083b3b749a1da3c78">&#64;107::CV_CAP_PROP_XI_LENS_FEATURE</span><span></span>                      <span class="o">=</span> <span class="mi">518</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaebedc6a15834d48f952e01c57da0827b">&#64;107::CV_CAP_PROP_XI_DEVICE_MODEL_ID</span><span></span>                   <span class="o">=</span> <span class="mi">521</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2a4ffb84b8be5dac8edee2298ecc4444">&#64;107::CV_CAP_PROP_XI_DEVICE_SN</span><span></span>                         <span class="o">=</span> <span class="mi">522</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada16ea1a5fa22026c0aba1d22ba66fc1ee">&#64;107::CV_CAP_PROP_XI_IMAGE_DATA_FORMAT_RGB32_ALPHA</span><span></span>     <span class="o">=</span> <span class="mi">529</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae6476c337fe3f3cd551697a0dfd997ef">&#64;107::CV_CAP_PROP_XI_IMAGE_PAYLOAD_SIZE</span><span></span>                <span class="o">=</span> <span class="mi">530</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada973eebd25c2719f78e2ffeaa5115af19">&#64;107::CV_CAP_PROP_XI_TRANSPORT_PIXEL_FORMAT</span><span></span>            <span class="o">=</span> <span class="mi">531</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf1da4afb6c39e50f81b5408ecb42c7c7">&#64;107::CV_CAP_PROP_XI_SENSOR_CLOCK_FREQ_HZ</span><span></span>              <span class="o">=</span> <span class="mi">532</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3184ef1269321d0932af17f256784c78">&#64;107::CV_CAP_PROP_XI_SENSOR_CLOCK_FREQ_INDEX</span><span></span>           <span class="o">=</span> <span class="mi">533</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada5fc535c89335acc945b8105ee58ab07c">&#64;107::CV_CAP_PROP_XI_SENSOR_OUTPUT_CHANNEL_COUNT</span><span></span>       <span class="o">=</span> <span class="mi">534</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada947846c870a6f17d6effcab807537ee9">&#64;107::CV_CAP_PROP_XI_FRAMERATE</span><span></span>                         <span class="o">=</span> <span class="mi">535</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab90dc1230836f708709452978006cf71">&#64;107::CV_CAP_PROP_XI_COUNTER_SELECTOR</span><span></span>                  <span class="o">=</span> <span class="mi">536</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4b07ca545ddbb9b5a378a458834a9095">&#64;107::CV_CAP_PROP_XI_COUNTER_VALUE</span><span></span>                     <span class="o">=</span> <span class="mi">537</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad089638da5cc2e4cab6cd9ba0e4ad753">&#64;107::CV_CAP_PROP_XI_ACQ_TIMING_MODE</span><span></span>                   <span class="o">=</span> <span class="mi">538</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad55821a1b518eff2cc791695cb4c9d99">&#64;107::CV_CAP_PROP_XI_AVAILABLE_BANDWIDTH</span><span></span>               <span class="o">=</span> <span class="mi">539</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaab10eb382f8c9af0f598063c069d6f60">&#64;107::CV_CAP_PROP_XI_BUFFER_POLICY</span><span></span>                     <span class="o">=</span> <span class="mi">540</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4c6c060434fb6abd493e16a00a5be038">&#64;107::CV_CAP_PROP_XI_LUT_EN</span><span></span>                            <span class="o">=</span> <span class="mi">541</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6654a8c72997e72c82c0dd760e44382f">&#64;107::CV_CAP_PROP_XI_LUT_INDEX</span><span></span>                         <span class="o">=</span> <span class="mi">542</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2bd972d8b4cf32394dba5ac3973b00bc">&#64;107::CV_CAP_PROP_XI_LUT_VALUE</span><span></span>                         <span class="o">=</span> <span class="mi">543</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6fd8591cf0fc4056c515ed1bfecce489">&#64;107::CV_CAP_PROP_XI_TRG_DELAY</span><span></span>                         <span class="o">=</span> <span class="mi">544</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada793b60c28469ec2bdb4dd049c5ca02af">&#64;107::CV_CAP_PROP_XI_TS_RST_MODE</span><span></span>                       <span class="o">=</span> <span class="mi">545</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada664c215aa745fc07be69fa2c1ac811ea">&#64;107::CV_CAP_PROP_XI_TS_RST_SOURCE</span><span></span>                     <span class="o">=</span> <span class="mi">546</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaa82fb9177afde9677072b27383593a2f">&#64;107::CV_CAP_PROP_XI_IS_DEVICE_EXIST</span><span></span>                   <span class="o">=</span> <span class="mi">547</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3078449c8e78766e503b36410bfae262">&#64;107::CV_CAP_PROP_XI_ACQ_BUFFER_SIZE</span><span></span>                   <span class="o">=</span> <span class="mi">548</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadabca7cd4327e644121f1126aa10ee2721">&#64;107::CV_CAP_PROP_XI_ACQ_BUFFER_SIZE_UNIT</span><span></span>              <span class="o">=</span> <span class="mi">549</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada80de11e6e3ca6effe7458733a8463da3">&#64;107::CV_CAP_PROP_XI_ACQ_TRANSPORT_BUFFER_SIZE</span><span></span>         <span class="o">=</span> <span class="mi">550</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0aa5255b4e0d1fd16167f29a3b317fef">&#64;107::CV_CAP_PROP_XI_BUFFERS_QUEUE_SIZE</span><span></span>                <span class="o">=</span> <span class="mi">551</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada05c268592e0cecefa2b5fe98045a1c4b">&#64;107::CV_CAP_PROP_XI_ACQ_TRANSPORT_BUFFER_COMMIT</span><span></span>       <span class="o">=</span> <span class="mi">552</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab02e9da9dddfa7a0097265eccd17d858">&#64;107::CV_CAP_PROP_XI_RECENT_FRAME</span><span></span>                      <span class="o">=</span> <span class="mi">553</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada6b5c1739ea39863d0fd71b859222179e">&#64;107::CV_CAP_PROP_XI_DEVICE_RESET</span><span></span>                      <span class="o">=</span> <span class="mi">554</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada05d7f3d8dea68e7e7fc62cade0f836b5">&#64;107::CV_CAP_PROP_XI_COLUMN_FPN_CORRECTION</span><span></span>             <span class="o">=</span> <span class="mi">555</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf7f366932abb49a444803e6c9c4c2732">&#64;107::CV_CAP_PROP_XI_ROW_FPN_CORRECTION</span><span></span>                <span class="o">=</span> <span class="mi">591</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadadec59b929c1f600c64fb9e9511786a9d">&#64;107::CV_CAP_PROP_XI_SENSOR_MODE</span><span></span>                       <span class="o">=</span> <span class="mi">558</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacd2ff23b1b66f73f3a19fcc6bbe09919">&#64;107::CV_CAP_PROP_XI_HDR</span><span></span>                               <span class="o">=</span> <span class="mi">559</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae5413c29f7663899999d8a7bfa2b4121">&#64;107::CV_CAP_PROP_XI_HDR_KNEEPOINT_COUNT</span><span></span>               <span class="o">=</span> <span class="mi">560</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad119c942b18b382e225c3ccb4519fe00">&#64;107::CV_CAP_PROP_XI_HDR_T1</span><span></span>                            <span class="o">=</span> <span class="mi">561</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad6b15cdd5eebbb33d54d19da9ddfce37">&#64;107::CV_CAP_PROP_XI_HDR_T2</span><span></span>                            <span class="o">=</span> <span class="mi">562</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaa8726a3bb70dd2c30e8bb0836600f1f2">&#64;107::CV_CAP_PROP_XI_KNEEPOINT1</span><span></span>                        <span class="o">=</span> <span class="mi">563</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4ee022491f94854df132b204292e8ff1">&#64;107::CV_CAP_PROP_XI_KNEEPOINT2</span><span></span>                        <span class="o">=</span> <span class="mi">564</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadad97d7a5e864c7ffe84b4031c4af03393">&#64;107::CV_CAP_PROP_XI_IMAGE_BLACK_LEVEL</span><span></span>                 <span class="o">=</span> <span class="mi">565</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae13e22e85241cd32fb794280212bae88">&#64;107::CV_CAP_PROP_XI_HW_REVISION</span><span></span>                       <span class="o">=</span> <span class="mi">571</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada60ec9e75f82a75247308684c0e6e7b18">&#64;107::CV_CAP_PROP_XI_DEBUG_LEVEL</span><span></span>                       <span class="o">=</span> <span class="mi">572</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2fc3565659bea84d82cc8f4ef14be542">&#64;107::CV_CAP_PROP_XI_AUTO_BANDWIDTH_CALCULATION</span><span></span>        <span class="o">=</span> <span class="mi">573</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacaf412bf22fbd612d5d3ce1e24742d32">&#64;107::CV_CAP_PROP_XI_FFS_FILE_ID</span><span></span>                       <span class="o">=</span> <span class="mi">594</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadae2e839d246bbac24a83be1f7849c5d90">&#64;107::CV_CAP_PROP_XI_FFS_FILE_SIZE</span><span></span>                     <span class="o">=</span> <span class="mi">580</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3ca897b5f182aa50ebfc56adb72871df">&#64;107::CV_CAP_PROP_XI_FREE_FFS_SIZE</span><span></span>                     <span class="o">=</span> <span class="mi">581</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab619c7c6073c660ee10e16e28402a9ea">&#64;107::CV_CAP_PROP_XI_USED_FFS_SIZE</span><span></span>                     <span class="o">=</span> <span class="mi">582</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0f6e810cc91eba389f591f1e2a9329ff">&#64;107::CV_CAP_PROP_XI_FFS_ACCESS_KEY</span><span></span>                    <span class="o">=</span> <span class="mi">583</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf2222fadacb28cc86ee8ee8bfb983e07">&#64;107::CV_CAP_PROP_XI_SENSOR_FEATURE_SELECTOR</span><span></span>           <span class="o">=</span> <span class="mi">585</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada201d084eb274959a2fc2b56c67a9df96">&#64;107::CV_CAP_PROP_XI_SENSOR_FEATURE_VALUE</span><span></span>              <span class="o">=</span> <span class="mi">586</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaac083921dda5bd79cea6fd5e631cce8c">&#64;107::CV_CAP_PROP_ANDROID_FLASH_MODE</span><span></span>                   <span class="o">=</span> <span class="mi">8001</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada7af29343cc761e64f91b896e9e3b5dae">&#64;107::CV_CAP_PROP_ANDROID_FOCUS_MODE</span><span></span>                   <span class="o">=</span> <span class="mi">8002</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2be36a13f266e3e59163503e78b34b57">&#64;107::CV_CAP_PROP_ANDROID_WHITE_BALANCE</span><span></span>                <span class="o">=</span> <span class="mi">8003</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada2ddd9d43aaafe5622c6e523b3c8fe47e">&#64;107::CV_CAP_PROP_ANDROID_ANTIBANDING</span><span></span>                  <span class="o">=</span> <span class="mi">8004</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3ed7e14182b70468dc8a90ab0e23fb63">&#64;107::CV_CAP_PROP_ANDROID_FOCAL_LENGTH</span><span></span>                 <span class="o">=</span> <span class="mi">8005</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada311bb4998c0cee4672a2bb250408a066">&#64;107::CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_NEAR</span><span></span>          <span class="o">=</span> <span class="mi">8006</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada387e5f985e20379d613607e09000e31f">&#64;107::CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_OPTIMAL</span><span></span>       <span class="o">=</span> <span class="mi">8007</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada32ff4b16f4886680b3846686c3588415">&#64;107::CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_FAR</span><span></span>           <span class="o">=</span> <span class="mi">8008</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadab53dfc4ca8a45be2f35a9d01e8e8e509">&#64;107::CV_CAP_PROP_ANDROID_EXPOSE_LOCK</span><span></span>                  <span class="o">=</span> <span class="mi">8009</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada8e517ff1cb09b46e76a8addee9450db0">&#64;107::CV_CAP_PROP_ANDROID_WHITEBALANCE_LOCK</span><span></span>            <span class="o">=</span> <span class="mi">8010</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaeee47caf908c892c7b8ba6b755c282fe">&#64;107::CV_CAP_PROP_IOS_DEVICE_FOCUS</span><span></span>                     <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada86a8c91ddccab3b202b187f68baf20b6">&#64;107::CV_CAP_PROP_IOS_DEVICE_EXPOSURE</span><span></span>                  <span class="o">=</span> <span class="mi">9002</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaed47a68c193edcca08f8b9bbc0396f70">&#64;107::CV_CAP_PROP_IOS_DEVICE_FLASH</span><span></span>                     <span class="o">=</span> <span class="mi">9003</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada4917ae01d2655423b674e9cf91a1e14f">&#64;107::CV_CAP_PROP_IOS_DEVICE_WHITEBALANCE</span><span></span>              <span class="o">=</span> <span class="mi">9004</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada31347c9f178bc2687e9a16b7b0730c51">&#64;107::CV_CAP_PROP_IOS_DEVICE_TORCH</span><span></span>                     <span class="o">=</span> <span class="mi">9005</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada34b63e3ad227ac9327592736e28d62b7">&#64;107::CV_CAP_PROP_GIGA_FRAME_OFFSET_X</span><span></span>                  <span class="o">=</span> <span class="mi">10001</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaaa27ba11bfbdd39287c14fa1848f6667">&#64;107::CV_CAP_PROP_GIGA_FRAME_OFFSET_Y</span><span></span>                  <span class="o">=</span> <span class="mi">10002</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada8e3b7ca0dcbffcdf4e9c4189660ffde1">&#64;107::CV_CAP_PROP_GIGA_FRAME_WIDTH_MAX</span><span></span>                 <span class="o">=</span> <span class="mi">10003</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada94af815bb4d340f11d089b6379d6a7a8">&#64;107::CV_CAP_PROP_GIGA_FRAME_HEIGH_MAX</span><span></span>                 <span class="o">=</span> <span class="mi">10004</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac1cebfb4eff88579e54f6a56b6ca2b8d">&#64;107::CV_CAP_PROP_GIGA_FRAME_SENS_WIDTH</span><span></span>                <span class="o">=</span> <span class="mi">10005</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaf079f0aa3d48d96cfc5d05d7ae704af5">&#64;107::CV_CAP_PROP_GIGA_FRAME_SENS_HEIGH</span><span></span>                <span class="o">=</span> <span class="mi">10006</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada807fac1977ad2d429640c14df350c901">&#64;107::CV_CAP_PROP_INTELPERC_PROFILE_COUNT</span><span></span>              <span class="o">=</span> <span class="mi">11001</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada013544c5e08de8ca283d21e66626fcb0">&#64;107::CV_CAP_PROP_INTELPERC_PROFILE_IDX</span><span></span>                <span class="o">=</span> <span class="mi">11002</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadacce2aad0c5e098db3acdb317b15b69bf">&#64;107::CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE</span><span></span> <span class="o">=</span> <span class="mi">11003</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada7d5dbed71a61959a946bf407c04291bb">&#64;107::CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE</span><span></span>     <span class="o">=</span> <span class="mi">11004</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada0f5d848be18a60fc0b051f0c19270ade">&#64;107::CV_CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD</span><span></span> <span class="o">=</span> <span class="mi">11005</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada71a3496c32e07afa65d6642721b8142a">&#64;107::CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ</span><span></span>    <span class="o">=</span> <span class="mi">11006</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadac81eaaf9d0705ff12264115b0e0b9d15">&#64;107::CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT</span><span></span>    <span class="o">=</span> <span class="mi">11007</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada3d7f5c19b2f8caefaa634ef0e4c36a56">&#64;107::CV_CAP_INTELPERC_DEPTH_GENERATOR</span><span></span>                 <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">29</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dada05043c068a533ddb5074a1774be3332d">&#64;107::CV_CAP_INTELPERC_IMAGE_GENERATOR</span><span></span>                 <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">28</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga01aea4eb01aa6415eee118b5a5ee3dadaea1bb7d010495ae6165782145e889fdd">&#64;107::CV_CAP_INTELPERC_GENERATORS_MASK</span><span></span>                 <span class="o">=</span> <span class="n">CV_CAP_INTELPERC_DEPTH_GENERATOR</span> <span class="o">+</span> <span class="n">CV_CAP_INTELPERC_IMAGE_GENERATOR</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga7646ae03981912f97626c39dfe9318daae7d22f626691b7cf050e26b1721d6abd">&#64;108::CV_CAP_MODE_BGR</span><span></span>  <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga7646ae03981912f97626c39dfe9318daa0aaa18b795ee63648f9a8ad133289707">&#64;108::CV_CAP_MODE_RGB</span><span></span>  <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga7646ae03981912f97626c39dfe9318daa5dee769f85fdf237b4a3586d2b1a4cb8">&#64;108::CV_CAP_MODE_GRAY</span><span></span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga7646ae03981912f97626c39dfe9318daa9ae8fe9d7711e08f1d8a48b7a6d50c9a">&#64;108::CV_CAP_MODE_YUYV</span><span></span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1ac60ae40a480a02a412ba18143c7a6f2d">&#64;109::CV_CAP_OPENNI_DEPTH_MAP</span><span></span>         <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1aaada6f59b0ce8cd61dcc8298f5188f49">&#64;109::CV_CAP_OPENNI_POINT_CLOUD_MAP</span><span></span>   <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1ad62d5b0a6fdc04766b2acf7a4c8b33c3">&#64;109::CV_CAP_OPENNI_DISPARITY_MAP</span><span></span>     <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1a3ce2e8e940e6852f1c6bb793d0870344">&#64;109::CV_CAP_OPENNI_DISPARITY_MAP_32F</span><span></span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1a73cddb5ef4904291d1307a8d77f4c983">&#64;109::CV_CAP_OPENNI_VALID_DEPTH_MASK</span><span></span>  <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1ac8eae9b541211a160c3a52d26bd86b1f">&#64;109::CV_CAP_OPENNI_BGR_IMAGE</span><span></span>         <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1a6cd2d5b16283a2d5fd99a5a060ec431f">&#64;109::CV_CAP_OPENNI_GRAY_IMAGE</span><span></span>        <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga29d44341ce767c5dfc737d622fc97ba1a0e0bd938f4a79556318f58037dab50f8">&#64;109::CV_CAP_OPENNI_IR_IMAGE</span><span></span>          <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga1b7b7893d940926615b39239ac05829dae425f2a83bf964026f33495dbc9ee1f2">&#64;110::CV_CAP_OPENNI_VGA_30HZ</span><span></span>  <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga1b7b7893d940926615b39239ac05829daad9fb1e1994b9559afee61984defa4b1">&#64;110::CV_CAP_OPENNI_SXGA_15HZ</span><span></span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga1b7b7893d940926615b39239ac05829da7aa71153dd143eb9cc6fac252ef34269">&#64;110::CV_CAP_OPENNI_SXGA_30HZ</span><span></span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga1b7b7893d940926615b39239ac05829da6a0a4ea8cc069afa1a23fd9871847d30">&#64;110::CV_CAP_OPENNI_QVGA_30HZ</span><span></span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga1b7b7893d940926615b39239ac05829dacdf2f4abce60e6b1168e6337f73f1397">&#64;110::CV_CAP_OPENNI_QVGA_60HZ</span><span></span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga098384b0034af0daa7c9c5c82b563567a0a9c3dc00999060cf100c13a61bbc912">&#64;111::CV_CAP_INTELPERC_DEPTH_MAP</span><span></span>   <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga098384b0034af0daa7c9c5c82b563567a73c43c9cc677ae065052b48c01b1c113">&#64;111::CV_CAP_INTELPERC_UVDEPTH_MAP</span><span></span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga098384b0034af0daa7c9c5c82b563567ab25f6ba231da9fc370017825cd9154be">&#64;111::CV_CAP_INTELPERC_IR_MAP</span><span></span>      <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga098384b0034af0daa7c9c5c82b563567aa9b3c22a8505b987924c711ee2940a96">&#64;111::CV_CAP_INTELPERC_IMAGE</span><span></span>       <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80ca3e971513e466355b93a1f259213d1bee">&#64;112::CV_CAP_PROP_GPHOTO2_PREVIEW</span><span></span>          <span class="o">=</span> <span class="mi">17001</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80cac4d44a09571dbbfade7f2fbedb242d43">&#64;112::CV_CAP_PROP_GPHOTO2_WIDGET_ENUMERATE</span><span></span> <span class="o">=</span> <span class="mi">17002</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80ca6038b97ca830d4a1fc0040b468fcb13c">&#64;112::CV_CAP_PROP_GPHOTO2_RELOAD_CONFIG</span><span></span>    <span class="o">=</span> <span class="mi">17003</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80caa1c6cd23a523208d8d8a3fcee4020cc7">&#64;112::CV_CAP_PROP_GPHOTO2_RELOAD_ON_CHANGE</span><span></span> <span class="o">=</span> <span class="mi">17004</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80ca4e9dc00972f2c7498fd0cc09d9dcc31a">&#64;112::CV_CAP_PROP_GPHOTO2_COLLECT_MSGS</span><span></span>     <span class="o">=</span> <span class="mi">17005</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80ca26ad5762c7a1d3cb18337067b8a3e953">&#64;112::CV_CAP_PROP_GPHOTO2_FLUSH_MSGS</span><span></span>       <span class="o">=</span> <span class="mi">17006</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80ca361ae9816f36f3294c5ce02a2e864e57">&#64;112::CV_CAP_PROP_SPEED</span><span></span>                    <span class="o">=</span> <span class="mi">17007</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80cadb82dad27289c07c57bc3112c4101798">&#64;112::CV_CAP_PROP_APERTURE</span><span></span>                 <span class="o">=</span> <span class="mi">17008</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80caf640a9e642c8a673c7cc011be01618f8">&#64;112::CV_CAP_PROP_EXPOSUREPROGRAM</span><span></span>          <span class="o">=</span> <span class="mi">17009</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dd-d01-group-videoio-c-1gga92c4bd66c8074c3d126a069275a0a80ca9ce272880db119af36f4d35e81b6cf1d">&#64;112::CV_CAP_PROP_VIEWFINDER</span><span></span>               <span class="o">=</span> <span class="mi">17010</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gac005718f121379beffdbdbfb44f2646a"><span class="std std-ref">CV_FOURCC</span></a><span></span><span class="p">(</span>
+    <span class="kt">char</span> <span class="n">c1</span><span class="p">,</span>
+    <span class="kt">char</span> <span class="n">c2</span><span class="p">,</span>
+    <span class="kt">char</span> <span class="n">c3</span><span class="p">,</span>
+    <span class="kt">char</span> <span class="n">c4</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gae38819ff8d6fa81e72c1ee032aa86284"><span class="std std-ref">cvCreateCameraCapture</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">);</span>
+
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga45f6f3f0b93038bc3aa0d7abe5d2e17c"><span class="std std-ref">cvCreateFileCapture</span></a><span></span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filename</span><span class="p">);</span>
+
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gaba5ce8394b2063a34b1bbf6d22a1a6d7"><span class="std std-ref">cvCreateFileCaptureWithPreference</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">apiPreference</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="o">*</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga929bf5fd40a49addad1c2135b5a115cc"><span class="std std-ref">cvCreateVideoWriter</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">fourcc</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">fps</span><span class="p">,</span>
+    <a class="reference internal" href="struct_CvSize.html#doxid-da-d4d-struct-cv-size"><span class="std std-ref">CvSize</span></a><span></span> <span class="n">frame_size</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">is_color</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga7a52ee770a121165b00a12f08161c864"><span class="std std-ref">cvGetCaptureDomain</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">);</span>
+
+<span class="kt">double</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gac21d50914f013cc498af484212bc2cb7"><span class="std std-ref">cvGetCaptureProperty</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">property_id</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga6975894191cdeec167a57dd53461a906"><span class="std std-ref">cvGrabFrame</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">);</span>
+
+<a class="reference internal" href="struct_IplImage.html#doxid-dd-d51-struct-ipl-image"><span class="std std-ref">IplImage</span></a><span></span><span class="o">*</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gab16767b4f5db3504b975ef22be2b126a"><span class="std std-ref">cvQueryFrame</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga39dd48dcaee21c7a8df040d47cbc27ee"><span class="std std-ref">cvReleaseCapture</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">**</span> <span class="n">capture</span><span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga63166bf8a068a04b193f43b4883ccc91"><span class="std std-ref">cvReleaseVideoWriter</span></a><span></span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="o">**</span> <span class="n">writer</span><span class="p">);</span>
+
+<a class="reference internal" href="struct_IplImage.html#doxid-dd-d51-struct-ipl-image"><span class="std std-ref">IplImage</span></a><span></span><span class="o">*</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga15224db88623fc748c4c4fa56c5751db"><span class="std std-ref">cvRetrieveFrame</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">streamIdx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga292c4ab8463dfe04772a955bc7211e27"><span class="std std-ref">cvSetCaptureProperty</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">property_id</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">value</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga6df8276ed140e569484ccb9cb11bb0cb"><span class="std std-ref">cvWriteFrame</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="o">*</span> <span class="n">writer</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="struct_IplImage.html#doxid-dd-d51-struct-ipl-image"><span class="std std-ref">IplImage</span></a><span></span><span class="o">*</span> <span class="n">image</span>
+    <span class="p">);</span>
+
+<span class="c1">// macros</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gaf56b22cc0b0c1985359738735ed8a46a"><span class="std std-ref">CV_FOURCC_DEFAULT</span></a><span></span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gae50212337d3b05af7acb23d9efa611c3"><span class="std std-ref">CV_FOURCC_MACRO</span></a><span></span><span class="p">(</span> \
+    <span class="n">c1</span><span class="p">,</span> \
+    <span class="n">c2</span><span class="p">,</span> \
+    <span class="n">c3</span><span class="p">,</span> \
+    <span class="n">c4</span> \
+    <span class="p">)</span>
+
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga5964e4ca5f467fde5624c2d64db8105d"><span class="std std-ref">CV_FOURCC_PROMPT</span></a><span></span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga710135adb524858e34858a447d03f507"><span class="std std-ref">cvCaptureFromAVI</span></a><span></span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga740fbcd0a6dc9a25e747ce3946491772"><span class="std std-ref">cvCaptureFromCAM</span></a><span></span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga709ac3b8d05afd27c1d86f6636cf55fb"><span class="std std-ref">cvCaptureFromFile</span></a><span></span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gaea3f63afc666dc8e09293498c15128c2"><span class="std std-ref">cvCreateAVIWriter</span></a><span></span>
+<span class="cp">#define </span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gaa251b74b997bc2ad92c424f96ecf82de"><span class="std std-ref">cvWriteToAVI</span></a>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-dd-d01-group-videoio-c"></span><h2>Detailed Documentation</h2>
+<div class="section" id="typedefs">
+<h3>Typedefs</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7">
+<span id="index-1"></span><span></span><span class="k">typedef</span> <span class="k">struct</span> <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span> <span class="n">CvCapture</span>
+</pre>
+<p>“black box” capture structure</p>
+<p>In C++ use <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638">
+<span id="index-2"></span><span></span><span class="k">typedef</span> <span class="k">struct</span> <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span> <span class="n">CvVideoWriter</span>
+</pre>
+<p>“black box” video file writer structure</p>
+<p>In C++ use <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer"><span class="std std-ref">cv::VideoWriter</span></a></p>
+</div>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gac005718f121379beffdbdbfb44f2646a">
+<span id="index-3"></span><span></span><span class="kt">int</span>
+<span class="n">CV_FOURCC</span><span class="p">(</span>
+    <span class="kt">char</span> <span class="n">c1</span><span class="p">,</span>
+    <span class="kt">char</span> <span class="n">c2</span><span class="p">,</span>
+    <span class="kt">char</span> <span class="n">c3</span><span class="p">,</span>
+    <span class="kt">char</span> <span class="n">c4</span>
+    <span class="p">)</span>
+</pre>
+<p>Constructs the fourcc code of the codec function.</p>
+<p>Simply call it with 4 chars fourcc code like <cite>CV_FOURCC(‘I’, ‘Y’, ‘U’, ‘V’)</cite></p>
+<p>List of codes can be obtained at <a class="reference external" href="http://www.fourcc.org/codecs.php">Video Codecs by FOURCC</a> page. FFMPEG backend with MP4 container natively uses other values as fourcc code: see <a class="reference external" href="http://www.mp4ra.org/codecs.html">ObjectType</a>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gae38819ff8d6fa81e72c1ee032aa86284">
+<span id="index-4"></span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span>
+<span class="n">cvCreateCameraCapture</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">)</span>
+</pre>
+<p>start capturing frames from camera: index = camera_index + domain_offset (CV_CAP_*)</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga45f6f3f0b93038bc3aa0d7abe5d2e17c">
+<span id="index-5"></span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span>
+<span class="n">cvCreateFileCapture</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filename</span><span class="p">)</span>
+</pre>
+<p>start capturing frames from video file</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gaba5ce8394b2063a34b1bbf6d22a1a6d7">
+<span id="index-6"></span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span>
+<span class="n">cvCreateFileCaptureWithPreference</span><span class="p">(</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">apiPreference</span>
+    <span class="p">)</span>
+</pre>
+<p>start capturing frames from video file. allows specifying a preferred API to use</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga929bf5fd40a49addad1c2135b5a115cc">
+<span id="index-7"></span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="o">*</span>
+<span class="n">cvCreateVideoWriter</span><span class="p">(</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">fourcc</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">fps</span><span class="p">,</span>
+    <a class="reference internal" href="struct_CvSize.html#doxid-da-d4d-struct-cv-size"><span class="std std-ref">CvSize</span></a><span></span> <span class="n">frame_size</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">is_color</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">)</span>
+</pre>
+<p>initialize video file writer</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga7a52ee770a121165b00a12f08161c864">
+<span id="index-8"></span><span></span><span class="kt">int</span>
+<span class="n">cvGetCaptureDomain</span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">)</span>
+</pre>
+<p>Return the type of the capturer (eg, <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058aa0008d5518630f11edcc89932faa4ae7"><span class="std std-ref">CV_CAP_VFW</span></a>, <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a061243c2ad12fbd89518a4ca8c58f79f"><span class="std std-ref">CV_CAP_UNICAP</span></a>)</p>
+<p>It is unknown if created with <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gga0ae1e3bf78c960c83e2d437efd802058a8c6c1159fb332c7979612de8bcb91a24"><span class="std std-ref">CV_CAP_ANY</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gac21d50914f013cc498af484212bc2cb7">
+<span id="index-9"></span><span></span><span class="kt">double</span>
+<span class="n">cvGetCaptureProperty</span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">property_id</span>
+    <span class="p">)</span>
+</pre>
+<p>retrieve capture properties</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga6975894191cdeec167a57dd53461a906">
+<span id="index-10"></span><span></span><span class="kt">int</span>
+<span class="n">cvGrabFrame</span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">)</span>
+</pre>
+<p>grab a frame, return 1 on success, 0 on fail.</p>
+<p>this function is thought to be fast</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gab16767b4f5db3504b975ef22be2b126a">
+<span id="index-11"></span><a class="reference internal" href="struct_IplImage.html#doxid-dd-d51-struct-ipl-image"><span class="std std-ref">IplImage</span></a><span></span><span class="o">*</span>
+<span class="n">cvQueryFrame</span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">)</span>
+</pre>
+<p>Just a combination of cvGrabFrame and cvRetrieveFrame.</p>
+<p>!!!DO NOT RELEASE or MODIFY the retrieved frame!!!</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga39dd48dcaee21c7a8df040d47cbc27ee">
+<span id="index-12"></span><span></span><span class="kt">void</span>
+<span class="n">cvReleaseCapture</span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">**</span> <span class="n">capture</span><span class="p">)</span>
+</pre>
+<p>stop capturing/reading and free resources</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga63166bf8a068a04b193f43b4883ccc91">
+<span id="index-13"></span><span></span><span class="kt">void</span>
+<span class="n">cvReleaseVideoWriter</span><span class="p">(</span><a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="o">**</span> <span class="n">writer</span><span class="p">)</span>
+</pre>
+<p>close video file writer</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga15224db88623fc748c4c4fa56c5751db">
+<span id="index-14"></span><a class="reference internal" href="struct_IplImage.html#doxid-dd-d51-struct-ipl-image"><span class="std std-ref">IplImage</span></a><span></span><span class="o">*</span>
+<span class="n">cvRetrieveFrame</span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">streamIdx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span>
+</pre>
+<p>get the frame grabbed with cvGrabFrame(..)</p>
+<p>This function may apply some frame processing like frame decompression, flipping etc.!!!DO NOT RELEASE or MODIFY the retrieved frame!!!</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga292c4ab8463dfe04772a955bc7211e27">
+<span id="index-15"></span><span></span><span class="kt">int</span>
+<span class="n">cvSetCaptureProperty</span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga394109074fab9bdca2ea45514b1946b7"><span class="std std-ref">CvCapture</span></a><span></span><span class="o">*</span> <span class="n">capture</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">property_id</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">value</span>
+    <span class="p">)</span>
+</pre>
+<p>set capture properties</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga6df8276ed140e569484ccb9cb11bb0cb">
+<span id="index-16"></span><span></span><span class="kt">int</span>
+<span class="n">cvWriteFrame</span><span class="p">(</span>
+    <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga888ba48aa022b60aecf98a462aa1b638"><span class="std std-ref">CvVideoWriter</span></a><span></span><span class="o">*</span> <span class="n">writer</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="struct_IplImage.html#doxid-dd-d51-struct-ipl-image"><span class="std std-ref">IplImage</span></a><span></span><span class="o">*</span> <span class="n">image</span>
+    <span class="p">)</span>
+</pre>
+<p>write frame to video file</p>
+</div>
+<div class="section" id="macros">
+<h3>Macros</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gaf56b22cc0b0c1985359738735ed8a46a">
+<span id="index-17"></span><span></span><span class="cp">#define CV_FOURCC_DEFAULT</span>
+</pre>
+<p>(Linux only) Use default codec for specified filename</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gae50212337d3b05af7acb23d9efa611c3">
+<span id="index-18"></span><span></span><span class="cp">#define CV_FOURCC_MACRO( \</span>
+<span class="cp">    c1, \</span>
+<span class="cp">    c2, \</span>
+<span class="cp">    c3, \</span>
+<span class="cp">    c4 \</span>
+<span class="cp">    )</span>
+</pre>
+<p>Macro to construct the fourcc code of the codec. Same as <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gac005718f121379beffdbdbfb44f2646a"><span class="std std-ref">CV_FOURCC()</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga5964e4ca5f467fde5624c2d64db8105d">
+<span id="index-19"></span><span></span><span class="cp">#define CV_FOURCC_PROMPT</span>
+</pre>
+<p>(Windows only) Open Codec Selection Dialog</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga710135adb524858e34858a447d03f507">
+<span id="index-20"></span><span></span><span class="cp">#define cvCaptureFromAVI</span>
+</pre>
+<p>Deprecated use <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga45f6f3f0b93038bc3aa0d7abe5d2e17c"><span class="std std-ref">cvCreateFileCapture()</span></a> instead</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga740fbcd0a6dc9a25e747ce3946491772">
+<span id="index-21"></span><span></span><span class="cp">#define cvCaptureFromCAM</span>
+</pre>
+<p>Deprecated use <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1gae38819ff8d6fa81e72c1ee032aa86284"><span class="std std-ref">cvCreateCameraCapture()</span></a> instead</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1ga709ac3b8d05afd27c1d86f6636cf55fb">
+<span id="index-22"></span><span></span><span class="cp">#define cvCaptureFromFile</span>
+</pre>
+<p>Deprecated use <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga45f6f3f0b93038bc3aa0d7abe5d2e17c"><span class="std std-ref">cvCreateFileCapture()</span></a> instead</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gaea3f63afc666dc8e09293498c15128c2">
+<span id="index-23"></span><span></span><span class="cp">#define cvCreateAVIWriter</span>
+</pre>
+<p>Deprecated use <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga929bf5fd40a49addad1c2135b5a115cc"><span class="std std-ref">cvCreateVideoWriter()</span></a> instead</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d01-group-videoio-c-1gaa251b74b997bc2ad92c424f96ecf82de">
+<span id="index-24"></span><span></span><span class="cp">#define cvWriteToAVI</span>
+</pre>
+<p>Deprecated use <a class="reference internal" href="#doxid-dd-d01-group-videoio-c-1ga6df8276ed140e569484ccb9cb11bb0cb"><span class="std std-ref">cvWriteFrame()</span></a> instead</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="group_videoio_flags_base.html" class="btn btn-neutral float-right" title="Flags for video I/O" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="group_videoio_flags_others.html" class="btn btn-neutral float-left" title="Additional flags for video I/O API backends" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

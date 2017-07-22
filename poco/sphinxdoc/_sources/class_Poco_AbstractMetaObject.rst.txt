@@ -1,0 +1,165 @@
+.. index:: pair: class; Poco::AbstractMetaObject
+.. _doxid-class_poco_1_1_abstract_meta_object:
+
+template class Poco::AbstractMetaObject
+=======================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`MetaObject <doxid-class_poco_1_1_meta_object>` stores some information about a C++ class. :ref:`More...<details-class_poco_1_1_abstract_meta_object>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <MetaObject.h>
+	
+	template <class B>
+	class AbstractMetaObject
+	{
+	public:
+		// construction
+	
+		:target:`AbstractMetaObject<doxid-class_poco_1_1_abstract_meta_object_1a2a71fd63054ed18a89a6471bc474b18e>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* name);
+
+		// methods
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char*
+		:target:`name<doxid-class_poco_1_1_abstract_meta_object_1a62e20079e8dccd0fcd855a089287403a>`() const;
+	
+		virtual
+		B*
+		:ref:`create<doxid-class_poco_1_1_abstract_meta_object_1a16a6e6f64bcd30380a836ac4e6519044>`() const = 0;
+	
+		virtual
+		B&
+		:ref:`instance<doxid-class_poco_1_1_abstract_meta_object_1a1eacd645cac07f230743d2cdf141dd77>`() const = 0;
+	
+		virtual
+		bool
+		:ref:`canCreate<doxid-class_poco_1_1_abstract_meta_object_1acf1efcd0dc424e77b59d2f157210c72f>`() const = 0;
+	
+		virtual
+		void
+		:ref:`destroy<doxid-class_poco_1_1_abstract_meta_object_1aed9acf390a803aa080f9e32cfc27c889>`(B* pObject) const;
+	
+		B*
+		:ref:`autoDelete<doxid-class_poco_1_1_abstract_meta_object_1af214cd06b8e1622e2e461b6f96c56bc0>`(B* pObject) const;
+	
+		virtual
+		bool
+		:ref:`isAutoDelete<doxid-class_poco_1_1_abstract_meta_object_1ab3074ec8c5f6547e2789284b2a14e362>`(B* pObject) const;
+	};
+
+	// direct descendants
+
+	template <
+		class C,
+		class B
+		>
+	class :ref:`MetaObject<doxid-class_poco_1_1_meta_object>`;
+
+	template <
+		class C,
+		class B
+		>
+	class :ref:`MetaSingleton<doxid-class_poco_1_1_meta_singleton>`;
+.. _details-class_poco_1_1_abstract_meta_object:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`MetaObject <doxid-class_poco_1_1_meta_object>` stores some information about a C++ class.
+
+The :ref:`MetaObject <doxid-class_poco_1_1_meta_object>` class is used by the :ref:`Manifest <doxid-class_poco_1_1_manifest>` class. :ref:`AbstractMetaObject <doxid-class_poco_1_1_abstract_meta_object>` is a common base class for all :ref:`MetaObject <doxid-class_poco_1_1_meta_object>` in a rooted class hierarchy. A :ref:`MetaObject <doxid-class_poco_1_1_meta_object>` can also be used as an object factory for its class.
+
+Methods
+-------
+
+.. index:: pair: function; create
+.. _doxid-class_poco_1_1_abstract_meta_object_1a16a6e6f64bcd30380a836ac4e6519044:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	B*
+	create() const = 0
+
+Create a new instance of a class.
+
+Cannot be used for singletons.
+
+.. index:: pair: function; instance
+.. _doxid-class_poco_1_1_abstract_meta_object_1a1eacd645cac07f230743d2cdf141dd77:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	B&
+	instance() const = 0
+
+Returns a reference to the only instance of the class.
+
+Used for singletons only.
+
+.. index:: pair: function; canCreate
+.. _doxid-class_poco_1_1_abstract_meta_object_1acf1efcd0dc424e77b59d2f157210c72f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	canCreate() const = 0
+
+Returns true iff the create method can be used to create instances of the class.
+
+Returns false if the class is a singleton.
+
+.. index:: pair: function; destroy
+.. _doxid-class_poco_1_1_abstract_meta_object_1aed9acf390a803aa080f9e32cfc27c889:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	destroy(B* pObject) const
+
+If pObject was owned by meta object, the ownership of the deleted object is removed and the object is deleted.
+
+.. index:: pair: function; autoDelete
+.. _doxid-class_poco_1_1_abstract_meta_object_1af214cd06b8e1622e2e461b6f96c56bc0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	B*
+	autoDelete(B* pObject) const
+
+Give ownership of pObject to the meta object.
+
+The meta object will delete all objects it owns when it is destroyed.
+
+Returns pObject.
+
+.. index:: pair: function; isAutoDelete
+.. _doxid-class_poco_1_1_abstract_meta_object_1ab3074ec8c5f6547e2789284b2a14e362:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	isAutoDelete(B* pObject) const
+
+Returns true if the object is owned by meta object.
+
+Overloaded in :ref:`MetaSingleton <doxid-class_poco_1_1_meta_singleton>` - returns true if the class is a singleton.
+

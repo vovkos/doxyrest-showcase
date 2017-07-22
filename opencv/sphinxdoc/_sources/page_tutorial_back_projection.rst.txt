@@ -1,0 +1,278 @@
+.. index:: pair: page; Back Projection
+.. _doxid-da/d7f/tutorial_back_projection:
+
+Back Projection
+===============
+
+.. rubric:: Goal
+
+In this tutorial you will learn:
+
+* What is Back Projection and why it is useful
+
+* How to use the OpenCV function :ref:`cv::calcBackProject <doxid-d6/dc7/group__imgproc__hist_1ga3a0af640716b456c3d14af8aee12e3ca>` to calculate Back Projection
+
+* How to mix different channels of an image by using the OpenCV function :ref:`cv::mixChannels <doxid-d2/de8/group__core__array_1ga51d768c270a1cdd3497255017c4504be>`
+
+.. rubric:: Theory
+
+.. rubric:: What is Back Projection?
+
+* Back Projection is a way of recording how well the pixels of a given image fit the distribution of pixels in a histogram model.
+
+* To make it simpler: For Back Projection, you calculate the histogram model of a feature and then use it to find this feature in an image.
+
+* Application example: If you have a histogram of flesh color (say, a Hue-Saturation histogram ), then you can use it to find flesh color areas in an image:
+
+.. rubric:: How does it work?
+
+* We explain this by using the skin example:
+
+* Let's say you have gotten a skin histogram (Hue-Saturation) based on the image below. The histogram besides is going to be our *model histogram* (which we know represents a sample of skin tonality). You applied some mask to capture only the histogram of the skin area:
+  
+  .. image:: Back_Projection_Theory0.jpg
+  	:alt: T0
+  
+  
+  
+  .. image:: Back_Projection_Theory1.jpg
+  	:alt: T1
+
+* Now, let's imagine that you get another hand image (Test Image) like the one below: (with its respective histogram):
+  
+  .. image:: Back_Projection_Theory2.jpg
+  	:alt: T2
+  
+  
+  
+  .. image:: Back_Projection_Theory3.jpg
+  	:alt: T3
+
+* What we want to do is to use our *model histogram* (that we know represents a skin tonality) to detect skin areas in our Test Image. Here are the steps
+  
+  #. In each pixel of our Test Image (i.e. :math:`p(i,j)`), collect the data and find the correspondent bin location for that pixel (i.e. :math:`( h_{i,j}, s_{i,j} )`).
+  
+  #. Lookup the *model histogram* in the correspondent bin - :math:`( h_{i,j}, s_{i,j} )` - and read the bin value.
+  
+  #. Store this bin value in a new image (*BackProjection*). Also, you may consider to normalize the *model histogram* first, so the output for the Test Image can be visible for you.
+  
+  #. Applying the steps above, we get the following BackProjection image for our Test Image:
+     
+     .. image:: Back_Projection_Theory4.jpg
+  
+  #. In terms of statistics, the values stored in *BackProjection* represent the *probability* that a pixel in *Test Image* belongs to a skin area, based on the *model histogram* that we use. For instance in our Test image, the brighter areas are more probable to be skin area (as they actually are), whereas the darker areas have less probability (notice that these "dark" areas belong to surfaces that have some shadow on it, which in turns affects the detection).
+
+.. rubric:: Code
+
+* **What does this program do?**
+  
+  * Loads an image
+  
+  * Convert the original to HSV format and separate only *Hue* channel to be used for the Histogram (using the OpenCV function :ref:`cv::mixChannels <doxid-d2/de8/group__core__array_1ga51d768c270a1cdd3497255017c4504be>`)
+  
+  * Let the user to enter the number of bins to be used in the calculation of the histogram.
+  
+  * Calculate the histogram (and update it if the bins change) and the backprojection of the same image.
+  
+  * Display the backprojection and the histogram in windows.
+
+* **Downloadable code** :
+  
+  #. Click `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/calcBackProject_Demo1.cpp>`__ for the basic version (explained in this tutorial).
+  
+  #. For stuff slightly fancier (using H-S histograms and floodFill to define a mask for the skin area) you can check the `improved demo <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/calcBackProject_Demo2.cpp>`__
+  
+  #. ...or you can always check out the classical `camshiftdemo <https://github.com/opencv/opencv/tree/master/samples/cpp/camshiftdemo.cpp>`__ in samples.
+
+* **Code at glance:**
+  
+  .. ref-code-block:: cpp
+  
+  	
+  	#include "opencv2/imgproc.hpp"
+  	#include "opencv2/imgcodecs.hpp"
+  	#include "opencv2/highgui.hpp"
+  	
+  	#include <iostream>
+  	
+  	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+  	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+  	
+  	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` hsv; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` hue;
+  	int bins = 25;
+  	
+  	void Hist_and_Backproj(int, void* );
+  	
+  	
+  	int main( int, char** argv )
+  	{
+  	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+  	
+  	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+  	    { cout<<"Usage: ./calcBackProject_Demo1 <path_to_image>"<<endl;
+  	      return -1;
+  	    }
+  	
+  	  :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, hsv, :ref:`COLOR_BGR2HSV <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa4a7f0ecf2e94150699e48c79139ee12>` );
+  	
+  	  hue.:ref:`create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>`( hsv.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), hsv.:ref:`depth <doxid-db/de6/classcv_1_1_mat_1a8da9f853b6f3a29d738572fd1ffc44c0>`() );
+  	  int ch[] = { 0, 0 };
+  	  :ref:`mixChannels <doxid-d2/de8/group__core__array_1ga51d768c270a1cdd3497255017c4504be>`( &hsv, 1, &hue, 1, ch, 1 );
+  	
+  	  const char* window_image = "Source image";
+  	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_image, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+  	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("* Hue  bins: ", window_image, &bins, 180, Hist_and_Backproj );
+  	  Hist_and_Backproj(0, 0);
+  	
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_image, src );
+  	
+  	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+  	  return 0;
+  	}
+  	
+  	
+  	void Hist_and_Backproj(int, void* )
+  	{
+  	  MatND hist;
+  	  int histSize = :ref:`MAX <doxid-db/de0/group__core__utils_1gafa99ec4acc4ecb2dc3c2d05da15d0e3f>`( bins, 2 );
+  	  float hue_range[] = { 0, 180 };
+  	  const float* ranges = { hue_range };
+  	
+  	  :ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &hue, 1, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), hist, 1, &histSize, &ranges, true, false );
+  	  :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`( hist, hist, 0, 255, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`() );
+  	
+  	  MatND backproj;
+  	  :ref:`calcBackProject <doxid-d6/dc7/group__imgproc__hist_1ga3a0af640716b456c3d14af8aee12e3ca>`( &hue, 1, 0, hist, backproj, &ranges, 1, true );
+  	
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "BackProj", backproj );
+  	
+  	  int w = 400; int h = 400;
+  	  int bin_w = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( (double) w / histSize );
+  	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` histImg = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`( w, h, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+  	
+  	  for( int i = 0; i < bins; i ++ )
+  	     { :ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( histImg, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( i*bin_w, h ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( (i+1)*bin_w, h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( hist.at<float>(i)*h/255.0 ) ), Scalar( 0, 0, 255 ), -1 ); }
+  	
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Histogram", histImg );
+  	
+  	}
+
+.. rubric:: Explanation
+
+#. Declare the matrices to store our images and initialize the number of bins to be used by our histogram:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat src; Mat hsv; Mat hue;
+   	int bins = 25;
+
+#. Read the input image and transform it to HSV format:
+   
+   .. ref-code-block:: cpp
+   
+   	src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], 1 );
+   	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, hsv, :ref:`COLOR_BGR2HSV <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa4a7f0ecf2e94150699e48c79139ee12>` );
+
+#. For this tutorial, we will use only the Hue value for our 1-D histogram (check out the fancier code in the links above if you want to use the more standard H-S histogram, which yields better results):
+   
+   .. ref-code-block:: cpp
+   
+   	hue.create( hsv.size(), hsv.depth() );
+   	int ch[] = { 0, 0 };
+   	:ref:`mixChannels <doxid-d2/de8/group__core__array_1ga51d768c270a1cdd3497255017c4504be>`( &hsv, 1, &hue, 1, ch, 1 );
+   
+   as you see, we use the function :ref:`cv::mixChannels <doxid-d2/de8/group__core__array_1ga51d768c270a1cdd3497255017c4504be>` to get only the channel 0 (Hue) from the hsv image. It gets the following parameters:
+   
+   * **&hsv:** The source array from which the channels will be copied
+   
+   * **1:** The number of source arrays
+   
+   * **&hue:** The destination array of the copied channels
+   
+   * **1:** The number of destination arrays
+   
+   * **ch[] = {0,0}:** The array of index pairs indicating how the channels are copied. In this case, the Hue(0) channel of &hsv is being copied to the 0 channel of &hue (1-channel)
+   
+   * **1:** Number of index pairs
+
+#. Create a Trackbar for the user to enter the bin values. Any change on the Trackbar means a call to the **Hist_and_Backproj** callback function.
+   
+   .. ref-code-block:: cpp
+   
+   	char* window_image = "Source image";
+   	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_image, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+   	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("* Hue  bins: ", window_image, &bins, 180, Hist_and_Backproj );
+   	Hist_and_Backproj(0, 0);
+
+#. Show the image and wait for the user to exit the program:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_image, src );
+   	
+   	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+   	return 0;
+
+#. **Hist_and_Backproj function:** Initialize the arguments needed for :ref:`cv::calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`. The number of bins comes from the Trackbar:
+   
+   .. ref-code-block:: cpp
+   
+   	void Hist_and_Backproj(int, void* )
+   	{
+   	  MatND hist;
+   	  int histSize = :ref:`MAX <doxid-db/de0/group__core__utils_1gafa99ec4acc4ecb2dc3c2d05da15d0e3f>`( bins, 2 );
+   	  float hue_range[] = { 0, 180 };
+   	  const float* ranges = { hue_range };
+
+#. Calculate the Histogram and normalize it to the range :math:`[0,255]`
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`( &hue, 1, 0, Mat(), hist, 1, &histSize, &ranges, true, false );
+   	:ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`( hist, hist, 0, 255, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`, -1, Mat() );
+
+#. Get the Backprojection of the same image by calling the function :ref:`cv::calcBackProject <doxid-d6/dc7/group__imgproc__hist_1ga3a0af640716b456c3d14af8aee12e3ca>`
+   
+   .. ref-code-block:: cpp
+   
+   	MatND backproj;
+   	:ref:`calcBackProject <doxid-d6/dc7/group__imgproc__hist_1ga3a0af640716b456c3d14af8aee12e3ca>`( &hue, 1, 0, hist, backproj, &ranges, 1, true );
+   
+   all the arguments are known (the same as used to calculate the histogram), only we add the backproj matrix, which will store the backprojection of the source image (&hue)
+
+#. Display backproj:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "BackProj", backproj );
+
+#. Draw the 1-D Hue histogram of the image:
+   
+   .. ref-code-block:: cpp
+   
+   	int w = 400; int h = 400;
+   	int bin_w = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( (double) w / histSize );
+   	Mat histImg = Mat::zeros( w, h, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+   	
+   	for( int i = 0; i < bins; i ++ )
+   	   { :ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( histImg, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( i*bin_w, h ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( (i+1)*bin_w, h - :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`( hist.at<float>(i)*h/255.0 ) ), Scalar( 0, 0, 255 ), -1 ); }
+   	
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Histogram", histImg );
+
+.. rubric:: Results
+
+Here are the output by using a sample image ( guess what? Another hand ). You can play with the bin values and you will observe how it affects the results:
+
+.. image:: Back_Projection1_Source_Image.jpg
+	:alt: R0
+
+
+
+.. image:: Back_Projection1_Histogram.jpg
+	:alt: R1
+
+
+
+.. image:: Back_Projection1_BackProj.jpg
+	:alt: R2
+

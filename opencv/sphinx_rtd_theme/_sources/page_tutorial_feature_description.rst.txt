@@ -1,0 +1,91 @@
+.. index:: pair: page; Feature Description
+.. _doxid-d5/dde/tutorial_feature_description:
+
+Feature Description
+===================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the :ref:`cv::DescriptorExtractor <doxid-da/d9b/group__features2d_1gadd5cf7c76865f14468cfdd9cc08eb990>` interface in order to find the feature vector correspondent to the keypoints. Specifically:
+  
+  * Use cv::xfeatures2d::SURF and its function cv::xfeatures2d::SURF::compute to perform the required calculations.
+  
+  * Use a :ref:`cv::BFMatcher <doxid-d9/d49/classcv_1_1_b_f_matcher>` to match the features vector
+  
+  * Use the function :ref:`cv::drawMatches <doxid-d4/d5d/group__features2d__draw_1ga7421b3941617d7267e3f2311582f49e1>` to draw the detected matches.
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below.
+
+.. ref-code-block:: cpp
+
+	#include <stdio.h>
+	#include <iostream>
+	#include "opencv2/core.hpp"
+	#include "opencv2/features2d.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/xfeatures2d.hpp"
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace cv::xfeatures2d;
+	
+	void readme();
+	
+	/* @function main */
+	int main( int argc, char** argv )
+	{
+	  if( argc != 3 )
+	   { return -1; }
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_1 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>` );
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_2 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[2], :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>` );
+	
+	  if( !img_1.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` || !img_2.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` )
+	   { return -1; }
+	
+	  //-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+	  int minHessian = 400;
+	
+	  :ref:`Ptr\<SURF> <doxid-d2/d56/structcv_1_1_ptr>` detector = SURF::create();
+	  detector->setHessianThreshold(minHessian);
+	
+	  std::vector<KeyPoint> keypoints_1, keypoints_2;
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` descriptors_1, descriptors_2;
+	
+	  detector->detectAndCompute( img_1, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), keypoints_1, descriptors_1 );
+	  detector->detectAndCompute( img_2, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), keypoints_2, descriptors_2 );
+	
+	  //-- Step 2: Matching descriptor vectors with a brute force matcher
+	  :ref:`BFMatcher <doxid-d9/d49/classcv_1_1_b_f_matcher>` matcher(:ref:`NORM_L2 <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2>`);
+	  std::vector< DMatch > matches;
+	  matcher.match( descriptors_1, descriptors_2, matches );
+	
+	  //-- Draw matches
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_matches;
+	  :ref:`drawMatches <doxid-d4/d5d/group__features2d__draw_1ga7421b3941617d7267e3f2311582f49e1>`( img_1, keypoints_1, img_2, keypoints_2, matches, img_matches );
+	
+	  //-- Show detected matches
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Matches", img_matches );
+	
+	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	  return 0;
+	  }
+	
+	 /* @function readme */
+	 void readme()
+	 { std::cout << " Usage: ./SURF_descriptor <img1> <img2>" << std::endl; }
+
+.. rubric:: Explanation
+
+.. rubric:: Result
+
+Here is the result after applying the BruteForce matcher between the two original images:
+
+.. image:: Feature_Description_BruteForce_Result.jpg
+

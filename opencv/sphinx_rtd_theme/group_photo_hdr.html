@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HDR imaging &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="class cv::AlignExposures" href="class_cv_AlignExposures.html" />
+    <link rel="prev" title="Denoising" href="group_photo_denoise.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_photo.html">Computational Photography</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_photo_c.html">C API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_photo_denoise.html">Denoising</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">HDR imaging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_AlignExposures.html">class cv::AlignExposures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_AlignMTB.html">class cv::AlignMTB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_CalibrateCRF.html">class cv::CalibrateCRF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_CalibrateDebevec.html">class cv::CalibrateDebevec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_CalibrateRobertson.html">class cv::CalibrateRobertson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_MergeDebevec.html">class cv::MergeDebevec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_MergeExposures.html">class cv::MergeExposures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_MergeMertens.html">class cv::MergeMertens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_MergeRobertson.html">class cv::MergeRobertson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_Tonemap.html">class cv::Tonemap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_TonemapDrago.html">class cv::TonemapDrago</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_TonemapDurand.html">class cv::TonemapDurand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_TonemapMantiuk.html">class cv::TonemapMantiuk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_TonemapReinhard.html">class cv::TonemapReinhard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_photo_render.html">Non-Photorealistic Rendering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_photo_clone.html">Seamless Cloning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_photo.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_photo.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_photo.html">Computational Photography</a> &raquo;</li>
+        
+      <li>HDR imaging</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hdr-imaging">
+<span id="doxid-d6-df5-group-photo-hdr"></span><span id="index-0"></span><h1>HDR imaging</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<p>This section describes high dynamic range imaging algorithms namely tonemapping, exposure alignment, camera calibration with multiple exposures and exposure fusion. <a class="reference internal" href="#details-d6-df5-group-photo-hdr"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-d6-df5-group-photo-hdr-1gga18737c0c27ce8d4fc31acdb7c8f2baada11377cb33f0a607d50cdc65e529529a1">cv::&#64;173::LDR_SIZE</span><span></span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_AlignExposures.html#doxid-df-d56-classcv-1-1-align-exposures"><span class="std std-ref">cv::AlignExposures</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_AlignMTB.html#doxid-d6-d15-classcv-1-1-align-m-t-b"><span class="std std-ref">cv::AlignMTB</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_CalibrateCRF.html#doxid-d6-d43-classcv-1-1-calibrate-c-r-f"><span class="std std-ref">cv::CalibrateCRF</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_CalibrateDebevec.html#doxid-d6-d56-classcv-1-1-calibrate-debevec"><span class="std std-ref">cv::CalibrateDebevec</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_CalibrateRobertson.html#doxid-d8-d80-classcv-1-1-calibrate-robertson"><span class="std std-ref">cv::CalibrateRobertson</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_MergeDebevec.html#doxid-df-d17-classcv-1-1-merge-debevec"><span class="std std-ref">cv::MergeDebevec</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_MergeExposures.html#doxid-d2-df7-classcv-1-1-merge-exposures"><span class="std std-ref">cv::MergeExposures</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_MergeMertens.html#doxid-df-d3e-classcv-1-1-merge-mertens"><span class="std std-ref">cv::MergeMertens</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_MergeRobertson.html#doxid-d0-d34-classcv-1-1-merge-robertson"><span class="std std-ref">cv::MergeRobertson</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_Tonemap.html#doxid-d0-dd3-classcv-1-1-tonemap"><span class="std std-ref">cv::Tonemap</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_TonemapDrago.html#doxid-d0-d3d-classcv-1-1-tonemap-drago"><span class="std std-ref">cv::TonemapDrago</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_TonemapDurand.html#doxid-d8-d4e-classcv-1-1-tonemap-durand"><span class="std std-ref">cv::TonemapDurand</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_TonemapMantiuk.html#doxid-de-da3-classcv-1-1-tonemap-mantiuk"><span class="std std-ref">cv::TonemapMantiuk</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_TonemapReinhard.html#doxid-dc-db9-classcv-1-1-tonemap-reinhard"><span class="std std-ref">cv::TonemapReinhard</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_AlignMTB.html#doxid-d6-d15-classcv-1-1-align-m-t-b"><span class="std std-ref">AlignMTB</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga2f1fafc885a5d79dbfb3542e08db0244"><span class="std std-ref">cv::createAlignMTB</span></a><span></span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">max_bits</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">exclude_range</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">cut</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_CalibrateDebevec.html#doxid-d6-d56-classcv-1-1-calibrate-debevec"><span class="std std-ref">CalibrateDebevec</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga7fed9707ad5f2cc0e633888867109f90"><span class="std std-ref">cv::createCalibrateDebevec</span></a><span></span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">samples</span> <span class="o">=</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">lambda</span> <span class="o">=</span> <span class="mf">10.0f</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">random</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_CalibrateRobertson.html#doxid-d8-d80-classcv-1-1-calibrate-robertson"><span class="std std-ref">CalibrateRobertson</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1gae77813a21cd351a596619e5ff013be5d"><span class="std std-ref">cv::createCalibrateRobertson</span></a><span></span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.01f</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_MergeDebevec.html#doxid-df-d17-classcv-1-1-merge-debevec"><span class="std std-ref">MergeDebevec</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1gaa8eab36bc764abb2a225db7c945f87f9"><span class="std std-ref">cv::createMergeDebevec</span></a><span></span><span class="p">();</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_MergeMertens.html#doxid-df-d3e-classcv-1-1-merge-mertens"><span class="std std-ref">MergeMertens</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga79d59aa3cb3a7c664e59a4b5acc1ccb6"><span class="std std-ref">cv::createMergeMertens</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">contrast_weight</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation_weight</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">exposure_weight</span> <span class="o">=</span> <span class="mf">0.0f</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_MergeRobertson.html#doxid-d0-d34-classcv-1-1-merge-robertson"><span class="std std-ref">MergeRobertson</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga460d4a1df1a7e8cdcf7445bb87a8fb78"><span class="std std-ref">cv::createMergeRobertson</span></a><span></span><span class="p">();</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Tonemap.html#doxid-d0-dd3-classcv-1-1-tonemap"><span class="std std-ref">Tonemap</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1gabcbd653140b93a1fa87ccce94548cd0d"><span class="std std-ref">cv::createTonemap</span></a><span></span><span class="p">(</span><span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapDrago.html#doxid-d0-d3d-classcv-1-1-tonemap-drago"><span class="std std-ref">TonemapDrago</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga72bf92bb6b8653ee4be650ac01cf50b6"><span class="std std-ref">cv::createTonemapDrago</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">bias</span> <span class="o">=</span> <span class="mf">0.85f</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapDurand.html#doxid-d8-d4e-classcv-1-1-tonemap-durand"><span class="std std-ref">TonemapDurand</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga19150c9a4b670437e374e51a3e865654"><span class="std std-ref">cv::createTonemapDurand</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">contrast</span> <span class="o">=</span> <span class="mf">4.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">sigma_space</span> <span class="o">=</span> <span class="mf">2.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">sigma_color</span> <span class="o">=</span> <span class="mf">2.0f</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapMantiuk.html#doxid-de-da3-classcv-1-1-tonemap-mantiuk"><span class="std std-ref">TonemapMantiuk</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1ga3b3f3bf083b7515802f039a6a70f2d21"><span class="std std-ref">cv::createTonemapMantiuk</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.7f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation</span> <span class="o">=</span> <span class="mf">1.0f</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapReinhard.html#doxid-dc-db9-classcv-1-1-tonemap-reinhard"><span class="std std-ref">TonemapReinhard</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d6-df5-group-photo-hdr-1gadabe7f6bf1fa96ad0fd644df9182c2fb"><span class="std std-ref">cv::createTonemapReinhard</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">intensity</span> <span class="o">=</span> <span class="mf">0.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">light_adapt</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">color_adapt</span> <span class="o">=</span> <span class="mf">0.0f</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d6-df5-group-photo-hdr"></span><h2>Detailed Documentation</h2>
+<p>This section describes high dynamic range imaging algorithms namely tonemapping, exposure alignment, camera calibration with multiple exposures and exposure fusion.</p>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga2f1fafc885a5d79dbfb3542e08db0244">
+<span id="index-1"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_AlignMTB.html#doxid-d6-d15-classcv-1-1-align-m-t-b"><span class="std std-ref">AlignMTB</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createAlignMTB</span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">max_bits</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">exclude_range</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">cut</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_AlignMTB.html#doxid-d6-d15-classcv-1-1-align-m-t-b"><span class="std std-ref">AlignMTB</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>max_bits</td>
+<td>logarithm to the base 2 of maximal shift in each dimension. Values of 5 and 6 are usually good enough (31 and 63 pixels shift respectively).</td>
+</tr>
+<tr class="row-even"><td>exclude_range</td>
+<td>range for exclusion bitmap that is constructed to suppress noise around the median value.</td>
+</tr>
+<tr class="row-odd"><td>cut</td>
+<td>if true cuts images, otherwise fills the new regions with zeros.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga7fed9707ad5f2cc0e633888867109f90">
+<span id="index-2"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_CalibrateDebevec.html#doxid-d6-d56-classcv-1-1-calibrate-debevec"><span class="std std-ref">CalibrateDebevec</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createCalibrateDebevec</span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">samples</span> <span class="o">=</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">lambda</span> <span class="o">=</span> <span class="mf">10.0f</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">random</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_CalibrateDebevec.html#doxid-d6-d56-classcv-1-1-calibrate-debevec"><span class="std std-ref">CalibrateDebevec</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>samples</td>
+<td>number of pixel locations to use</td>
+</tr>
+<tr class="row-even"><td>lambda</td>
+<td>smoothness term weight. Greater values produce smoother results, but can alter the response.</td>
+</tr>
+<tr class="row-odd"><td>random</td>
+<td>if true sample pixel locations are chosen at random, otherwise they form a rectangular grid.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1gae77813a21cd351a596619e5ff013be5d">
+<span id="index-3"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_CalibrateRobertson.html#doxid-d8-d80-classcv-1-1-calibrate-robertson"><span class="std std-ref">CalibrateRobertson</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createCalibrateRobertson</span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.01f</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_CalibrateRobertson.html#doxid-d8-d80-classcv-1-1-calibrate-robertson"><span class="std std-ref">CalibrateRobertson</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>max_iter</td>
+<td>maximal number of Gauss-Seidel solver iterations.</td>
+</tr>
+<tr class="row-even"><td>threshold</td>
+<td>target difference between results of two successive steps of the minimization.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1gaa8eab36bc764abb2a225db7c945f87f9">
+<span id="index-4"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_MergeDebevec.html#doxid-df-d17-classcv-1-1-merge-debevec"><span class="std std-ref">MergeDebevec</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createMergeDebevec</span><span class="p">()</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_MergeDebevec.html#doxid-df-d17-classcv-1-1-merge-debevec"><span class="std std-ref">MergeDebevec</span></a> object.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga79d59aa3cb3a7c664e59a4b5acc1ccb6">
+<span id="index-5"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_MergeMertens.html#doxid-df-d3e-classcv-1-1-merge-mertens"><span class="std std-ref">MergeMertens</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createMergeMertens</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">contrast_weight</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation_weight</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">exposure_weight</span> <span class="o">=</span> <span class="mf">0.0f</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_MergeMertens.html#doxid-df-d3e-classcv-1-1-merge-mertens"><span class="std std-ref">MergeMertens</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>contrast_weight</td>
+<td>contrast measure weight. See <a class="reference internal" href="class_cv_MergeMertens.html#doxid-df-d3e-classcv-1-1-merge-mertens"><span class="std std-ref">MergeMertens</span></a>.</td>
+</tr>
+<tr class="row-even"><td>saturation_weight</td>
+<td>saturation measure weight</td>
+</tr>
+<tr class="row-odd"><td>exposure_weight</td>
+<td>well-exposedness measure weight</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga460d4a1df1a7e8cdcf7445bb87a8fb78">
+<span id="index-6"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_MergeRobertson.html#doxid-d0-d34-classcv-1-1-merge-robertson"><span class="std std-ref">MergeRobertson</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createMergeRobertson</span><span class="p">()</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_MergeRobertson.html#doxid-d0-d34-classcv-1-1-merge-robertson"><span class="std std-ref">MergeRobertson</span></a> object.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1gabcbd653140b93a1fa87ccce94548cd0d">
+<span id="index-7"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Tonemap.html#doxid-d0-dd3-classcv-1-1-tonemap"><span class="std std-ref">Tonemap</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createTonemap</span><span class="p">(</span><span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">)</span>
+</pre>
+<p>Creates simple linear mapper with gamma correction.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gamma</td>
+<td>positive value for gamma correction. Gamma value of 1.0 implies no correction, gamma equal to 2.2f is suitable for most displays. Generally gamma &gt; 1 brightens the image and gamma &lt; 1 darkens it.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga72bf92bb6b8653ee4be650ac01cf50b6">
+<span id="index-8"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapDrago.html#doxid-d0-d3d-classcv-1-1-tonemap-drago"><span class="std std-ref">TonemapDrago</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createTonemapDrago</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">bias</span> <span class="o">=</span> <span class="mf">0.85f</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_TonemapDrago.html#doxid-d0-d3d-classcv-1-1-tonemap-drago"><span class="std std-ref">TonemapDrago</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gamma</td>
+<td>gamma value for gamma correction. See createTonemap</td>
+</tr>
+<tr class="row-even"><td>saturation</td>
+<td>positive saturation enhancement value. 1.0 preserves saturation, values greater than 1 increase saturation and values less than 1 decrease it.</td>
+</tr>
+<tr class="row-odd"><td>bias</td>
+<td>value for bias function in [0, 1] range. Values from 0.7 to 0.9 usually give best results, default value is 0.85.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga19150c9a4b670437e374e51a3e865654">
+<span id="index-9"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapDurand.html#doxid-d8-d4e-classcv-1-1-tonemap-durand"><span class="std std-ref">TonemapDurand</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createTonemapDurand</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">contrast</span> <span class="o">=</span> <span class="mf">4.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">sigma_space</span> <span class="o">=</span> <span class="mf">2.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">sigma_color</span> <span class="o">=</span> <span class="mf">2.0f</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_TonemapDurand.html#doxid-d8-d4e-classcv-1-1-tonemap-durand"><span class="std std-ref">TonemapDurand</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gamma</td>
+<td>gamma value for gamma correction. See createTonemap</td>
+</tr>
+<tr class="row-even"><td>contrast</td>
+<td>resulting contrast on logarithmic scale, i. e. log(max / min), where max and min are maximum and minimum luminance values of the resulting image.</td>
+</tr>
+<tr class="row-odd"><td>saturation</td>
+<td>saturation enhancement value. See createTonemapDrago</td>
+</tr>
+<tr class="row-even"><td>sigma_space</td>
+<td>bilateral filter sigma in color space</td>
+</tr>
+<tr class="row-odd"><td>sigma_color</td>
+<td>bilateral filter sigma in coordinate space</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1ga3b3f3bf083b7515802f039a6a70f2d21">
+<span id="index-10"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapMantiuk.html#doxid-de-da3-classcv-1-1-tonemap-mantiuk"><span class="std std-ref">TonemapMantiuk</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createTonemapMantiuk</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.7f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">saturation</span> <span class="o">=</span> <span class="mf">1.0f</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_TonemapMantiuk.html#doxid-de-da3-classcv-1-1-tonemap-mantiuk"><span class="std std-ref">TonemapMantiuk</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gamma</td>
+<td>gamma value for gamma correction. See createTonemap</td>
+</tr>
+<tr class="row-even"><td>scale</td>
+<td>contrast scale factor. HVS response is multiplied by this parameter, thus compressing dynamic range. Values from 0.6 to 0.9 produce best results.</td>
+</tr>
+<tr class="row-odd"><td>saturation</td>
+<td>saturation enhancement value. See createTonemapDrago</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-df5-group-photo-hdr-1gadabe7f6bf1fa96ad0fd644df9182c2fb">
+<span id="index-11"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_TonemapReinhard.html#doxid-dc-db9-classcv-1-1-tonemap-reinhard"><span class="std std-ref">TonemapReinhard</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createTonemapReinhard</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">intensity</span> <span class="o">=</span> <span class="mf">0.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">light_adapt</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">color_adapt</span> <span class="o">=</span> <span class="mf">0.0f</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="class_cv_TonemapReinhard.html#doxid-dc-db9-classcv-1-1-tonemap-reinhard"><span class="std std-ref">TonemapReinhard</span></a> object.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>gamma</td>
+<td>gamma value for gamma correction. See createTonemap</td>
+</tr>
+<tr class="row-even"><td>intensity</td>
+<td>result intensity in [-8, 8] range. Greater intensity produces brighter results.</td>
+</tr>
+<tr class="row-odd"><td>light_adapt</td>
+<td>light adaptation in [0, 1] range. If 1 adaptation is based only on pixel value, if 0 it’s global, otherwise it’s a weighted mean of this two cases.</td>
+</tr>
+<tr class="row-even"><td>color_adapt</td>
+<td>chromatic adaptation in [0, 1] range. If 1 channels are treated independently, if 0 adaptation level is the same for each channel.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="class_cv_AlignExposures.html" class="btn btn-neutral float-right" title="class cv::AlignExposures" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="group_photo_denoise.html" class="btn btn-neutral float-left" title="Denoising" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

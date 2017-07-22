@@ -1,0 +1,189 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Histograms - 2: Histogram Equalization &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Histograms - 3 : 2D Histograms" href="page_tutorial_py_2d_histogram.html" />
+    <link rel="prev" title="Histograms - 1 : Find, Plot, Analyze !!!" href="page_tutorial_py_histogram_begins.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_2d_histogram.html" title="Histograms - 3 : 2D Histograms"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_histogram_begins.html" title="Histograms - 1 : Find, Plot, Analyze !!!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_table_of_contents_histograms.html" accesskey="U">Histograms in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_histogram_begins.html"
+                        title="previous chapter">Histograms - 1 : Find, Plot, Analyze !!!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_2d_histogram.html"
+                        title="next chapter">Histograms - 3 : 2D Histograms</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="histograms-2-histogram-equalization">
+<span id="doxid-d5-daf-tutorial-py-histogram-equalization"></span><span id="index-0"></span><h1>Histograms - 2: Histogram Equalization</h1>
+<p class="rubric">Goal</p>
+<p>In this section,</p>
+<ul class="simple">
+<li>We will learn the concepts of histogram equalization and use it to improve the contrast of our images.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>Consider an image whose pixel values are confined to some specific range of values only. For eg, brighter image will have all pixels confined to high values. But a good image will have pixels from all regions of the image. So you need to stretch this histogram to either ends (as given in below image, from wikipedia) and that is what Histogram Equalization does (in simple words). This normally improves the contrast of the image.</p>
+<img alt="image" src="_images/histogram_equalization.png" />
+<p>I would recommend you to read the wikipedia page on <a class="reference external" href="http://en.wikipedia.org/wiki/Histogram_equalization">Histogram Equalization</a> for more details about it. It has a very good explanation with worked out examples, so that you would understand almost everything after reading that. Instead, here we will see its Numpy implementation. After that, we will see OpenCV function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;wiki.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">hist</span><span class="p">,</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">flatten</span><span class="p">(),</span><span class="mi">256</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">])</span>
+
+<span class="n">cdf</span> <span class="o">=</span> <span class="n">hist</span><span class="p">.</span><span class="n">cumsum</span><span class="p">()</span>
+<span class="n">cdf_normalized</span> <span class="o">=</span> <span class="n">cdf</span> <span class="o">*</span> <span class="n">hist</span><span class="p">.</span><span class="n">max</span><span class="p">()</span><span class="o">/</span> <span class="n">cdf</span><span class="p">.</span><span class="n">max</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cdf_normalized</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="sc">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">flatten</span><span class="p">(),</span><span class="mi">256</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">((</span><span class="sc">&#39;cdf&#39;</span><span class="p">,</span><span class="sc">&#39;histogram&#39;</span><span class="p">),</span> <span class="n">loc</span> <span class="o">=</span> <span class="sc">&#39;upper left&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<img alt="image" src="_images/histeq_numpy1.jpg" />
+<p>You can see histogram lies in brighter region. We need the full spectrum. For that, we need a transformation function which maps the input pixels in brighter region to output pixels in full region. That is what histogram equalization does.</p>
+<p>Now we find the minimum histogram value (excluding 0) and apply the histogram equalization equation as given in wiki page. But I have used here, the masked array concept array from Numpy. For masked array, all operations are performed on non-masked elements. You can read more about it from Numpy docs on masked arrays.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cdf_m</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">ma</span><span class="p">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cdf_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">cdf_m</span> <span class="o">-</span> <span class="n">cdf_m</span><span class="p">.</span><span class="n">min</span><span class="p">())</span><span class="o">*</span><span class="mi">255</span><span class="o">/</span><span class="p">(</span><span class="n">cdf_m</span><span class="p">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">cdf_m</span><span class="p">.</span><span class="n">min</span><span class="p">())</span>
+<span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">ma</span><span class="p">.</span><span class="n">filled</span><span class="p">(</span><span class="n">cdf_m</span><span class="p">,</span><span class="mi">0</span><span class="p">).</span><span class="n">astype</span><span class="p">(</span><span class="sc">&#39;uint8&#39;</span><span class="p">)</span>
+</pre>
+<p>Now we have the look-up table that gives us the information on what is the output pixel value for every input pixel value. So we just apply the transform.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img2</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">[</span><span class="n">img</span><span class="p">]</span>
+</pre>
+<p>Now we calculate its histogram and cdf as before ( you do it) and result looks like below :</p>
+<img alt="image" src="_images/histeq_numpy2.jpg" />
+<p>Another important feature is that, even if the image was a darker image (instead of a brighter one we used), after equalization we will get almost the same image as we got. As a result, this is used as a “reference tool” to make all images with same lighting conditions. This is useful in many cases. For example, in face recognition, before training the face data, the images of faces are histogram equalized to make them all with same lighting conditions.</p>
+<p class="rubric">Histograms Equalization in OpenCV</p>
+<p>OpenCV has a function to do this, <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga7e54091f0c937d49bf84152a16f76d6e"><span class="std std-ref">cv2.equalizeHist()</span></a>. Its input is just grayscale image and output is our histogram equalized image.</p>
+<p>Below is a simple code snippet showing its usage for same image we used :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;wiki.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">equ</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">equalizeHist</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">img</span><span class="p">,</span><span class="n">equ</span><span class="p">))</span> <span class="err">#</span><span class="n">stacking</span> <span class="n">images</span> <span class="n">side</span><span class="o">-</span><span class="n">by</span><span class="o">-</span><span class="n">side</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;res.png&#39;</span><span class="p">,</span><span class="n">res</span><span class="p">)</span>
+</pre>
+<img alt="image" src="_images/equalization_opencv.jpg" />
+<p>So now you can take different images with different light conditions, equalize it and check the results.</p>
+<p>Histogram equalization is good when histogram of the image is confined to a particular region. It won’t work good in places where there is large intensity variations where histogram covers a large region, ie both bright and dark pixels are present. Please check the SOF links in Additional Resources.</p>
+<p class="rubric">CLAHE (Contrast Limited Adaptive Histogram Equalization)</p>
+<p>The first histogram equalization we just saw, considers the global contrast of the image. In many cases, it is not a good idea. For example, below image shows an input image and its result after global histogram equalization.</p>
+<img alt="image" src="_images/clahe_1.jpg" />
+<p>It is true that the background contrast has improved after histogram equalization. But compare the face of statue in both images. We lost most of the information there due to over-brightness. It is because its histogram is not confined to a particular region as we saw in previous cases (Try to plot histogram of input image, you will get more intuition).</p>
+<p>So to solve this problem, <strong>adaptive histogram equalization</strong> is used. In this, image is divided into small blocks called “tiles” (tileSize is 8x8 by default in OpenCV). Then each of these blocks are histogram equalized as usual. So in a small area, histogram would confine to a small region (unless there is noise). If noise is there, it will be amplified. To avoid this, <strong>contrast limiting</strong> is applied. If any histogram bin is above the specified contrast limit (by default 40 in OpenCV), those pixels are clipped and distributed uniformly to other bins before applying histogram equalization. After equalization, to remove artifacts in tile borders, bilinear interpolation is applied.</p>
+<p>Below code snippet shows how to apply CLAHE in OpenCV:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;tsukuba_l.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># create a CLAHE object (Arguments are optional).</span>
+<span class="n">clahe</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">createCLAHE</span><span class="p">(</span><span class="n">clipLimit</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">tileGridSize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">cl1</span> <span class="o">=</span> <span class="n">clahe</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;clahe_2.jpg&#39;</span><span class="p">,</span><span class="n">cl1</span><span class="p">)</span>
+</pre>
+<p>See the result below and compare it with results above, especially the statue region:</p>
+<img alt="image" src="_images/clahe_2.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>Wikipedia page on <a class="reference external" href="http://en.wikipedia.org/wiki/Histogram_equalization">Histogram Equalization</a></li>
+<li><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.html">Masked Arrays in Numpy</a></li>
+</ol>
+<p>Also check these SOF questions regarding contrast adjustment:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://stackoverflow.com/questions/10549245/how-can-i-adjust-contrast-in-opencv-in-c">How can I adjust contrast in OpenCV in C?</a></li>
+<li><a class="reference external" href="http://stackoverflow.com/questions/10561222/how-do-i-equalize-contrast-brightness-of-images-using-opencv">How do I equalize contrast &amp; brightness of images using opencv?</a></li>
+</ol>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_2d_histogram.html" title="Histograms - 3 : 2D Histograms"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_histogram_begins.html" title="Histograms - 1 : Find, Plot, Analyze !!!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_table_of_contents_histograms.html" >Histograms in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

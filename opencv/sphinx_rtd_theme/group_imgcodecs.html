@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Image file reading and writing &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="C API" href="group_imgcodecs_c.html" />
+    <link rel="prev" title="enum cv::WindowPropertyFlags" href="enum_cv_WindowPropertyFlags.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Image file reading and writing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="group_imgcodecs_c.html">C API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgcodecs_ios.html">iOS glue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ImreadModes.html">enum cv::ImreadModes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ImwriteFlags.html">enum cv::ImwriteFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ImwritePAMFlags.html">enum cv::ImwritePAMFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ImwritePNGFlags.html">enum cv::ImwritePNGFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Image file reading and writing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="image-file-reading-and-writing">
+<span id="doxid-d4-da8-group-imgcodecs"></span><span id="index-0"></span><h1>Image file reading and writing</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<div class="line-block">
+<div class="line"><a class="reference internal" href="group_imgcodecs_c.html#doxid-da-d0a-group-imgcodecs-c"><span class="std std-ref">C API</span></a></div>
+<div class="line"><a class="reference internal" href="group_imgcodecs_ios.html#doxid-d2-d92-group-imgcodecs-ios"><span class="std std-ref">iOS glue</span></a></div>
+</div>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1ga61d9b0126a3e57d9277ac48327799c80"><span class="std std-ref">cv::ImreadModes</span></a><span></span><span class="p">;</span>
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_ImwriteFlags.html#doxid-d4-da8-group-imgcodecs-1ga292d81be8d76901bff7988d18d2b42ac"><span class="std std-ref">cv::ImwriteFlags</span></a><span></span><span class="p">;</span>
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_ImwritePAMFlags.html#doxid-d4-da8-group-imgcodecs-1ga4e6c77a906952525a4d22fb3efea0e01"><span class="std std-ref">cv::ImwritePAMFlags</span></a><span></span><span class="p">;</span>
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_ImwritePNGFlags.html#doxid-d4-da8-group-imgcodecs-1gaa60044d347ffd187161b5ec9ea2ef2f9"><span class="std std-ref">cv::ImwritePNGFlags</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga26a67788faa58ade337f8d28ba0eb19e"><span class="std std-ref">cv::imdecode</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">buf</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga5a0acefe5cbe0a81e904e452ec7ca733"><span class="std std-ref">cv::imdecode</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">buf</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">*</span> <span class="n">dst</span>
+    <span class="p">);</span>
+
+<span class="kt">bool</span>
+<a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga461f9ac09887e47797a54567df3b8b63"><span class="std std-ref">cv::imencode</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">ext</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">img</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">buf</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">params</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">bool</span>
+<a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga4dd47c9ae3d55cc42286cff005825e31"><span class="std std-ref">cv::imreadmulti</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">mats</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ab6573b69300c092b61800222fe555953"><span class="std std-ref">IMREAD_ANYCOLOR</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">bool</span>
+<a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">img</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">params</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d4-da8-group-imgcodecs"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d4-da8-group-imgcodecs-1ga26a67788faa58ade337f8d28ba0eb19e">
+<span id="index-1"></span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">imdecode</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">buf</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span>
+    <span class="p">)</span>
+</pre>
+<p>Reads an image from a buffer in memory.</p>
+<p>The function imdecode reads an image from the specified buffer in the memory. If the buffer is too short or contains invalid data, the function returns an empty matrix (<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">Mat::data</span></a> ==NULL ).</p>
+<p>See <a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a> for the list of supported formats and flags description.</p>
+<p>In the case of color images, the decoded images will have the channels stored in <strong>B G R</strong> order.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>buf</td>
+<td>Input array or vector of bytes.</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td>The same flags as in <a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a>, see <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1ga61d9b0126a3e57d9277ac48327799c80"><span class="std std-ref">cv::ImreadModes</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d4-da8-group-imgcodecs-1ga5a0acefe5cbe0a81e904e452ec7ca733">
+<span id="index-2"></span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">imdecode</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">buf</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">*</span> <span class="n">dst</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>buf</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>dst</td>
+<td>The optional output placeholder for the decoded matrix. It can save the image reallocations when the function is called repeatedly for images of the same size.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d4-da8-group-imgcodecs-1ga461f9ac09887e47797a54567df3b8b63">
+<span id="index-3"></span><span></span><span class="kt">bool</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">imencode</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">ext</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">img</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">buf</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">params</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Encodes an image into a memory buffer.</p>
+<p>The function imencode compresses the image and stores it in the memory buffer that is resized to fit the result. See <a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a> for the list of supported formats and flags description.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>ext</td>
+<td>File extension that defines the output format.</td>
+</tr>
+<tr class="row-even"><td>img</td>
+<td>Image to be written.</td>
+</tr>
+<tr class="row-odd"><td>buf</td>
+<td>Output buffer resized to fit the compressed image.</td>
+</tr>
+<tr class="row-even"><td>params</td>
+<td>Format-specific parameters. See <a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a> and <a class="reference internal" href="enum_cv_ImwriteFlags.html#doxid-d4-da8-group-imgcodecs-1ga292d81be8d76901bff7988d18d2b42ac"><span class="std std-ref">cv::ImwriteFlags</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56">
+<span id="index-4"></span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">imread</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Loads an image from a file.</p>
+<p><span class="target" id="doxid-d4-da8-group-imgcodecs-1imread"></span> The function imread loads an image from the specified file and returns it. If the image cannot be read (because of missing file, improper permissions, unsupported or invalid format), the function returns an empty matrix (<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">Mat::data</span></a> ==NULL ).</p>
+<p>Currently, the following file formats are supported:</p>
+<ul class="simple">
+<li>Windows bitmaps - *.bmp, *.dib (always supported)</li>
+<li>JPEG files - *.jpeg, *.jpg, *.jpe (see the <em>Notes</em> section)</li>
+<li>JPEG 2000 files - *.jp2 (see the <em>Notes</em> section)</li>
+<li>Portable Network Graphics - *.png (see the <em>Notes</em> section)</li>
+<li>WebP - *.webp (see the <em>Notes</em> section)</li>
+<li>Portable image format - *.pbm, *.pgm, *.ppm *.pxm, *.pnm (always supported)</li>
+<li>Sun rasters - *.sr, *.ras (always supported)</li>
+<li>TIFF files - *.tiff, *.tif (see the <em>Notes</em> section)</li>
+<li>OpenEXR Image files - *.exr (see the <em>Notes</em> section)</li>
+<li>Radiance HDR - *.hdr, *.pic (always supported)</li>
+<li>Raster and Vector geospatial data supported by Gdal (see the <em>Notes</em> section)</li>
+<li>The function determines the type of an image by the content, not by the file extension.</li>
+<li>In the case of color images, the decoded images will have the channels stored in <strong>B G R</strong> order.</li>
+<li>On Microsoft Windows* OS and MacOSX*, the codecs shipped with an OpenCV image (libjpeg, libpng, libtiff, and libjasper) are used by default. So, OpenCV can always read JPEGs, PNGs, and TIFFs. On MacOSX, there is also an option to use native MacOSX image readers. But beware that currently these native image loaders give images with different pixel values because of the color management embedded into MacOSX.</li>
+<li>On Linux*, BSD flavors and other Unix-like open-source operating systems, OpenCV looks for codecs supplied with an OS image. Install the relevant packages (do not forget the development files, for example, “libjpeg-dev”, in Debian* and Ubuntu*) to get the codec support or turn on the OPENCV_BUILD_3RDPARTY_LIBS flag in CMake.</li>
+<li>In the case you set <em>WITH_GDAL</em> flag to true in CMake and <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896"><span class="std std-ref">IMREAD_LOAD_GDAL</span></a> to load the image, then <a class="reference external" href="http://www.gdal.org">GDAL</a> driver will be used in order to decode the image by supporting the following formats: <a class="reference external" href="http://www.gdal.org/formats_list.html">Raster</a>, <a class="reference external" href="http://www.gdal.org/ogr_formats.html">Vector</a>.</li>
+<li>If EXIF information are embedded in the image file, the EXIF orientation will be taken into account and thus the image will be rotated accordingly except if the flag <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a34f91a514cd95127d8ba900840af548e"><span class="std std-ref">IMREAD_IGNORE_ORIENTATION</span></a> is passed.</li>
+</ul>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>filename</td>
+<td>Name of file to be loaded.</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td>Flag that can take values of <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1ga61d9b0126a3e57d9277ac48327799c80"><span class="std std-ref">cv::ImreadModes</span></a></td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d4-da8-group-imgcodecs-1ga4dd47c9ae3d55cc42286cff005825e31">
+<span id="index-5"></span><span></span><span class="kt">bool</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">imreadmulti</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">mats</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ab6573b69300c092b61800222fe555953"><span class="std std-ref">IMREAD_ANYCOLOR</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Loads a multi-page image from a file.</p>
+<p>The function imreadmulti loads a multi-page image from the specified file into a vector of <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a> objects.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>filename</td>
+<td>Name of file to be loaded.</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td>Flag that can take values of <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1ga61d9b0126a3e57d9277ac48327799c80"><span class="std std-ref">cv::ImreadModes</span></a>, default with <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ab6573b69300c092b61800222fe555953"><span class="std std-ref">cv::IMREAD_ANYCOLOR</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>mats</td>
+<td>A vector of <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a> objects holding each page, if more than one.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce">
+<span id="index-6"></span><span></span><span class="kt">bool</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">imwrite</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">img</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">params</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Saves an image to a specified file.</p>
+<p>The function imwrite saves the image to the specified file. The image format is chosen based on the filename extension (see <a class="reference internal" href="#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a> for the list of extensions). Only 8-bit (or 16-bit unsigned (CV_16U) in case of PNG, JPEG 2000, and TIFF) single-channel or 3-channel (with ‘BGR’ channel order) images can be saved using this function. If the format, depth or channel order is different, use <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">Mat::convertTo</span></a>, and <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cv::cvtColor</span></a> to convert it before saving. Or, use the universal <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a> I/O functions to save the image to XML or YAML format.</p>
+<p>It is possible to store PNG images with an alpha channel using this function. To do this, create 8-bit (or 16-bit) 4-channel image BGRA, where the alpha channel goes last. Fully transparent pixels should have alpha set to 0, fully opaque pixels should have alpha set to 255/65535.</p>
+<p>The sample below shows how to create such a BGRA image and store to PNG file. It also demonstrates how to set custom compression parameters :</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/opencv.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">cv</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">createAlphaMat</span><span class="p">(</span><span class="n">Mat</span> <span class="o">&amp;</span><span class="n">mat</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">CV_Assert</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">==</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mat</span><span class="p">.</span><span class="n">rows</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">mat</span><span class="p">.</span><span class="n">cols</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Vec4b</span><span class="o">&amp;</span> <span class="n">bgra</span> <span class="o">=</span> <span class="n">mat</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="n">Vec4b</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+            <span class="n">bgra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">UCHAR_MAX</span><span class="p">;</span> <span class="c1">// Blue</span>
+            <span class="n">bgra</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">saturate_cast</span><span class="o">&lt;</span><span class="n">uchar</span><span class="o">&gt;</span><span class="p">((</span><span class="kt">float</span> <span class="p">(</span><span class="n">mat</span><span class="p">.</span><span class="n">cols</span> <span class="o">-</span> <span class="n">j</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="kt">float</span><span class="p">)</span><span class="n">mat</span><span class="p">.</span><span class="n">cols</span><span class="p">)</span> <span class="o">*</span> <span class="n">UCHAR_MAX</span><span class="p">);</span> <span class="c1">// Green</span>
+            <span class="n">bgra</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">saturate_cast</span><span class="o">&lt;</span><span class="n">uchar</span><span class="o">&gt;</span><span class="p">((</span><span class="kt">float</span> <span class="p">(</span><span class="n">mat</span><span class="p">.</span><span class="n">rows</span> <span class="o">-</span> <span class="n">i</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="kt">float</span><span class="p">)</span><span class="n">mat</span><span class="p">.</span><span class="n">rows</span><span class="p">)</span> <span class="o">*</span> <span class="n">UCHAR_MAX</span><span class="p">);</span> <span class="c1">// Red</span>
+            <span class="n">bgra</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">saturate_cast</span><span class="o">&lt;</span><span class="n">uchar</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">bgra</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bgra</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span> <span class="c1">// Alpha</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argc</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Create mat with alpha channel</span>
+    <span class="n">Mat</span> <span class="n">mat</span><span class="p">(</span><span class="mi">480</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="n">CV_8UC4</span><span class="p">);</span>
+    <span class="n">createAlphaMat</span><span class="p">(</span><span class="n">mat</span><span class="p">);</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">compression_params</span><span class="p">;</span>
+    <span class="n">compression_params</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">IMWRITE_PNG_COMPRESSION</span><span class="p">);</span>
+    <span class="n">compression_params</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
+
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="n">imwrite</span><span class="p">(</span><span class="s">&quot;alpha.png&quot;</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">compression_params</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span><span class="n">cv</span><span class="o">::</span><span class="n">Exception</span><span class="o">&amp;</span> <span class="n">ex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Exception converting image to PNG format: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="p">.</span><span class="n">what</span><span class="p">());</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s">&quot;Saved PNG file with alpha data.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>filename</td>
+<td>Name of the file.</td>
+</tr>
+<tr class="row-even"><td>img</td>
+<td>Image to be saved.</td>
+</tr>
+<tr class="row-odd"><td>params</td>
+<td>Format-specific parameters encoded as pairs (paramId_1, paramValue_1, paramId_2, paramValue_2, … .) see <a class="reference internal" href="enum_cv_ImwriteFlags.html#doxid-d4-da8-group-imgcodecs-1ga292d81be8d76901bff7988d18d2b42ac"><span class="std std-ref">cv::ImwriteFlags</span></a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="group_imgcodecs_c.html" class="btn btn-neutral float-right" title="C API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="enum_cv_WindowPropertyFlags.html" class="btn btn-neutral float-left" title="enum cv::WindowPropertyFlags" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

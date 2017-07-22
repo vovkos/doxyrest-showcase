@@ -1,0 +1,244 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Creating Widgets &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Launching Viz" href="page_tutorial_launching_viz.html" />
+    <link rel="prev" title="OpenCV Viz" href="page_tutorial_table_of_content_viz.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_launching_viz.html" title="Launching Viz"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_viz.html" title="OpenCV Viz"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_viz.html" accesskey="U">OpenCV Viz</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_viz.html"
+                        title="previous chapter">OpenCV Viz</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_launching_viz.html"
+                        title="next chapter">Launching Viz</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="creating-widgets">
+<span id="doxid-d2-d64-tutorial-creating-widgets"></span><span id="index-0"></span><h1>Creating Widgets</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to</p>
+<ul class="simple">
+<li>Create your own widgets using WidgetAccessor and VTK.</li>
+<li>Show your widget in the visualization window.</li>
+</ul>
+<p class="rubric">Code</p>
+<p>You can download the code from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/viz/creating_widgets.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#ifndef USE_VTK</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;This sample requires direct compilation with VTK. Stop&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">#else</span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/viz.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/viz/widget_accessor.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;vtkPoints.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkTriangle.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkCellArray.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkPolyData.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkPolyDataMapper.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkIdList.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkActor.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vtkProp.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;--------------------------------------------------------------------------&quot;</span>   <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;This program shows how to create a custom widget. You can create your own &quot;</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;widgets by extending Widget2D/Widget3D, and with the help of WidgetAccessor.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:&quot;</span>                                                                       <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;./creating_widgets&quot;</span>                                                           <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nl">WTriangle</span> <span class="p">:</span> <span class="k">public</span> <a class="reference internal" href="class_cv_viz_Widget3D.html#doxid-d0-d9d-classcv-1-1viz-1-1-widget3-d"><span class="std std-ref">viz::Widget3D</span></a><span></span>
+<span class="p">{</span>
+    <span class="k">public</span><span class="o">:</span>
+        <span class="n">WTriangle</span><span class="p">(</span><span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt2</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt3</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_viz_Color.html#doxid-df-d5b-classcv-1-1viz-1-1-color"><span class="std std-ref">viz::Color</span></a><span></span> <span class="o">&amp;</span> <span class="n">color</span> <span class="o">=</span> <a class="reference internal" href="class_cv_viz_Color.html#doxid-df-d5b-classcv-1-1viz-1-1-color-1a9e57965ee56731f103c1d9e40bd460c1"><span class="std std-ref">viz::Color::white</span></a><span></span><span class="p">());</span>
+<span class="p">};</span>
+
+<span class="n">WTriangle</span><span class="o">::</span><span class="n">WTriangle</span><span class="p">(</span><span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt2</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt3</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_viz_Color.html#doxid-df-d5b-classcv-1-1viz-1-1-color"><span class="std std-ref">viz::Color</span></a><span></span> <span class="o">&amp;</span> <span class="n">color</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Create a triangle</span>
+    <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span> <span class="n">points</span> <span class="o">=</span> <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+    <span class="n">points</span><span class="o">-&gt;</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">pt1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a363a0ec9e4ebce7209438cb14c29ab47"><span class="std std-ref">x</span></a><span></span><span class="p">,</span> <span class="n">pt1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1aa332b734e658368c647744adb9065810"><span class="std std-ref">y</span></a><span></span><span class="p">,</span> <span class="n">pt1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a1af9c182772a3c082e505f50eb5d2ee1"><span class="std std-ref">z</span></a><span></span><span class="p">);</span>
+    <span class="n">points</span><span class="o">-&gt;</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">pt2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a363a0ec9e4ebce7209438cb14c29ab47"><span class="std std-ref">x</span></a><span></span><span class="p">,</span> <span class="n">pt2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1aa332b734e658368c647744adb9065810"><span class="std std-ref">y</span></a><span></span><span class="p">,</span> <span class="n">pt2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a1af9c182772a3c082e505f50eb5d2ee1"><span class="std std-ref">z</span></a><span></span><span class="p">);</span>
+    <span class="n">points</span><span class="o">-&gt;</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">pt3</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a363a0ec9e4ebce7209438cb14c29ab47"><span class="std std-ref">x</span></a><span></span><span class="p">,</span> <span class="n">pt3</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1aa332b734e658368c647744adb9065810"><span class="std std-ref">y</span></a><span></span><span class="p">,</span> <span class="n">pt3</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a1af9c182772a3c082e505f50eb5d2ee1"><span class="std std-ref">z</span></a><span></span><span class="p">);</span>
+
+    <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTriangle</span><span class="o">&gt;</span> <span class="n">triangle</span> <span class="o">=</span> <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTriangle</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+    <span class="n">triangle</span><span class="o">-&gt;</span><span class="n">GetPointIds</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">SetId</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">triangle</span><span class="o">-&gt;</span><span class="n">GetPointIds</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">SetId</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">triangle</span><span class="o">-&gt;</span><span class="n">GetPointIds</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">SetId</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellArray</span><span class="o">&gt;</span> <span class="n">cells</span> <span class="o">=</span> <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellArray</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+    <span class="n">cells</span><span class="o">-&gt;</span><span class="n">InsertNextCell</span><span class="p">(</span><span class="n">triangle</span><span class="p">);</span>
+
+    <span class="c1">// Create a polydata object</span>
+    <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span> <span class="n">polyData</span> <span class="o">=</span> <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+
+    <span class="c1">// Add the geometry and topology to the polydata</span>
+    <span class="n">polyData</span><span class="o">-&gt;</span><span class="n">SetPoints</span><span class="p">(</span><span class="n">points</span><span class="p">);</span>
+    <span class="n">polyData</span><span class="o">-&gt;</span><span class="n">SetPolys</span><span class="p">(</span><span class="n">cells</span><span class="p">);</span>
+
+    <span class="c1">// Create mapper and actor</span>
+    <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span> <span class="n">mapper</span> <span class="o">=</span> <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="cp">#if VTK_MAJOR_VERSION &lt;= 5</span>
+    <span class="n">mapper</span><span class="o">-&gt;</span><span class="n">SetInput</span><span class="p">(</span><span class="n">polyData</span><span class="p">);</span>
+<span class="cp">#else</span>
+    <span class="n">mapper</span><span class="o">-&gt;</span><span class="n">SetInputData</span><span class="p">(</span><span class="n">polyData</span><span class="p">);</span>
+<span class="cp">#endif</span>
+
+    <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span> <span class="n">actor</span> <span class="o">=</span> <span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+    <span class="n">actor</span><span class="o">-&gt;</span><span class="n">SetMapper</span><span class="p">(</span><span class="n">mapper</span><span class="p">);</span>
+
+    <span class="c1">// Store this actor in the widget in order that visualizer can access it</span>
+    <a class="reference internal" href="struct_cv_viz_WidgetAccessor.html#doxid-d0-d4d-structcv-1-1viz-1-1-widget-accessor-1acd4eaa43e67c2b55ec36a60e066fd8cb"><span class="std std-ref">viz::WidgetAccessor::setProp</span></a><span></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span> <span class="n">actor</span><span class="p">);</span>
+
+    <span class="c1">// Set the color of the widget. This has to be called after WidgetAccessor.</span>
+    <span class="n">setColor</span><span class="p">(</span><span class="n">color</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+
+    <a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d"><span class="std std-ref">viz::Viz3d</span></a><span></span> <span class="n">myWindow</span><span class="p">(</span><span class="s">&quot;Creating Widgets&quot;</span><span class="p">);</span>
+
+    <span class="n">WTriangle</span> <span class="n">tw</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga3d79ceeb4419bccd0308dfdf1cd31435"><span class="std std-ref">Point3f</span></a><span></span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga3d79ceeb4419bccd0308dfdf1cd31435"><span class="std std-ref">Point3f</span></a><span></span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga3d79ceeb4419bccd0308dfdf1cd31435"><span class="std std-ref">Point3f</span></a><span></span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span> <a class="reference internal" href="class_cv_viz_Color.html#doxid-df-d5b-classcv-1-1viz-1-1-color-1a1e1372991e755607437574ed62863701"><span class="std std-ref">viz::Color::red</span></a><span></span><span class="p">());</span>
+
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;TRIANGLE&quot;</span><span class="p">,</span> <span class="n">tw</span><span class="p">);</span>
+
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">spin</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">#endif</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>Here is the general structure of the program:</p>
+<ul>
+<li><p class="first">Extend Widget3D class to create a new 3D widget.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">class</span> <span class="nl">WTriangle</span> <span class="p">:</span> <span class="k">public</span> <span class="n">viz</span><span class="o">::</span><span class="n">Widget3D</span>
+<span class="p">{</span>
+    <span class="k">public</span><span class="o">:</span>
+        <span class="n">WTriangle</span><span class="p">(</span><span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt2</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point3f</span> <span class="o">&amp;</span><span class="n">pt3</span><span class="p">,</span> <span class="k">const</span> <span class="n">viz</span><span class="o">::</span><span class="n">Color</span> <span class="o">&amp;</span> <span class="n">color</span> <span class="o">=</span> <span class="n">viz</span><span class="o">::</span><span class="n">Color</span><span class="o">::</span><span class="n">white</span><span class="p">());</span>
+<span class="p">};</span>
+</pre>
+</li>
+<li><p class="first">Assign a VTK actor to the widget.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Store this actor in the widget in order that visualizer can access it</span>
+<span class="n">viz</span><span class="o">::</span><span class="n">WidgetAccessor</span><span class="o">::</span><span class="n">setProp</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span> <span class="n">actor</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Set color of the widget.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Set the color of the widget. This has to be called after WidgetAccessor.</span>
+<span class="n">setColor</span><span class="p">(</span><span class="n">color</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Construct a triangle widget and display it in the window.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">WTriangle</span> <span class="n">tw</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga3d79ceeb4419bccd0308dfdf1cd31435"><span class="std std-ref">Point3f</span></a><span></span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga3d79ceeb4419bccd0308dfdf1cd31435"><span class="std std-ref">Point3f</span></a><span></span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga3d79ceeb4419bccd0308dfdf1cd31435"><span class="std std-ref">Point3f</span></a><span></span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">viz</span><span class="o">::</span><span class="n">Color</span><span class="o">::</span><span class="n">red</span><span class="p">());</span>
+
+<span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;TRIANGLE&quot;</span><span class="p">,</span> <span class="n">tw</span><span class="p">);</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Results</p>
+<p>Here is the result of the program.</p>
+<img alt="_images/red_triangle.png" src="_images/red_triangle.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_launching_viz.html" title="Launching Viz"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_viz.html" title="OpenCV Viz"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_viz.html" >OpenCV Viz</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

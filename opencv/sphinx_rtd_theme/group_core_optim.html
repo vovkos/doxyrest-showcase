@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Optimization Algorithms &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="enum cv::SolveLPResult" href="enum_cv_SolveLPResult.html" />
+    <link rel="prev" title="enum cv::SVD::Flags" href="enum_cv_SVD_Flags.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_core.html">Core functionality</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_core_basic.html">Basic structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_c.html">C structures and operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_cluster.html">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_directx.html">DirectX interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_eigen.html">Eigen support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_ipp.html">Intel IPP Asynchronous C/C++ Converters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_va_intel.html">Intel VA-API/OpenCL (CL-VA) interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opencl.html">OpenCL support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opengl.html">OpenGL interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_array.html">Operations on arrays</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Optimization Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enum_cv_SolveLPResult.html">enum cv::SolveLPResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ConjGradSolver.html">class cv::ConjGradSolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_DownhillSolver.html">class cv::DownhillSolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_MinProblemSolver.html">class cv::MinProblemSolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_utils.html">Utility and system functions and macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_xml.html">XML/YAML Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_CovarFlags.html">enum cv::CovarFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HersheyFonts.html">enum cv::HersheyFonts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_KmeansFlags.html">enum cv::KmeansFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_LineTypes.html">enum cv::LineTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ReduceTypes.html">enum cv::ReduceTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_Affine3.html">template class cv::Affine3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_BufferPoolController.html">class cv::BufferPoolController</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImage.html">template class cv::WImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBuffer.html">template class cv::WImageBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBufferC.html">template class cv::WImageBufferC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageC.html">template class cv::WImageC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageView.html">template class cv::WImageView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageViewC.html">template class cv::WImageViewC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_core.html">Core functionality</a> &raquo;</li>
+        
+      <li>Optimization Algorithms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="optimization-algorithms">
+<span id="doxid-da-d01-group-core-optim"></span><span id="index-0"></span><h1>Optimization Algorithms</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<p>The algorithms in this section minimize or maximize function value within specified constraints or without any constraints. <a class="reference internal" href="#details-da-d01-group-core-optim"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_SolveLPResult.html#doxid-da-d01-group-core-optim-1ga86a370deffb37af51deb405a634eb14c"><span class="std std-ref">cv::SolveLPResult</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_ConjGradSolver.html#doxid-df-d8a-classcv-1-1-conj-grad-solver"><span class="std std-ref">cv::ConjGradSolver</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_DownhillSolver.html#doxid-df-dac-classcv-1-1-downhill-solver"><span class="std std-ref">cv::DownhillSolver</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_MinProblemSolver.html#doxid-d0-d39-classcv-1-1-min-problem-solver"><span class="std std-ref">cv::MinProblemSolver</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-da-d01-group-core-optim-1ga6364eb49b9b0722cd7a4eb361f9896cd"><span class="std std-ref">cv::solveLP</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">Func</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">Constr</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">z</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-da-d01-group-core-optim"></span><h2>Detailed Documentation</h2>
+<p>The algorithms in this section minimize or maximize function value within specified constraints or without any constraints.</p>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-da-d01-group-core-optim-1ga6364eb49b9b0722cd7a4eb361f9896cd">
+<span id="index-1"></span><span></span><span class="kt">int</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">solveLP</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">Func</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">Constr</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">z</span>
+    <span class="p">)</span>
+</pre>
+<p>Solve given (non-integer) linear programming problem using the Simplex <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm"><span class="std std-ref">Algorithm</span></a> (Simplex Method).</p>
+<p>What we mean here by “linear programming problem” (or LP problem, for short) can be formulated as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mbox{Maximize } c\cdot x\\ \mbox{Subject to:}\\ Ax\leq b\\ x\geq 0\end{split}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(c\)</span> is fixed <code class="docutils literal notranslate"><span class="pre">1</span></code> -by- <code class="docutils literal notranslate"><span class="pre">n</span></code> row-vector, <span class="math notranslate nohighlight">\(A\)</span> is fixed <code class="docutils literal notranslate"><span class="pre">m</span></code> -by- <code class="docutils literal notranslate"><span class="pre">n</span></code> matrix, <span class="math notranslate nohighlight">\(b\)</span> is fixed <code class="docutils literal notranslate"><span class="pre">m</span></code> -by- <code class="docutils literal notranslate"><span class="pre">1</span></code> column vector and <span class="math notranslate nohighlight">\(x\)</span> is an arbitrary <code class="docutils literal notranslate"><span class="pre">n</span></code> -by- <code class="docutils literal notranslate"><span class="pre">1</span></code> column vector, which satisfies the constraints.</p>
+<p>Simplex algorithm is one of many algorithms that are designed to handle this sort of problems efficiently. Although it is not optimal in theoretical sense (there exist algorithms that can solve any problem written as above in polynomial time, while simplex method degenerates to exponential time for some special cases), it is well-studied, easy to implement and is shown to work well for real-life purposes.</p>
+<p>The particular implementation is taken almost verbatim from <strong>Introduction to Algorithms, third edition</strong> by T. H. Cormen, C. E. Leiserson, R. L. Rivest and Clifford Stein. In particular, the Bland’s rule <a class="reference external" href="http://en.wikipedia.org/wiki/Bland%27s_rule">http://en.wikipedia.org/wiki/Bland%27s_rule</a> is used to prevent cycling.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Func</td>
+<td>This row-vector corresponds to <span class="math notranslate nohighlight">\(c\)</span> in the LP problem formulation (see above). It should contain 32- or 64-bit floating point numbers. As a convenience, column-vector may be also submitted, in the latter case it is understood to correspond to <span class="math notranslate nohighlight">\(c^T\)</span>.</td>
+</tr>
+<tr class="row-even"><td>Constr</td>
+<td><code class="docutils literal notranslate"><span class="pre">m</span></code> -by- <code class="docutils literal notranslate"><span class="pre">n+1</span></code> matrix, whose rightmost column corresponds to <span class="math notranslate nohighlight">\(b\)</span> in formulation above and the remaining to <span class="math notranslate nohighlight">\(A\)</span>. It should containt 32- or 64-bit floating point numbers.</td>
+</tr>
+<tr class="row-odd"><td>z</td>
+<td>The solution will be returned here as a column-vector - it corresponds to <span class="math notranslate nohighlight">\(c\)</span> in the formulation above. It will contain 64-bit floating point numbers.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Returns:</p>
+<p>One of <a class="reference internal" href="enum_cv_SolveLPResult.html#doxid-da-d01-group-core-optim-1ga86a370deffb37af51deb405a634eb14c"><span class="std std-ref">cv::SolveLPResult</span></a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="enum_cv_SolveLPResult.html" class="btn btn-neutral float-right" title="enum cv::SolveLPResult" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="enum_cv_SVD_Flags.html" class="btn btn-neutral float-left" title="enum cv::SVD::Flags" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

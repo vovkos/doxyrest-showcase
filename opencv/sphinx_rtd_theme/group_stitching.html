@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Images stitching &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Autocalibration" href="group_stitching_autocalib.html" />
+    <link rel="prev" title="class cv::GeneralizedHoughGuil" href="class_cv_GeneralizedHoughGuil.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Images stitching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_autocalib.html">Autocalibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_exposure.html">Exposure Compensation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_match.html">Features Finding and Images Matching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_blend.html">Image Blenders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_warp.html">Images Warping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_rotation.html">Rotation Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_stitching_seam.html">Seam Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_cv_detail_CameraParams.html">struct cv::detail::CameraParams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_cv_detail_GraphEdge.html">struct cv::detail::GraphEdge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_detail_DisjointSets.html">class cv::detail::DisjointSets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_detail_Graph.html">class cv::detail::Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_Stitcher.html">class cv::Stitcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_detail_Timelapser.html">class cv::detail::Timelapser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_detail_TimelapserCrop.html">class cv::detail::TimelapserCrop</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Images stitching</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="images-stitching">
+<span id="doxid-d1-d46-group-stitching"></span><span id="index-0"></span><h1>Images stitching</h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>This figure illustrates the stitching module pipeline implemented in the <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">Stitcher</span></a> class. Using that class it’s possible to configure/remove some steps, i.e. adjust the stitching pipeline according to the particular needs. All building blocks from the pipeline are available in the detail namespace, one can combine and use them separately.</p>
+<p>The implemented stitching pipeline is very similar to the one proposed in <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-bl07"><span class="std std-ref">[11]</span></a>.</p>
+<img alt="stitching pipeline" src="_images/StitchingPipeline.jpg" />
+<p class="rubric">Camera models</p>
+<p>There are currently 2 camera models implemented in stitching pipeline.</p>
+<ul class="simple">
+<li><em>Homography model</em> expecting perspective transformations between images implemented in <a class="reference internal" href="class_cv_detail_BestOf2NearestMatcher.html#doxid-d1-d16-classcv-1-1detail-1-1-best-of2-nearest-matcher"><span class="std std-ref">cv::detail::BestOf2NearestMatcher</span></a> <a class="reference internal" href="class_cv_detail_HomographyBasedEstimator.html#doxid-da-d96-classcv-1-1detail-1-1-homography-based-estimator"><span class="std std-ref">cv::detail::HomographyBasedEstimator</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterReproj.html#doxid-d4-d9d-classcv-1-1detail-1-1-bundle-adjuster-reproj"><span class="std std-ref">cv::detail::BundleAdjusterReproj</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterRay.html#doxid-d2-d79-classcv-1-1detail-1-1-bundle-adjuster-ray"><span class="std std-ref">cv::detail::BundleAdjusterRay</span></a></li>
+<li><em>Affine model</em> expecting affine transformation with 6 DOF or 4 DOF implemented in <a class="reference internal" href="class_cv_detail_AffineBestOf2NearestMatcher.html#doxid-d3-dc2-classcv-1-1detail-1-1-affine-best-of2-nearest-matcher"><span class="std std-ref">cv::detail::AffineBestOf2NearestMatcher</span></a> <a class="reference internal" href="class_cv_detail_AffineBasedEstimator.html#doxid-d1-da3-classcv-1-1detail-1-1-affine-based-estimator"><span class="std std-ref">cv::detail::AffineBasedEstimator</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterAffine.html#doxid-d6-d86-classcv-1-1detail-1-1-bundle-adjuster-affine"><span class="std std-ref">cv::detail::BundleAdjusterAffine</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterAffinePartial.html#doxid-da-d8b-classcv-1-1detail-1-1-bundle-adjuster-affine-partial"><span class="std std-ref">cv::detail::BundleAdjusterAffinePartial</span></a> <a class="reference internal" href="class_cv_AffineWarper.html#doxid-d2-d53-classcv-1-1-affine-warper"><span class="std std-ref">cv::AffineWarper</span></a></li>
+</ul>
+<p>Homography model is useful for creating photo panoramas captured by camera, while affine-based model can be used to stitch scans and object captured by specialized devices. Use <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher-1acb32106b3b3e7870d4b39082ab58a26e"><span class="std std-ref">cv::Stitcher::create</span></a> to get preconfigured pipeline for one of those models.</p>
+<p>Certain detailed settings of <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">cv::Stitcher</span></a> might not make sense. Especially you should not mix classes implementing affine model and classes implementing Homography model, as they work with different transformations.</p>
+<div class="line-block">
+<div class="line"><a class="reference internal" href="group_stitching_autocalib.html#doxid-d4-dbc-group-stitching-autocalib"><span class="std std-ref">Autocalibration</span></a></div>
+<div class="line"><a class="reference internal" href="group_stitching_exposure.html#doxid-dd-dff-group-stitching-exposure"><span class="std std-ref">Exposure Compensation</span></a></div>
+<div class="line"><a class="reference internal" href="group_stitching_match.html#doxid-df-d8c-group-stitching-match"><span class="std std-ref">Features Finding and Images Matching</span></a></div>
+<div class="line"><a class="reference internal" href="group_stitching_blend.html#doxid-d9-d46-group-stitching-blend"><span class="std std-ref">Image Blenders</span></a></div>
+<div class="line"><a class="reference internal" href="group_stitching_warp.html#doxid-d0-dfa-group-stitching-warp"><span class="std std-ref">Images Warping</span></a></div>
+<div class="line"><a class="reference internal" href="group_stitching_rotation.html#doxid-d7-d74-group-stitching-rotation"><span class="std std-ref">Rotation Estimation</span></a></div>
+<div class="line"><a class="reference internal" href="group_stitching_seam.html#doxid-d9-d24-group-stitching-seam"><span class="std std-ref">Seam Estimation</span></a></div>
+</div>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// structs</span>
+
+<span class="k">struct</span> <a class="reference internal" href="struct_cv_detail_CameraParams.html#doxid-da-d60-structcv-1-1detail-1-1-camera-params"><span class="std std-ref">cv::detail::CameraParams</span></a><span></span><span class="p">;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_cv_detail_GraphEdge.html#doxid-d3-d66-structcv-1-1detail-1-1-graph-edge"><span class="std std-ref">cv::detail::GraphEdge</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_detail_DisjointSets.html#doxid-d4-d21-classcv-1-1detail-1-1-disjoint-sets"><span class="std std-ref">cv::detail::DisjointSets</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_detail_Graph.html#doxid-db-d7a-classcv-1-1detail-1-1-graph"><span class="std std-ref">cv::detail::Graph</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">cv::Stitcher</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_detail_Timelapser.html#doxid-d1-d97-classcv-1-1detail-1-1-timelapser"><span class="std std-ref">cv::detail::Timelapser</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_detail_TimelapserCrop.html#doxid-da-d40-classcv-1-1detail-1-1-timelapser-crop"><span class="std std-ref">cv::detail::TimelapserCrop</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">Stitcher</span></a><span></span><span class="o">&gt;</span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1ga2de00132401436e7ddc89590994fd922">cv::createStitcher</span><span></span><span class="p">(</span><span class="kt">bool</span> <span class="n">try_use_gpu</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+
+<span class="kt">bool</span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1gaf9ff38a39051369119b53529b3d779ab">cv::detail::overlapRoi</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span> <span class="n">tl1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span> <span class="n">tl2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">sz1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">sz2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&amp;</span> <span class="n">roi</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1gab7d43257ae6a1d607ee195f369d51b67">cv::detail::resultRoi</span><span></span><span class="p">(</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">corners</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">images</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1gaeb641b2481aa8261c3ee087a38016485">cv::detail::resultRoi</span><span></span><span class="p">(</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">corners</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">sizes</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1gac27a7690523e62854880225ec2020271">cv::detail::resultRoiIntersection</span><span></span><span class="p">(</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">corners</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">sizes</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1ga0714acd404c7b8024017d6d93a0eab3d">cv::detail::resultTl</span><span></span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">corners</span><span class="p">);</span>
+
+<span class="kt">void</span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1ga73d6882563516f276bda76365d4619ee">cv::detail::selectRandomSubset</span><span></span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">count</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">size</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">subset</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span><span class="o">&amp;</span>
+<span class="doxyrest-code-target target" id="doxid-d1-d46-group-stitching-1ga7616573f03568a19c14e3333f104b2af">cv::detail::stitchingLogLevel</span><span></span><span class="p">();</span>
+</pre>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="group_stitching_autocalib.html" class="btn btn-neutral float-right" title="Autocalibration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="class_cv_GeneralizedHoughGuil.html" class="btn btn-neutral float-left" title="class cv::GeneralizedHoughGuil" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

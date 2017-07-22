@@ -1,0 +1,269 @@
+.. index:: pair: class; Poco::Net::ParallelSocketAcceptor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor:
+
+template class Poco::Net::ParallelSocketAcceptor
+================================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class implements the Acceptor part of the Acceptor-Connector design pattern. :ref:`More...<details-class_poco_1_1_net_1_1_parallel_socket_acceptor>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ParallelSocketAcceptor.h>
+	
+	template <
+		class ServiceHandler,
+		class SR
+		>
+	class ParallelSocketAcceptor
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`Poco::Net::ParallelSocketReactor<doxid-class_poco_1_1_net_1_1_parallel_socket_reactor>`<SR> :target:`ParallelReactor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a64b9632d14f2641e91f4eece0d5e0d35>`;
+
+		// construction
+	
+		:ref:`ParallelSocketAcceptor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a421559c6c5d718cfcc8b4272335e4a22>`(
+			:ref:`ServerSocket<doxid-class_poco_1_1_net_1_1_server_socket>`& socket,
+			unsigned threads = :ref:`Poco::Environment::processorCount<doxid-class_poco_1_1_environment_1a89d4217cc1ab4eae39592a1136b82f82>`()
+			);
+	
+		:ref:`ParallelSocketAcceptor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a1db9da478475fde4ab6cb5ab38721b89>`(
+			:ref:`ServerSocket<doxid-class_poco_1_1_net_1_1_server_socket>`& socket,
+			:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor,
+			unsigned threads = :ref:`Poco::Environment::processorCount<doxid-class_poco_1_1_environment_1a89d4217cc1ab4eae39592a1136b82f82>`()
+			);
+
+		// methods
+	
+		void
+		:ref:`setReactor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a1746866d4759585584e7f508b168f701>`(:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor);
+	
+		virtual
+		void
+		:ref:`registerAcceptor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a5a87b01e93a0cb5c0646246f2a4bcfde>`(:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor);
+	
+		virtual
+		void
+		:ref:`unregisterAcceptor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a0d04c724457efe626ebc92f6e21007f1>`();
+	
+		void
+		:ref:`onAccept<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a38f858babc9853692aa2da749ce886bf>`(:ref:`ReadableNotification<doxid-class_poco_1_1_net_1_1_readable_notification>`* pNotification);
+
+	protected:
+		// typedefs
+	
+		typedef std::vector<typename :ref:`ParallelReactor::Ptr<doxid-class_poco_1_1_net_1_1_parallel_socket_reactor_1ac2cb6a3db08a5db75cc7d92b565cb89d>`> :target:`ReactorVec<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a463b2e60246ade9dbc9c977b6e71385d>`;
+
+		// methods
+	
+		virtual
+		ServiceHandler*
+		:ref:`createServiceHandler<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a6dc105fc3a7187e40c5784fcf24714fc>`(:ref:`StreamSocket<doxid-class_poco_1_1_net_1_1_stream_socket>`& socket);
+	
+		:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`*
+		:ref:`reactor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a59af64f08e6e93bba7dd393373534446>`();
+	
+		:ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`&
+		:ref:`socket<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a195fd32427d16fc04bba78c34c766d2f>`();
+	
+		void
+		:ref:`init<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1ab68b0579316811103bc40e7aa75d5647>`();
+	
+		:ref:`ReactorVec<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a463b2e60246ade9dbc9c977b6e71385d>`&
+		:ref:`reactors<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1ae30be2682e8225547a546901532e4fb9>`();
+	
+		:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`*
+		:ref:`reactor<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1ab3324a06bcb6b9a1a19ed2497d3fd339>`(std::size_t idx);
+	
+		std::size_t&
+		:ref:`next<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a354e396e861bdaf4d2639444591ea643>`();
+	};
+.. _details-class_poco_1_1_net_1_1_parallel_socket_acceptor:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements the Acceptor part of the Acceptor-Connector design pattern.
+
+Only the difference from single-threaded version is documented here, For full description see :ref:`Poco::Net::SocketAcceptor <doxid-class_poco_1_1_net_1_1_socket_acceptor>` documentation.
+
+This is a multi-threaded version of :ref:`SocketAcceptor <doxid-class_poco_1_1_net_1_1_socket_acceptor>`, it differs from the single-threaded version in number of reactors (defaulting to number of processors) that can be specified at construction time and is rotated in a round-robin fashion by event handler. See :ref:`ParallelSocketAcceptor::onAccept <doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a38f858babc9853692aa2da749ce886bf>` and :ref:`ParallelSocketAcceptor::createServiceHandler <doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a6dc105fc3a7187e40c5784fcf24714fc>` documentation and implementation for details.
+
+Construction
+------------
+
+.. index:: pair: function; ParallelSocketAcceptor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a421559c6c5d718cfcc8b4272335e4a22:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ParallelSocketAcceptor(
+		:ref:`ServerSocket<doxid-class_poco_1_1_net_1_1_server_socket>`& socket,
+		unsigned threads = :ref:`Poco::Environment::processorCount<doxid-class_poco_1_1_environment_1a89d4217cc1ab4eae39592a1136b82f82>`()
+		)
+
+Creates a :ref:`ParallelSocketAcceptor <doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor>` using the given :ref:`ServerSocket <doxid-class_poco_1_1_net_1_1_server_socket>`, sets number of threads and populates the reactors vector.
+
+.. index:: pair: function; ParallelSocketAcceptor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a1db9da478475fde4ab6cb5ab38721b89:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ParallelSocketAcceptor(
+		:ref:`ServerSocket<doxid-class_poco_1_1_net_1_1_server_socket>`& socket,
+		:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor,
+		unsigned threads = :ref:`Poco::Environment::processorCount<doxid-class_poco_1_1_environment_1a89d4217cc1ab4eae39592a1136b82f82>`()
+		)
+
+Creates a :ref:`ParallelSocketAcceptor <doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor>` using the given :ref:`ServerSocket <doxid-class_poco_1_1_net_1_1_server_socket>`, sets the number of threads, populates the reactors vector and registers itself with the given :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>`.
+
+Methods
+-------
+
+.. index:: pair: function; setReactor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a1746866d4759585584e7f508b168f701:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setReactor(:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor)
+
+Sets the reactor for this acceptor.
+
+.. index:: pair: function; registerAcceptor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a5a87b01e93a0cb5c0646246f2a4bcfde:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	registerAcceptor(:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor)
+
+Registers the :ref:`ParallelSocketAcceptor <doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor>` with a :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>`.
+
+A subclass can override this function to e.g. register an event handler for timeout event.
+
+The overriding method must either call the base class implementation or register the accept handler on its own.
+
+.. index:: pair: function; unregisterAcceptor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a0d04c724457efe626ebc92f6e21007f1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	unregisterAcceptor()
+
+Unregisters the :ref:`ParallelSocketAcceptor <doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor>`.
+
+A subclass can override this function to e.g. unregister its event handler for a timeout event.
+
+The overriding method must either call the base class implementation or unregister the accept handler on its own.
+
+.. index:: pair: function; onAccept
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a38f858babc9853692aa2da749ce886bf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	onAccept(:ref:`ReadableNotification<doxid-class_poco_1_1_net_1_1_readable_notification>`* pNotification)
+
+Accepts connection and creates event handler.
+
+.. index:: pair: function; createServiceHandler
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a6dc105fc3a7187e40c5784fcf24714fc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	ServiceHandler*
+	createServiceHandler(:ref:`StreamSocket<doxid-class_poco_1_1_net_1_1_stream_socket>`& socket)
+
+Create and initialize a new ServiceHandler instance.
+
+Subclasses can override this method.
+
+.. index:: pair: function; reactor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a59af64f08e6e93bba7dd393373534446:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`*
+	reactor()
+
+Returns a pointer to the :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>` where this :ref:`SocketAcceptor <doxid-class_poco_1_1_net_1_1_socket_acceptor>` is registered.
+
+The pointer may be null.
+
+.. index:: pair: function; socket
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a195fd32427d16fc04bba78c34c766d2f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`&
+	socket()
+
+Returns a reference to the :ref:`SocketAcceptor <doxid-class_poco_1_1_net_1_1_socket_acceptor>` 's socket.
+
+.. index:: pair: function; init
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1ab68b0579316811103bc40e7aa75d5647:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	init()
+
+Populates the reactors vector.
+
+.. index:: pair: function; reactors
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1ae30be2682e8225547a546901532e4fb9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ReactorVec<doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a463b2e60246ade9dbc9c977b6e71385d>`&
+	reactors()
+
+Returns reference to vector of reactors.
+
+.. index:: pair: function; reactor
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1ab3324a06bcb6b9a1a19ed2497d3fd339:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`*
+	reactor(std::size_t idx)
+
+Returns reference to the reactor at position idx.
+
+.. index:: pair: function; next
+.. _doxid-class_poco_1_1_net_1_1_parallel_socket_acceptor_1a354e396e861bdaf4d2639444591ea643:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::size_t&
+	next()
+
+Returns reference to the next reactor index.
+

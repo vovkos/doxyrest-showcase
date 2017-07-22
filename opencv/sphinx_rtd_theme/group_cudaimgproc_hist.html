@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Histogram Calculation &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="class cv::cuda::CLAHE" href="class_cv_cuda_CLAHE.html" />
+    <link rel="prev" title="class cv::cuda::CornersDetector" href="class_cv_cuda_CornersDetector.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_core.html">Core functionality</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_core_basic.html">Basic structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_c.html">C structures and operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_cluster.html">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_directx.html">DirectX interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_eigen.html">Eigen support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_ipp.html">Intel IPP Asynchronous C/C++ Converters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_va_intel.html">Intel VA-API/OpenCL (CL-VA) interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opencl.html">OpenCL support</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="group_core_opengl.html">OpenGL interoperability</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="group_cuda.html">CUDA-accelerated Computer Vision</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="group_cudabgsegm.html">Background Segmentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudacore.html">Core part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudev.html">Device layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudafeatures2d.html">Feature Detection and Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudafilters.html">Image Filtering</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="group_cudaimgproc.html">Image Processing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudawarping.html">Image Warping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudalegacy.html">Legacy support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudaobjdetect.html">Object Detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudaarithm.html">Operations on Matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudaoptflow.html">Optical Flow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudastereo.html">Stereo Correspondence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudacodec.html">Video Encoding/Decoding</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_cv_cuda.html">namespace cv::cuda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_cv_ogl_ocl.html">namespace cv::ogl::ocl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enum_cv_ogl_RenderModes.html">enum cv::ogl::RenderModes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ogl_Arrays.html">class cv::ogl::Arrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ogl_Buffer.html">class cv::ogl::Buffer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ogl_Texture2D.html">class cv::ogl::Texture2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_core_opengl.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_core_opengl.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_array.html">Operations on arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_optim.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_utils.html">Utility and system functions and macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_xml.html">XML/YAML Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_CovarFlags.html">enum cv::CovarFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HersheyFonts.html">enum cv::HersheyFonts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_KmeansFlags.html">enum cv::KmeansFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_LineTypes.html">enum cv::LineTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ReduceTypes.html">enum cv::ReduceTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_Affine3.html">template class cv::Affine3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_BufferPoolController.html">class cv::BufferPoolController</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImage.html">template class cv::WImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBuffer.html">template class cv::WImageBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBufferC.html">template class cv::WImageBufferC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageC.html">template class cv::WImageC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageView.html">template class cv::WImageView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageViewC.html">template class cv::WImageViewC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_core.html">Core functionality</a> &raquo;</li>
+        
+          <li><a href="group_core_opengl.html">OpenGL interoperability</a> &raquo;</li>
+        
+          <li><a href="group_cuda.html">CUDA-accelerated Computer Vision</a> &raquo;</li>
+        
+          <li><a href="group_cudaimgproc.html">Image Processing</a> &raquo;</li>
+        
+      <li>Histogram Calculation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="histogram-calculation">
+<span id="doxid-d8-d0e-group-cudaimgproc-hist"></span><span id="index-0"></span><h1>Histogram Calculation</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_cuda_CLAHE.html#doxid-df-d64-classcv-1-1cuda-1-1-c-l-a-h-e"><span class="std std-ref">cv::cuda::CLAHE</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1gaaf3944106890947020bb4522a7619c26"><span class="std std-ref">cv::cuda::calcHist</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga2d55b444ce776c8bbd3087cc90c47f32"><span class="std std-ref">cv::cuda::calcHist</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_CLAHE.html#doxid-df-d64-classcv-1-1cuda-1-1-c-l-a-h-e"><span class="std std-ref">cuda::CLAHE</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga950d3228b77b368a452553dcf57308c0"><span class="std std-ref">cv::cuda::createCLAHE</span></a><span></span><span class="p">(</span>
+    <span class="kt">double</span> <span class="n">clipLimit</span> <span class="o">=</span> <span class="mf">40.0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">tileGridSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga2384be74bd2feba7e6c46815513f0060"><span class="std std-ref">cv::cuda::equalizeHist</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga2f2cbd21dc6d7367a7c4ee1a826f389d"><span class="std std-ref">cv::cuda::evenLevels</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">levels</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">nLevels</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">lowerLevel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">upperLevel</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1gacd3b14279fb77a57a510cb8c89a1856f"><span class="std std-ref">cv::cuda::histEven</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">histSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">lowerLevel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">upperLevel</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1gae9dc72ce8e5467704f2a5777b61b1831"><span class="std std-ref">cv::cuda::histEven</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">GpuMat</span></a><span></span> <span class="n">hist</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="kt">int</span> <span class="n">histSize</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="kt">int</span> <span class="n">lowerLevel</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="kt">int</span> <span class="n">upperLevel</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga87819085c1059186d9cdeacd92cea783"><span class="std std-ref">cv::cuda::histRange</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">levels</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga8816f4cbb3e796264901f9a42eb4884d"><span class="std std-ref">cv::cuda::histRange</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">GpuMat</span></a><span></span> <span class="n">hist</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">GpuMat</span></a><span></span> <span class="n">levels</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d8-d0e-group-cudaimgproc-hist"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1gaaf3944106890947020bb4522a7619c26">
+<span id="index-1"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcHist</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates histogram for one channel 8-bit image.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image with CV_8UC1 type.</td>
+</tr>
+<tr class="row-even"><td>hist</td>
+<td>Destination histogram with one row, 256 columns, and the CV_32SC1 type.</td>
+</tr>
+<tr class="row-odd"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1ga2d55b444ce776c8bbd3087cc90c47f32">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">calcHist</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates histogram for one channel 8-bit image confined in given mask.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image with CV_8UC1 type.</td>
+</tr>
+<tr class="row-even"><td>hist</td>
+<td>Destination histogram with one row, 256 columns, and the CV_32SC1 type.</td>
+</tr>
+<tr class="row-odd"><td>mask</td>
+<td>A mask image same size as src and of type CV_8UC1.</td>
+</tr>
+<tr class="row-even"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1ga950d3228b77b368a452553dcf57308c0">
+<span id="index-3"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_CLAHE.html#doxid-df-d64-classcv-1-1cuda-1-1-c-l-a-h-e"><span class="std std-ref">cuda::CLAHE</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">createCLAHE</span><span class="p">(</span>
+    <span class="kt">double</span> <span class="n">clipLimit</span> <span class="o">=</span> <span class="mf">40.0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">tileGridSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates implementation for <a class="reference internal" href="class_cv_cuda_CLAHE.html#doxid-df-d64-classcv-1-1cuda-1-1-c-l-a-h-e"><span class="std std-ref">cuda::CLAHE</span></a>.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>clipLimit</td>
+<td>Threshold for contrast limiting.</td>
+</tr>
+<tr class="row-even"><td>tileGridSize</td>
+<td>Size of grid for histogram equalization. Input image will be divided into equally sized rectangular tiles. tileGridSize defines the number of tiles in row and column.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1ga2384be74bd2feba7e6c46815513f0060">
+<span id="index-4"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">equalizeHist</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Equalizes the histogram of a grayscale image.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image with CV_8UC1 type.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Destination image.</td>
+</tr>
+<tr class="row-odd"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d8-d0e-group-cudaimgproc-hist-1ga2384be74bd2feba7e6c46815513f0060"><span class="std std-ref">equalizeHist</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1ga2f2cbd21dc6d7367a7c4ee1a826f389d">
+<span id="index-5"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">evenLevels</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">levels</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">nLevels</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">lowerLevel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">upperLevel</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes levels with even distribution.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>levels</td>
+<td>Destination array. levels has 1 row, nLevels columns, and the CV_32SC1 type.</td>
+</tr>
+<tr class="row-even"><td>nLevels</td>
+<td>Number of computed levels. nLevels must be at least 2.</td>
+</tr>
+<tr class="row-odd"><td>lowerLevel</td>
+<td>Lower boundary value of the lowest level.</td>
+</tr>
+<tr class="row-even"><td>upperLevel</td>
+<td>Upper boundary value of the greatest level.</td>
+</tr>
+<tr class="row-odd"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1gacd3b14279fb77a57a510cb8c89a1856f">
+<span id="index-6"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">histEven</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">histSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">lowerLevel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">upperLevel</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates a histogram with evenly distributed bins.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image. CV_8U, CV_16U, or CV_16S depth and 1 or 4 channels are supported. For a four-channel image, all channels are processed separately.</td>
+</tr>
+<tr class="row-even"><td>hist</td>
+<td>Destination histogram with one row, histSize columns, and the CV_32S type.</td>
+</tr>
+<tr class="row-odd"><td>histSize</td>
+<td>Size of the histogram.</td>
+</tr>
+<tr class="row-even"><td>lowerLevel</td>
+<td>Lower boundary of lowest-level bin.</td>
+</tr>
+<tr class="row-odd"><td>upperLevel</td>
+<td>Upper boundary of highest-level bin.</td>
+</tr>
+<tr class="row-even"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1gae9dc72ce8e5467704f2a5777b61b1831">
+<span id="index-7"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">histEven</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">GpuMat</span></a><span></span> <span class="n">hist</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="kt">int</span> <span class="n">histSize</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="kt">int</span> <span class="n">lowerLevel</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="kt">int</span> <span class="n">upperLevel</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1ga87819085c1059186d9cdeacd92cea783">
+<span id="index-8"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">histRange</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">hist</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">levels</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates a histogram with bins determined by the levels array.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source image. CV_8U , CV_16U , or CV_16S depth and 1 or 4 channels are supported. For a four-channel image, all channels are processed separately.</td>
+</tr>
+<tr class="row-even"><td>hist</td>
+<td>Destination histogram with one row, (levels.cols-1) columns, and the CV_32SC1 type.</td>
+</tr>
+<tr class="row-odd"><td>levels</td>
+<td>Number of levels in the histogram.</td>
+</tr>
+<tr class="row-even"><td>stream</td>
+<td><a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a> for the asynchronous version.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d8-d0e-group-cudaimgproc-hist-1ga8816f4cbb3e796264901f9a42eb4884d">
+<span id="index-9"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">histRange</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">GpuMat</span></a><span></span> <span class="n">hist</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">GpuMat</span></a><span></span> <span class="n">levels</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">Stream</span></a><span></span><span class="o">&amp;</span> <span class="n">stream</span> <span class="o">=</span> <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream-1a680af5adfeeb1cdaa5b7b13f680c0131"><span class="std std-ref">Stream::Null</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="class_cv_cuda_CLAHE.html" class="btn btn-neutral float-right" title="class cv::cuda::CLAHE" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="class_cv_cuda_CornersDetector.html" class="btn btn-neutral float-left" title="class cv::cuda::CornersDetector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

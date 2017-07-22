@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Creating a video with OpenCV &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors" href="page_tutorial_intelperc.html" />
+    <link rel="prev" title="Video Input and Output (videoio module)" href="page_tutorial_table_of_content_videoio.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Creating a video with OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_intelperc.html">Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_kinect_openni.html">Using Kinect and other OpenNI compatible depth sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_video_input_psnr_ssim.html">Video Input with OpenCV and similarity measurement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a> &raquo;</li>
+        
+      <li>Creating a video with OpenCV</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="creating-a-video-with-opencv">
+<span id="doxid-d7-d9e-tutorial-video-write"></span><span id="index-0"></span><h1>Creating a video with OpenCV</h1>
+<p class="rubric">Goal</p>
+<p>Whenever you work with video feeds you may eventually want to save your image processing result in a form of a new video file. For simple video outputs you can use the OpenCV built-in <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer"><span class="std std-ref">cv::VideoWriter</span></a> class, designed for this.</p>
+<ul class="simple">
+<li>How to create a video file with OpenCV</li>
+<li>What type of video files you can create with OpenCV</li>
+<li>How to extract a given color channel from a video</li>
+</ul>
+<p>As a simple demonstration I’ll just extract one of the BGR color channels of an input video file into a new video. You can control the flow of the application from its console line arguments:</p>
+<ul class="simple">
+<li>The first argument points to the video file to work on</li>
+<li>The second argument may be one of the characters: R G B. This will specify which of the channels to extract.</li>
+<li>The last argument is the character Y (Yes) or N (No). If this is no, the codec used for the input video file will be the same as for the output. Otherwise, a window will pop up and allow you to select yourself the codec to use.</li>
+</ul>
+<p>For example, a valid command line would look like:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">video</span><span class="o">-</span><span class="n">write</span><span class="p">.</span><span class="n">exe</span> <span class="n">video</span><span class="o">/</span><span class="n">Megamind</span><span class="p">.</span><span class="n">avi</span> <span class="n">R</span> <span class="n">Y</span>
+</pre>
+<p class="rubric">The source code</p>
+<p>You may also find the source code and these video file in the <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/videoio/video-write/</span></code> folder of the OpenCV source library or <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/videoio/video-write/video-write.cpp">download it from here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt; // for standard I/O</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;   // for strings</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;     // Basic OpenCV structures (cv::Mat)</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/videoio.hpp&gt;  // Video write</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;------------------------------------------------------------------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;This program shows how to write video files.&quot;</span>                                   <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;You can extract the R or G or B color channel of the input video.&quot;</span>              <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:&quot;</span>                                                                         <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;./video-write &lt;input_video_name&gt; [ R | G | B] [Y | N]&quot;</span>                          <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;------------------------------------------------------------------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Not enough parameters&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="n">string</span> <span class="n">source</span>      <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>           <span class="c1">// the source file name</span>
+    <span class="k">const</span> <span class="kt">bool</span> <span class="n">askOutputType</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span><span class="sc">&#39;Y&#39;</span><span class="p">;</span>  <span class="c1">// If false it will use the inputs codec type</span>
+
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">inputVideo</span><span class="p">(</span><span class="n">source</span><span class="p">);</span>              <span class="c1">// Open input</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">inputVideo</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">cout</span>  <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open the input video: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">source</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">string</span><span class="o">::</span><span class="n">size_type</span> <span class="n">pAt</span> <span class="o">=</span> <span class="n">source</span><span class="p">.</span><span class="n">find_last_of</span><span class="p">(</span><span class="sc">&#39;.&#39;</span><span class="p">);</span>                  <span class="c1">// Find extension point</span>
+    <span class="k">const</span> <span class="n">string</span> <span class="n">NAME</span> <span class="o">=</span> <span class="n">source</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pAt</span><span class="p">)</span> <span class="o">+</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;.avi&quot;</span><span class="p">;</span>   <span class="c1">// Form the new name with container</span>
+    <span class="kt">int</span> <span class="n">ex</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da53e1c28d4c2ca10732af106f3bf00613"><span class="std std-ref">CAP_PROP_FOURCC</span></a><span></span><span class="p">));</span>     <span class="c1">// Get Codec Type- Int form</span>
+
+    <span class="c1">// Transform from int to char via Bitwise operators</span>
+    <span class="kt">char</span> <span class="n">EXT</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{(</span><span class="kt">char</span><span class="p">)(</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="kt">char</span><span class="p">)((</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">),(</span><span class="kt">char</span><span class="p">)((</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">),(</span><span class="kt">char</span><span class="p">)((</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF000000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">),</span> <span class="mi">0</span><span class="p">};</span>
+
+    <span class="n">Size</span> <span class="n">S</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">((</span><span class="kt">int</span><span class="p">)</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad"><span class="std std-ref">CAP_PROP_FRAME_WIDTH</span></a><span></span><span class="p">),</span>    <span class="c1">// Acquire input size</span>
+                  <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e"><span class="std std-ref">CAP_PROP_FRAME_HEIGHT</span></a><span></span><span class="p">));</span>
+
+    <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer"><span class="std std-ref">VideoWriter</span></a><span></span> <span class="n">outputVideo</span><span class="p">;</span>                                        <span class="c1">// Open the output</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">askOutputType</span><span class="p">)</span>
+        <span class="n">outputVideo</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer-1a0901c353cd5ea05bba455317dab81130"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="n">ex</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704daf01bc92359d2abc9e6eeb5cbe36d9af2"><span class="std std-ref">CAP_PROP_FPS</span></a><span></span><span class="p">),</span> <span class="n">S</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">outputVideo</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704daf01bc92359d2abc9e6eeb5cbe36d9af2"><span class="std std-ref">CAP_PROP_FPS</span></a><span></span><span class="p">),</span> <span class="n">S</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">outputVideo</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">cout</span>  <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open the output video for write: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">source</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Input frame resolution: Width=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">S</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1abfe0367b32c407ddccf5ddf92667c73d"><span class="std std-ref">width</span></a><span></span> <span class="o">&lt;&lt;</span> <span class="s">&quot;  Height=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">S</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1a1d289dce6b5d8006a54f3ee0259fc545"><span class="std std-ref">height</span></a><span></span>
+         <span class="o">&lt;&lt;</span> <span class="s">&quot; of nr#: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2"><span class="std std-ref">CAP_PROP_FRAME_COUNT</span></a><span></span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Input codec type: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">EXT</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// Select the channel to save</span>
+    <span class="k">switch</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="p">{</span>
+    <span class="k">case</span> <span class="sc">&#39;R&#39;</span> <span class="o">:</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="sc">&#39;G&#39;</span> <span class="o">:</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="sc">&#39;B&#39;</span> <span class="o">:</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">res</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">spl</span><span class="p">;</span>
+
+    <span class="k">for</span><span class="p">(;;)</span> <span class="c1">//Show the image captured in the window and repeat</span>
+    <span class="p">{</span>
+        <span class="n">inputVideo</span> <span class="o">&gt;&gt;</span> <span class="n">src</span><span class="p">;</span>              <span class="c1">// read</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="k">break</span><span class="p">;</span>         <span class="c1">// check if at end</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">split</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">spl</span><span class="p">);</span>                <span class="c1">// process - extract only the correct channel</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="n">channel</span><span class="p">)</span>
+                <span class="n">spl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">zeros</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">spl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">type</span><span class="p">());</span>
+       <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga7d7b4d6c6ee504b30a20b1680029c7b4"><span class="std std-ref">merge</span></a><span></span><span class="p">(</span><span class="n">spl</span><span class="p">,</span> <span class="n">res</span><span class="p">);</span>
+
+       <span class="c1">//outputVideo.write(res); //save or</span>
+       <span class="n">outputVideo</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Finished writing&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">The structure of a video</p>
+<p>For start, you should have an idea of just how a video file looks. Every video file in itself is a container. The type of the container is expressed in the files extension (for example <em>avi</em>, <em>mov</em> or <em>mkv</em>). This contains multiple elements like: video feeds, audio feeds or other tracks (like for example subtitles). How these feeds are stored is determined by the codec used for each one of them. In case of the audio tracks commonly used codecs are <em>mp3</em> or <em>aac</em>. For the video files the list is somehow longer and includes names such as <em>XVID</em>, <em>DIVX</em>, <em>H264</em> or <em>LAGS</em> (<em>Lagarith Lossless Codec</em>). The full list of codecs you may use on a system depends on just what one you have installed.</p>
+<img alt="_images/videoFileStructure.png" src="_images/videoFileStructure.png" />
+<p>As you can see things can get really complicated with videos. However, OpenCV is mainly a computer vision library, not a video stream, codec and write one. Therefore, the developers tried to keep this part as simple as possible. Due to this OpenCV for video containers supports only the <em>avi</em> extension, its first version. A direct limitation of this is that you cannot save a video file larger than 2 GB. Furthermore you can only create and expand a single video track inside the container. No audio or other track editing support here. Nevertheless, any video codec present on your system might work. If you encounter some of these limitations you will need to look into more specialized video writing libraries such as <em>FFMpeg</em> or codecs as <em>HuffYUV</em>, <em>CorePNG</em> and <em>LCL</em>. As an alternative, create the video track with OpenCV and expand it with sound tracks or convert it to other formats by using video manipulation programs such as <em>VirtualDub</em> or <em>AviSynth</em>.</p>
+<p class="rubric">The  class</p>
+<p>The content written here builds on the assumption you already read the <a class="reference internal" href="page_tutorial_video_input_psnr_ssim.html#doxid-d5-dc4-tutorial-video-input-psnr-ssim"><span class="std std-ref">Video Input with OpenCV and similarity measurement</span></a> tutorial and you know how to read video files. To create a video file you just need to create an instance of the <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer"><span class="std std-ref">cv::VideoWriter</span></a> class. You can specify its properties either via parameters in the constructor or later on via the <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer-1a0901c353cd5ea05bba455317dab81130"><span class="std std-ref">cv::VideoWriter::open</span></a> function. Either way, the parameters are the same: 1. The name of the output that contains the container type in its extension. At the moment only <em>avi</em> is supported. We construct this from the input file, add to this the name of the channel to use, and finish it off with the container extension.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">const</span> <span class="n">string</span> <span class="n">source</span>      <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>            <span class="c1">// the source file name</span>
+<span class="n">string</span><span class="o">::</span><span class="n">size_type</span> <span class="n">pAt</span> <span class="o">=</span> <span class="n">source</span><span class="p">.</span><span class="n">find_last_of</span><span class="p">(</span><span class="sc">&#39;.&#39;</span><span class="p">);</span>   <span class="c1">// Find extension point</span>
+<span class="k">const</span> <span class="n">string</span> <span class="n">NAME</span> <span class="o">=</span> <span class="n">source</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pAt</span><span class="p">)</span> <span class="o">+</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;.avi&quot;</span><span class="p">;</span>   <span class="c1">// Form the new name with container</span>
+</pre>
+<ol class="arabic">
+<li><p class="first">The codec to use for the video track. Now all the video codecs have a unique short name of maximum four characters. Hence, the <em>XVID</em>, <em>DIVX</em> or <em>H264</em> names. This is called a four character code. You may also ask this from an input video by using its <em>get</em> function. Because the <em>get</em> function is a general function it always returns double values. A double value is stored on 64 bits. Four characters are four bytes, meaning 32 bits. These four characters are coded in the lower 32 bits of the <em>double</em>. A simple way to throw away the upper 32 bits would be to just convert this value to <em>int</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">VideoCapture</span> <span class="nf">inputVideo</span><span class="p">(</span><span class="n">source</span><span class="p">);</span>                                <span class="c1">// Open input</span>
+<span class="kt">int</span> <span class="n">ex</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da53e1c28d4c2ca10732af106f3bf00613"><span class="std std-ref">CAP_PROP_FOURCC</span></a><span></span><span class="p">));</span>     <span class="c1">// Get Codec Type- Int form</span>
+</pre>
+<p>OpenCV internally works with this integer type and expect this as its second parameter. Now to convert from the integer form to string we may use two methods: a bitwise operator and a union method. The first one extracting from an int the characters looks like (an “and” operation, some shifting and adding a 0 at the end to close the string):</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">char</span> <span class="n">EXT</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF</span> <span class="p">,</span> <span class="p">(</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">,(</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">,(</span><span class="n">ex</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">XFF000000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+</pre>
+<p>You can do the same thing with the <em>union</em> as:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">union</span> <span class="p">{</span> <span class="kt">int</span> <span class="n">v</span><span class="p">;</span> <span class="kt">char</span> <span class="n">c</span><span class="p">[</span><span class="mi">5</span><span class="p">];}</span> <span class="n">uEx</span> <span class="p">;</span>
+<span class="n">uEx</span><span class="p">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">ex</span><span class="p">;</span>                              <span class="c1">// From Int to char via union</span>
+<span class="n">uEx</span><span class="p">.</span><span class="n">c</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">=</span><span class="sc">&#39;</span><span class="se">\0</span><span class="sc">&#39;</span><span class="p">;</span>
+</pre>
+<p>The advantage of this is that the conversion is done automatically after assigning, while for the bitwise operator you need to do the operations whenever you change the codec type. In case you know the codecs four character code beforehand, you can use the <em>CV_FOURCC</em> macro to build the integer:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_videoio_c.html#doxid-dd-d01-group-videoio-c-1gac005718f121379beffdbdbfb44f2646a"><span class="std std-ref">CV_FOURCC</span></a><span></span><span class="p">(</span><span class="sc">&#39;P&#39;</span><span class="p">,</span><span class="sc">&#39;I&#39;</span><span class="p">,</span><span class="sc">&#39;M,&#39;</span><span class="mi">1</span><span class="sc">&#39;) // this is an MPEG1 codec from the characters to integer</span>
+</pre>
+<p>If you pass for this argument minus one than a window will pop up at runtime that contains all the codec installed on your system and ask you to select the one to use:</p>
+<img alt="_images/videoCompressSelect.png" src="_images/videoCompressSelect.png" />
+</li>
+<li><p class="first">The frame per second for the output video. Again, here I keep the input videos frame per second by using the <em>get</em> function.</p>
+</li>
+<li><p class="first">The size of the frames for the output video. Here too I keep the input videos frame size per second by using the <em>get</em> function.</p>
+</li>
+<li><p class="first">The final argument is an optional one. By default is true and says that the output will be a colorful one (so for write you will send three channel images). To create a gray scale video pass a false parameter here.</p>
+</li>
+</ol>
+<p>Here it is, how I use it in the sample:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">VideoWriter</span> <span class="n">outputVideo</span><span class="p">;</span>
+<span class="n">Size</span> <span class="n">S</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">((</span><span class="kt">int</span><span class="p">)</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad"><span class="std std-ref">CAP_PROP_FRAME_WIDTH</span></a><span></span><span class="p">),</span>    <span class="c1">//Acquire input size</span>
+              <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e"><span class="std std-ref">CAP_PROP_FRAME_HEIGHT</span></a><span></span><span class="p">));</span>
+<span class="n">outputVideo</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">NAME</span> <span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="n">inputVideo</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704daf01bc92359d2abc9e6eeb5cbe36d9af2"><span class="std std-ref">CAP_PROP_FPS</span></a><span></span><span class="p">),</span><span class="n">S</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+</pre>
+<p>Afterwards, you use the <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer-1a9a40803e5f671968ac9efa877c984d75"><span class="std std-ref">cv::VideoWriter::isOpened()</span></a> function to find out if the open operation succeeded or not. The video file automatically closes when the <em>VideoWriter</em> object is destroyed. After you open the object with success you can send the frames of the video in a sequential order by using the <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer-1a3115b679d612a6a0b5864a0c88ed4b39"><span class="std std-ref">cv::VideoWriter::write</span></a> function of the class. Alternatively, you can use its overloaded operator &lt;&lt; :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">outputVideo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>  <span class="c1">//or</span>
+<span class="n">outputVideo</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">;</span>
+</pre>
+<p>Extracting a color channel from an BGR image means to set to zero the BGR values of the other channels. You can either do this with image scanning operations or by using the split and merge operations. You first split the channels up into different images, set the other channels to zero images of the same size and type and finally merge them back:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">split</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">spl</span><span class="p">);</span>                 <span class="c1">// process - extract only the correct channel</span>
+<span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+   <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="n">channel</span><span class="p">)</span>
+      <span class="n">spl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">zeros</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">spl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">type</span><span class="p">());</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga7d7b4d6c6ee504b30a20b1680029c7b4"><span class="std std-ref">merge</span></a><span></span><span class="p">(</span><span class="n">spl</span><span class="p">,</span> <span class="n">res</span><span class="p">);</span>
+</pre>
+<p>Put all this together and you’ll get the upper source code, whose runtime result will show something around the idea:</p>
+<img alt="_images/resultOutputWideoWrite.png" src="_images/resultOutputWideoWrite.png" />
+<p>You may observe a runtime instance of this on the <a class="reference external" href="https://www.youtube.com/watch?v=jpBwHxsl1_0">YouTube here</a>.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_intelperc.html" class="btn btn-neutral float-right" title="Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_table_of_content_videoio.html" class="btn btn-neutral float-left" title="Video Input and Output (videoio module)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

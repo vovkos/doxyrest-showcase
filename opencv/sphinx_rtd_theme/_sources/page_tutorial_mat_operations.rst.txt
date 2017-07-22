@@ -1,0 +1,186 @@
+.. index:: pair: page; Operations with images
+.. _doxid-d5/d98/tutorial_mat_operations:
+
+Operations with images
+======================
+
+.. rubric:: Input/Output
+
+.. rubric:: Images
+
+Load an image from a file:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename)
+
+If you read a jpg file, a 3 channel image is created by default. If you need a grayscale image, use:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>`);
+
+format of the file is determined by its content (first few bytes) Save an image to a file:
+
+
+
+.. ref-code-block:: cpp
+
+	:ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`(filename, img);
+
+format of the file is determined by its extension.
+
+use imdecode and imencode to read and write image from/to memory rather than a file.
+
+
+
+.. rubric:: Basic operations with images
+
+.. rubric:: Accessing pixel intensity values
+
+In order to get pixel intensity value, you have to know the type of an image and the number of channels. Here is an example for a single channel grey scale image (type 8UC1) and pixel coordinates x and y:
+
+.. ref-code-block:: cpp
+
+	Scalar intensity = img.at<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(y, x);
+
+intensity.val[0] contains a value from 0 to 255. Note the ordering of x and y. Since in OpenCV images are represented by the same structure as matrices, we use the same convention for both cases - the 0-based row index (or y-coordinate) goes first and the 0-based column index (or x-coordinate) follows it. Alternatively, you can use the following notation:
+
+.. ref-code-block:: cpp
+
+	Scalar intensity = img.at<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(:ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(x, y));
+
+Now let us consider a 3 channel image with BGR color ordering (the default format returned by imread):
+
+.. ref-code-block:: cpp
+
+	:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>` intensity = img.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(y, x);
+	:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>` blue = intensity.val[0];
+	:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>` green = intensity.val[1];
+	:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>` red = intensity.val[2];
+
+You can use the same method for floating-point images (for example, you can get such an image by running Sobel on a 3 channel image):
+
+.. ref-code-block:: cpp
+
+	:ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>` intensity = img.at<:ref:`Vec3f <doxid-dc/d84/group__core__basic_1gab9e0ab642a3e01742916763173b72232>`>(y, x);
+	float blue = intensity.val[0];
+	float green = intensity.val[1];
+	float red = intensity.val[2];
+
+The same method can be used to change pixel intensities:
+
+.. ref-code-block:: cpp
+
+	img.at<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(y, x) = 128;
+
+There are functions in OpenCV, especially from calib3d module, such as projectPoints, that take an array of 2D or 3D points in the form of Mat. Matrix should contain exactly one column, each row corresponds to a point, matrix type should be 32FC2 or 32FC3 correspondingly. Such a matrix can be easily constructed from ``std::vector`` :
+
+.. ref-code-block:: cpp
+
+	vector<Point2f> points;
+	//... fill the array
+	Mat pointsMat = Mat(points);
+
+One can access a point in this matrix using the same method Mat::at :
+
+.. ref-code-block:: cpp
+
+	Point2f point = pointsMat.at<Point2f>(i, 0);
+
+.. rubric:: Memory management and reference counting
+
+Mat is a structure that keeps matrix/image characteristics (rows and columns number, data type etc) and a pointer to data. So nothing prevents us from having several instances of Mat corresponding to the same data. A Mat keeps a reference count that tells if data has to be deallocated when a particular instance of Mat is destroyed. Here is an example of creating two matrices without copying data:
+
+.. ref-code-block:: cpp
+
+	std::vector<Point3f> points;
+	// .. fill the array
+	Mat pointsMat = Mat(points).reshape(1);
+
+As a result we get a 32FC1 matrix with 3 columns instead of 32FC3 matrix with 1 column. pointsMat uses data from points and will not deallocate the memory when destroyed. In this particular instance, however, developer has to make sure that lifetime of points is longer than of pointsMat. If we need to copy the data, this is done using, for example, :ref:`cv::Mat::copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>` or :ref:`cv::Mat::clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>` :
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("image.jpg");
+	Mat img1 = img.clone();
+
+To the contrary with C API where an output image had to be created by developer, an empty output Mat can be supplied to each function. Each implementation calls Mat::create for a destination matrix. This method allocates data for a matrix if it is empty. If it is not empty and has the correct size and type, the method does nothing. If, however, size or type are different from input arguments, the data is deallocated (and lost) and a new data is allocated. For example:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("image.jpg");
+	Mat sobelx;
+	:ref:`Sobel <doxid-d4/d86/group__imgproc__filter_1gacea54f142e81b6758cb6f375ce782c8d>`(img, sobelx, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, 1, 0);
+
+.. rubric:: Primitive operations
+
+There is a number of convenient operators defined on a matrix. For example, here is how we can make a black image from an existing greyscale image `img`:
+
+.. ref-code-block:: cpp
+
+	img = :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0);
+
+Selecting a region of interest:
+
+.. ref-code-block:: cpp
+
+	:ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>` r(10, 10, 100, 100);
+	Mat smallImg = img(r);
+
+A convertion from Mat to C API data structures:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("image.jpg");
+	:ref:`IplImage <doxid-dd/d51/struct_ipl_image>` img1 = img;
+	:ref:`CvMat <doxid-d6/dda/struct_cv_mat>` m = img;
+
+Note that there is no data copying here.
+
+Conversion from color to grey scale:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("image.jpg"); // loading a 8UC3 image
+	Mat grey;
+	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(img, grey, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+
+Change image type from 8UC1 to 32FC1:
+
+.. ref-code-block:: cpp
+
+	src.convertTo(dst, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+
+.. rubric:: Visualizing images
+
+It is very useful to see intermediate results of your algorithm during development process. OpenCV provides a convenient way of visualizing images. A 8U image can be shown using:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("image.jpg");
+	
+	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("image", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", img);
+	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+
+A call to :ref:`waitKey() <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>` starts a message passing cycle that waits for a key stroke in the "image" window. A 32F image needs to be converted to 8U type. For example:
+
+.. ref-code-block:: cpp
+
+	Mat img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`("image.jpg");
+	Mat grey;
+	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(img, grey, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	
+	Mat sobelx;
+	:ref:`Sobel <doxid-d4/d86/group__imgproc__filter_1gacea54f142e81b6758cb6f375ce782c8d>`(grey, sobelx, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, 1, 0);
+	
+	double minVal, maxVal;
+	:ref:`minMaxLoc <doxid-d2/de8/group__core__array_1gab473bf2eb6d14ff97e89b355dac20707>`(sobelx, &minVal, &maxVal); //find minimum and maximum intensities
+	Mat draw;
+	sobelx.convertTo(draw, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal - minVal));
+	
+	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("image", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image", draw);
+	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+

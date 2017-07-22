@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>distrans.cpp &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="edge.cpp" href="example_edge.cpp.html" />
+    <link rel="prev" title="demhist.cpp" href="example_demhist.cpp.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>distrans.cpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="distrans-cpp">
+<span id="doxid-d4-d11-distrans-8cpp-example"></span><span id="index-0"></span><h1>distrans.cpp</h1>
+<p>An example on using the distance transform</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core/utility.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a8a8b17ed6012f6ce42e56f302c07d481"><span class="std std-ref">DIST_MASK_5</span></a><span></span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">voronoiType</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">edgeThresh</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebae5b2dfaf2ba5024d7ce47885001fad86"><span class="std std-ref">DIST_L1</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// The output and temporary images</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">gray</span><span class="p">;</span>
+
+<span class="c1">// threshold trackbar callback</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">onTrackbar</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="n">Scalar</span> <span class="n">colors</span><span class="p">[]</span> <span class="o">=</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">)</span>
+    <span class="p">};</span>
+
+    <span class="kt">int</span> <span class="n">maskSize</span> <span class="o">=</span> <span class="n">voronoiType</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">?</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a8a8b17ed6012f6ce42e56f302c07d481"><span class="std std-ref">DIST_MASK_5</span></a><span></span> <span class="o">:</span> <span class="n">maskSize0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">distType</span> <span class="o">=</span> <span class="n">voronoiType</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">?</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebaff0d1f5be0fc152a56a9b9716d158b96"><span class="std std-ref">DIST_L2</span></a><span></span> <span class="o">:</span> <span class="n">distType0</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">edge</span> <span class="o">=</span> <span class="n">gray</span> <span class="o">&gt;=</span> <span class="n">edgeThresh</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">dist8u</span><span class="p">;</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">voronoiType</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga8a0b7fdfcb7a13dde018988ba3a43042"><span class="std std-ref">distanceTransform</span></a><span></span><span class="p">(</span> <span class="n">edge</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">distType</span><span class="p">,</span> <span class="n">maskSize</span> <span class="p">);</span>
+    <span class="k">else</span>
+        <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga8a0b7fdfcb7a13dde018988ba3a43042"><span class="std std-ref">distanceTransform</span></a><span></span><span class="p">(</span> <span class="n">edge</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">distType</span><span class="p">,</span> <span class="n">maskSize</span><span class="p">,</span> <span class="n">voronoiType</span> <span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">voronoiType</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// begin &quot;painting&quot; the distance transform result</span>
+        <span class="n">dist</span> <span class="o">*=</span> <span class="mi">5000</span><span class="p">;</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">dist</span><span class="p">);</span>
+
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">dist32s</span><span class="p">,</span> <span class="n">dist8u1</span><span class="p">,</span> <span class="n">dist8u2</span><span class="p">;</span>
+
+        <span class="n">dist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">dist32s</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4067910fc388075c3ea3aa14393e83b9"><span class="std std-ref">CV_32S</span></a><span></span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+        <span class="n">dist32s</span> <span class="o">&amp;=</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+
+        <span class="n">dist32s</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">dist8u1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">dist32s</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+        <span class="n">dist32s</span> <span class="o">+=</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+        <span class="n">dist32s</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">dist8u2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>
+
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">planes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="n">dist8u1</span><span class="p">,</span> <span class="n">dist8u2</span><span class="p">,</span> <span class="n">dist8u2</span><span class="p">};</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga7d7b4d6c6ee504b30a20b1680029c7b4"><span class="std std-ref">merge</span></a><span></span><span class="p">(</span><span class="n">planes</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dist8u</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">dist8u</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">labels</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">labels</span><span class="p">.</span><span class="n">rows</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">const</span> <span class="kt">int</span><span class="o">*</span> <span class="n">ll</span> <span class="o">=</span> <span class="p">(</span><span class="k">const</span> <span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">labels</span><span class="p">.</span><span class="n">ptr</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+            <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="k">const</span> <span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">dist</span><span class="p">.</span><span class="n">ptr</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+            <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span><span class="p">)</span><span class="n">dist8u</span><span class="p">.</span><span class="n">ptr</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+            <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">labels</span><span class="p">.</span><span class="n">cols</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span> <span class="p">)</span>
+            <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">dd</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="p">(</span><span class="n">ll</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="kt">float</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.f</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">dd</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">dd</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="mf">0.0004f</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">g</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">);</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="o">*</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)</span><span class="n">b</span><span class="p">;</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)</span><span class="n">g</span><span class="p">;</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)</span><span class="n">r</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Distance Map&quot;</span><span class="p">,</span> <span class="n">dist8u</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="n">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Program to demonstrate the use of the distance transform function between edge images.</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;Usage:</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;./distrans [image_name -- default image is ../data/stuff.jpg]</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\n</span><span class="s">Hot keys: </span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">ESC - quit the program</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">C - use C/Inf metric</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">L1 - use L1 metric</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">L2 - use L2 metric</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">3 - use 3x3 mask</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">5 - use 5x5 mask</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">0 - use precise distance transform</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">v - switch to Voronoi diagram mode</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">p - switch to pixel-based Voronoi diagram mode</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;</span><span class="se">\t</span><span class="s">SPACE - loop through all the modes</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">keys</span> <span class="o">=</span>
+<span class="p">{</span>
+    <span class="s">&quot;{help h||}{@image |../data/stuff.jpg|input image file}&quot;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">keys</span><span class="p">);</span>
+    <span class="n">help</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">gray</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">gray</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot read image file: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="s">&quot;Distance Map&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;Brightness Threshold&quot;</span><span class="p">,</span> <span class="s">&quot;Distance Map&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">edgeThresh</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">onTrackbar</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(;;)</span>
+    <span class="p">{</span>
+        <span class="c1">// Call to update the view</span>
+        <span class="n">onTrackbar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span>
+            <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;c&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;C&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;1&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;2&#39;</span> <span class="o">||</span>
+            <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;3&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;5&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;0&#39;</span> <span class="p">)</span>
+            <span class="n">voronoiType</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;c&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;C&#39;</span> <span class="p">)</span>
+            <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8eba507b16eb5ef95ea784ca1b3cb7b0d7ee"><span class="std std-ref">DIST_C</span></a><span></span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;1&#39;</span> <span class="p">)</span>
+            <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebae5b2dfaf2ba5024d7ce47885001fad86"><span class="std std-ref">DIST_L1</span></a><span></span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;2&#39;</span> <span class="p">)</span>
+            <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebaff0d1f5be0fc152a56a9b9716d158b96"><span class="std std-ref">DIST_L2</span></a><span></span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;3&#39;</span> <span class="p">)</span>
+            <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a520d4f90e1e37d13d7592fd295a6b5b2"><span class="std std-ref">DIST_MASK_3</span></a><span></span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;5&#39;</span> <span class="p">)</span>
+            <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a8a8b17ed6012f6ce42e56f302c07d481"><span class="std std-ref">DIST_MASK_5</span></a><span></span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;0&#39;</span> <span class="p">)</span>
+            <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a71e13e06c1d12eabd2acd2669f94f9ca"><span class="std std-ref">DIST_MASK_PRECISE</span></a><span></span><span class="p">;</span>
+        <span class="k">else</span> <span class="nf">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;v&#39;</span> <span class="p">)</span>
+            <span class="n">voronoiType</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">else</span> <span class="nf">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;p&#39;</span> <span class="p">)</span>
+            <span class="n">voronoiType</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span> <span class="nf">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39; &#39;</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">voronoiType</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">)</span>
+                <span class="n">voronoiType</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">voronoiType</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">voronoiType</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a520d4f90e1e37d13d7592fd295a6b5b2"><span class="std std-ref">DIST_MASK_3</span></a><span></span><span class="p">;</span>
+                <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8eba507b16eb5ef95ea784ca1b3cb7b0d7ee"><span class="std std-ref">DIST_C</span></a><span></span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">distType0</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8eba507b16eb5ef95ea784ca1b3cb7b0d7ee"><span class="std std-ref">DIST_C</span></a><span></span> <span class="p">)</span>
+                <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebae5b2dfaf2ba5024d7ce47885001fad86"><span class="std std-ref">DIST_L1</span></a><span></span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">distType0</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebae5b2dfaf2ba5024d7ce47885001fad86"><span class="std std-ref">DIST_L1</span></a><span></span> <span class="p">)</span>
+                <span class="n">distType0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa2bfbebbc5c320526897996aafa1d8ebaff0d1f5be0fc152a56a9b9716d158b96"><span class="std std-ref">DIST_L2</span></a><span></span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">maskSize0</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a520d4f90e1e37d13d7592fd295a6b5b2"><span class="std std-ref">DIST_MASK_3</span></a><span></span> <span class="p">)</span>
+                <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a8a8b17ed6012f6ce42e56f302c07d481"><span class="std std-ref">DIST_MASK_5</span></a><span></span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">maskSize0</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a8a8b17ed6012f6ce42e56f302c07d481"><span class="std std-ref">DIST_MASK_5</span></a><span></span> <span class="p">)</span>
+                <span class="n">maskSize0</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a71e13e06c1d12eabd2acd2669f94f9ca"><span class="std std-ref">DIST_MASK_PRECISE</span></a><span></span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">maskSize0</span> <span class="o">==</span> <a class="reference internal" href="enum_cv_DistanceTransformMasks.html#doxid-d7-d1b-group-imgproc-misc-1ggaaa68392323ccf7fad87570e41259b497a71e13e06c1d12eabd2acd2669f94f9ca"><span class="std std-ref">DIST_MASK_PRECISE</span></a><span></span> <span class="p">)</span>
+                <span class="n">voronoiType</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="example_edge.cpp.html" class="btn btn-neutral float-right" title="edge.cpp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="example_demhist.cpp.html" class="btn btn-neutral float-left" title="demhist.cpp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+.. index:: pair: class; Poco::Net::FTPStreamFactory
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory:
+
+class Poco::Net::FTPStreamFactory
+=================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An implementation of the :ref:`URIStreamFactory <doxid-class_poco_1_1_u_r_i_stream_factory>` interface that handles :ref:`File <doxid-class_poco_1_1_file>` Transfer Protocol (ftp) URIs. :ref:`More...<details-class_poco_1_1_net_1_1_f_t_p_stream_factory>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <FTPStreamFactory.h>
+	
+	class FTPStreamFactory: public :ref:`Poco::URIStreamFactory<doxid-class_poco_1_1_u_r_i_stream_factory>`
+	{
+	public:
+		// methods
+	
+		virtual
+		std::istream*
+		:ref:`open<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a51f750de683fd33098d47189f8ca2975>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::URI<doxid-class_poco_1_1_u_r_i>`& uri);
+	
+		static
+		void
+		:ref:`setAnonymousPassword<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a52d37f9700399e86ad9382318cefc558>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& password);
+	
+		static
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`getAnonymousPassword<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a9588a7bdf3b396a6552360c85c08155e>`();
+	
+		static
+		void
+		:ref:`setPasswordProvider<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1af167ec43002f46b7f2179c4c3d525462>`(:ref:`FTPPasswordProvider<doxid-class_poco_1_1_net_1_1_f_t_p_password_provider>`* pProvider);
+	
+		static
+		:ref:`FTPPasswordProvider<doxid-class_poco_1_1_net_1_1_f_t_p_password_provider>`*
+		:ref:`getPasswordProvider<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a59a3e057649aaab59d7fe6a577e89e4e>`();
+	
+		static
+		void
+		:ref:`registerFactory<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1abb958c4a1d8bb6e71bc06cd41d6700ac>`();
+	
+		static
+		void
+		:ref:`unregisterFactory<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a698c2fead313c9b3a4782cdc4d6ea2fa>`();
+
+	protected:
+		// methods
+	
+		static
+		void
+		:target:`splitUserInfo<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1aeb742b5c1d157416d406d16c836427da>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& userInfo,
+			std::string& username,
+			std::string& password
+			);
+	
+		static
+		void
+		:target:`getUserInfo<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1ad25dae83fa96e436be754c2a14517b09>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::URI<doxid-class_poco_1_1_u_r_i>`& uri,
+			std::string& username,
+			std::string& password
+			);
+	
+		static
+		void
+		:target:`getPathAndType<doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1aa463d9247b04dcbe494ffb8b26056e34>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::URI<doxid-class_poco_1_1_u_r_i>`& uri,
+			std::string& path,
+			char& type
+			);
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		std::istream*
+		:ref:`open<doxid-class_poco_1_1_u_r_i_stream_factory_1a0768071cef5d26530977d4fd23a8abc8>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`URI<doxid-class_poco_1_1_u_r_i>`& uri) = 0;
+
+.. _details-class_poco_1_1_net_1_1_f_t_p_stream_factory:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An implementation of the :ref:`URIStreamFactory <doxid-class_poco_1_1_u_r_i_stream_factory>` interface that handles :ref:`File <doxid-class_poco_1_1_file>` Transfer Protocol (ftp) URIs.
+
+The :ref:`URI <doxid-class_poco_1_1_u_r_i>` 's path may end with an optional type specification in the form (;type=<typecode>), where <typecode> is one of a, i or d. If type=a, the file identified by the path is transferred in ASCII (text) mode. If type=i, the file is transferred in Image (binary) mode. If type=d, a directory listing (in NLST format) is returned. This corresponds with the FTP URL format specified in RFC 1738.
+
+If the :ref:`URI <doxid-class_poco_1_1_u_r_i>` does not contain a username and password, the username "anonymous" and the password "
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1ad61fe834f5b331dec6afc7dea4c54b40:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~FTPStreamFactory()
+
+Destroys the :ref:`FTPStreamFactory <doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory>`.
+
+Methods
+-------
+
+.. index:: pair: function; open
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a51f750de683fd33098d47189f8ca2975:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	std::istream*
+	open(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::URI<doxid-class_poco_1_1_u_r_i>`& uri)
+
+Creates and opens a HTTP stream for the given :ref:`URI <doxid-class_poco_1_1_u_r_i>`.
+
+The :ref:`URI <doxid-class_poco_1_1_u_r_i>` must be a `ftp://.. <ftp://..>`__. :ref:`URI <doxid-class_poco_1_1_u_r_i>`.
+
+Throws a NetException if anything goes wrong.
+
+.. index:: pair: function; setAnonymousPassword
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a52d37f9700399e86ad9382318cefc558:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	setAnonymousPassword(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& password)
+
+Sets the password used for anonymous FTP.
+
+WARNING: Setting the anonymous password is not thread-safe, so it's best to call this method during application initialization, before the :ref:`FTPStreamFactory <doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory>` is used for the first time.
+
+.. index:: pair: function; getAnonymousPassword
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a9588a7bdf3b396a6552360c85c08155e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+	getAnonymousPassword()
+
+Returns the password used for anonymous FTP.
+
+.. index:: pair: function; setPasswordProvider
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1af167ec43002f46b7f2179c4c3d525462:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	setPasswordProvider(:ref:`FTPPasswordProvider<doxid-class_poco_1_1_net_1_1_f_t_p_password_provider>`* pProvider)
+
+Sets the :ref:`FTPPasswordProvider <doxid-class_poco_1_1_net_1_1_f_t_p_password_provider>`.
+
+If NULL is given, no password provider is used.
+
+WARNING: Setting the password provider is not thread-safe, so it's best to call this method during application initialization, before the :ref:`FTPStreamFactory <doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory>` is used for the first time.
+
+.. index:: pair: function; getPasswordProvider
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a59a3e057649aaab59d7fe6a577e89e4e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	:ref:`FTPPasswordProvider<doxid-class_poco_1_1_net_1_1_f_t_p_password_provider>`*
+	getPasswordProvider()
+
+Returns the :ref:`FTPPasswordProvider <doxid-class_poco_1_1_net_1_1_f_t_p_password_provider>` currently in use, or NULL if no one has been set.
+
+.. index:: pair: function; registerFactory
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1abb958c4a1d8bb6e71bc06cd41d6700ac:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	registerFactory()
+
+Registers the :ref:`FTPStreamFactory <doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory>` with the default :ref:`URIStreamOpener <doxid-class_poco_1_1_u_r_i_stream_opener>` instance.
+
+.. index:: pair: function; unregisterFactory
+.. _doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory_1a698c2fead313c9b3a4782cdc4d6ea2fa:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	unregisterFactory()
+
+Unregisters the :ref:`FTPStreamFactory <doxid-class_poco_1_1_net_1_1_f_t_p_stream_factory>` with the default :ref:`URIStreamOpener <doxid-class_poco_1_1_u_r_i_stream_opener>` instance.
+

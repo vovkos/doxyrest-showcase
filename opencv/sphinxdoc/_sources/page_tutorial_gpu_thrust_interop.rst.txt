@@ -1,0 +1,211 @@
+.. index:: pair: page; Using a cv::cuda::GpuMat with thrust
+.. _doxid-d8/db9/tutorial_gpu_thrust_interop:
+
+Using a cv::cuda::GpuMat with thrust
+====================================
+
+.. rubric:: Goal
+
+Thrust is an extremely powerful library for various cuda accelerated algorithms. However thrust is designed to work with vectors and not pitched matricies. The following tutorial will discuss wrapping :ref:`cv::cuda::GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>` 's into thrust iterators that can be used with thrust algorithms.
+
+This tutorial should show you how to:
+
+* Wrap a GpuMat into a thrust iterator
+
+* Fill a GpuMat with random numbers
+
+* Sort a column of a GpuMat in place
+
+* Copy values greater than 0 to a new gpu matrix
+
+* Use streams with thrust
+
+.. rubric:: Wrapping a GpuMat into a thrust iterator
+
+The following code will produce an iterator for a GpuMat
+
+.. ref-code-block:: cpp
+
+	/*
+	    @Brief GpuMatBeginItr returns a thrust compatible iterator to the beginning of a GPU mat's memory.
+	    @Param mat is the input matrix
+	    @Param channel is the channel of the matrix that the iterator is accessing.  If set to -1, the iterator will access every element in sequential order
+	*/
+	template<typename T>
+	thrust::permutation_iterator<thrust::device_ptr<T>, thrust::transform_iterator<step_functor<T>, thrust::counting_iterator<int>>>  GpuMatBeginItr(:ref:`cv::cuda::GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>` mat, int channel = 0)
+	{
+	    if (channel == -1)
+	    {
+	        mat = mat.:ref:`reshape <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a408e22ed824d1ddf59f58bda895017a8>`(1);
+	        channel = 0;
+	    }
+	    :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`(mat.:ref:`depth <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1aaa229d9b2b2f60ecae3b5fbf0603c1b9>`() == :ref:`cv::DataType\<T>::depth <doxid-da/da2/classcv_1_1_data_type>`);
+	    :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`(channel < mat.:ref:`channels <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a538fc6d75281b4ecb7ad50e4555f3fc6>`());
+	    return thrust::make_permutation_iterator(thrust::device_pointer_cast(mat.:ref:`ptr <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1aa83fa0825c60eb22a11a87a98c3cd5ed>`<T>(0) + channel),
+	        thrust::make_transform_iterator(thrust::make_counting_iterator(0), step_functor<T>(mat.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>`, mat.:ref:`step <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1af46427ea4c9b3fe7687e3afa84baede3>` / sizeof(T), mat.:ref:`channels <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a538fc6d75281b4ecb7ad50e4555f3fc6>`())));
+	}
+
+
+
+.. ref-code-block:: cpp
+
+	/*
+	@Brief GpuMatEndItr returns a thrust compatible iterator to the end of a GPU mat's memory.
+	@Param mat is the input matrix
+	@Param channel is the channel of the matrix that the iterator is accessing.  If set to -1, the iterator will access every element in sequential order
+	*/
+	template<typename T>
+	thrust::permutation_iterator<thrust::device_ptr<T>, thrust::transform_iterator<step_functor<T>, thrust::counting_iterator<int>>>  GpuMatEndItr(:ref:`cv::cuda::GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>` mat, int channel = 0)
+	{
+	    if (channel == -1)
+	    {
+	        mat = mat.:ref:`reshape <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a408e22ed824d1ddf59f58bda895017a8>`(1);
+	        channel = 0;
+	    }
+	    :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`(mat.:ref:`depth <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1aaa229d9b2b2f60ecae3b5fbf0603c1b9>`() == :ref:`cv::DataType\<T>::depth <doxid-da/da2/classcv_1_1_data_type>`);
+	    :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`(channel < mat.:ref:`channels <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a538fc6d75281b4ecb7ad50e4555f3fc6>`());
+	    return thrust::make_permutation_iterator(thrust::device_pointer_cast(mat.:ref:`ptr <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1aa83fa0825c60eb22a11a87a98c3cd5ed>`<T>(0) + channel),
+	        thrust::make_transform_iterator(thrust::make_counting_iterator(mat.:ref:`rows <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a7385022ca9114e5f5058dbb2f12467cb>`*mat.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>`), step_functor<T>(mat.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>`, mat.:ref:`step <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1af46427ea4c9b3fe7687e3afa84baede3>` / sizeof(T), mat.:ref:`channels <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a538fc6d75281b4ecb7ad50e4555f3fc6>`())));
+	}
+
+Our goal is to have an iterator that will start at the beginning of the matrix, and increment correctly to access continuous matrix elements. This is trivial for a continuous row, but how about for a column of a pitched matrix? To do this we need the iterator to be aware of the matrix dimensions and step. This information is embedded in the step_functor.
+
+.. ref-code-block:: cpp
+
+	template<typename T> struct step_functor : public thrust::unary_function<int, int>
+	{
+	    int columns;
+	    int step;
+	    int channels;
+	    __host__ __device__ step_functor(int columns_, int step_, int channels_ = 1) : columns(columns_), step(step_), channels(channels_)  {   };
+	    __host__ step_functor(:ref:`cv::cuda::GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>`& mat)
+	    {
+	        :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`(mat.:ref:`depth <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1aaa229d9b2b2f60ecae3b5fbf0603c1b9>`() == :ref:`cv::DataType\<T>::depth <doxid-da/da2/classcv_1_1_data_type>`);
+	        columns = mat.:ref:`cols <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a9265a32d8d29fe29804a0cb8f57213e9>`;
+	        step = mat.:ref:`step <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1af46427ea4c9b3fe7687e3afa84baede3>` / sizeof(T);
+	        channels = mat.:ref:`channels <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat_1a538fc6d75281b4ecb7ad50e4555f3fc6>`();
+	    }
+	    __host__ __device__
+	        int operator()(int x) const
+	    {
+	        int row = x / columns;
+	        int idx = (row * step) + (x % columns)*channels;
+	        return idx;
+	    }
+	};
+
+The step functor takes in an index value and returns the appropriate offset from the beginning of the matrix. The counting iterator simply increments over the range of pixel elements. Combined into the transform_iterator we have an iterator that counts from 0 to M\*N and correctly increments to account for the pitched memory of a GpuMat. Unfortunately this does not include any memory location information, for that we need a thrust::device_ptr. By combining a device pointer with the transform_iterator we can point thrust to the first element of our matrix and have it step accordingly.
+
+.. rubric:: Fill a GpuMat with random numbers
+
+Now that we have some nice functions for making iterators for thrust, lets use them to do some things OpenCV can't do. Unfortunately at the time of this writing, OpenCV doesn't have any Gpu random number generation. Thankfully thrust does and it's now trivial to interop between the two. Example taken from `http://stackoverflow.com/questions/12614164/generating-a-random-number-vector-between-0-and-1-0-using-thrust <http://stackoverflow.com/questions/12614164/generating-a-random-number-vector-between-0-and-1-0-using-thrust>`__
+
+First we need to write a functor that will produce our random values.
+
+.. ref-code-block:: cpp
+
+	struct prg
+	{
+	  float a, b;
+	
+	  __host__ __device__
+	    prg(float _a = 0.f, float _b = 1.f) : a(_a), b(_b) {};
+	
+	  __host__ __device__
+	    float operator()(const unsigned int n) const
+	  {
+	    thrust::default_random_engine rng;
+	    thrust::uniform_real_distribution<float> dist(a, b);
+	    rng.discard(n);
+	    return dist(rng);
+	  }
+	};
+
+This will take in an integer value and output a value between a and b. Now we will populate our matrix with values between 0 and 10 with a thrust transform.
+
+.. ref-code-block:: cpp
+
+	{
+	  cv::cuda::GpuMat d_value(1, 100, CV_32F);
+	  auto valueBegin = GpuMatBeginItr<float>(d_value);
+	  auto valueEnd = GpuMatEndItr<float>(d_value);
+	  thrust::transform(thrust::make_counting_iterator(0), thrust::make_counting_iterator(d_value.cols), valueBegin, prg(-1, 1));
+
+	  cv::Mat h_value(d_value);
+	}
+
+
+
+.. rubric:: Sort a column of a GpuMat in place
+
+Lets fill matrix elements with random values and an index. Afterwards we will sort the random numbers and the indecies.
+
+.. ref-code-block:: cpp
+
+	{
+	  cv::cuda::GpuMat d_data(1, 100, CV_32SC2);
+	  // Thrust compatible begin and end iterators to channel 1 of this matrix
+	  auto keyBegin = GpuMatBeginItr<int>(d_data, 1);
+	  auto keyEnd = GpuMatEndItr<int>(d_data, 1);
+	  // Thrust compatible begin and end iterators to channel 0 of this matrix
+	  auto idxBegin = GpuMatBeginItr<int>(d_data, 0);
+	  auto idxEnd = GpuMatEndItr<int>(d_data, 0);
+	  // Fill the index channel with a sequence of numbers from 0 to 100
+	  thrust::sequence(idxBegin, idxEnd);
+	  // Fill the key channel with random numbers between 0 and 10.  A counting iterator is used here to give an integer value for each location as an input to prg::operator()
+	  thrust::transform(thrust::make_counting_iterator(0), thrust::make_counting_iterator(d_data.cols), keyBegin, prg(0, 10));
+	  // Sort the key channel and index channel such that the keys and indecies stay together
+	  thrust::sort_by_key(keyBegin, keyEnd, idxBegin);
+
+	  cv::Mat h_idx(d_data);
+	}
+
+
+
+.. rubric:: Copy values greater than 0 to a new gpu matrix while using streams
+
+In this example we're going to see how cv::cuda::Streams can be used with thrust. Unfortunately this specific example uses functions that must return results to the CPU so it isn't the optimal use of streams.
+
+.. ref-code-block:: cpp
+
+	{
+	  cv::cuda::GpuMat d_value(1, 100, CV_32F);
+	  auto valueBegin = GpuMatBeginItr<float>(d_value);
+	  auto valueEnd = GpuMatEndItr<float>(d_value);
+	  cv::cuda::Stream stream;
+	  //! [random_gen_stream]
+	  // Same as the random generation code from before except now the transformation is being performed on a stream
+	  thrust::transform(thrust::system::cuda::par.on(cv::cuda::StreamAccessor::getStream(stream)), thrust::make_counting_iterator(0), thrust::make_counting_iterator(d_value.cols), valueBegin, prg(-1, 1));
+	  //! [random_gen_stream]
+	  // Count the number of values we are going to copy
+	  int count = thrust::count_if(thrust::system::cuda::par.on(cv::cuda::StreamAccessor::getStream(stream)), valueBegin, valueEnd, pred_greater<float>(0.0));
+	  // Allocate a destination for copied values
+	  cv::cuda::GpuMat d_valueGreater(1, count, CV_32F);
+	  // Copy values that satisfy the predicate.
+	  thrust::copy_if(thrust::system::cuda::par.on(cv::cuda::StreamAccessor::getStream(stream)), valueBegin, valueEnd, GpuMatBeginItr<float>(d_valueGreater), pred_greater<float>(0.0));
+	  cv::Mat h_greater(d_valueGreater);
+	}
+
+First we will populate a GPU mat with randomly generated data between -1 and 1 on a stream.
+
+.. ref-code-block:: cpp
+
+	// Same as the random generation code from before except now the transformation is being performed on a stream
+	thrust::transform(thrust::system::cuda::par.on(cv::cuda::StreamAccessor::getStream(stream)), thrust::make_counting_iterator(0), thrust::make_counting_iterator(d_value.cols), valueBegin, prg(-1, 1));
+
+Notice the use of thrust::system::cuda::par.on(...), this creates an execution policy for executing thrust code on a stream. There is a bug in the version of thrust distributed with the cuda toolkit, as of version 7.5 this has not been fixed. This bug causes code to not execute on streams. The bug can however be fixed by using the newest version of thrust from the git repository. (`http://github.com/thrust/thrust.git <http://github.com/thrust/thrust.git>`__) Next we will determine how many values are greater than 0 by using thrust::count_if with the following predicate:
+
+.. ref-code-block:: cpp
+
+	template<typename T> struct pred_greater
+	{
+	  T value;
+	  __host__ __device__ pred_greater(T value_) : value(value_){}
+	  __host__ __device__ bool operator()(const T& val) const
+	  {
+	    return val > value;
+	  }
+	};
+
+We will use those results to create an output buffer for storing the copied values, we will then use copy_if with the same predicate to populate the output buffer. Lastly we will download the values into a CPU mat for viewing.
+

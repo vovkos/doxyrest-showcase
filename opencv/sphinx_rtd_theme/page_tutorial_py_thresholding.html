@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Image Thresholding &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Image Transforms in OpenCV" href="page_tutorial_py_table_of_contents_transforms.html" />
+    <link rel="prev" title="Image Segmentation with Watershed Algorithm" href="page_tutorial_py_watershed.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_photo.html">Computational Photography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_core.html">Core Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_gui.html">Gui Features in OpenCV</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_canny.html">Canny Edge Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_colorspaces.html">Changing Colorspaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_table_of_contents_contours.html">Contours in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_geometric_transformations.html">Geometric Transformations of Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_table_of_contents_histograms.html">Histograms in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_houghcircles.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_houghlines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_gradients.html">Image Gradients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_watershed.html">Image Segmentation with Watershed Algorithm</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Image Thresholding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_table_of_contents_transforms.html">Image Transforms in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_grabcut.html">Interactive Foreground Extraction using GrabCut Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_morphological_ops.html">Morphological Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_filtering.html">Smoothing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_template_matching.html">Template Matching</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_setup.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_ml.html">Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_objdetect.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_bindings.html">OpenCV-Python Bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_video.html">Video Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a> &raquo;</li>
+        
+      <li>Image Thresholding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="image-thresholding">
+<span id="doxid-d7-d4d-tutorial-py-thresholding"></span><span id="index-0"></span><h1>Image Thresholding</h1>
+<p class="rubric">Goal</p>
+<ul class="simple">
+<li>In this tutorial, you will learn Simple thresholding, Adaptive thresholding, Otsu’s thresholding etc.</li>
+<li>You will learn these functions : <strong>cv2.threshold</strong>, <strong>cv2.adaptiveThreshold</strong> etc.</li>
+</ul>
+<p class="rubric">Simple Thresholding</p>
+<p>Here, the matter is straight forward. If pixel value is greater than a threshold value, it is assigned one value (may be white), else it is assigned another value (may be black). The function used is <strong>cv2.threshold</strong>. First argument is the source image, which <strong>should be a grayscale image</strong>. Second argument is the threshold value which is used to classify the pixel values. Third argument is the maxVal which represents the value to be given if pixel value is more than (sometimes less than) the threshold value. OpenCV provides different styles of thresholding and it is decided by the fourth parameter of the function. Different types are:</p>
+<ul class="simple">
+<li>cv2.THRESH_BINARY</li>
+<li>cv2.THRESH_BINARY_INV</li>
+<li>cv2.THRESH_TRUNC</li>
+<li>cv2.THRESH_TOZERO</li>
+<li>cv2.THRESH_TOZERO_INV</li>
+</ul>
+<p>Documentation clearly explain what each type is meant for. Please check out the documentation.</p>
+<p>Two outputs are obtained. First one is a <strong>retval</strong> which will be explained later. Second output is our <strong>thresholded image</strong>.</p>
+<p>Code :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;gradient.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY_INV</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh3</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_TRUNC</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh4</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_TOZERO</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh5</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_TOZERO_INV</span><span class="p">)</span>
+
+<span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;Original Image&#39;</span><span class="p">,</span><span class="sc">&#39;BINARY&#39;</span><span class="p">,</span><span class="sc">&#39;BINARY_INV&#39;</span><span class="p">,</span><span class="sc">&#39;TRUNC&#39;</span><span class="p">,</span><span class="sc">&#39;TOZERO&#39;</span><span class="p">,</span><span class="sc">&#39;TOZERO_INV&#39;</span><span class="p">]</span>
+<span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="p">,</span> <span class="n">thresh1</span><span class="p">,</span> <span class="n">thresh2</span><span class="p">,</span> <span class="n">thresh3</span><span class="p">,</span> <span class="n">thresh4</span><span class="p">,</span> <span class="n">thresh5</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="sc">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span><span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>To plot multiple images, we have used plt.subplot() function. Please checkout Matplotlib docs for more details.</p>
+<p>Result is given below :</p>
+<img alt="image" src="_images/threshold.jpg" />
+<p class="rubric">Adaptive Thresholding</p>
+<p>In the previous section, we used a global value as threshold value. But it may not be good in all the conditions where image has different lighting conditions in different areas. In that case, we go for adaptive thresholding. In this, the algorithm calculate the threshold for a small regions of the image. So we get different thresholds for different regions of the same image and it gives us better results for images with varying illumination.</p>
+<p>It has three ‘special’ input params and only one output argument.</p>
+<p><strong>Adaptive Method</strong> - It decides how thresholding value is calculated.</p>
+<ul class="simple">
+<li>cv2.ADAPTIVE_THRESH_MEAN_C : threshold value is the mean of neighbourhood area.</li>
+<li>cv2.ADAPTIVE_THRESH_GAUSSIAN_C : threshold value is the weighted sum of neighbourhood values where weights are a gaussian window.</li>
+</ul>
+<p><strong>Block Size</strong> - It decides the size of neighbourhood area.</p>
+<p><strong>C</strong> - It is just a constant which is subtracted from the mean or weighted mean calculated.</p>
+<p>Below piece of code compares global thresholding and adaptive thresholding for an image with varying illumination:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;sudoku.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">medianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">ret</span><span class="p">,</span><span class="n">th1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+<span class="n">th2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">adaptiveThreshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">ADAPTIVE_THRESH_MEAN_C</span><span class="p">,</span>\
+            <span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">th3</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">adaptiveThreshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">ADAPTIVE_THRESH_GAUSSIAN_C</span><span class="p">,</span>\
+            <span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;Original Image&#39;</span><span class="p">,</span> <span class="sc">&#39;Global Thresholding (v = 127)&#39;</span><span class="p">,</span>
+            <span class="sc">&#39;Adaptive Mean Thresholding&#39;</span><span class="p">,</span> <span class="sc">&#39;Adaptive Gaussian Thresholding&#39;</span><span class="p">]</span>
+<span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="p">,</span> <span class="n">th1</span><span class="p">,</span> <span class="n">th2</span><span class="p">,</span> <span class="n">th3</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="sc">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span><span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>Result :</p>
+<img alt="image" src="_images/ada_threshold.jpg" />
+<p class="rubric">Otsu’s Binarization</p>
+<p>In the first section, I told you there is a second parameter <strong>retVal</strong>. Its use comes when we go for Otsu’s Binarization. So what is it?</p>
+<p>In global thresholding, we used an arbitrary value for threshold value, right? So, how can we know a value we selected is good or not? Answer is, trial and error method. But consider a <strong>bimodal image</strong> (<em>In simple words, bimodal image is an image whose histogram has two peaks</em>). For that image, we can approximately take a value in the middle of those peaks as threshold value, right ? That is what Otsu binarization does. So in simple words, it automatically calculates a threshold value from image histogram for a bimodal image. (For images which are not bimodal, binarization won’t be accurate.)</p>
+<p>For this, our <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">cv2.threshold()</span></a> function is used, but pass an extra flag, cv2.THRESH_OTSU. <strong>For threshold value, simply pass zero</strong>. Then the algorithm finds the optimal threshold value and returns you as the second output, retVal. If Otsu thresholding is not used, retVal is same as the threshold value you used.</p>
+<p>Check out below example. Input image is a noisy image. In first case, I applied global thresholding for a value of 127. In second case, I applied Otsu’s thresholding directly. In third case, I filtered image with a 5x5 gaussian kernel to remove the noise, then applied Otsu thresholding. See how noise filtering improves the result.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;noisy2.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># global thresholding</span>
+<span class="n">ret1</span><span class="p">,</span><span class="n">th1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+
+<span class="cp"># Otsu&#39;s thresholding</span>
+<span class="n">ret2</span><span class="p">,</span><span class="n">th2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="o">+</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_OTSU</span><span class="p">)</span>
+
+<span class="cp"># Otsu&#39;s thresholding after Gaussian filtering</span>
+<span class="n">blur</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ret3</span><span class="p">,</span><span class="n">th3</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">blur</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="o">+</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_OTSU</span><span class="p">)</span>
+
+<span class="cp"># plot all the images and their histograms</span>
+<span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">th1</span><span class="p">,</span>
+          <span class="n">img</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">th2</span><span class="p">,</span>
+          <span class="n">blur</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">th3</span><span class="p">]</span>
+<span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;Original Noisy Image&#39;</span><span class="p">,</span><span class="sc">&#39;Histogram&#39;</span><span class="p">,</span><span class="sc">&#39;Global Thresholding (v=127)&#39;</span><span class="p">,</span>
+          <span class="sc">&#39;Original Noisy Image&#39;</span><span class="p">,</span><span class="sc">&#39;Histogram&#39;</span><span class="p">,</span><span class="s">&quot;Otsu&#39;s Thresholding&quot;</span><span class="p">,</span>
+          <span class="sc">&#39;Gaussian filtered Image&#39;</span><span class="p">,</span><span class="sc">&#39;Histogram&#39;</span><span class="p">,</span><span class="s">&quot;Otsu&#39;s Thresholding&quot;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="p">],</span><span class="sc">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="p">]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="p">].</span><span class="n">ravel</span><span class="p">(),</span><span class="mi">256</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">3</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span><span class="sc">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>Result :</p>
+<img alt="image" src="_images/otsu.jpg" />
+<p class="rubric">How Otsu’s Binarization Works?</p>
+<p>This section demonstrates a Python implementation of Otsu’s binarization to show how it works actually. If you are not interested, you can skip this.</p>
+<p>Since we are working with bimodal images, Otsu’s algorithm tries to find a threshold value (t) which minimizes the <strong>weighted within-class variance</strong> given by the relation :</p>
+<div class="math notranslate nohighlight">
+\[\sigma_w^2(t) = q_1(t)\sigma_1^2(t)+q_2(t)\sigma_2^2(t)\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[q_1(t) = \sum_{i=1}^{t} P(i) \quad \&amp; \quad q_1(t) = \sum_{i=t+1}^{I} P(i)\]</div>
+<div class="math notranslate nohighlight">
+\[\mu_1(t) = \sum_{i=1}^{t} \frac{iP(i)}{q_1(t)} \quad \&amp; \quad \mu_2(t) = \sum_{i=t+1}^{I} \frac{iP(i)}{q_2(t)}\]</div>
+<div class="math notranslate nohighlight">
+\[\sigma_1^2(t) = \sum_{i=1}^{t} [i-\mu_1(t)]^2 \frac{P(i)}{q_1(t)} \quad \&amp; \quad \sigma_2^2(t) = \sum_{i=t+1}^{I} [i-\mu_1(t)]^2 \frac{P(i)}{q_2(t)}\]</div>
+<p>It actually finds a value of t which lies in between two peaks such that variances to both classes are minimum. It can be simply implemented in Python as follows:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;noisy2.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">blur</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># find normalized_histogram, and its cumulative distribution function</span>
+<span class="n">hist</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">blur</span><span class="p">],[</span><span class="mi">0</span><span class="p">],</span><span class="n">None</span><span class="p">,[</span><span class="mi">256</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">])</span>
+<span class="n">hist_norm</span> <span class="o">=</span> <span class="n">hist</span><span class="p">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">/</span><span class="n">hist</span><span class="p">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">hist_norm</span><span class="p">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+
+<span class="n">fn_min</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">inf</span>
+<span class="n">thresh</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">256</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">p1</span><span class="p">,</span><span class="n">p2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hsplit</span><span class="p">(</span><span class="n">hist_norm</span><span class="p">,[</span><span class="n">i</span><span class="p">])</span> <span class="err">#</span> <span class="n">probabilities</span>
+    <span class="n">q1</span><span class="p">,</span><span class="n">q2</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">Q</span><span class="p">[</span><span class="mi">255</span><span class="p">]</span><span class="o">-</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="err">#</span> <span class="n">cum</span> <span class="n">sum</span> <span class="n">of</span> <span class="n">classes</span>
+    <span class="n">b1</span><span class="p">,</span><span class="n">b2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hsplit</span><span class="p">(</span><span class="n">bins</span><span class="p">,[</span><span class="n">i</span><span class="p">])</span> <span class="err">#</span> <span class="n">weights</span>
+
+    <span class="cp"># finding means and variances</span>
+    <span class="n">m1</span><span class="p">,</span><span class="n">m2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">b1</span><span class="p">)</span><span class="o">/</span><span class="n">q1</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p2</span><span class="o">*</span><span class="n">b2</span><span class="p">)</span><span class="o">/</span><span class="n">q2</span>
+    <span class="n">v1</span><span class="p">,</span><span class="n">v2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sum</span><span class="p">(((</span><span class="n">b1</span><span class="o">-</span><span class="n">m1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">p1</span><span class="p">)</span><span class="o">/</span><span class="n">q1</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">sum</span><span class="p">(((</span><span class="n">b2</span><span class="o">-</span><span class="n">m2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">p2</span><span class="p">)</span><span class="o">/</span><span class="n">q2</span>
+
+    <span class="cp"># calculates the minimization function</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">v1</span><span class="o">*</span><span class="n">q1</span> <span class="o">+</span> <span class="n">v2</span><span class="o">*</span><span class="n">q2</span>
+    <span class="k">if</span> <span class="n">fn</span> <span class="o">&lt;</span> <span class="nl">fn_min</span><span class="p">:</span>
+        <span class="n">fn_min</span> <span class="o">=</span> <span class="n">fn</span>
+        <span class="n">thresh</span> <span class="o">=</span> <span class="n">i</span>
+
+<span class="cp"># find otsu&#39;s threshold value with OpenCV function</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">otsu</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">blur</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="o">+</span><span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_OTSU</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span> <span class="s">&quot;{} {}&quot;</span><span class="p">.</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga0cccdb2f73859309b0611cf70b1b9409"><span class="std std-ref">format</span></a><span></span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span><span class="n">ret</span><span class="p">)</span> <span class="p">)</span>
+</pre>
+<p>*(Some of the functions may be new here, but we will cover them in coming chapters)*</p>
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>Digital Image Processing, Rafael C. Gonzalez</li>
+</ol>
+<p class="rubric">Exercises</p>
+<ol class="arabic simple">
+<li>There are some optimizations available for Otsu’s binarization. You can search and implement it.</li>
+</ol>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_py_table_of_contents_transforms.html" class="btn btn-neutral float-right" title="Image Transforms in OpenCV" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_py_watershed.html" class="btn btn-neutral float-left" title="Image Segmentation with Watershed Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Harris Corner Detection &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction to SIFT (Scale-Invariant Feature Transform)" href="page_tutorial_py_sift_intro.html" />
+    <link rel="prev" title="Feature Matching + Homography to find Objects" href="page_tutorial_py_feature_homography.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_photo.html">Computational Photography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_core.html">Core Operations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_brief.html">BRIEF (Binary Robust Independent Elementary Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_fast.html">FAST Algorithm for Corner Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_matcher.html">Feature Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_feature_homography.html">Feature Matching + Homography to find Objects</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Harris Corner Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_sift_intro.html">Introduction to SIFT (Scale-Invariant Feature Transform)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_surf_intro.html">Introduction to SURF (Speeded-Up Robust Features)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_orb.html">ORB (Oriented FAST and Rotated BRIEF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_shi_tomasi.html">Shi-Tomasi Corner Detector &amp; Good Features to Track</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_features_meaning.html">Understanding Features</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_gui.html">Gui Features in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_setup.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_ml.html">Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_objdetect.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_bindings.html">OpenCV-Python Bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_video.html">Video Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a> &raquo;</li>
+        
+      <li>Harris Corner Detection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="harris-corner-detection">
+<span id="doxid-dc-d0d-tutorial-py-features-harris"></span><span id="index-0"></span><h1>Harris Corner Detection</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will understand the concepts behind Harris Corner Detection.</li>
+<li>We will see the functions: <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cv2.cornerHarris()</span></a>, <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga354e0d7c86d0d9da75de9b9701a9a87e"><span class="std std-ref">cv2.cornerSubPix()</span></a></li>
+</ul>
+<p class="rubric">Theory</p>
+<p>In last chapter, we saw that corners are regions in the image with large variation in intensity in all the directions. One early attempt to find these corners was done by <strong>Chris Harris &amp; Mike Stephens</strong> in their paper <strong>A Combined Corner and Edge Detector</strong> in 1988, so now it is called Harris Corner Detector. He took this simple idea to a mathematical form. It basically finds the difference in intensity for a displacement of <span class="math notranslate nohighlight">\((u,v)\)</span> in all directions. This is expressed as below:</p>
+<div class="math notranslate nohighlight">
+\[E(u,v) = \sum_{x,y} \underbrace{w(x,y)}_\text{window function} \, [\underbrace{I(x+u,y+v)}_\text{shifted intensity}-\underbrace{I(x,y)}_\text{intensity}]^2\]</div>
+<p>Window function is either a rectangular window or gaussian window which gives weights to pixels underneath.</p>
+<p>We have to maximize this function <span class="math notranslate nohighlight">\(E(u,v)\)</span> for corner detection. That means, we have to maximize the second term. Applying Taylor Expansion to above equation and using some mathematical steps (please refer any standard text books you like for full derivation), we get the final equation as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}E(u,v) \approx \begin{bmatrix} u &amp; v \end{bmatrix} M \begin{bmatrix} u \\ v \end{bmatrix}\end{split}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M = \sum_{x,y} w(x,y) \begin{bmatrix}I_x I_x &amp; I_x I_y \\ I_x I_y &amp; I_y I_y \end{bmatrix}\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(I_x\)</span> and <span class="math notranslate nohighlight">\(I_y\)</span> are image derivatives in x and y directions respectively. (Can be easily found out using <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">cv2.Sobel()</span></a>).</p>
+<p>Then comes the main part. After this, they created a score, basically an equation, which will determine if a window can contain a corner or not.</p>
+<div class="math notranslate nohighlight">
+\[R = det(M) - k(trace(M))^2\]</div>
+<p>where</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(det(M) = \lambda_1 \lambda_2\)</span></li>
+<li><span class="math notranslate nohighlight">\(trace(M) = \lambda_1 + \lambda_2\)</span></li>
+<li><span class="math notranslate nohighlight">\(\lambda_1\)</span> and <span class="math notranslate nohighlight">\(\lambda_2\)</span> are the eigen values of M</li>
+</ul>
+<p>So the values of these eigen values decide whether a region is corner, edge or flat.</p>
+<ul class="simple">
+<li>When <span class="math notranslate nohighlight">\(|R|\)</span> is small, which happens when <span class="math notranslate nohighlight">\(\lambda_1\)</span> and <span class="math notranslate nohighlight">\(\lambda_2\)</span> are small, the region is flat.</li>
+<li>When <span class="math notranslate nohighlight">\(R&lt;0\)</span>, which happens when <span class="math notranslate nohighlight">\(\lambda_1 &gt;&gt; \lambda_2\)</span> or vice versa, the region is edge.</li>
+<li>When <span class="math notranslate nohighlight">\(R\)</span> is large, which happens when <span class="math notranslate nohighlight">\(\lambda_1\)</span> and <span class="math notranslate nohighlight">\(\lambda_2\)</span> are large and <span class="math notranslate nohighlight">\(\lambda_1 \sim \lambda_2\)</span>, the region is a corner.</li>
+</ul>
+<p>It can be represented in a nice picture as follows:</p>
+<img alt="image" src="_images/harris_region.jpg" />
+<p>So the result of Harris Corner Detection is a grayscale image with these scores. Thresholding for a suitable give you the corners in the image. We will do it with a simple image.</p>
+<p class="rubric">Harris Corner Detector in OpenCV</p>
+<p>OpenCV has the function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cv2.cornerHarris()</span></a> for this purpose. Its arguments are :</p>
+<ul class="simple">
+<li><strong>img</strong> - Input image, it should be grayscale and float32 type.</li>
+<li><strong>blockSize</strong> - It is the size of neighbourhood considered for corner detection</li>
+<li><strong>ksize</strong> - Aperture parameter of Sobel derivative used.</li>
+<li><strong>k</strong> - Harris detector free parameter in the equation.</li>
+</ul>
+<p>See the example below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="sc">&#39;chessboard.png&#39;</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+<span class="n">gray</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cornerHarris</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">0.04</span><span class="p">)</span>
+
+<span class="cp">#result is dilated for marking the corners, not important</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+
+<span class="cp"># Threshold for an optimal value, it may vary depending on the image.</span>
+<span class="n">img</span><span class="p">[</span><span class="n">dst</span><span class="o">&gt;</span><span class="mf">0.01</span><span class="o">*</span><span class="n">dst</span><span class="p">.</span><span class="n">max</span><span class="p">()]</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">]</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;dst&#39;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xff</span> <span class="o">==</span> <span class="mi">27</span><span class="o">:</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>Below are the three results:</p>
+<img alt="image" src="_images/harris_result.jpg" />
+<p class="rubric">Corner with SubPixel Accuracy</p>
+<p>Sometimes, you may need to find the corners with maximum accuracy. OpenCV comes with a function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga354e0d7c86d0d9da75de9b9701a9a87e"><span class="std std-ref">cv2.cornerSubPix()</span></a> which further refines the corners detected with sub-pixel accuracy. Below is an example. As usual, we need to find the harris corners first. Then we pass the centroids of these corners (There may be a bunch of pixels at a corner, we take their centroid) to refine them. Harris corners are marked in red pixels and refined corners are marked in green pixels. For this function, we have to define the criteria when to stop the iteration. We stop it after a specified number of iteration or a certain accuracy is achieved, whichever occurs first. We also need to define the size of neighbourhood it would search for corners.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="sc">&#39;chessboard2.jpg&#39;</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+<span class="cp"># find Harris corners</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cornerHarris</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">0.04</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="mf">0.01</span><span class="o">*</span><span class="n">dst</span><span class="p">.</span><span class="n">max</span><span class="p">(),</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+
+<span class="cp"># find centroids</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">connectedComponentsWithStats</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+
+<span class="cp"># define the criteria to stop and refine the corners</span>
+<span class="n">criteria</span> <span class="o">=</span> <span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_EPS</span> <span class="o">+</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TERM_CRITERIA_MAX_ITER</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+<span class="n">corners</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cornerSubPix</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">(</span><span class="n">centroids</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">criteria</span><span class="p">)</span>
+
+<span class="cp"># Now draw them</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">centroids</span><span class="p">,</span><span class="n">corners</span><span class="p">))</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">int0</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="n">img</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">]</span>
+<span class="n">img</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="n">res</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;subpixel5.png&#39;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
+</pre>
+<p>Below is the result, where some important locations are shown in zoomed window to visualize:</p>
+<img alt="image" src="_images/subpixel3.png" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_py_sift_intro.html" class="btn btn-neutral float-right" title="Introduction to SIFT (Scale-Invariant Feature Transform)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_py_feature_homography.html" class="btn btn-neutral float-left" title="Feature Matching + Homography to find Objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Contours : More Functions &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contours Hierarchy" href="page_tutorial_py_contours_hierarchy.html" />
+    <link rel="prev" title="Contours : Getting Started" href="page_tutorial_py_contours_begin.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_contours_hierarchy.html" title="Contours Hierarchy"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_contours_begin.html" title="Contours : Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_table_of_contents_contours.html" accesskey="U">Contours in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_contours_begin.html"
+                        title="previous chapter">Contours : Getting Started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_contours_hierarchy.html"
+                        title="next chapter">Contours Hierarchy</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contours-more-functions">
+<span id="doxid-d5-d45-tutorial-py-contours-more-functions"></span><span id="index-0"></span><h1>Contours : More Functions</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter, we will learn about</p>
+<ul class="simple">
+<li>Convexity defects and how to find them.</li>
+<li>Finding shortest distance from a point to a polygon</li>
+<li>Matching different shapes</li>
+</ul>
+<p class="rubric">Theory and Code</p>
+<p class="rubric">1. Convexity Defects</p>
+<p>We saw what is convex hull in second chapter about contours. Any deviation of the object from this hull can be considered as convexity defect.</p>
+<p>OpenCV comes with a ready-made function to find this, <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1gada4437098113fd8683c932e0567f47ba"><span class="std std-ref">cv2.convexityDefects()</span></a>. A basic function call would look like below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">hull</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">convexHull</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span><span class="n">returnPoints</span> <span class="o">=</span> <span class="n">False</span><span class="p">)</span>
+<span class="n">defects</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">convexityDefects</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span><span class="n">hull</span><span class="p">)</span>
+</pre>
+<p>Remember we have to pass returnPoints = False while finding convex hull, in order to find convexity defects.</p>
+<p>It returns an array where each row contains these values - <strong>[ start point, end point, farthest point, approximate distance to farthest point ]</strong>. We can visualize it using an image. We draw a line joining start point and end point, then draw a circle at the farthest point. Remember first three values returned are indices of cnt. So we have to bring those values from cnt.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;star.jpg&#39;</span><span class="p">)</span>
+<span class="n">img_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img_gray</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">im2</span><span class="p">,</span><span class="n">contours</span><span class="p">,</span><span class="n">hierarchy</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cnt</span> <span class="o">=</span> <span class="n">contours</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">hull</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">convexHull</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span><span class="n">returnPoints</span> <span class="o">=</span> <span class="n">False</span><span class="p">)</span>
+<span class="n">defects</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">convexityDefects</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span><span class="n">hull</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="n">defects</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">:</span>
+    <span class="n">s</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">defects</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">tuple</span><span class="p">(</span><span class="n">cnt</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">tuple</span><span class="p">(</span><span class="n">cnt</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">far</span> <span class="o">=</span> <span class="n">tuple</span><span class="p">(</span><span class="n">cnt</span><span class="p">[</span><span class="n">f</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">far</span><span class="p">,</span><span class="mi">5</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;img&#39;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>And see the result:</p>
+<img alt="image" src="_images/defects.jpg" />
+<p class="rubric">2. Point Polygon Test</p>
+<p>This function finds the shortest distance between a point in the image and a contour. It returns the distance which is negative when point is outside the contour, positive when point is inside and zero if point is on the contour.</p>
+<p>For example, we can check the point (50,50) as follows:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">dist</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">pointPolygonTest</span><span class="p">(</span><span class="n">cnt</span><span class="p">,(</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span><span class="n">True</span><span class="p">)</span>
+</pre>
+<p>In the function, third argument is measureDist. If it is True, it finds the signed distance. If False, it finds whether the point is inside or outside or on the contour (it returns +1, -1, 0 respectively).</p>
+<p>If you don’t want to find the distance, make sure third argument is False, because, it is a time consuming process. So, making it False gives about 2-3X speedup.</p>
+<p class="rubric">3. Match Shapes</p>
+<p>OpenCV comes with a function <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1gaadc90cb16e2362c9bd6e7363e6e4c317"><span class="std std-ref">cv2.matchShapes()</span></a> which enables us to compare two shapes, or two contours and returns a metric showing the similarity. The lower the result, the better match it is. It is calculated based on the hu-moment values. Different measurement methods are explained in the docs.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;star.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;star2.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">ret</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">thresh2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">im2</span><span class="p">,</span><span class="n">contours</span><span class="p">,</span><span class="n">hierarchy</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cnt1</span> <span class="o">=</span> <span class="n">contours</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">im2</span><span class="p">,</span><span class="n">contours</span><span class="p">,</span><span class="n">hierarchy</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">thresh2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cnt2</span> <span class="o">=</span> <span class="n">contours</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchShapes</span><span class="p">(</span><span class="n">cnt1</span><span class="p">,</span><span class="n">cnt2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span> <span class="n">ret</span> <span class="p">)</span>
+</pre>
+<p>I tried matching shapes with different shapes given below:</p>
+<img alt="image" src="_images/matchshapes.jpg" />
+<p>I got following results:</p>
+<ul class="simple">
+<li>Matching Image A with itself = 0.0</li>
+<li>Matching Image A with Image B = 0.001946</li>
+<li>Matching Image A with Image C = 0.326911</li>
+</ul>
+<p>See, even image rotation doesn’t affect much on this comparison.</p>
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+<ol class="arabic simple">
+<li>Check the documentation for <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1ga1a539e8db2135af2566103705d7a5722"><span class="std std-ref">cv2.pointPolygonTest()</span></a>, you can find a nice image in Red and Blue color. It represents the distance from all pixels to the white curve on it. All pixels inside curve is blue depending on the distance. Similarly outside points are red. Contour edges are marked with White. So problem is simple. Write a code to create such a representation of distance.</li>
+<li>Compare images of digits or letters using <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1gaadc90cb16e2362c9bd6e7363e6e4c317"><span class="std std-ref">cv2.matchShapes()</span></a>. ( That would be a simple step towards OCR )</li>
+</ol>
+<p class="rubric">See also:</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Image_moment#Rotation_invariant_moments">Hu-Moments</a> are seven moments invariant to translation, rotation and scale. Seventh one is skew-invariant. Those values can be found using <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1gab001db45c1f1af6cbdbe64df04c4e944"><span class="std std-ref">cv2.HuMoments()</span></a> function.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_contours_hierarchy.html" title="Contours Hierarchy"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_contours_begin.html" title="Contours : Getting Started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_table_of_contents_contours.html" >Contours in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

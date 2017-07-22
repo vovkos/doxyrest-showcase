@@ -1,0 +1,222 @@
+.. index:: pair: class; Poco::Activity
+.. _doxid-class_poco_1_1_activity:
+
+template class Poco::Activity
+=============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This template class helps to implement active objects. :ref:`More...<details-class_poco_1_1_activity>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Activity.h>
+	
+	template <class C>
+	class Activity: public :ref:`Poco::Runnable<doxid-class_poco_1_1_runnable>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`RunnableAdapter<doxid-class_poco_1_1_runnable_adapter>`<C> :target:`RunnableAdapterType<doxid-class_poco_1_1_activity_1aaad19414c556bb73328a7e3541342ffc>`;
+		typedef RunnableAdapterType::Callback :target:`Callback<doxid-class_poco_1_1_activity_1a07e5f781240253023fea7a02f730d213>`;
+
+		// construction
+	
+		:ref:`Activity<doxid-class_poco_1_1_activity_1a42e3d306d56e3432204fdfb755ebf836>`(
+			C* pOwner,
+			:ref:`Callback<doxid-class_poco_1_1_activity_1a07e5f781240253023fea7a02f730d213>` method
+			);
+
+		// methods
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_activity_1aeb95d190e39653462b3b35cb3c36bab6>`();
+	
+		void
+		:target:`start<doxid-class_poco_1_1_activity_1a1624f1f3f3372602627e109cbc948ba9>`(:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& pool);
+	
+		void
+		:ref:`stop<doxid-class_poco_1_1_activity_1ab3ebbec884bedeb87d6a5e83ea050912>`();
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_activity_1a7ac1dcc3ebaf0c74993291a7fa143b32>`();
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_activity_1a203d47ab11d1b78313069318ddd1fbb2>`(long milliseconds);
+	
+		bool
+		:ref:`isStopped<doxid-class_poco_1_1_activity_1a7ab614e94138541cf34fde0ec058bcd4>`() const;
+	
+		bool
+		:ref:`isRunning<doxid-class_poco_1_1_activity_1acf920215a00ee8c68a6ebbfc0cba86bc>`() const;
+
+	protected:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_activity_1a892d0678d0100ae0efbea64c1732efb8>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>`() = 0;
+
+.. _details-class_poco_1_1_activity:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This template class helps to implement active objects.
+
+An active object uses threads to decouple method execution from method invocation, or to perform tasks autonomously, without intervention of a caller.
+
+An activity is a (typically longer running) method that executes within its own task. Activities can be started automatically (upon object construction) or manually at a later time. Activities can also be stopped at any time. However, to make stopping an activity work, the method implementing the activity has to check periodically whether it has been requested to stop, and if so, return. Activities are stopped before the object they belong to is destroyed. Methods implementing activities cannot have arguments or return values.
+
+:ref:`Activity <doxid-class_poco_1_1_activity>` objects are used as follows:
+
+.. ref-code-block:: cpp
+
+	class ActiveObject
+	{
+	public:
+	    ActiveObject(): 
+	        _activity(this, &ActiveObject::runActivity)
+	    {
+	        ...
+	    }
+	
+	    ...
+	
+	protected:
+	    void runActivity()
+	    {
+	        while (!_activity.isStopped())
+	        {
+	            ...
+	        }
+	    }
+	
+	private:
+	    Activity<ActiveObject> _activity;
+	};
+
+Construction
+------------
+
+.. index:: pair: function; Activity
+.. _doxid-class_poco_1_1_activity_1a42e3d306d56e3432204fdfb755ebf836:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Activity(
+		C* pOwner,
+		:ref:`Callback<doxid-class_poco_1_1_activity_1a07e5f781240253023fea7a02f730d213>` method
+		)
+
+Creates the activity.
+
+Call :ref:`start() <doxid-class_poco_1_1_activity_1aeb95d190e39653462b3b35cb3c36bab6>` to start it.
+
+Methods
+-------
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_activity_1aeb95d190e39653462b3b35cb3c36bab6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start()
+
+Starts the activity by acquiring a thread for it from the default thread pool.
+
+.. index:: pair: function; stop
+.. _doxid-class_poco_1_1_activity_1ab3ebbec884bedeb87d6a5e83ea050912:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	stop()
+
+Requests to stop the activity.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_activity_1a7ac1dcc3ebaf0c74993291a7fa143b32:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait()
+
+Waits for the activity to complete.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_activity_1a203d47ab11d1b78313069318ddd1fbb2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait(long milliseconds)
+
+Waits the given interval for the activity to complete.
+
+An TimeoutException is thrown if the activity does not complete within the given interval.
+
+.. index:: pair: function; isStopped
+.. _doxid-class_poco_1_1_activity_1a7ab614e94138541cf34fde0ec058bcd4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	isStopped() const
+
+Returns true if the activity has been requested to stop.
+
+.. index:: pair: function; isRunning
+.. _doxid-class_poco_1_1_activity_1acf920215a00ee8c68a6ebbfc0cba86bc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	isRunning() const
+
+Returns true if the activity is running.
+
+.. index:: pair: function; run
+.. _doxid-class_poco_1_1_activity_1a892d0678d0100ae0efbea64c1732efb8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	run()
+
+Do whatever the thread needs to do.
+
+Must be overridden by subclasses.
+

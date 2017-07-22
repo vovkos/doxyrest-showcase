@@ -1,0 +1,232 @@
+.. index:: pair: group; Object Detection
+.. _doxid-d5/d54/group__objdetect:
+
+Object Detection
+================
+
+.. toctree::
+	:hidden:
+
+	group_objdetect_c.rst
+	struct_cv_DetectionROI.rst
+	struct_cv_HOGDescriptor.rst
+	class_cv_BaseCascadeClassifier.rst
+	class_cv_CascadeClassifier.rst
+	class_cv_SimilarRects.rst
+
+Overview
+~~~~~~~~
+
+.. :ref:`More...<details-d5/d54/group__objdetect>`
+
+|	:ref:`C API<doxid-d9/d31/group__objdetect__c>`
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// enums
+
+	enum
+	{
+	    :target:`cv::@163::CASCADE_DO_CANNY_PRUNING<doxid-d5/d54/group__objdetect_1ggaf9da076edb99cf8cb211c313b3f0fbe7a04a050084d81a4a05abe92b7fc9ef210>`    = 1,
+	    :target:`cv::@163::CASCADE_SCALE_IMAGE<doxid-d5/d54/group__objdetect_1ggaf9da076edb99cf8cb211c313b3f0fbe7a1d35c5234686c05c075d224efc91d673>`         = 2,
+	    :target:`cv::@163::CASCADE_FIND_BIGGEST_OBJECT<doxid-d5/d54/group__objdetect_1ggaf9da076edb99cf8cb211c313b3f0fbe7a3ecc6a38e196bd80afb57ac7b116c7fc>` = 4,
+	    :target:`cv::@163::CASCADE_DO_ROUGH_SEARCH<doxid-d5/d54/group__objdetect_1ggaf9da076edb99cf8cb211c313b3f0fbe7a54f9abc96125f942117c847bc8fa9b83>`     = 8,
+	};
+
+	// structs
+
+	struct :ref:`cv::DetectionROI<doxid-d0/d86/structcv_1_1_detection_r_o_i>`;
+	struct :ref:`cv::HOGDescriptor<doxid-db/d92/structcv_1_1_h_o_g_descriptor>`;
+
+	// classes
+
+	class :ref:`cv::BaseCascadeClassifier<doxid-dd/de9/classcv_1_1_base_cascade_classifier>`;
+	class :ref:`cv::CascadeClassifier<doxid-dd/d5f/classcv_1_1_cascade_classifier>`;
+	class :ref:`cv::SimilarRects<doxid-dc/d72/classcv_1_1_similar_rects>`;
+
+	// global functions
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`BaseCascadeClassifier::MaskGenerator<doxid-d8/dbc/classcv_1_1_base_cascade_classifier_1_1_mask_generator>`>
+	:target:`cv::createFaceDetectionMaskGenerator<doxid-d5/d54/group__objdetect_1ga9767823749e5e5df561593c2c85939cc>`();
+
+	void
+	:ref:`cv::groupRectangles<doxid-d5/d54/group__objdetect_1ga3dba897ade8aa8227edda66508e16ab9>`(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		int groupThreshold,
+		double eps = 0.2
+		);
+
+	void
+	:ref:`cv::groupRectangles<doxid-d5/d54/group__objdetect_1ga1592d68e4c32a13aa50ed73dbecd6d22>`(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		std::vector<int>& weights,
+		int groupThreshold,
+		double eps = 0.2
+		);
+
+	void
+	:ref:`cv::groupRectangles<doxid-d5/d54/group__objdetect_1ga371b207eb2113f7816e5857fa0d2e50e>`(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		int groupThreshold,
+		double eps,
+		std::vector<int>* weights,
+		std::vector<double>* levelWeights
+		);
+
+	void
+	:ref:`cv::groupRectangles<doxid-d5/d54/group__objdetect_1gaca13a6339f9d8992d9ee278c6c8f53ae>`(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		std::vector<int>& rejectLevels,
+		std::vector<double>& levelWeights,
+		int groupThreshold,
+		double eps = 0.2
+		);
+
+	void
+	:ref:`cv::groupRectangles_meanshift<doxid-d5/d54/group__objdetect_1ga281baf622553e2eab17a8e96beab916d>`(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		std::vector<double>& foundWeights,
+		std::vector<double>& foundScales,
+		double detectThreshold = 0.0,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` winDetSize = :ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(64, 128)
+		);
+
+.. _details-d5/d54/group__objdetect:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. rubric:: Haar Feature-based Cascade Classifier for Object Detection
+
+The object detector described below has been initially proposed by Paul Viola :ref:`[87] <doxid-d0/de3/citelist_1CITEREF_Viola01>` and improved by Rainer Lienhart :ref:`[49] <doxid-d0/de3/citelist_1CITEREF_Lienhart02>`.
+
+First, a classifier (namely a *cascade of boosted classifiers working with haar-like features*) is trained with a few hundred sample views of a particular object (i.e., a face or a car), called positive examples, that are scaled to the same size (say, 20x20), and negative examples - arbitrary images of the same size.
+
+After a classifier is trained, it can be applied to a region of interest (of the same size as used during the training) in an input image. The classifier outputs a "1" if the region is likely to show the object (i.e., face/car), and "0" otherwise. To search for the object in the whole image one can move the search window across the image and check every location using the classifier. The classifier is designed so that it can be easily "resized" in order to be able to find the objects of interest at different sizes, which is more efficient than resizing the image itself. So, to find an object of an unknown size in the image the scan procedure should be done several times at different scales.
+
+The word "cascade" in the classifier name means that the resultant classifier consists of several simpler classifiers (*stages*) that are applied subsequently to a region of interest until at some stage the candidate is rejected or all the stages are passed. The word "boosted" means that the classifiers at every stage of the cascade are complex themselves and they are built out of basic classifiers using one of four different boosting techniques (weighted voting). Currently Discrete Adaboost, Real Adaboost, Gentle Adaboost and Logitboost are supported. The basic classifiers are decision-tree classifiers with at least 2 leaves. Haar-like features are the input to the basic classifiers, and are calculated as described below. The current algorithm uses the following Haar-like features:
+
+.. image:: haarfeatures.png
+	:alt: image
+
+The feature used in a particular classifier is specified by its shape (1a, 2b etc.), position within the region of interest and the scale (this scale is not the same as the scale used at the detection stage, though these two scales are multiplied). For example, in the case of the third line feature (2c) the response is calculated as the difference between the sum of image pixels under the rectangle covering the whole feature (including the two white stripes and the black stripe in the middle) and the sum of the image pixels under the black stripe multiplied by 3 in order to compensate for the differences in the size of areas. The sums of pixel values over a rectangular regions are calculated rapidly using integral images (see below and the integral description).
+
+To see the object detector at work, have a look at the facedetect demo: `https://github.com/opencv/opencv/tree/master/samples/cpp/dbt_face_detection.cpp <https://github.com/opencv/opencv/tree/master/samples/cpp/dbt_face_detection.cpp>`__
+
+The following reference is for the detection part only. There is a separate application called opencv_traincascade that can train a cascade of boosted classifiers from a set of samples.
+
+In the new C++ interface it is also possible to use LBP (local binary pattern) features in addition to Haar-like features. .. [Viola01] Paul Viola and Michael J. Jones. Rapid Object Detection using a Boosted Cascade of Simple Features. IEEE CVPR, 2001. The paper is available online at `http://research.microsoft.com/en-us/um/people/viola/Pubs/Detect/violaJones_CVPR2001.pdf <http://research.microsoft.com/en-us/um/people/viola/Pubs/Detect/violaJones_CVPR2001.pdf>`__
+
+Global Functions
+----------------
+
+.. index:: pair: function; groupRectangles
+.. _doxid-d5/d54/group__objdetect_1ga3dba897ade8aa8227edda66508e16ab9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::groupRectangles(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		int groupThreshold,
+		double eps = 0.2
+		)
+
+Groups the object candidate rectangles.
+
+The function is a wrapper for the generic function partition . It clusters all the input rectangles using the rectangle equivalence criteria that combines rectangles with similar sizes and similar locations. The similarity is defined by eps. When eps=0 , no clustering is done at all. If :math:`\texttt{eps}\rightarrow +\inf`, all the rectangles are put in one cluster. Then, the small clusters containing less than or equal to groupThreshold rectangles are rejected. In each other cluster, the average rectangle is computed and put into the output rectangle list.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- rectList
+
+		- Input/output vector of rectangles. Output vector includes retained and grouped rectangles. (The Python list is not modified in place.)
+
+	*
+		- groupThreshold
+
+		- Minimum possible number of rectangles minus 1. The threshold is used in a group of rectangles to retain it.
+
+	*
+		- eps
+
+		- Relative difference between sides of the rectangles to merge them into a group.
+
+.. index:: pair: function; groupRectangles
+.. _doxid-d5/d54/group__objdetect_1ga1592d68e4c32a13aa50ed73dbecd6d22:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::groupRectangles(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		std::vector<int>& weights,
+		int groupThreshold,
+		double eps = 0.2
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; groupRectangles
+.. _doxid-d5/d54/group__objdetect_1ga371b207eb2113f7816e5857fa0d2e50e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::groupRectangles(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		int groupThreshold,
+		double eps,
+		std::vector<int>* weights,
+		std::vector<double>* levelWeights
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; groupRectangles
+.. _doxid-d5/d54/group__objdetect_1gaca13a6339f9d8992d9ee278c6c8f53ae:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::groupRectangles(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		std::vector<int>& rejectLevels,
+		std::vector<double>& levelWeights,
+		int groupThreshold,
+		double eps = 0.2
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; groupRectangles_meanshift
+.. _doxid-d5/d54/group__objdetect_1ga281baf622553e2eab17a8e96beab916d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::groupRectangles_meanshift(
+		std::vector<:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`>& rectList,
+		std::vector<double>& foundWeights,
+		std::vector<double>& foundScales,
+		double detectThreshold = 0.0,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` winDetSize = :ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(64, 128)
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+

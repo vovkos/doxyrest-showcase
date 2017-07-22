@@ -1,0 +1,162 @@
+.. index:: pair: class; Poco::Condition
+.. _doxid-class_poco_1_1_condition:
+
+class Poco::Condition
+=====================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`Condition <doxid-class_poco_1_1_condition>` is a synchronization object used to block a thread until a particular condition is met. :ref:`More...<details-class_poco_1_1_condition>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Condition.h>
+	
+	class Condition
+	{
+	public:
+		// methods
+	
+		template <class Mtx>
+		void
+		:ref:`wait<doxid-class_poco_1_1_condition_1ab9b6694010c93e9e7708c6078f82ca17>`(Mtx& mutex);
+	
+		template <class Mtx>
+		void
+		:ref:`wait<doxid-class_poco_1_1_condition_1a1be6fa66b1bb9cdf17ebdd1ed7ccfc09>`(
+			Mtx& mutex,
+			long milliseconds
+			);
+	
+		template <class Mtx>
+		bool
+		:ref:`tryWait<doxid-class_poco_1_1_condition_1af30e8c23a52a026aee012b3cfe5de453>`(
+			Mtx& mutex,
+			long milliseconds
+			);
+	
+		void
+		:ref:`signal<doxid-class_poco_1_1_condition_1a27fc0d60ba5d504c3e02135ac3123b8f>`();
+	
+		void
+		:ref:`broadcast<doxid-class_poco_1_1_condition_1a29c45ec9a7866e78cfa1fdeb196e9083>`();
+
+	protected:
+		// methods
+	
+		void
+		:target:`enqueue<doxid-class_poco_1_1_condition_1a0a6d268261a529a829cec4ee31c1f586>`(:ref:`Event<doxid-class_poco_1_1_event>`& event);
+	
+		void
+		:target:`dequeue<doxid-class_poco_1_1_condition_1a651066fe1482c62b8a78eb5f2b57000c>`();
+	
+		void
+		:target:`dequeue<doxid-class_poco_1_1_condition_1acd8629efc8114d91c64be113eebd0fa1>`(:ref:`Event<doxid-class_poco_1_1_event>`& event);
+	};
+.. _details-class_poco_1_1_condition:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`Condition <doxid-class_poco_1_1_condition>` is a synchronization object used to block a thread until a particular condition is met.
+
+A :ref:`Condition <doxid-class_poco_1_1_condition>` object is always used in conjunction with a :ref:`Mutex <doxid-class_poco_1_1_mutex>` (or :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>`) object.
+
+:ref:`Condition <doxid-class_poco_1_1_condition>` objects are similar to POSIX condition variables, which the difference that :ref:`Condition <doxid-class_poco_1_1_condition>` is not subject to spurious wakeups.
+
+Threads waiting on a :ref:`Condition <doxid-class_poco_1_1_condition>` are resumed in FIFO order.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_condition_1a94f20cae16a1258417a3ffd19b6a384c:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~Condition()
+
+Destroys the :ref:`Condition <doxid-class_poco_1_1_condition>`.
+
+Methods
+-------
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_condition_1ab9b6694010c93e9e7708c6078f82ca17:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class Mtx>
+	void
+	wait(Mtx& mutex)
+
+Unlocks the mutex (which must be locked upon calling :ref:`wait() <doxid-class_poco_1_1_condition_1ab9b6694010c93e9e7708c6078f82ca17>`) and waits until the :ref:`Condition <doxid-class_poco_1_1_condition>` is signalled.
+
+The given mutex will be locked again upon leaving the function, even in case of an exception.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_condition_1a1be6fa66b1bb9cdf17ebdd1ed7ccfc09:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class Mtx>
+	void
+	wait(
+		Mtx& mutex,
+		long milliseconds
+		)
+
+Unlocks the mutex (which must be locked upon calling :ref:`wait() <doxid-class_poco_1_1_condition_1ab9b6694010c93e9e7708c6078f82ca17>`) and waits for the given time until the :ref:`Condition <doxid-class_poco_1_1_condition>` is signalled.
+
+The given mutex will be locked again upon successfully leaving the function, even in case of an exception.
+
+Throws a TimeoutException if the :ref:`Condition <doxid-class_poco_1_1_condition>` is not signalled within the given time interval.
+
+.. index:: pair: function; tryWait
+.. _doxid-class_poco_1_1_condition_1af30e8c23a52a026aee012b3cfe5de453:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <class Mtx>
+	bool
+	tryWait(
+		Mtx& mutex,
+		long milliseconds
+		)
+
+Unlocks the mutex (which must be locked upon calling :ref:`tryWait() <doxid-class_poco_1_1_condition_1af30e8c23a52a026aee012b3cfe5de453>`) and waits for the given time until the :ref:`Condition <doxid-class_poco_1_1_condition>` is signalled.
+
+The given mutex will be locked again upon leaving the function, even in case of an exception.
+
+Returns true if the :ref:`Condition <doxid-class_poco_1_1_condition>` has been signalled within the given time interval, otherwise false.
+
+.. index:: pair: function; signal
+.. _doxid-class_poco_1_1_condition_1a27fc0d60ba5d504c3e02135ac3123b8f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	signal()
+
+Signals the :ref:`Condition <doxid-class_poco_1_1_condition>` and allows one waiting thread to continue execution.
+
+.. index:: pair: function; broadcast
+.. _doxid-class_poco_1_1_condition_1a29c45ec9a7866e78cfa1fdeb196e9083:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	broadcast()
+
+Signals the :ref:`Condition <doxid-class_poco_1_1_condition>` and allows all waiting threads to continue their execution.
+

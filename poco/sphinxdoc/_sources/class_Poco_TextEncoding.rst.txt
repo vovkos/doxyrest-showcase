@@ -1,0 +1,416 @@
+.. index:: pair: class; Poco::TextEncoding
+.. _doxid-class_poco_1_1_text_encoding:
+
+class Poco::TextEncoding
+========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An abstract base class for implementing text encodings like UTF-8 or ISO 8859-1. :ref:`More...<details-class_poco_1_1_text_encoding>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <TextEncoding.h>
+	
+	class TextEncoding
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TextEncoding> :target:`Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>`;
+		typedef int :ref:`CharacterMap<doxid-class_poco_1_1_text_encoding_1ac61121651a57a139cd625b1d23a42d09>`[256];
+
+		// enums
+	
+		enum
+		{
+		    :ref:`MAX_SEQUENCE_LENGTH<doxid-class_poco_1_1_text_encoding_1a259c6e05e7c9869050f8fd4967d50e53a2add20503785de3c42ea25b166397b99>` = 6,
+		};
+
+		// fields
+	
+		static :ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string :ref:`GLOBAL<doxid-class_poco_1_1_text_encoding_1a61e68007a0df4782f2984b6fe43c4015>`;
+
+		// methods
+	
+		virtual
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char*
+		:ref:`canonicalName<doxid-class_poco_1_1_text_encoding_1a128efbeb06e5b102704633d3d8565ea3>`() const = 0;
+	
+		virtual
+		bool
+		:ref:`isA<doxid-class_poco_1_1_text_encoding_1aa199506fe71af0bb8bef4b735880ba48>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName) const = 0;
+	
+		virtual
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`CharacterMap<doxid-class_poco_1_1_text_encoding_1ac61121651a57a139cd625b1d23a42d09>`&
+		:ref:`characterMap<doxid-class_poco_1_1_text_encoding_1a7c3e03c076147725384737ec0a4471ae>`() const = 0;
+	
+		virtual
+		int
+		:ref:`convert<doxid-class_poco_1_1_text_encoding_1a318ff7d0d0dfc8419d2358bc68145531>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` unsigned char* bytes) const;
+	
+		virtual
+		int
+		:ref:`queryConvert<doxid-class_poco_1_1_text_encoding_1a4bc2b918f47f5f705b827418ab6d222f>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` unsigned char* bytes,
+			int length
+			) const;
+	
+		virtual
+		int
+		:ref:`sequenceLength<doxid-class_poco_1_1_text_encoding_1abed5d214bf61c2596ccd5bf4dc80f89e>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` unsigned char* bytes,
+			int length
+			) const;
+	
+		virtual
+		int
+		:ref:`convert<doxid-class_poco_1_1_text_encoding_1afd06a207525c358bd8e3ade92393acf5>`(
+			int ch,
+			unsigned char* bytes,
+			int length
+			) const;
+	
+		static
+		TextEncoding&
+		:ref:`byName<doxid-class_poco_1_1_text_encoding_1a692cfa762f2ffe37998126dfb0ea4e3b>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName);
+	
+		static
+		:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>`
+		:ref:`find<doxid-class_poco_1_1_text_encoding_1aa7bfe79c429b4db12209ce43511c25e8>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName);
+	
+		static
+		void
+		:ref:`add<doxid-class_poco_1_1_text_encoding_1ac9f264cd9b8408f8f424559aac564969>`(:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>` encoding);
+	
+		static
+		void
+		:ref:`add<doxid-class_poco_1_1_text_encoding_1a7b6fa47ee7d0db456a77ed7c30f97216>`(
+			:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>` encoding,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name
+			);
+	
+		static
+		void
+		:ref:`remove<doxid-class_poco_1_1_text_encoding_1a14ffc4ec7564c0387e3835aa6fa07c25>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName);
+	
+		static
+		:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>`
+		:ref:`global<doxid-class_poco_1_1_text_encoding_1aa63fca18ba67b616ce17cf9448d497b4>`(:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>` encoding);
+	
+		static
+		TextEncoding&
+		:ref:`global<doxid-class_poco_1_1_text_encoding_1a3c13a27371bddf520833a119cd902fd7>`();
+
+	protected:
+		// methods
+	
+		static
+		TextEncodingManager&
+		:ref:`manager<doxid-class_poco_1_1_text_encoding_1abc5ef93c0fe78d3a9dba02a542b1f620>`();
+	};
+
+	// direct descendants
+
+	class :ref:`ASCIIEncoding<doxid-class_poco_1_1_a_s_c_i_i_encoding>`;
+	class :ref:`Latin1Encoding<doxid-class_poco_1_1_latin1_encoding>`;
+	class :ref:`Latin2Encoding<doxid-class_poco_1_1_latin2_encoding>`;
+	class :ref:`Latin9Encoding<doxid-class_poco_1_1_latin9_encoding>`;
+	class :ref:`UTF16Encoding<doxid-class_poco_1_1_u_t_f16_encoding>`;
+	class :ref:`UTF32Encoding<doxid-class_poco_1_1_u_t_f32_encoding>`;
+	class :ref:`UTF8Encoding<doxid-class_poco_1_1_u_t_f8_encoding>`;
+	class :ref:`Windows1250Encoding<doxid-class_poco_1_1_windows1250_encoding>`;
+	class :ref:`Windows1251Encoding<doxid-class_poco_1_1_windows1251_encoding>`;
+	class :ref:`Windows1252Encoding<doxid-class_poco_1_1_windows1252_encoding>`;
+.. _details-class_poco_1_1_text_encoding:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An abstract base class for implementing text encodings like UTF-8 or ISO 8859-1.
+
+Subclasses must override the :ref:`canonicalName() <doxid-class_poco_1_1_text_encoding_1a128efbeb06e5b102704633d3d8565ea3>`, :ref:`isA() <doxid-class_poco_1_1_text_encoding_1aa199506fe71af0bb8bef4b735880ba48>`, :ref:`characterMap() <doxid-class_poco_1_1_text_encoding_1a7c3e03c076147725384737ec0a4471ae>` and :ref:`convert() <doxid-class_poco_1_1_text_encoding_1a318ff7d0d0dfc8419d2358bc68145531>` methods and need to be thread safe and stateless.
+
+:ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` also provides static member functions for managing mappings from encoding names to :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` objects.
+
+Enum Values
+-----------
+
+.. index:: pair: enumvalue; MAX_SEQUENCE_LENGTH
+.. _doxid-class_poco_1_1_text_encoding_1a259c6e05e7c9869050f8fd4967d50e53a2add20503785de3c42ea25b166397b99:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	MAX_SEQUENCE_LENGTH
+
+The maximum character byte sequence length supported.
+
+Typedefs
+--------
+
+.. index:: pair: typedef; CharacterMap
+.. _doxid-class_poco_1_1_text_encoding_1ac61121651a57a139cd625b1d23a42d09:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	typedef int CharacterMap[256]
+
+The map[b] member gives information about byte sequences whose first byte is b.
+
+If map[b] is c where c is >= 0, then b by itself encodes the :ref:`Unicode <doxid-class_poco_1_1_unicode>` scalar value c. If map[b] is -1, then the byte sequence is malformed. If map[b] is -n, where n >= 2, then b is the first byte of an n-byte sequence that encodes a single :ref:`Unicode <doxid-class_poco_1_1_unicode>` scalar value. Byte sequences up to 6 bytes in length are supported.
+
+Fields
+------
+
+.. index:: pair: variable; GLOBAL
+.. _doxid-class_poco_1_1_text_encoding_1a61e68007a0df4782f2984b6fe43c4015:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static :ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string GLOBAL
+
+Name of the global :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>`, which is the empty string.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_text_encoding_1aaf5550aac0c6cb4bdb32fdb1881457e0:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	~TextEncoding()
+
+Destroys the encoding.
+
+Methods
+-------
+
+.. index:: pair: function; canonicalName
+.. _doxid-class_poco_1_1_text_encoding_1a128efbeb06e5b102704633d3d8565ea3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char*
+	canonicalName() const = 0
+
+Returns the canonical name of this encoding, e.g.
+
+"ISO-8859-1". Encoding name comparisons are case insensitive.
+
+.. index:: pair: function; isA
+.. _doxid-class_poco_1_1_text_encoding_1aa199506fe71af0bb8bef4b735880ba48:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	isA(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName) const = 0
+
+Returns true if the given name is one of the names of this encoding.
+
+For example, the "ISO-8859-1" encoding is also known as "Latin-1".
+
+Encoding name comparision are be case insensitive.
+
+.. index:: pair: function; characterMap
+.. _doxid-class_poco_1_1_text_encoding_1a7c3e03c076147725384737ec0a4471ae:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`CharacterMap<doxid-class_poco_1_1_text_encoding_1ac61121651a57a139cd625b1d23a42d09>`&
+	characterMap() const = 0
+
+Returns the CharacterMap for the encoding.
+
+The CharacterMap should be kept in a static member. As :ref:`characterMap() <doxid-class_poco_1_1_text_encoding_1a7c3e03c076147725384737ec0a4471ae>` can be called frequently, it should be implemented in such a way that it just returns a static map. If the map is built at runtime, this should be done in the constructor.
+
+.. index:: pair: function; convert
+.. _doxid-class_poco_1_1_text_encoding_1a318ff7d0d0dfc8419d2358bc68145531:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	int
+	convert(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` unsigned char* bytes) const
+
+The convert function is used to convert multibyte sequences; bytes will point to a byte sequence of n bytes where sequenceLength(bytes, length) == -n, with length >= n.
+
+The convert function must return the :ref:`Unicode <doxid-class_poco_1_1_unicode>` scalar value represented by this byte sequence or -1 if the byte sequence is malformed. The default implementation returns (int) bytes[0].
+
+.. index:: pair: function; queryConvert
+.. _doxid-class_poco_1_1_text_encoding_1a4bc2b918f47f5f705b827418ab6d222f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	int
+	queryConvert(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` unsigned char* bytes,
+		int length
+		) const
+
+The queryConvert function is used to convert single byte characters or multibyte sequences; bytes will point to a byte sequence of length bytes.
+
+The queryConvert function must return the :ref:`Unicode <doxid-class_poco_1_1_unicode>` scalar value represented by this byte sequence or -1 if the byte sequence is malformed or -n where n is number of bytes requested for the sequence, if lenght is shorter than the sequence. The length of the sequence might not be determined by the first byte, in which case the conversion becomes an iterative process: First call with length == 1 might return -2, Then a second call with lenght == 2 might return -4 Eventually, the third call with length == 4 should return either a :ref:`Unicode <doxid-class_poco_1_1_unicode>` scalar value, or -1 if the byte sequence is malformed. The default implementation returns (int) bytes[0].
+
+.. index:: pair: function; sequenceLength
+.. _doxid-class_poco_1_1_text_encoding_1abed5d214bf61c2596ccd5bf4dc80f89e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	int
+	sequenceLength(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` unsigned char* bytes,
+		int length
+		) const
+
+The sequenceLength function is used to get the lenth of the sequence pointed by bytes.
+
+The length paramater should be greater or equal to the length of the sequence.
+
+The sequenceLength function must return the lenght of the sequence represented by this byte sequence or a negative value -n if length is shorter than the sequence, where n is the number of byte requested to determine the length of the sequence. The length of the sequence might not be determined by the first byte, in which case the conversion becomes an iterative process as long as the result is negative: First call with length == 1 might return -2, Then a second call with lenght == 2 might return -4 Eventually, the third call with length == 4 should return 4. The default implementation returns 1.
+
+.. index:: pair: function; convert
+.. _doxid-class_poco_1_1_text_encoding_1afd06a207525c358bd8e3ade92393acf5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	int
+	convert(
+		int ch,
+		unsigned char* bytes,
+		int length
+		) const
+
+Transform the :ref:`Unicode <doxid-class_poco_1_1_unicode>` character ch into the encoding's byte sequence.
+
+The method returns the number of bytes used. The method must not use more than length characters. Bytes and length can also be null - in this case only the number of bytes required to represent ch is returned. If the character cannot be converted, 0 is returned and the byte sequence remains unchanged. The default implementation simply returns 0.
+
+.. index:: pair: function; byName
+.. _doxid-class_poco_1_1_text_encoding_1a692cfa762f2ffe37998126dfb0ea4e3b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	TextEncoding&
+	byName(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName)
+
+Returns the :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` object for the given encoding name.
+
+Throws a NotFoundException if the encoding with given name is not available.
+
+.. index:: pair: function; find
+.. _doxid-class_poco_1_1_text_encoding_1aa7bfe79c429b4db12209ce43511c25e8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>`
+	find(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName)
+
+Returns a pointer to the :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` object for the given encodingName, or NULL if no such :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` object exists.
+
+.. index:: pair: function; add
+.. _doxid-class_poco_1_1_text_encoding_1ac9f264cd9b8408f8f424559aac564969:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	add(:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>` encoding)
+
+Adds the given :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` to the table of text encodings, under the encoding's canonical name.
+
+If an encoding with the given name is already registered, it is replaced.
+
+.. index:: pair: function; add
+.. _doxid-class_poco_1_1_text_encoding_1a7b6fa47ee7d0db456a77ed7c30f97216:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	add(
+		:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>` encoding,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name
+		)
+
+Adds the given :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` to the table of text encodings, under the given name.
+
+If an encoding with the given name is already registered, it is replaced.
+
+.. index:: pair: function; remove
+.. _doxid-class_poco_1_1_text_encoding_1a14ffc4ec7564c0387e3835aa6fa07c25:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	remove(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& encodingName)
+
+Removes the encoding with the given name from the table of text encodings.
+
+.. index:: pair: function; global
+.. _doxid-class_poco_1_1_text_encoding_1aa63fca18ba67b616ce17cf9448d497b4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>`
+	global(:ref:`TextEncoding::Ptr<doxid-class_poco_1_1_text_encoding_1ac3f8a98d778ac1dc2e6e6020f303d229>` encoding)
+
+Sets global :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` object.
+
+This function sets the global encoding to the argument and returns a reference of the previous global encoding.
+
+.. index:: pair: function; global
+.. _doxid-class_poco_1_1_text_encoding_1a3c13a27371bddf520833a119cd902fd7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	TextEncoding&
+	global()
+
+Return the current global :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` object.
+
+.. index:: pair: function; manager
+.. _doxid-class_poco_1_1_text_encoding_1abc5ef93c0fe78d3a9dba02a542b1f620:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	TextEncodingManager&
+	manager()
+
+Returns the TextEncodingManager.
+

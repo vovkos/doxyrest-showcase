@@ -1,0 +1,348 @@
+.. index:: pair: example; grabcut.cpp
+.. _doxid-de/dd0/grabcut_8cpp-example:
+
+grabcut.cpp
+===========
+
+An example using the GrabCut algorithm
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	
+	#include <iostream>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	static void help()
+	{
+	    cout << "\nThis program demonstrates GrabCut segmentation -- select an object in a region\n"
+	            "and then grabcut will attempt to segment it out.\n"
+	            "Call:\n"
+	            "./grabcut <image_name>\n"
+	        "\nSelect a rectangular area around the object you want to segment\n" <<
+	        "\nHot keys: \n"
+	        "\tESC - quit the program\n"
+	        "\tr - restore the original image\n"
+	        "\tn - next iteration\n"
+	        "\n"
+	        "\tleft mouse button - set rectangle\n"
+	        "\n"
+	        "\tCTRL+left mouse button - set GC_BGD pixels\n"
+	        "\tSHIFT+left mouse button - set GC_FGD pixels\n"
+	        "\n"
+	        "\tCTRL+right mouse button - set GC_PR_BGD pixels\n"
+	        "\tSHIFT+right mouse button - set GC_PR_FGD pixels\n" << endl;
+	}
+	
+	const Scalar RED = :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,0,255);
+	const Scalar PINK = :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(230,130,255);
+	const Scalar BLUE = :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255,0,0);
+	const Scalar LIGHTBLUE = :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255,255,160);
+	const Scalar GREEN = :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,255,0);
+	
+	const int BGD_KEY = :ref:`EVENT_FLAG_CTRLKEY <doxid-d7/dfc/group__highgui_1ggaab4dc057947f70058c80626c9f1c25cea5876848aeb4e7cc282d461f94e45a07f>`;
+	const int FGD_KEY = :ref:`EVENT_FLAG_SHIFTKEY <doxid-d7/dfc/group__highgui_1ggaab4dc057947f70058c80626c9f1c25cea61da926b22fd4fd3aa226ef1d2893102>`;
+	
+	static void getBinMask( const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& comMask, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& binMask )
+	{
+	    if( comMask.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() || comMask.:ref:`type <doxid-db/de6/classcv_1_1_mat_1af2d2652e552d7de635988f18a84b53e5>`()!=:ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>` )
+	        :ref:`CV_Error <doxid-db/de0/group__core__utils_1ga5b48c333c777666e076bd7052799f891>`( :ref:`Error::StsBadArg <doxid-d6/d43/namespacecv_1_1_error_1a759fa1af92f7aa7377c76ffb142abccaaf587497af64537041ee62c04a92b755d>`, "comMask is empty or has incorrect type (not CV_8UC1)" );
+	    if( binMask.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() || binMask.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`!=comMask.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` || binMask.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`!=comMask.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` )
+	        binMask.:ref:`create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>`( comMask.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>` );
+	    binMask = comMask & 1;
+	}
+	
+	class GCApplication
+	{
+	public:
+	    enum{ NOT_SET = 0, IN_PROCESS = 1, SET = 2 };
+	    static const int radius = 2;
+	    static const int thickness = -1;
+	
+	    void reset();
+	    void setImageAndWinName( const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& _image, const string& _winName );
+	    void showImage() const;
+	    void mouseClick( int event, int x, int y, int flags, void* param );
+	    int nextIter();
+	    int getIterCount() const { return iterCount; }
+	private:
+	    void setRectInMask();
+	    void setLblsInMask( int flags, Point p, bool isPr );
+	
+	    const string* winName;
+	    const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`* image;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mask;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` bgdModel, fgdModel;
+	
+	    :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>` rectState, lblsState, prLblsState;
+	    bool isInitialized;
+	
+	    :ref:`Rect <doxid-d6/db0/classcv_1_1_rect__>` rect;
+	    vector<Point> fgdPxls, bgdPxls, prFgdPxls, prBgdPxls;
+	    int iterCount;
+	};
+	
+	void GCApplication::reset()
+	{
+	    if( !mask.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+	        mask.:ref:`setTo <doxid-db/de6/classcv_1_1_mat_1a0440e2a164c0b0d8462fb1e487be9876>`(Scalar::all(:ref:`GC_BGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38a889f1ce109543e8aed80a7abbc6dcb39>`));
+	    bgdPxls.clear(); fgdPxls.clear();
+	    prBgdPxls.clear();  prFgdPxls.clear();
+	
+	    isInitialized = false;
+	    rectState = NOT_SET;
+	    lblsState = NOT_SET;
+	    prLblsState = NOT_SET;
+	    iterCount = 0;
+	}
+	
+	void GCApplication::setImageAndWinName( const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& _image, const string& _winName  )
+	{
+	    if( _image.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() || _winName.empty() )
+	        return;
+	    image = &_image;
+	    winName = &_winName;
+	    mask.:ref:`create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>`( image->size(), :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	    reset();
+	}
+	
+	void GCApplication::showImage() const
+	{
+	    if( image->empty() || winName->empty() )
+	        return;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` res;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` binMask;
+	    if( !isInitialized )
+	        image->:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`( res );
+	    else
+	    {
+	        getBinMask( mask, binMask );
+	        image->copyTo( res, binMask );
+	    }
+	
+	    vector<Point>::const_iterator it;
+	    for( it = bgdPxls.begin(); it != bgdPxls.end(); ++it )
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( res, *it, radius, BLUE, thickness );
+	    for( it = fgdPxls.begin(); it != fgdPxls.end(); ++it )
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( res, *it, radius, RED, thickness );
+	    for( it = prBgdPxls.begin(); it != prBgdPxls.end(); ++it )
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( res, *it, radius, LIGHTBLUE, thickness );
+	    for( it = prFgdPxls.begin(); it != prFgdPxls.end(); ++it )
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( res, *it, radius, PINK, thickness );
+	
+	    if( rectState == IN_PROCESS || rectState == SET )
+	        :ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( res, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( rect.x, rect.y ), Point(rect.x + rect.width, rect.y + rect.height ), GREEN, 2);
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( *winName, res );
+	}
+	
+	void GCApplication::setRectInMask()
+	{
+	    :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`( !mask.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() );
+	    mask.:ref:`setTo <doxid-db/de6/classcv_1_1_mat_1a0440e2a164c0b0d8462fb1e487be9876>`( :ref:`GC_BGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38a889f1ce109543e8aed80a7abbc6dcb39>` );
+	    rect.x = :ref:`max <doxid-d2/d75/namespacecv_1a78f988f6cfa6223610298cbd4f86ec66>`(0, rect.x);
+	    rect.y = :ref:`max <doxid-d2/d75/namespacecv_1a78f988f6cfa6223610298cbd4f86ec66>`(0, rect.y);
+	    rect.width = :ref:`min <doxid-d2/d75/namespacecv_1ac48df53b8fd34b87e7b121fa8fd4c379>`(rect.width, image->cols-rect.x);
+	    rect.height = :ref:`min <doxid-d2/d75/namespacecv_1ac48df53b8fd34b87e7b121fa8fd4c379>`(rect.height, image->rows-rect.y);
+	    (mask(rect)).setTo( :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(:ref:`GC_PR_FGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38ad33184b73cb87e08d29e0a3411b7c863>`) );
+	}
+	
+	void GCApplication::setLblsInMask( int flags, Point p, bool isPr )
+	{
+	    vector<Point> *bpxls, *fpxls;
+	    :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>` bvalue, fvalue;
+	    if( !isPr )
+	    {
+	        bpxls = &bgdPxls;
+	        fpxls = &fgdPxls;
+	        bvalue = :ref:`GC_BGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38a889f1ce109543e8aed80a7abbc6dcb39>`;
+	        fvalue = :ref:`GC_FGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38a4757c1f0587bcf6e53e86dee7689a649>`;
+	    }
+	    else
+	    {
+	        bpxls = &prBgdPxls;
+	        fpxls = &prFgdPxls;
+	        bvalue = :ref:`GC_PR_BGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38af748414821c7f39fab3493f9eed1eedf>`;
+	        fvalue = :ref:`GC_PR_FGD <doxid-d7/d1b/group__imgproc__misc_1ggad43d3e4208d3cf025d8304156b02ba38ad33184b73cb87e08d29e0a3411b7c863>`;
+	    }
+	    if( flags & BGD_KEY )
+	    {
+	        bpxls->push_back(p);
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( mask, p, radius, bvalue, thickness );
+	    }
+	    if( flags & FGD_KEY )
+	    {
+	        fpxls->push_back(p);
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( mask, p, radius, fvalue, thickness );
+	    }
+	}
+	
+	void GCApplication::mouseClick( int event, int x, int y, int flags, void* )
+	{
+	    // TODO add bad args check
+	    switch( event )
+	    {
+	    case :ref:`EVENT_LBUTTONDOWN <doxid-d7/dfc/group__highgui_1gga927593befdddc7e7013602bca9b079b0ad3419100fc2d7688c6dbe3da030fbfd9>`: // set rect or GC_BGD(GC_FGD) labels
+	        {
+	            bool isb = (flags & BGD_KEY) != 0,
+	                 isf = (flags & FGD_KEY) != 0;
+	            if( rectState == NOT_SET && !isb && !isf )
+	            {
+	                rectState = IN_PROCESS;
+	                rect = :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`( x, y, 1, 1 );
+	            }
+	            if ( (isb || isf) && rectState == SET )
+	                lblsState = IN_PROCESS;
+	        }
+	        break;
+	    case :ref:`EVENT_RBUTTONDOWN <doxid-d7/dfc/group__highgui_1gga927593befdddc7e7013602bca9b079b0aa3536f83b6f48da5121041f58fc7a683>`: // set GC_PR_BGD(GC_PR_FGD) labels
+	        {
+	            bool isb = (flags & BGD_KEY) != 0,
+	                 isf = (flags & FGD_KEY) != 0;
+	            if ( (isb || isf) && rectState == SET )
+	                prLblsState = IN_PROCESS;
+	        }
+	        break;
+	    case :ref:`EVENT_LBUTTONUP <doxid-d7/dfc/group__highgui_1gga927593befdddc7e7013602bca9b079b0a59cad7ffe959adf2782a110196d47bf6>`:
+	        if( rectState == IN_PROCESS )
+	        {
+	            rect = :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`( :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(rect.x, rect.y), Point(x,y) );
+	            rectState = SET;
+	            setRectInMask();
+	            :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`( bgdPxls.empty() && fgdPxls.empty() && prBgdPxls.empty() && prFgdPxls.empty() );
+	            showImage();
+	        }
+	        if( lblsState == IN_PROCESS )
+	        {
+	            setLblsInMask(flags, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(x,y), false);
+	            lblsState = SET;
+	            showImage();
+	        }
+	        break;
+	    case :ref:`EVENT_RBUTTONUP <doxid-d7/dfc/group__highgui_1gga927593befdddc7e7013602bca9b079b0aacdda7d94278928c34b61a7bd8be9f62>`:
+	        if( prLblsState == IN_PROCESS )
+	        {
+	            setLblsInMask(flags, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(x,y), true);
+	            prLblsState = SET;
+	            showImage();
+	        }
+	        break;
+	    case :ref:`EVENT_MOUSEMOVE <doxid-d7/dfc/group__highgui_1gga927593befdddc7e7013602bca9b079b0a8f2ec5fd35fe3f4b696518b146dcf675>`:
+	        if( rectState == IN_PROCESS )
+	        {
+	            rect = :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`( :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(rect.x, rect.y), Point(x,y) );
+	            :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`( bgdPxls.empty() && fgdPxls.empty() && prBgdPxls.empty() && prFgdPxls.empty() );
+	            showImage();
+	        }
+	        else if( lblsState == IN_PROCESS )
+	        {
+	            setLblsInMask(flags, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(x,y), false);
+	            showImage();
+	        }
+	        else if( prLblsState == IN_PROCESS )
+	        {
+	            setLblsInMask(flags, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(x,y), true);
+	            showImage();
+	        }
+	        break;
+	    }
+	}
+	
+	int GCApplication::nextIter()
+	{
+	    if( isInitialized )
+	        :ref:`grabCut <doxid-d7/d1b/group__imgproc__misc_1ga909c1dda50efcbeaa3ce126be862b37f>`( *image, mask, rect, bgdModel, fgdModel, 1 );
+	    else
+	    {
+	        if( rectState != SET )
+	            return iterCount;
+	
+	        if( lblsState == SET || prLblsState == SET )
+	            :ref:`grabCut <doxid-d7/d1b/group__imgproc__misc_1ga909c1dda50efcbeaa3ce126be862b37f>`( *image, mask, rect, bgdModel, fgdModel, 1, :ref:`GC_INIT_WITH_MASK <doxid-d7/d1b/group__imgproc__misc_1ggaf8b5832ba85e59fc7a98a2afd034e558ab01527c7effb50fd1c54d8c4e671ed22>` );
+	        else
+	            :ref:`grabCut <doxid-d7/d1b/group__imgproc__misc_1ga909c1dda50efcbeaa3ce126be862b37f>`( *image, mask, rect, bgdModel, fgdModel, 1, :ref:`GC_INIT_WITH_RECT <doxid-d7/d1b/group__imgproc__misc_1ggaf8b5832ba85e59fc7a98a2afd034e558a5f8853c1e5a89c4aa2687d1f78a7e550>` );
+	
+	        isInitialized = true;
+	    }
+	    iterCount++;
+	
+	    bgdPxls.clear(); fgdPxls.clear();
+	    prBgdPxls.clear(); prFgdPxls.clear();
+	
+	    return iterCount;
+	}
+	
+	GCApplication gcapp;
+	
+	static void on_mouse( int event, int x, int y, int flags, void* param )
+	{
+	    gcapp.mouseClick( event, x, y, flags, param );
+	}
+	
+	int main( int argc, char** argv )
+	{
+	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{help h||}{@input||}");
+	    if (parser.has("help"))
+	    {
+	        help();
+	        return 0;
+	    }
+	    string filename = parser.get<string>("@input");
+	    if( filename.empty() )
+	    {
+	        cout << "\nDurn, empty filename" << endl;
+	        return 1;
+	    }
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( filename, 1 );
+	    if( image.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+	    {
+	        cout << "\n Durn, couldn't read image filename " << filename << endl;
+	        return 1;
+	    }
+	
+	    help();
+	
+	    const string winName = "image";
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( winName, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	    :ref:`setMouseCallback <doxid-d7/dfc/group__highgui_1ga89e7806b0a616f6f1d502bd8c183ad3e>`( winName, on_mouse, 0 );
+	
+	    gcapp.setImageAndWinName( image, winName );
+	    gcapp.showImage();
+	
+	    for(;;)
+	    {
+	        char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	        switch( c )
+	        {
+	        case '\x1b':
+	            cout << "Exiting ..." << endl;
+	            goto exit_main;
+	        case 'r':
+	            cout << endl;
+	            gcapp.reset();
+	            gcapp.showImage();
+	            break;
+	        case 'n':
+	            int iterCount = gcapp.getIterCount();
+	            cout << "<" << iterCount << "... ";
+	            int newIterCount = gcapp.nextIter();
+	            if( newIterCount > iterCount )
+	            {
+	                gcapp.showImage();
+	                cout << iterCount << ">" << endl;
+	            }
+	            else
+	                cout << "rect must be determined>" << endl;
+	            break;
+	        }
+	    }
+	
+	exit_main:
+	    :ref:`destroyWindow <doxid-d7/dfc/group__highgui_1ga851ccdd6961022d1d5b4c4f255dbab34>`( winName );
+	    return 0;
+	}

@@ -1,0 +1,337 @@
+.. index:: pair: class; Poco::Timer
+.. _doxid-class_poco_1_1_timer:
+
+class Poco::Timer
+=================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class implements a thread-based timer. :ref:`More...<details-class_poco_1_1_timer>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Timer.h>
+	
+	class Timer: protected :ref:`Poco::Runnable<doxid-class_poco_1_1_runnable>`
+	{
+	public:
+		// construction
+	
+		:ref:`Timer<doxid-class_poco_1_1_timer_1ae18e0fd1d13a569bfa177a24fb69865f>`(
+			long startInterval = 0,
+			long periodicInterval = 0
+			);
+
+		// methods
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_timer_1ad19e42887efd1ea7c656047399e2a966>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method);
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_timer_1a6004396696b2dd5a112180d8ac1f3b7b>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method,
+			:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority
+			);
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_timer_1aeb6a6b1493262161afea2763624f7b86>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method,
+			:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& threadPool
+			);
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_timer_1aac71f593d6248f819c30c56e0ede1d8b>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method,
+			:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority,
+			:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& threadPool
+			);
+	
+		void
+		:ref:`stop<doxid-class_poco_1_1_timer_1a416ca5703263d7e121136d1d2d8cd40f>`();
+	
+		void
+		:ref:`restart<doxid-class_poco_1_1_timer_1a7a7efbcfcbcd9b9ff4dd275073a5e8be>`();
+	
+		void
+		:ref:`restart<doxid-class_poco_1_1_timer_1a048dd7be725bf974a54ff222746421aa>`(long milliseconds);
+	
+		long
+		:ref:`getStartInterval<doxid-class_poco_1_1_timer_1a05d2b0f3e02bf0d0143b72d5a0b31bd3>`() const;
+	
+		void
+		:ref:`setStartInterval<doxid-class_poco_1_1_timer_1a9e46e073fb6993618db7d8ef7d1eca4d>`(long milliseconds);
+	
+		long
+		:ref:`getPeriodicInterval<doxid-class_poco_1_1_timer_1a480c4fa73087551d5a184e62bd778978>`() const;
+	
+		void
+		:ref:`setPeriodicInterval<doxid-class_poco_1_1_timer_1a949d077f78c791f625ab51680bb2e6de>`(long milliseconds);
+	
+		long
+		:ref:`skipped<doxid-class_poco_1_1_timer_1a20210f97f166691d7d775f0f206cc344>`() const;
+
+	protected:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_timer_1a20bf1784de6d745d805fea3aec49a235>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>`() = 0;
+
+.. _details-class_poco_1_1_timer:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements a thread-based timer.
+
+A timer starts a thread that first waits for a given start interval. Once that interval expires, the timer callback is called repeatedly in the given periodic interval. If the interval is 0, the timer is only called once. The timer callback method can stop the timer by setting the timer's periodic interval to 0.
+
+The timer callback runs in its own thread, so multithreading issues (proper synchronization) have to be considered when writing the callback method.
+
+The exact interval at which the callback is called depends on many factors like operating system, CPU performance and system load and may differ from the specified interval.
+
+The time needed to execute the timer callback is not included in the interval between invocations. For example, if the interval is 500 milliseconds, and the callback needs 400 milliseconds to execute, the callback function is nevertheless called every 500 milliseconds. If the callback takes longer to execute than the interval, the callback function will not be called until the next proper interval. The number of skipped invocations since the last invocation will be recorded and can be obtained by the callback by calling :ref:`skipped() <doxid-class_poco_1_1_timer_1a20210f97f166691d7d775f0f206cc344>`.
+
+The timer thread is taken from a thread pool, so there is a limit to the number of available concurrent timers.
+
+Construction
+------------
+
+.. index:: pair: function; Timer
+.. _doxid-class_poco_1_1_timer_1ae18e0fd1d13a569bfa177a24fb69865f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Timer(
+		long startInterval = 0,
+		long periodicInterval = 0
+		)
+
+Creates a new timer object.
+
+StartInterval and periodicInterval are given in milliseconds. If a periodicInterval of zero is specified, the callback will only be called once, after the startInterval expires. To start the timer, call the Start() method.
+
+Methods
+-------
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_timer_1ad19e42887efd1ea7c656047399e2a966:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method)
+
+Starts the timer.
+
+Create the :ref:`TimerCallback <doxid-class_poco_1_1_timer_callback>` as follows:
+
+.. ref-code-block:: cpp
+
+	TimerCallback<MyClass> callback(*this, &MyClass::onTimer);
+	timer.start(callback);
+
+The timer thread is taken from the global default thread pool.
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_timer_1a6004396696b2dd5a112180d8ac1f3b7b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method,
+		:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority
+		)
+
+Starts the timer in a thread with the given priority.
+
+Create the :ref:`TimerCallback <doxid-class_poco_1_1_timer_callback>` as follows:
+
+.. ref-code-block:: cpp
+
+	TimerCallback<MyClass> callback(*this, &MyClass::onTimer);
+	timer.start(callback);
+
+The timer thread is taken from the global default thread pool.
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_timer_1aeb6a6b1493262161afea2763624f7b86:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method,
+		:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& threadPool
+		)
+
+Starts the timer.
+
+Create the :ref:`TimerCallback <doxid-class_poco_1_1_timer_callback>` as follows:
+
+.. ref-code-block:: cpp
+
+	TimerCallback<MyClass> callback(*this, &MyClass::onTimer);
+	timer.start(callback);
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_timer_1aac71f593d6248f819c30c56e0ede1d8b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractTimerCallback<doxid-class_poco_1_1_abstract_timer_callback>`& method,
+		:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority,
+		:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& threadPool
+		)
+
+Starts the timer in a thread with the given priority.
+
+Create the :ref:`TimerCallback <doxid-class_poco_1_1_timer_callback>` as follows:
+
+.. ref-code-block:: cpp
+
+	TimerCallback<MyClass> callback(*this, &MyClass::onTimer);
+	timer.start(callback);
+
+.. index:: pair: function; stop
+.. _doxid-class_poco_1_1_timer_1a416ca5703263d7e121136d1d2d8cd40f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	stop()
+
+Stops the timer.
+
+If the callback method is currently running it will be allowed to finish first. WARNING: Never call this method from within the callback method, as a deadlock would result. To stop the timer from within the callback method, call restart(0).
+
+.. index:: pair: function; restart
+.. _doxid-class_poco_1_1_timer_1a7a7efbcfcbcd9b9ff4dd275073a5e8be:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	restart()
+
+Restarts the periodic interval.
+
+If the callback method is already running, nothing will happen.
+
+.. index:: pair: function; restart
+.. _doxid-class_poco_1_1_timer_1a048dd7be725bf974a54ff222746421aa:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	restart(long milliseconds)
+
+Sets a new periodic interval and restarts the timer.
+
+An interval of 0 will stop the timer.
+
+.. index:: pair: function; getStartInterval
+.. _doxid-class_poco_1_1_timer_1a05d2b0f3e02bf0d0143b72d5a0b31bd3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	long
+	getStartInterval() const
+
+Returns the start interval.
+
+.. index:: pair: function; setStartInterval
+.. _doxid-class_poco_1_1_timer_1a9e46e073fb6993618db7d8ef7d1eca4d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setStartInterval(long milliseconds)
+
+Sets the start interval.
+
+Will only be effective before :ref:`start() <doxid-class_poco_1_1_timer_1ad19e42887efd1ea7c656047399e2a966>` is called.
+
+.. index:: pair: function; getPeriodicInterval
+.. _doxid-class_poco_1_1_timer_1a480c4fa73087551d5a184e62bd778978:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	long
+	getPeriodicInterval() const
+
+Returns the periodic interval.
+
+.. index:: pair: function; setPeriodicInterval
+.. _doxid-class_poco_1_1_timer_1a949d077f78c791f625ab51680bb2e6de:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setPeriodicInterval(long milliseconds)
+
+Sets the periodic interval.
+
+If the timer is already running the new interval will be effective when the current interval expires.
+
+.. index:: pair: function; skipped
+.. _doxid-class_poco_1_1_timer_1a20210f97f166691d7d775f0f206cc344:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	long
+	skipped() const
+
+Returns the number of skipped invocations since the last invocation.
+
+Skipped invocations happen if the timer callback function takes longer to execute than the timer interval.
+
+.. index:: pair: function; run
+.. _doxid-class_poco_1_1_timer_1a20bf1784de6d745d805fea3aec49a235:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	run()
+
+Do whatever the thread needs to do.
+
+Must be overridden by subclasses.
+

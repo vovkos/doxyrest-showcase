@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>class cv::StereoBM &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="class cv::StereoMatcher" href="class_cv_StereoMatcher.html" />
+    <link rel="prev" title="enum cv::CirclesGridFinderParameters::GridType" href="enum_cv_CirclesGridFinderParameters_GridType.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_calib3d_c.html">C API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_calib3d_fisheye.html">Fisheye camera model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_cv_CirclesGridFinderParameters.html">struct cv::CirclesGridFinderParameters</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">class cv::StereoBM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#inherited-members">Inherited Members</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_StereoMatcher.html">class cv::StereoMatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_StereoSGBM.html">class cv::StereoSGBM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_calib3d.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_calib3d.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a> &raquo;</li>
+        
+      <li>class cv::StereoBM</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-cv-stereobm">
+<span id="doxid-d1-db9-classcv-1-1-stereo-b-m"></span><span id="index-0"></span><h1>class cv::StereoBM</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<p>Class for computing stereo correspondence using the block matching algorithm, introduced and contributed to OpenCV by K. Konolige. <a class="reference internal" href="#details-d1-db9-classcv-1-1-stereo-b-m"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;calib3d.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">class</span> <span class="nl">StereoBM</span><span class="p">:</span> <span class="k">public</span> <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher"><span class="std std-ref">cv::StereoMatcher</span></a><span></span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// enums</span>
+
+    <span class="k">enum</span>
+    <span class="p">{</span>
+        <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a5a1107f4879559037cf2eb657605399ca9b5f32162b35799e3c29e1bfd73e93df">PREFILTER_NORMALIZED_RESPONSE</span><span></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a5a1107f4879559037cf2eb657605399cabf381e03e290b2b94541738193a6abd6">PREFILTER_XSOBEL</span><span></span>              <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">};</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1aa1659733652473662da8e2e2a6dd83fa">getPreFilterCap</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1ac8b5569ca0dd322e5c6436e25aef833a">getPreFilterSize</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a2c148484f1b69d300e608c6a52dfe537">getPreFilterType</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a6b44df190e8f3ae0b06707e231dfe14f">getROI1</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1ae7a58914c4448aa417b88415ab45b9a1">getROI2</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a6c048feee99fb565d0dd14c23b9f4a3c">getSmallerBlockSize</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a1b6a29dd617f05fd30a0a67bac5e830b">getTextureThreshold</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a4a1181713b16fe730e186fe5d8021339">getUniquenessRatio</span><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a19c6de399420337984db65aec28fc6b3">setPreFilterCap</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">preFilterCap</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a6edbcfd1dd79c9ba0c76a206741b4719">setPreFilterSize</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">preFilterSize</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1ae44e1b05ac1b36917cd5fb4d4fd1d7c2">setPreFilterType</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">preFilterType</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a4bc3beb14fb5db0d58533fa101de20a2">setROI1</span><span></span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span> <span class="n">roi1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1ae4b5129722296e505bfba9fac46d43a2">setROI2</span><span></span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span> <span class="n">roi2</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1abb6280255bb070f51ade69d6455216d6">setSmallerBlockSize</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">blockSize</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1aaee69730b91d606744cc4c5d9d8590e7">setTextureThreshold</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">textureThreshold</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <span class="doxyrest-code-target target" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1ab60fc9ac381c1fde378bbc205f4d5c8f">setUniquenessRatio</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">uniquenessRatio</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">static</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><span class="n">StereoBM</span><span class="o">&gt;</span>
+    <a class="reference internal" href="#doxid-d1-db9-classcv-1-1-stereo-b-m-1a04fdf00525f82fe708d556e2cd359004"><span class="std std-ref">create</span></a><span></span><span class="p">(</span>
+        <span class="kt">int</span> <span class="n">numDisparities</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="kt">int</span> <span class="n">blockSize</span> <span class="o">=</span> <span class="mi">21</span>
+        <span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// direct descendants</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_cuda_StereoBM.html#doxid-d8-d05-classcv-1-1cuda-1-1-stereo-b-m"><span class="std std-ref">StereoBM</span></a><span></span><span class="p">;</span>
+</pre>
+<div class="section" id="inherited-members">
+<h3>Inherited Members</h3>
+<pre class="highlight doxyrest-overview-inherited-code-block literal-block">
+<span></span><span class="k">public</span><span class="o">:</span>
+    <span class="c1">// enums</span>
+
+    <span class="k">enum</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1ab69953c160bd7705ef0454aad36af73aa6aadf3b0bd4503bde2531592e5f90e0b"><span class="std std-ref">DISP_SHIFT</span></a><span></span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1ab69953c160bd7705ef0454aad36af73aa5b4b128a781d8002c3bc2640912295a4"><span class="std std-ref">DISP_SCALE</span></a><span></span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="n">DISP_SHIFT</span><span class="p">),</span>
+    <span class="p">};</span>
+
+    <span class="c1">// methods</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1aec9c965448e4dc851d7cacd3abd84cd1"><span class="std std-ref">clear</span></a><span></span><span class="p">();</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">bool</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1ab6a18f1825475643e94381697d413972"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1a286fc82744ccab3d248aca44524266a9"><span class="std std-ref">getDefaultName</span></a><span></span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1aef2ad3f4145bd6e8c3664eb1c4b5e1e6"><span class="std std-ref">read</span></a><span></span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">FileNode</span></a><span></span><span class="o">&amp;</span> <span class="n">fn</span><span class="p">);</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1a0a880744bc4e3f45711444571df47d67"><span class="std std-ref">save</span></a><span></span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1a1f8ad7b8add515077367fb9949a174d2"><span class="std std-ref">write</span></a><span></span><span class="p">(</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a><span></span><span class="o">&amp;</span> <span class="n">fs</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">_Tp</span><span class="o">&gt;</span>
+    <span class="k">static</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1a623841c33b58ea9c4847da04607e067b"><span class="std std-ref">load</span></a><span></span><span class="p">(</span>
+        <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span>
+        <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">objname</span> <span class="o">=</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="p">()</span>
+        <span class="p">);</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">_Tp</span><span class="o">&gt;</span>
+    <span class="k">static</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1a3ba305a10d02479c13cf7d169c321547"><span class="std std-ref">loadFromString</span></a><span></span><span class="p">(</span>
+        <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">strModel</span><span class="p">,</span>
+        <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">objname</span> <span class="o">=</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="p">()</span>
+        <span class="p">);</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">_Tp</span><span class="o">&gt;</span>
+    <span class="k">static</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1ad8c591bacb34c485f5b7a250c314fc53"><span class="std std-ref">read</span></a><span></span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">FileNode</span></a><span></span><span class="o">&amp;</span> <span class="n">fn</span><span class="p">);</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a03f7087df1b2c618462eb98898841345"><span class="std std-ref">compute</span></a><span></span><span class="p">(</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">left</span><span class="p">,</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">right</span><span class="p">,</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">disparity</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a9ab4290840ac7a9270af455f74b30b98"><span class="std std-ref">getBlockSize</span></a><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a0ca2c2ab88e7ecac58720134867ea072"><span class="std std-ref">getDisp12MaxDiff</span></a><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1abd790d22519d3c0d4fcb8e3210d11b13"><span class="std std-ref">getMinDisparity</span></a><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1ab3a3d5f5a49f77be0b965557e17d9fdd"><span class="std std-ref">getNumDisparities</span></a><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1afb686d0de4551e86306f10509632fa24"><span class="std std-ref">getSpeckleRange</span></a><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">int</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a1be922bd3111d427fd2ddc8448537c35"><span class="std std-ref">getSpeckleWindowSize</span></a><span></span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a38814e8a33d59f4eb5db33de04fe8c34"><span class="std std-ref">setBlockSize</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">blockSize</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1aede8620506ff7f27d106fff25777514d"><span class="std std-ref">setDisp12MaxDiff</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">disp12MaxDiff</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1ae67a506bfe7fbd37444b6713aea1c0ad"><span class="std std-ref">setMinDisparity</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">minDisparity</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1abacfe4e5760e86b48d0c19bd4106c2fc"><span class="std std-ref">setNumDisparities</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">numDisparities</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a3c9106923f87592b98bf53e90bcba020"><span class="std std-ref">setSpeckleRange</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">speckleRange</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">virtual</span>
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1ad21033d76ad7cdf36a5c8bb6cd946d43"><span class="std std-ref">setSpeckleWindowSize</span></a><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">speckleWindowSize</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="c1">// methods</span>
+
+    <span class="kt">void</span>
+    <a class="reference internal" href="class_cv_Algorithm.html#doxid-d1-d41-classcv-1-1-algorithm-1a68eeca71617474ad3d4561786f0289d2"><span class="std std-ref">writeFormat</span></a><span></span><span class="p">(</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a><span></span><span class="o">&amp;</span> <span class="n">fs</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+</pre>
+</div>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d1-db9-classcv-1-1-stereo-b-m"></span><h2>Detailed Documentation</h2>
+<p>Class for computing stereo correspondence using the block matching algorithm, introduced and contributed to OpenCV by K. Konolige.</p>
+<div class="section" id="methods">
+<h3>Methods</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d1-db9-classcv-1-1-stereo-b-m-1a04fdf00525f82fe708d556e2cd359004">
+<span id="index-1"></span><span></span><span class="k">static</span>
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><span class="n">StereoBM</span><span class="o">&gt;</span>
+<span class="n">create</span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">numDisparities</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span> <span class="o">=</span> <span class="mi">21</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates <a class="reference internal" href="#doxid-d1-db9-classcv-1-1-stereo-b-m"><span class="std std-ref">StereoBM</span></a> object.</p>
+<p>The function create <a class="reference internal" href="#doxid-d1-db9-classcv-1-1-stereo-b-m"><span class="std std-ref">StereoBM</span></a> object. You can then call <a class="reference internal" href="class_cv_StereoMatcher.html#doxid-dd-ddc-classcv-1-1-stereo-matcher-1a03f7087df1b2c618462eb98898841345"><span class="std std-ref">StereoBM::compute()</span></a> to compute disparity for a specific stereo pair.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>numDisparities</td>
+<td>the disparity search range. For each pixel algorithm will find the best disparity from 0 (default minimum disparity) to numDisparities. The search range can then be shifted by changing the minimum disparity.</td>
+</tr>
+<tr class="row-even"><td>blockSize</td>
+<td>the linear size of the blocks compared by the algorithm. The size should be odd (as the block is centered at the current pixel). Larger block size implies smoother, though less accurate disparity map. Smaller block size gives more detailed disparity map, but there is higher chance for algorithm to find a wrong correspondence.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="class_cv_StereoMatcher.html" class="btn btn-neutral float-right" title="class cv::StereoMatcher" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="enum_cv_CirclesGridFinderParameters_GridType.html" class="btn btn-neutral float-left" title="enum cv::CirclesGridFinderParameters::GridType" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

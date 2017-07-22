@@ -1,0 +1,707 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Real Time pose estimation of a textured object &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Computational photography (photo module)" href="page_tutorial_table_of_content_photo.html" />
+    <link rel="prev" title="Interactive camera calibration application" href="page_tutorial_interactive_calibration.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_photo.html" title="Computational photography (photo module)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_interactive_calibration.html" title="Interactive camera calibration application"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_calib3d.html" accesskey="U">Camera calibration and 3D reconstruction (calib3d module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_interactive_calibration.html"
+                        title="previous chapter">Interactive camera calibration application</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_photo.html"
+                        title="next chapter">Computational photography (photo module)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="real-time-pose-estimation-of-a-textured-object">
+<span id="doxid-dc-d2c-tutorial-real-time-pose"></span><span id="index-0"></span><h1>Real Time pose estimation of a textured object</h1>
+<p>Nowadays, augmented reality is one of the top research topic in computer vision and robotics fields. The most elemental problem in augmented reality is the estimation of the camera pose respect of an object in the case of computer vision area to do later some 3D rendering or in the case of robotics obtain an object pose in order to grasp it and do some manipulation. However, this is not a trivial problem to solve due to the fact that the most common issue in image processing is the computational cost of applying a lot of algorithms or mathematical operations for solving a problem which is basic and immediateley for humans.</p>
+<p class="rubric">Goal</p>
+<p>In this tutorial is explained how to build a real time application to estimate the camera pose in order to track a textured object with six degrees of freedom given a 2D image and its 3D textured model.</p>
+<p>The application will have the followings parts:</p>
+<ul class="simple">
+<li>Read 3D textured object model and object mesh.</li>
+<li>Take input from Camera or Video.</li>
+<li>Extract ORB features and descriptors from the scene.</li>
+<li>Match scene descriptors with model descriptors using Flann matcher.</li>
+<li>Pose estimation using PnP + Ransac.</li>
+<li>Linear Kalman Filter for bad poses rejection.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>In computer vision estimate the camera pose from <em>n</em> 3D-to-2D point correspondences is a fundamental and well understood problem. The most general version of the problem requires estimating the six degrees of freedom of the pose and five calibration parameters: focal length, principal point, aspect ratio and skew. It could be established with a minimum of 6 correspondences, using the well known Direct Linear Transform (DLT) algorithm. There are, though, several simplifications to the problem which turn into an extensive list of different algorithms that improve the accuracy of the DLT.</p>
+<p>The most common simplification is to assume known calibration parameters which is the so-called Perspective-*n*-Point problem:</p>
+<img alt="_images/pnp.jpg" src="_images/pnp.jpg" />
+<p><strong>Problem Formulation:</strong> Given a set of correspondences between 3D points <span class="math notranslate nohighlight">\(p_i\)</span> expressed in a world reference frame, and their 2D projections <span class="math notranslate nohighlight">\(u_i\)</span> onto the image, we seek to retrieve the pose (<span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(t\)</span>) of the camera w.r.t. the world and the focal length <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<p>OpenCV provides four different approaches to solve the Perspective-*n*-Point problem which return <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(t\)</span>. Then, using the following formula it’s possible to project 3D points into the image plane:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}s\ \left [ \begin{matrix} u \\ v \\ 1 \end{matrix} \right ] = \left [ \begin{matrix} f_x &amp; 0 &amp; c_x \\ 0 &amp; f_y &amp; c_y \\ 0 &amp; 0 &amp; 1 \end{matrix} \right ] \left [ \begin{matrix} r_{11} &amp; r_{12} &amp; r_{13} &amp; t_1 \\ r_{21} &amp; r_{22} &amp; r_{23} &amp; t_2 \\ r_{31} &amp; r_{32} &amp; r_{33} &amp; t_3 \end{matrix} \right ] \left [ \begin{matrix} X \\ Y \\ Z\\ 1 \end{matrix} \right ]\end{split}\]</div>
+<p>The complete documentation of how to manage with this equations is in <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d"><span class="std std-ref">Camera Calibration and 3D Reconstruction</span></a>.</p>
+<p class="rubric">Source code</p>
+<p>You can find the source code of this tutorial in the <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/</span></code> folder of the OpenCV source library.</p>
+<p>The tutorial consists of two main programs:</p>
+<ol class="arabic">
+<li><p class="first"><strong>Model registration</strong></p>
+<p>This applicaton is exclusive to whom don’t have a 3D textured model of the object to be detected. You can use this program to create your own textured 3D model. This program only works for planar objects, then if you want to model an object with complex shape you should use a sophisticated software to create it.</p>
+<p>The application needs an input image of the object to be registered and its 3D mesh. We have also to provide the intrinsic parameters of the camera with which the input image was taken. All the files need to be specified using the absolute path or the relative one from your application’s working directory. If none files are specified the program will try to open the provided default parameters.</p>
+<p>The application starts up extracting the ORB features and descriptors from the input image and then uses the mesh along with the <a class="reference external" href="http://http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm/">Möller–Trumbore intersection algorithm</a> to compute the 3D coordinates of the found features. Finally, the 3D points and the descriptors are stored in different lists in a file with YAML format which each row is a different point. The technical background on how to store the files can be found in the <a class="reference internal" href="page_tutorial_file_input_output_with_xml_yml.html#doxid-dd-d74-tutorial-file-input-output-with-xml-yml"><span class="std std-ref">File Input and Output using XML and YAML files</span></a> tutorial.</p>
+<img alt="_images/registration.png" src="_images/registration.png" />
+</li>
+<li><p class="first"><strong>Model detection</strong></p>
+<p>The aim of this application is estimate in real time the object pose given its 3D textured model.</p>
+<p>The application starts up loading the 3D textured model in YAML file format with the same structure explained in the model registration program. From the scene, the ORB features and descriptors are detected and extracted. Then, is used <a class="reference internal" href="class_cv_FlannBasedMatcher.html#doxid-de-d48-classcv-1-1-flann-based-matcher"><span class="std std-ref">cv::FlannBasedMatcher</span></a> with <a class="reference internal" href="class_cv_flann_GenericIndex.html#doxid-dd-dde-classcv-1-1flann-1-1-generic-index"><span class="std std-ref">cv::flann::GenericIndex</span></a> to do the matching between the scene descriptors and the model descriptors. Using the found matches along with <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga50620f0e26e02caa2e9adc07b5fbf24e"><span class="std std-ref">cv::solvePnPRansac</span></a> function the <code class="docutils literal notranslate"><span class="pre">R</span></code> and <code class="docutils literal notranslate"><span class="pre">t</span></code> of the camera are computed. Finally, a KalmanFilter is applied in order to reject bad poses.</p>
+<p>In the case that you compiled OpenCV with the samples, you can find it in opencv/build/bin/cpp-tutorial-pnp_detection`. Then you can run the application and change some parameters:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">This</span> <span class="n">program</span> <span class="n">shows</span> <span class="n">how</span> <span class="n">to</span> <span class="n">detect</span> <span class="n">an</span> <span class="n">object</span> <span class="n">given</span> <span class="n">its</span> <span class="mi">3</span><span class="n">D</span> <span class="n">textured</span> <span class="n">model</span><span class="p">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">choose</span> <span class="n">to</span> <span class="n">use</span> <span class="n">a</span> <span class="n">recorded</span> <span class="n">video</span> <span class="n">or</span> <span class="n">the</span> <span class="n">webcam</span><span class="p">.</span>
+<span class="nl">Usage</span><span class="p">:</span>
+  <span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">-</span><span class="n">help</span>
+<span class="nl">Keys</span><span class="p">:</span>
+  <span class="sc">&#39;esc&#39;</span> <span class="o">-</span> <span class="n">to</span> <span class="n">quit</span><span class="p">.</span>
+<span class="o">--------------------------------------------------------------------------</span>
+
+<span class="nl">Usage</span><span class="p">:</span> <span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="p">[</span><span class="n">params</span><span class="p">]</span>
+
+  <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="o">--</span><span class="n">confidence</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mf">0.95</span><span class="p">)</span>
+      <a class="reference internal" href="namespace_cv.html#doxid-d9-d0c-group-calib3d-1gga96ccbb3198badce31862120414bc0d2da724159df258a5d7e29410a6a2f4e6c87"><span class="std std-ref">RANSAC</span></a><span></span> <span class="n">confidence</span>
+  <span class="o">-</span><span class="n">e</span><span class="p">,</span> <span class="o">--</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gacbd081fdb20423a63cf731569ba70b2b"><span class="std std-ref">error</span></a><span></span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mf">2.0</span><span class="p">)</span>
+      <a class="reference internal" href="namespace_cv.html#doxid-d9-d0c-group-calib3d-1gga96ccbb3198badce31862120414bc0d2da724159df258a5d7e29410a6a2f4e6c87"><span class="std std-ref">RANSAC</span></a><span></span> <span class="n">reprojection</span> <span class="n">errror</span>
+  <span class="o">-</span><span class="n">f</span><span class="p">,</span> <span class="o">--</span><span class="n">fast</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="nb">true</span><span class="p">)</span>
+      <span class="n">use</span> <span class="n">of</span> <span class="n">robust</span> <span class="n">fast</span> <span class="n">match</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="nb">true</span><span class="p">)</span>
+      <span class="n">print</span> <span class="k">this</span> <span class="n">message</span>
+  <span class="o">--</span><span class="n">in</span><span class="p">,</span> <span class="o">--</span><span class="n">inliers</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mi">30</span><span class="p">)</span>
+      <span class="n">minimum</span> <span class="n">inliers</span> <span class="k">for</span> <span class="n">Kalman</span> <span class="n">update</span>
+  <span class="o">--</span><span class="n">it</span><span class="p">,</span> <span class="o">--</span><span class="n">iterations</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mi">500</span><span class="p">)</span>
+      <a class="reference internal" href="namespace_cv.html#doxid-d9-d0c-group-calib3d-1gga96ccbb3198badce31862120414bc0d2da724159df258a5d7e29410a6a2f4e6c87"><span class="std std-ref">RANSAC</span></a><span></span> <span class="n">maximum</span> <span class="n">iterations</span> <span class="n">count</span>
+  <span class="o">-</span><span class="n">k</span><span class="p">,</span> <span class="o">--</span><span class="n">keypoints</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mi">2000</span><span class="p">)</span>
+      <span class="n">number</span> <span class="n">of</span> <span class="n">keypoints</span> <span class="n">to</span> <span class="n">detect</span>
+  <span class="o">--</span><span class="n">mesh</span>
+      <span class="n">path</span> <span class="n">to</span> <span class="n">ply</span> <span class="n">mesh</span>
+  <span class="o">--</span><span class="n">method</span><span class="p">,</span> <span class="o">--</span><span class="n">pnp</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mi">0</span><span class="p">)</span>
+      <span class="n">PnP</span> <span class="nl">method</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="n">ITERATIVE</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">EPNP</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="n">P3P</span> <span class="o">-</span> <span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="n">DLS</span>
+  <span class="o">--</span><span class="n">model</span>
+      <span class="n">path</span> <span class="n">to</span> <span class="n">yml</span> <span class="n">model</span>
+  <span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="o">--</span><span class="n">ratio</span> <span class="p">(</span><span class="nl">value</span><span class="p">:</span><span class="mf">0.7</span><span class="p">)</span>
+      <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">threshold</span></a><span></span> <span class="k">for</span> <span class="n">ratio</span> <span class="n">test</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">video</span>
+      <span class="n">path</span> <span class="n">to</span> <span class="n">recorded</span> <span class="n">video</span>
+</pre>
+<p>For example, you can run the application changing the pnp method:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">--</span><span class="n">method</span><span class="o">=</span><span class="mi">2</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Explanation</p>
+<p>Here is explained in detail the code for the real time application:</p>
+<ol class="arabic">
+<li><p class="first"><strong>Read 3D textured object model and object mesh.</strong></p>
+<p>In order to load the textured model I implemented the <em>class</em> <strong>Model</strong> which has the function <em>load()</em> that opens a YAML file and take the stored 3D points with its corresponding descriptors. You can find an example of a 3D textured model in <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/cookies_ORB.yml</span></code>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/* Load a YAML file using OpenCV */</span>
+<span class="kt">void</span> <span class="n">Model</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">path</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">points3d_mat</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">cv::FileStorage</span></a><span></span> <span class="n">storage</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <a class="reference internal" href="enum_cv_FileStorage_Mode.html#doxid-d9-df9-classcv-1-1-file-storage-1a973e41cb75ef6230412a567723b7482daa0dcc459c4d100c35ccfa9a643827bed"><span class="std std-ref">cv::FileStorage::READ</span></a><span></span><span class="p">);</span>
+    <span class="n">storage</span><span class="p">[</span><span class="s">&quot;points_3d&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">points3d_mat</span><span class="p">;</span>
+    <span class="n">storage</span><span class="p">[</span><span class="s">&quot;descriptors&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">descriptors_</span><span class="p">;</span>
+
+    <span class="n">points3d_mat</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span><span class="n">list_points3d_in_</span><span class="p">);</span>
+
+    <span class="n">storage</span><span class="p">.</span><span class="n">release</span><span class="p">();</span>
+
+<span class="p">}</span>
+</pre>
+<p>In the main program the model is loaded as follows:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Model</span> <span class="n">model</span><span class="p">;</span>               <span class="c1">// instantiate Model object</span>
+<span class="n">model</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">yml_read_path</span><span class="p">);</span> <span class="c1">// load a 3D textured object model</span>
+</pre>
+<p>In order to read the model mesh I implemented a <em>class</em> <strong>Mesh</strong> which has a function <em>load()</em> that opens a <span class="math notranslate nohighlight">\(*\)</span>.ply file and store the 3D points of the object and also the composed triangles. You can find an example of a model mesh in <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/box.ply</span></code>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/* Load a CSV with *.ply format */</span>
+<span class="kt">void</span> <span class="n">Mesh</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">path</span><span class="p">)</span>
+<span class="p">{</span>
+
+    <span class="c1">// Create the reader</span>
+    <span class="n">CsvReader</span> <span class="n">csvReader</span><span class="p">(</span><span class="n">path</span><span class="p">);</span>
+
+    <span class="c1">// Clear previous data</span>
+    <span class="n">list_vertex_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="n">list_triangles_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+
+    <span class="c1">// Read from .ply file</span>
+    <span class="n">csvReader</span><span class="p">.</span><span class="n">readPLY</span><span class="p">(</span><span class="n">list_vertex_</span><span class="p">,</span> <span class="n">list_triangles_</span><span class="p">);</span>
+
+    <span class="c1">// Update mesh attributes</span>
+    <span class="n">num_vertexs_</span> <span class="o">=</span> <span class="n">list_vertex_</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">num_triangles_</span> <span class="o">=</span> <span class="n">list_triangles_</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+<span class="p">}</span>
+</pre>
+<p>In the main program the mesh is loaded as follows:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mesh</span> <span class="n">mesh</span><span class="p">;</span>                <span class="c1">// instantiate Mesh object</span>
+<span class="n">mesh</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">ply_read_path</span><span class="p">);</span> <span class="c1">// load an object mesh</span>
+</pre>
+<p>You can also load different model and mesh:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">--</span><span class="n">mesh</span><span class="o">=/</span><span class="n">absolute_path_to_your_mesh</span><span class="p">.</span><span class="n">ply</span> <span class="o">--</span><span class="n">model</span><span class="o">=/</span><span class="n">absolute_path_to_your_model</span><span class="p">.</span><span class="n">yml</span>
+</pre>
+</li>
+<li><p class="first"><strong>Take input from Camera or Video</strong></p>
+<p>To detect is necessary capture video. It’s done loading a recorded video by passing the absolute path where it is located in your machine. In order to test the application you can find a recorded video in <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/box.mp4</span></code>.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a><span></span> <span class="n">cap</span><span class="p">;</span>                <span class="c1">// instantiate VideoCapture</span>
+<span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">video_read_path</span><span class="p">);</span>           <span class="c1">// open a recorded video</span>
+
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9d2ca36789e7fcfe7a7be3b328038585"><span class="std std-ref">isOpened</span></a><span></span><span class="p">())</span>                  <span class="c1">// check if we succeeded</span>
+<span class="p">{</span>
+   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open the camera device&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+   <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>Then the algorithm is computed frame per frame:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">frame</span><span class="p">,</span> <span class="n">frame_vis</span><span class="p">;</span>
+
+<span class="k">while</span><span class="p">(</span><span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a473055e77dd7faa4d26d686226b292c1"><span class="std std-ref">read</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">cv::waitKey</span></a><span></span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">27</span><span class="p">)</span>    <span class="c1">// capture frame until ESC is pressed</span>
+<span class="p">{</span>
+
+    <span class="n">frame_vis</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>                     <span class="c1">// refresh visualisation frame</span>
+
+    <span class="c1">// MAIN ALGORITHM</span>
+
+<span class="p">}</span>
+</pre>
+<p>You can also load different recorded video:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">--</span><span class="n">video</span><span class="o">=/</span><span class="n">absolute_path_to_your_video</span><span class="p">.</span><span class="n">mp4</span>
+</pre>
+</li>
+<li><p class="first"><strong>Extract ORB features and descriptors from the scene</strong></p>
+<p>The next step is to detect the scene features and extract it descriptors. For this task I implemented a <em>class</em> <strong>RobustMatcher</strong> which has a function for keypoints detection and features extraction. You can find it in <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/src/RobusMatcher.cpp</span></code>. In your <em>RobusMatch</em> object you can use any of the 2D features detectors of OpenCV. In this case I used <a class="reference internal" href="class_cv_ORB.html#doxid-dc-dca-classcv-1-1-o-r-b"><span class="std std-ref">cv::ORB</span></a> features because is based on <a class="reference internal" href="group_features2d_main.html#doxid-d5-d51-group-features2d-main-1ga816d870cbdca71c6790c71bdf17df099"><span class="std std-ref">cv::FAST</span></a> to detect the keypoints and cv::xfeatures2d::BriefDescriptorExtractor to extract the descriptors which means that is fast and robust to rotations. You can find more detailed information about <em>ORB</em> in the documentation.</p>
+<p>The following code is how to instantiate and set the features detector and the descriptors extractor:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">RobustMatcher</span> <span class="n">rmatcher</span><span class="p">;</span>                                                          <span class="c1">// instantiate RobustMatcher</span>
+
+<a class="reference internal" href="class_cv_Feature2D.html#doxid-d9-d9f-classcv-1-1-feature2-d"><span class="std std-ref">cv::FeatureDetector</span></a><span></span> <span class="o">*</span> <span class="n">detector</span> <span class="o">=</span> <span class="k">new</span> <span class="n">cv</span><span class="o">::</span><span class="n">OrbFeatureDetector</span><span class="p">(</span><span class="n">numKeyPoints</span><span class="p">);</span>       <span class="c1">// instatiate ORB feature detector</span>
+<a class="reference internal" href="class_cv_Feature2D.html#doxid-d9-d9f-classcv-1-1-feature2-d"><span class="std std-ref">cv::DescriptorExtractor</span></a><span></span> <span class="o">*</span> <span class="n">extractor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">cv</span><span class="o">::</span><span class="n">OrbDescriptorExtractor</span><span class="p">();</span>          <span class="c1">// instatiate ORB descriptor extractor</span>
+
+<span class="n">rmatcher</span><span class="p">.</span><span class="n">setFeatureDetector</span><span class="p">(</span><span class="n">detector</span><span class="p">);</span>                                           <span class="c1">// set feature detector</span>
+<span class="n">rmatcher</span><span class="p">.</span><span class="n">setDescriptorExtractor</span><span class="p">(</span><span class="n">extractor</span><span class="p">);</span>                                      <span class="c1">// set descriptor extractor</span>
+</pre>
+<p>The features and descriptors will be computed by the <em>RobustMatcher</em> inside the matching function.</p>
+</li>
+<li><p class="first"><strong>Match scene descriptors with model descriptors using Flann matcher</strong></p>
+<p>It is the first step in our detection algorithm. The main idea is to match the scene descriptors with our model descriptors in order to know the 3D coordinates of the found features into the current scene.</p>
+<p>Firstly, we have to set which matcher we want to use. In this case is used <a class="reference internal" href="class_cv_FlannBasedMatcher.html#doxid-de-d48-classcv-1-1-flann-based-matcher"><span class="std std-ref">cv::FlannBasedMatcher</span></a> matcher which in terms of computational cost is faster than the <a class="reference internal" href="class_cv_BFMatcher.html#doxid-d9-d49-classcv-1-1-b-f-matcher"><span class="std std-ref">cv::BFMatcher</span></a> matcher as we increase the trained collectction of features. Then, for FlannBased matcher the index created is <em>Multi-Probe LSH: Efficient Indexing for High-Dimensional Similarity Search</em> due to <em>ORB</em> descriptors are binary.</p>
+<p>You can tune the <em>LSH</em> and search parameters to improve the matching efficiency:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">cv::Ptr&lt;cv::flann::IndexParams&gt;</span></a><span></span> <span class="n">indexParams</span> <span class="o">=</span> <span class="n">cv</span><span class="o">::</span><span class="n">makePtr</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">flann</span><span class="o">::</span><span class="n">LshIndexParams</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// instantiate LSH index parameters</span>
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">cv::Ptr&lt;cv::flann::SearchParams&gt;</span></a><span></span> <span class="n">searchParams</span> <span class="o">=</span> <span class="n">cv</span><span class="o">::</span><span class="n">makePtr</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">flann</span><span class="o">::</span><span class="n">SearchParams</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>       <span class="c1">// instantiate flann search parameters</span>
+
+<a class="reference internal" href="class_cv_DescriptorMatcher.html#doxid-d4-d64-classcv-1-1-descriptor-matcher"><span class="std std-ref">cv::DescriptorMatcher</span></a><span></span> <span class="o">*</span> <span class="n">matcher</span> <span class="o">=</span> <span class="k">new</span> <a class="reference internal" href="class_cv_FlannBasedMatcher.html#doxid-de-d48-classcv-1-1-flann-based-matcher"><span class="std std-ref">cv::FlannBasedMatcher</span></a><span></span><span class="p">(</span><span class="n">indexParams</span><span class="p">,</span> <span class="n">searchParams</span><span class="p">);</span>         <span class="c1">// instantiate FlannBased matcher</span>
+<span class="n">rmatcher</span><span class="p">.</span><span class="n">setDescriptorMatcher</span><span class="p">(</span><span class="n">matcher</span><span class="p">);</span>                                                         <span class="c1">// set matcher</span>
+</pre>
+<p>Secondly, we have to call the matcher by using <em>robustMatch()</em> or <em>fastRobustMatch()</em> function. The difference of using this two functions is its computational cost. The first method is slower but more robust at filtering good matches because uses two ratio test and a symmetry test. In contrast, the second method is faster but less robust because only applies a single ratio test to the matches.</p>
+<p>The following code is to get the model 3D points and its descriptors and then call the matcher in the main program:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Get the MODEL INFO</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Point3f</span><span class="o">&gt;</span> <span class="n">list_points3d_model</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">get_points3d</span><span class="p">();</span>  <span class="c1">// list with model 3D coordinates</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">descriptors_model</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">get_descriptors</span><span class="p">();</span>                  <span class="c1">// list with descriptors of each 3D coordinate</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// -- Step 1: Robust matching between model descriptors and scene descriptors</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">DMatch</span><span class="o">&gt;</span> <span class="n">good_matches</span><span class="p">;</span>       <span class="c1">// to obtain the model 3D points  in the scene</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">keypoints_scene</span><span class="p">;</span>  <span class="c1">// to obtain the 2D points of the scene</span>
+
+<span class="k">if</span><span class="p">(</span><span class="n">fast_match</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">rmatcher</span><span class="p">.</span><span class="n">fastRobustMatch</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">good_matches</span><span class="p">,</span> <span class="n">keypoints_scene</span><span class="p">,</span> <span class="n">descriptors_model</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+    <span class="n">rmatcher</span><span class="p">.</span><span class="n">robustMatch</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">good_matches</span><span class="p">,</span> <span class="n">keypoints_scene</span><span class="p">,</span> <span class="n">descriptors_model</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>The following code corresponds to the <em>robustMatch()</em> function which belongs to the <em>RobustMatcher</em> class. This function uses the given image to detect the keypoints and extract the descriptors, match using <em>two Nearest Neighbour</em> the extracted descriptors with the given model descriptors and vice versa. Then, a ratio test is applied to the two direction matches in order to remove these matches which its distance ratio between the first and second best match is larger than a given threshold. Finally, a symmetry test is applied in order the remove non symmetrical matches.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="n">RobustMatcher</span><span class="o">::</span><span class="n">robustMatch</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">frame</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">DMatch</span><span class="o">&gt;&amp;</span> <span class="n">good_matches</span><span class="p">,</span>
+                                 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">KeyPoint</span><span class="o">&gt;&amp;</span> <span class="n">keypoints_frame</span><span class="p">,</span>
+                                 <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">KeyPoint</span><span class="o">&gt;&amp;</span> <span class="n">keypoints_model</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">descriptors_model</span> <span class="p">)</span>
+<span class="p">{</span>
+
+    <span class="c1">// 1a. Detection of the ORB features</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">computeKeyPoints</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">keypoints_frame</span><span class="p">);</span>
+
+    <span class="c1">// 1b. Extraction of the ORB descriptors</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">descriptors_frame</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">computeDescriptors</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">keypoints_frame</span><span class="p">,</span> <span class="n">descriptors_frame</span><span class="p">);</span>
+
+    <span class="c1">// 2. Match the two image descriptors</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">DMatch</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">matches12</span><span class="p">,</span> <span class="n">matches21</span><span class="p">;</span>
+
+    <span class="c1">// 2a. From image 1 to image 2</span>
+    <span class="n">matcher_</span><span class="o">-&gt;</span><span class="n">knnMatch</span><span class="p">(</span><span class="n">descriptors_frame</span><span class="p">,</span> <span class="n">descriptors_model</span><span class="p">,</span> <span class="n">matches12</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// return 2 nearest neighbours</span>
+
+    <span class="c1">// 2b. From image 2 to image 1</span>
+    <span class="n">matcher_</span><span class="o">-&gt;</span><span class="n">knnMatch</span><span class="p">(</span><span class="n">descriptors_model</span><span class="p">,</span> <span class="n">descriptors_frame</span><span class="p">,</span> <span class="n">matches21</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// return 2 nearest neighbours</span>
+
+    <span class="c1">// 3. Remove matches for which NN ratio is &gt; than threshold</span>
+    <span class="c1">// clean image 1 -&gt; image 2 matches</span>
+    <span class="kt">int</span> <span class="n">removed1</span> <span class="o">=</span> <span class="n">ratioTest</span><span class="p">(</span><span class="n">matches12</span><span class="p">);</span>
+    <span class="c1">// clean image 2 -&gt; image 1 matches</span>
+    <span class="kt">int</span> <span class="n">removed2</span> <span class="o">=</span> <span class="n">ratioTest</span><span class="p">(</span><span class="n">matches21</span><span class="p">);</span>
+
+    <span class="c1">// 4. Remove non-symmetrical matches</span>
+    <span class="n">symmetryTest</span><span class="p">(</span><span class="n">matches12</span><span class="p">,</span> <span class="n">matches21</span><span class="p">,</span> <span class="n">good_matches</span><span class="p">);</span>
+
+<span class="p">}</span>
+</pre>
+<p>After the matches filtering we have to subtract the 2D and 3D correspondences from the found scene keypoints and our 3D model using the obtained <em>DMatches</em> vector. For more information about <a class="reference internal" href="class_cv_DMatch.html#doxid-d9-db0-classcv-1-1-d-match"><span class="std std-ref">cv::DMatch</span></a> check the documentation.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// -- Step 2: Find out the 2D/3D correspondences</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Point3f</span><span class="o">&gt;</span> <span class="n">list_points3d_model_match</span><span class="p">;</span>    <span class="c1">// container for the model 3D coordinates found in the scene</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">list_points2d_scene_match</span><span class="p">;</span>    <span class="c1">// container for the model 2D coordinates found in the scene</span>
+
+<span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">match_index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">match_index</span> <span class="o">&lt;</span> <span class="n">good_matches</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">match_index</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span> <span class="n">point3d_model</span> <span class="o">=</span> <span class="n">list_points3d_model</span><span class="p">[</span> <span class="n">good_matches</span><span class="p">[</span><span class="n">match_index</span><span class="p">].</span><span class="n">trainIdx</span> <span class="p">];</span>   <span class="c1">// 3D point from model</span>
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span> <span class="n">point2d_scene</span> <span class="o">=</span> <span class="n">keypoints_scene</span><span class="p">[</span> <span class="n">good_matches</span><span class="p">[</span><span class="n">match_index</span><span class="p">].</span><span class="n">queryIdx</span> <span class="p">].</span><span class="n">pt</span><span class="p">;</span>    <span class="c1">// 2D point from the scene</span>
+    <span class="n">list_points3d_model_match</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">point3d_model</span><span class="p">);</span>                                      <span class="c1">// add 3D point</span>
+    <span class="n">list_points2d_scene_match</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">point2d_scene</span><span class="p">);</span>                                      <span class="c1">// add 2D point</span>
+<span class="p">}</span>
+</pre>
+<p>You can also change the ratio test threshold, the number of keypoints to detect as well as use or not the robust matcher:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">--</span><span class="n">ratio</span><span class="o">=</span><span class="mf">0.8</span> <span class="o">--</span><span class="n">keypoints</span><span class="o">=</span><span class="mi">1000</span> <span class="o">--</span><span class="n">fast</span><span class="o">=</span><span class="nb">false</span>
+</pre>
+</li>
+<li><p class="first"><strong>Pose estimation using PnP + Ransac</strong></p>
+<p>Once with the 2D and 3D correspondences we have to apply a PnP algorithm in order to estimate the camera pose. The reason why we have to use <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga50620f0e26e02caa2e9adc07b5fbf24e"><span class="std std-ref">cv::solvePnPRansac</span></a> instead of <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga549c2075fac14829ff4a58bc931c033d"><span class="std std-ref">cv::solvePnP</span></a> is due to the fact that after the matching not all the found correspondences are correct and, as like as not, there are false correspondences or also called <em>outliers</em>. The <a class="reference external" href="http://en.wikipedia.org/wiki/RANSAC">Random Sample Consensus</a> or <em>Ransac</em> is a non-deterministic iterative method which estimate parameters of a mathematical model from observed data producing an aproximate result as the number of iterations increase. After appyling <em>Ransac</em> all the <em>outliers</em> will be eliminated to then estimate the camera pose with a certain probability to obtain a good solution.</p>
+<p>For the camera pose estimation I have implemented a <em>class</em> <strong>PnPProblem</strong>. This <em>class</em> has 4 atributes: a given calibration matrix, the rotation matrix, the translation matrix and the rotation-translation matrix. The intrinsic calibration parameters of the camera which you are using to estimate the pose are necessary. In order to obtain the parameters you can check <a class="reference internal" href="page_tutorial_camera_calibration_square_chess.html#doxid-dc-d43-tutorial-camera-calibration-square-chess"><span class="std std-ref">Camera calibration with square chessboard</span></a> and <a class="reference internal" href="page_tutorial_camera_calibration.html#doxid-d4-d94-tutorial-camera-calibration"><span class="std std-ref">Camera calibration With OpenCV</span></a> tutorials.</p>
+<p>The following code is how to declare the <em>PnPProblem class</em> in the main program:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Intrinsic camera parameters: UVC WEBCAM</span>
+
+<span class="kt">double</span> <span class="n">f</span> <span class="o">=</span> <span class="mi">55</span><span class="p">;</span>                           <span class="c1">// focal length in mm</span>
+<span class="kt">double</span> <span class="n">sx</span> <span class="o">=</span> <span class="mf">22.3</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="mf">14.9</span><span class="p">;</span>             <span class="c1">// sensor size</span>
+<span class="kt">double</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">640</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">480</span><span class="p">;</span>        <span class="c1">// image size</span>
+
+<span class="kt">double</span> <span class="n">params_WEBCAM</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">width</span><span class="o">*</span><span class="n">f</span><span class="o">/</span><span class="n">sx</span><span class="p">,</span>   <span class="c1">// fx</span>
+                           <span class="n">height</span><span class="o">*</span><span class="n">f</span><span class="o">/</span><span class="n">sy</span><span class="p">,</span>  <span class="c1">// fy</span>
+                           <span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>      <span class="c1">// cx</span>
+                           <span class="n">height</span><span class="o">/</span><span class="mi">2</span><span class="p">};</span>    <span class="c1">// cy</span>
+
+<span class="n">PnPProblem</span> <span class="nf">pnp_detection</span><span class="p">(</span><span class="n">params_WEBCAM</span><span class="p">);</span> <span class="c1">// instantiate PnPProblem class</span>
+</pre>
+<p>The following code is how the <em>PnPProblem class</em> initialises its atributes:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Custom constructor given the intrinsic camera parameters</span>
+
+<span class="n">PnPProblem</span><span class="o">::</span><span class="n">PnPProblem</span><span class="p">(</span><span class="k">const</span> <span class="kt">double</span> <span class="n">params</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="n">_A_matrix</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>   <span class="c1">// intrinsic camera parameters</span>
+  <span class="n">_A_matrix</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>       <span class="c1">//      [ fx   0  cx ]</span>
+  <span class="n">_A_matrix</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>       <span class="c1">//      [  0  fy  cy ]</span>
+  <span class="n">_A_matrix</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>       <span class="c1">//      [  0   0   1 ]</span>
+  <span class="n">_A_matrix</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+  <span class="n">_A_matrix</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">_R_matrix</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>   <span class="c1">// rotation matrix</span>
+  <span class="n">_t_matrix</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>   <span class="c1">// translation matrix</span>
+  <span class="n">_P_matrix</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>   <span class="c1">// rotation-translation matrix</span>
+
+<span class="p">}</span>
+</pre>
+<p>OpenCV provides four PnP methods: ITERATIVE, EPNP, P3P and DLS. Depending on the application type, the estimation method will be different. In the case that we want to make a real time application, the more suitable methods are EPNP and P3P due to that are faster than ITERATIVE and DLS at finding an optimal solution. However, EPNP and P3P are not especially robust in front of planar surfaces and sometimes the pose estimation seems to have a mirror effect. Therefore, in this this tutorial is used ITERATIVE method due to the object to be detected has planar surfaces.</p>
+<p>The OpenCV Ransac implementation wants you to provide three parameters: the maximum number of iterations until stop the algorithm, the maximum allowed distance between the observed and computed point projections to consider it an inlier and the confidence to obtain a good result. You can tune these paramaters in order to improve your algorithm performance. Increasing the number of iterations you will have a more accurate solution, but will take more time to find a solution. Increasing the reprojection error will reduce the computation time, but your solution will be unaccurate. Decreasing the confidence your arlgorithm will be faster, but the obtained solution will be unaccurate.</p>
+<p>The following parameters work for this application:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// RANSAC parameters</span>
+
+<span class="kt">int</span> <span class="n">iterationsCount</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>        <span class="c1">// number of Ransac iterations.</span>
+<span class="kt">float</span> <span class="n">reprojectionError</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">;</span>    <span class="c1">// maximum allowed distance to consider it an inlier.</span>
+<span class="kt">float</span> <span class="n">confidence</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">;</span>          <span class="c1">// ransac successful confidence.</span>
+</pre>
+<p>The following code corresponds to the <em>estimatePoseRANSAC()</em> function which belongs to the <em>PnPProblem class</em>. This function estimates the rotation and translation matrix given a set of 2D/3D correspondences, the desired PnP method to use, the output inliers container and the Ransac parameters:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Estimate the pose given a list of 2D/3D correspondences with RANSAC and the method to use</span>
+
+<span class="kt">void</span> <span class="n">PnPProblem</span><span class="o">::</span><span class="n">estimatePoseRANSAC</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Point3f</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">list_points3d</span><span class="p">,</span>        <span class="c1">// list with model 3D coordinates</span>
+                                     <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">list_points2d</span><span class="p">,</span>        <span class="c1">// list with scene 2D coordinates</span>
+                                     <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">inliers</span><span class="p">,</span> <span class="kt">int</span> <span class="n">iterationsCount</span><span class="p">,</span>     <span class="c1">// PnP method; inliers container</span>
+                                     <span class="kt">float</span> <span class="n">reprojectionError</span><span class="p">,</span> <span class="kt">float</span> <span class="n">confidence</span> <span class="p">)</span>           <span class="c1">// Ransac parameters</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">distCoeffs</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>    <span class="c1">// vector of distortion coefficients</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">rvec</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>          <span class="c1">// output rotation vector</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">tvec</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>          <span class="c1">// output translation vector</span>
+
+    <span class="kt">bool</span> <span class="n">useExtrinsicGuess</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>   <span class="c1">// if true the function uses the provided rvec and tvec values as</span>
+                                      <span class="c1">// initial approximations of the rotation and translation vectors</span>
+
+    <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga50620f0e26e02caa2e9adc07b5fbf24e"><span class="std std-ref">cv::solvePnPRansac</span></a><span></span><span class="p">(</span> <span class="n">list_points3d</span><span class="p">,</span> <span class="n">list_points2d</span><span class="p">,</span> <span class="n">_A_matrix</span><span class="p">,</span> <span class="n">distCoeffs</span><span class="p">,</span> <span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">,</span>
+                        <span class="n">useExtrinsicGuess</span><span class="p">,</span> <span class="n">iterationsCount</span><span class="p">,</span> <span class="n">reprojectionError</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span>
+                        <span class="n">inliers</span><span class="p">,</span> <span class="n">flags</span> <span class="p">);</span>
+
+    <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga61585db663d9da06b68e70cfbf6a1eac"><span class="std std-ref">Rodrigues</span></a><span></span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span><span class="n">_R_matrix</span><span class="p">);</span>                   <span class="c1">// converts Rotation Vector to Matrix</span>
+    <span class="n">_t_matrix</span> <span class="o">=</span> <span class="n">tvec</span><span class="p">;</span>                            <span class="c1">// set translation matrix</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">set_P_matrix</span><span class="p">(</span><span class="n">_R_matrix</span><span class="p">,</span> <span class="n">_t_matrix</span><span class="p">);</span>    <span class="c1">// set rotation-translation matrix</span>
+
+<span class="p">}</span>
+</pre>
+<p>In the following code are the 3th and 4th steps of the main algorithm. The first, calling the above function and the second taking the output inliers vector from Ransac to get the 2D scene points for drawing purpose. As seen in the code we must be sure to apply Ransac if we have matches, in the other case, the function <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga50620f0e26e02caa2e9adc07b5fbf24e"><span class="std std-ref">cv::solvePnPRansac</span></a> crashes due to any OpenCV <em>bug</em>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span><span class="p">(</span><span class="n">good_matches</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// None matches, then RANSAC crashes</span>
+<span class="p">{</span>
+
+    <span class="c1">// -- Step 3: Estimate the pose using RANSAC approach</span>
+    <span class="n">pnp_detection</span><span class="p">.</span><span class="n">estimatePoseRANSAC</span><span class="p">(</span> <span class="n">list_points3d_model_match</span><span class="p">,</span> <span class="n">list_points2d_scene_match</span><span class="p">,</span>
+                                      <span class="n">pnpMethod</span><span class="p">,</span> <span class="n">inliers_idx</span><span class="p">,</span> <span class="n">iterationsCount</span><span class="p">,</span> <span class="n">reprojectionError</span><span class="p">,</span> <span class="n">confidence</span> <span class="p">);</span>
+
+
+    <span class="c1">// -- Step 4: Catch the inliers keypoints to draw</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">inliers_index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">inliers_index</span> <span class="o">&lt;</span> <span class="n">inliers_idx</span><span class="p">.</span><span class="n">rows</span><span class="p">;</span> <span class="o">++</span><span class="n">inliers_index</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">inliers_idx</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">inliers_index</span><span class="p">);</span>         <span class="c1">// i-inlier</span>
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span> <span class="n">point2d</span> <span class="o">=</span> <span class="n">list_points2d_scene_match</span><span class="p">[</span><span class="n">n</span><span class="p">];</span> <span class="c1">// i-inlier point 2D</span>
+    <span class="n">list_points2d_inliers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">point2d</span><span class="p">);</span>           <span class="c1">// add i-inlier to list</span>
+<span class="p">}</span>
+</pre>
+<p>Finally, once the camera pose has been estimated we can use the <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(t\)</span> in order to compute the 2D projection onto the image of a given 3D point expressed in a world reference frame using the showed formula on <em>Theory</em>.</p>
+<p>The following code corresponds to the <em>backproject3DPoint()</em> function which belongs to the <em>PnPProblem class</em>. The function backproject a given 3D point expressed in a world reference frame onto a 2D image:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Backproject a 3D point to 2D using the estimated pose parameters</span>
+
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span> <span class="n">PnPProblem</span><span class="o">::</span><span class="n">backproject3DPoint</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span> <span class="o">&amp;</span><span class="n">point3d</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 3D point vector [x y z 1]&#39;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">point3d_vec</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>
+    <span class="n">point3d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">point3d</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a363a0ec9e4ebce7209438cb14c29ab47"><span class="std std-ref">x</span></a><span></span><span class="p">;</span>
+    <span class="n">point3d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">point3d</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1aa332b734e658368c647744adb9065810"><span class="std std-ref">y</span></a><span></span><span class="p">;</span>
+    <span class="n">point3d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">point3d</span><span class="p">.</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3-1a1af9c182772a3c082e505f50eb5d2ee1"><span class="std std-ref">z</span></a><span></span><span class="p">;</span>
+    <span class="n">point3d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// 2D point vector [u v 1]&#39;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">point2d_vec</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3b256d68c6002b6afd60ab9538d717a8"><span class="std std-ref">CV_64FC1</span></a><span></span><span class="p">);</span>
+    <span class="n">point2d_vec</span> <span class="o">=</span> <span class="n">_A_matrix</span> <span class="o">*</span> <span class="n">_P_matrix</span> <span class="o">*</span> <span class="n">point3d_vec</span><span class="p">;</span>
+
+    <span class="c1">// Normalization of [u v]&#39;</span>
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span> <span class="n">point2d</span><span class="p">;</span>
+    <span class="n">point2d</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">=</span> <span class="n">point2d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">point2d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">point2d</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">=</span> <span class="n">point2d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">point2d_vec</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">point2d</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>The above function is used to compute all the 3D points of the object <em>Mesh</em> to show the pose of the object.</p>
+<p>You can also change RANSAC parameters and PnP method:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">--</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gacbd081fdb20423a63cf731569ba70b2b"><span class="std std-ref">error</span></a><span></span><span class="o">=</span><span class="mf">0.25</span> <span class="o">--</span><span class="n">confidence</span><span class="o">=</span><span class="mf">0.90</span> <span class="o">--</span><span class="n">iterations</span><span class="o">=</span><span class="mi">250</span> <span class="o">--</span><span class="n">method</span><span class="o">=</span><span class="mi">3</span>
+</pre>
+</li>
+<li><p class="first"><strong>Linear Kalman Filter for bad poses rejection</strong></p>
+<p>Is it common in computer vision or robotics fields that after applying detection or tracking techniques, bad results are obtained due to some sensor errors. In order to avoid these bad detections in this tutorial is explained how to implement a Linear Kalman Filter. The Kalman Filter will be applied after detected a given number of inliers.</p>
+<p>You can find more information about what <a class="reference external" href="http://en.wikipedia.org/wiki/Kalman_filter">Kalman Filter</a> is. In this tutorial it’s used the OpenCV implementation of the <a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter"><span class="std std-ref">cv::KalmanFilter</span></a> based on <a class="reference external" href="http://campar.in.tum.de/Chair/KalmanFilter">Linear Kalman Filter for position and orientation tracking</a> to set the dynamics and measurement models.</p>
+<p>Firstly, we have to define our state vector which will have 18 states: the positional data (x,y,z) with its first and second derivatives (velocity and acceleration), then rotation is added in form of three euler angles (roll, pitch, jaw) together with their first and second derivatives (angular velocity and acceleration)</p>
+<div class="math notranslate nohighlight">
+\[X = (x,y,z,\dot x,\dot y,\dot z,\ddot x,\ddot y,\ddot z,\psi,\theta,\phi,\dot \psi,\dot \theta,\dot \phi,\ddot \psi,\ddot \theta,\ddot \phi)^T\]</div>
+<p>Secondly, we have to define the number of measuremnts which will be 6: from <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(t\)</span> we can extract <span class="math notranslate nohighlight">\((x,y,z)\)</span> and <span class="math notranslate nohighlight">\((\psi,\theta,\phi)\)</span>. In addition, we have to define the number of control actions to apply to the system which in this case will be <em>zero</em>. Finally, we have to define the differential time between measurements which in this case is <span class="math notranslate nohighlight">\(1/T\)</span>, where <em>T</em> is the frame rate of the video.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter"><span class="std std-ref">cv::KalmanFilter</span></a><span></span> <span class="n">KF</span><span class="p">;</span>         <span class="c1">// instantiate Kalman Filter</span>
+
+<span class="kt">int</span> <span class="n">nStates</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>            <span class="c1">// the number of states</span>
+<span class="kt">int</span> <span class="n">nMeasurements</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>       <span class="c1">// the number of measured states</span>
+<span class="kt">int</span> <span class="n">nInputs</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>             <span class="c1">// the number of action control</span>
+
+<span class="kt">double</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.125</span><span class="p">;</span>           <span class="c1">// time between measurements (1/FPS)</span>
+
+<span class="n">initKalmanFilter</span><span class="p">(</span><span class="n">KF</span><span class="p">,</span> <span class="n">nStates</span><span class="p">,</span> <span class="n">nMeasurements</span><span class="p">,</span> <span class="n">nInputs</span><span class="p">,</span> <span class="n">dt</span><span class="p">);</span>    <span class="c1">// init function</span>
+</pre>
+<p>The following code corresponds to the <em>Kalman Filter</em> initialisation. Firstly, is set the process noise, the measurement noise and the error covariance matrix. Secondly, are set the transition matrix which is the dynamic model and finally the measurement matrix, which is the measurement model.</p>
+<p>You can tune the process and measurement noise to improve the <em>Kalman Filter</em> performance. As the measurement noise is reduced the faster will converge doing the algorithm sensitive in front of bad measurements.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="n">initKalmanFilter</span><span class="p">(</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter"><span class="std std-ref">cv::KalmanFilter</span></a><span></span> <span class="o">&amp;</span><span class="n">KF</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nStates</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nMeasurements</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nInputs</span><span class="p">,</span> <span class="kt">double</span> <span class="n">dt</span><span class="p">)</span>
+<span class="p">{</span>
+
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a4f136c39c016d3530c7c5801dd1ddb3b"><span class="std std-ref">init</span></a><span></span><span class="p">(</span><span class="n">nStates</span><span class="p">,</span> <span class="n">nMeasurements</span><span class="p">,</span> <span class="n">nInputs</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>                 <span class="c1">// init Kalman Filter</span>
+
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga388d7575224a4a277ceb98ccaa327c99"><span class="std std-ref">cv::setIdentity</span></a><span></span><span class="p">(</span><span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1af19be9c0630d0f658bdbaea409a35cda"><span class="std std-ref">processNoiseCov</span></a><span></span><span class="p">,</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">cv::Scalar::all</span></a><span></span><span class="p">(</span><span class="mf">1e-5</span><span class="p">));</span>       <span class="c1">// set process noise</span>
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga388d7575224a4a277ceb98ccaa327c99"><span class="std std-ref">cv::setIdentity</span></a><span></span><span class="p">(</span><span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a828d051035ba807966ad65edf288a08e"><span class="std std-ref">measurementNoiseCov</span></a><span></span><span class="p">,</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">cv::Scalar::all</span></a><span></span><span class="p">(</span><span class="mf">1e-4</span><span class="p">));</span>   <span class="c1">// set measurement noise</span>
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga388d7575224a4a277ceb98ccaa327c99"><span class="std std-ref">cv::setIdentity</span></a><span></span><span class="p">(</span><span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a446d8e9a0105b0aa35cd66119c529803"><span class="std std-ref">errorCovPost</span></a><span></span><span class="p">,</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">cv::Scalar::all</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>             <span class="c1">// error covariance</span>
+
+
+                 <span class="cm">/* DYNAMIC MODEL */</span>
+
+  <span class="c1">//  [1 0 0 dt  0  0 dt2   0   0 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 1 0  0 dt  0   0 dt2   0 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 1  0  0 dt   0   0 dt2 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  1  0  0  dt   0   0 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  0  1  0   0  dt   0 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  1   0   0  dt 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   1   0   0 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   1   0 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   1 0 0 0  0  0  0   0   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 1 0 0 dt  0  0 dt2   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 1 0  0 dt  0   0 dt2   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 1  0  0 dt   0   0 dt2]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 0  1  0  0  dt   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 0  0  1  0   0  dt   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  1   0   0  dt]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   1   0   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   0   1   0]</span>
+  <span class="c1">//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   0   0   1]</span>
+
+  <span class="c1">// position</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+  <span class="c1">// orientation</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">13</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">14</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">15</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">17</span><span class="p">)</span> <span class="o">=</span> <span class="n">dt</span><span class="p">;</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">15</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0657173e411acbf40d2d3c6b46e03b19"><span class="std std-ref">transitionMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">17</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a8bc36646a43b82baa15f151a973fb0c5"><span class="std std-ref">pow</span></a><span></span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+
+       <span class="cm">/* MEASUREMENT MODEL */</span>
+
+  <span class="c1">//  [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]</span>
+  <span class="c1">//  [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]</span>
+  <span class="c1">//  [0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]</span>
+  <span class="c1">//  [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]</span>
+  <span class="c1">//  [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]</span>
+  <span class="c1">//  [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]</span>
+
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0f60b78726d8eccf74a1f2479c2d1f97"><span class="std std-ref">measurementMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// x</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0f60b78726d8eccf74a1f2479c2d1f97"><span class="std std-ref">measurementMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// y</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0f60b78726d8eccf74a1f2479c2d1f97"><span class="std std-ref">measurementMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// z</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0f60b78726d8eccf74a1f2479c2d1f97"><span class="std std-ref">measurementMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// roll</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0f60b78726d8eccf74a1f2479c2d1f97"><span class="std std-ref">measurementMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// pitch</span>
+  <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a0f60b78726d8eccf74a1f2479c2d1f97"><span class="std std-ref">measurementMatrix</span></a><span></span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// yaw</span>
+
+<span class="p">}</span>
+</pre>
+<p>In the following code is the 5th step of the main algorithm. When the obtained number of inliers after <em>Ransac</em> is over the threshold, the measurements matrix is filled and then the <em>Kalman Filter</em> is updated:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// -- Step 5: Kalman Filter</span>
+
+<span class="c1">// GOOD MEASUREMENT</span>
+<span class="k">if</span><span class="p">(</span> <span class="n">inliers_idx</span><span class="p">.</span><span class="n">rows</span> <span class="o">&gt;=</span> <span class="n">minInliersKalman</span> <span class="p">)</span>
+<span class="p">{</span>
+
+    <span class="c1">// Get the measured translation</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">translation_measured</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>
+    <span class="n">translation_measured</span> <span class="o">=</span> <span class="n">pnp_detection</span><span class="p">.</span><span class="n">get_t_matrix</span><span class="p">();</span>
+
+    <span class="c1">// Get the measured rotation</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">rotation_measured</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>
+    <span class="n">rotation_measured</span> <span class="o">=</span> <span class="n">pnp_detection</span><span class="p">.</span><span class="n">get_R_matrix</span><span class="p">();</span>
+
+    <span class="c1">// fill the measurements vector</span>
+    <span class="n">fillMeasurements</span><span class="p">(</span><span class="n">measurements</span><span class="p">,</span> <span class="n">translation_measured</span><span class="p">,</span> <span class="n">rotation_measured</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="c1">// Instantiate estimated translation and rotation</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">translation_estimated</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">rotation_estimated</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>
+
+<span class="c1">// update the Kalman filter with good measurements</span>
+<span class="n">updateKalmanFilter</span><span class="p">(</span> <span class="n">KF</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span>
+              <span class="n">translation_estimated</span><span class="p">,</span> <span class="n">rotation_estimated</span><span class="p">);</span>
+</pre>
+<p>The following code corresponds to the <em>fillMeasurements()</em> function which converts the measured <a class="reference external" href="http://euclideanspace.com/maths/geometry/rotations/conversions/matrixToEuler/index.htm">Rotation Matrix to Eulers angles</a> and fill the measurements matrix along with the measured translation vector:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="n">fillMeasurements</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">measurements</span><span class="p">,</span>
+                   <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">translation_measured</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">rotation_measured</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Convert rotation matrix to euler angles</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">measured_eulers</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>
+    <span class="n">measured_eulers</span> <span class="o">=</span> <span class="n">rot2euler</span><span class="p">(</span><span class="n">rotation_measured</span><span class="p">);</span>
+
+    <span class="c1">// Set measurement to predict</span>
+    <span class="n">measurements</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">translation_measured</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// x</span>
+    <span class="n">measurements</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">translation_measured</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// y</span>
+    <span class="n">measurements</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">translation_measured</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// z</span>
+    <span class="n">measurements</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="n">measured_eulers</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>      <span class="c1">// roll</span>
+    <span class="n">measurements</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="n">measured_eulers</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>      <span class="c1">// pitch</span>
+    <span class="n">measurements</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">=</span> <span class="n">measured_eulers</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>      <span class="c1">// yaw</span>
+<span class="p">}</span>
+</pre>
+<p>The following code corresponds to the <em>updateKalmanFilter()</em> function which update the Kalman Filter and set the estimated Rotation Matrix and translation vector. The estimated Rotation Matrix comes from the estimated <a class="reference external" href="http://euclideanspace.com/maths/geometry/rotations/conversions/eulerToMatrix/index.htm">Euler angles to Rotation Matrix</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="n">updateKalmanFilter</span><span class="p">(</span> <a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter"><span class="std std-ref">cv::KalmanFilter</span></a><span></span> <span class="o">&amp;</span><span class="n">KF</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">measurement</span><span class="p">,</span>
+                     <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">translation_estimated</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="o">&amp;</span><span class="n">rotation_estimated</span> <span class="p">)</span>
+<span class="p">{</span>
+
+    <span class="c1">// First predict, to update the internal statePre variable</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">prediction</span> <span class="o">=</span> <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1aa710d2255566bec8d6ce608d103d4fa7"><span class="std std-ref">predict</span></a><span></span><span class="p">();</span>
+
+    <span class="c1">// The &quot;correct&quot; phase that is going to use the predicted value and our measurement</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">estimated</span> <span class="o">=</span> <span class="n">KF</span><span class="p">.</span><a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter-1a60eb7feb569222ad0657ef1875884b5e"><span class="std std-ref">correct</span></a><span></span><span class="p">(</span><span class="n">measurement</span><span class="p">);</span>
+
+    <span class="c1">// Estimated translation</span>
+    <span class="n">translation_estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">translation_estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">translation_estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="c1">// Estimated euler angles</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">eulers_estimated</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga30a562691cc5987bc88eb7bb7a8faf2b"><span class="std std-ref">CV_64F</span></a><span></span><span class="p">);</span>
+    <span class="n">eulers_estimated</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
+    <span class="n">eulers_estimated</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+    <span class="n">eulers_estimated</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">estimated</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">11</span><span class="p">);</span>
+
+    <span class="c1">// Convert estimated quaternion to rotation matrix</span>
+    <span class="n">rotation_estimated</span> <span class="o">=</span> <span class="n">euler2rot</span><span class="p">(</span><span class="n">eulers_estimated</span><span class="p">);</span>
+
+<span class="p">}</span>
+</pre>
+<p>The 6th step is set the estimated rotation-translation matrix:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// -- Step 6: Set estimated projection matrix</span>
+<span class="n">pnp_detection_est</span><span class="p">.</span><span class="n">set_P_matrix</span><span class="p">(</span><span class="n">rotation_estimated</span><span class="p">,</span> <span class="n">translation_estimated</span><span class="p">);</span>
+</pre>
+<p>The last and optional step is draw the found pose. To do it I implemented a function to draw all the mesh 3D points and an extra reference axis:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// -- Step X: Draw pose</span>
+
+<span class="n">drawObjectMesh</span><span class="p">(</span><span class="n">frame_vis</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mesh</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pnp_detection</span><span class="p">,</span> <span class="n">green</span><span class="p">);</span>                <span class="c1">// draw current pose</span>
+<span class="n">drawObjectMesh</span><span class="p">(</span><span class="n">frame_vis</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mesh</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pnp_detection_est</span><span class="p">,</span> <span class="n">yellow</span><span class="p">);</span>           <span class="c1">// draw estimated pose</span>
+
+<span class="kt">double</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">pose_points2d</span><span class="p">;</span>
+<span class="n">pose_points2d</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pnp_detection_est</span><span class="p">.</span><span class="n">backproject3DPoint</span><span class="p">(</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>    <span class="c1">// axis center</span>
+<span class="n">pose_points2d</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pnp_detection_est</span><span class="p">.</span><span class="n">backproject3DPoint</span><span class="p">(</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>    <span class="c1">// axis x</span>
+<span class="n">pose_points2d</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pnp_detection_est</span><span class="p">.</span><span class="n">backproject3DPoint</span><span class="p">(</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>    <span class="c1">// axis y</span>
+<span class="n">pose_points2d</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pnp_detection_est</span><span class="p">.</span><span class="n">backproject3DPoint</span><span class="p">(</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">)));</span>    <span class="c1">// axis z</span>
+<span class="n">draw3DCoordinateAxes</span><span class="p">(</span><span class="n">frame_vis</span><span class="p">,</span> <span class="n">pose_points2d</span><span class="p">);</span>                                       <span class="c1">// draw axes</span>
+</pre>
+<p>You can also modify the minimum inliers to update Kalman Filter:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">tutorial</span><span class="o">-</span><span class="n">pnp_detection</span> <span class="o">--</span><span class="n">inliers</span><span class="o">=</span><span class="mi">20</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<p>The following videos are the results of pose estimation in real time using the explained detection algorithm using the following parameters:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Robust Matcher parameters</span>
+
+<span class="kt">int</span> <span class="n">numKeyPoints</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span>      <span class="c1">// number of detected keypoints</span>
+<span class="kt">float</span> <span class="n">ratio</span> <span class="o">=</span> <span class="mf">0.70f</span><span class="p">;</span>          <span class="c1">// ratio test</span>
+<span class="kt">bool</span> <span class="n">fast_match</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>       <span class="c1">// fastRobustMatch() or robustMatch()</span>
+
+
+<span class="c1">// RANSAC parameters</span>
+
+<span class="kt">int</span> <span class="n">iterationsCount</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>    <span class="c1">// number of Ransac iterations.</span>
+<span class="kt">int</span> <span class="n">reprojectionError</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">;</span>  <span class="c1">// maximum allowed distance to consider it an inlier.</span>
+<span class="kt">float</span> <span class="n">confidence</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">;</span>      <span class="c1">// ransac successful confidence.</span>
+
+
+<span class="c1">// Kalman Filter parameters</span>
+
+<span class="kt">int</span> <span class="n">minInliersKalman</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>    <span class="c1">// Kalman threshold updating</span>
+</pre>
+<p>You can watch the real time pose estimation on the <a class="reference external" href="http://www.youtube.com/user/opencvdev/videos">YouTube here</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_photo.html" title="Computational photography (photo module)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_interactive_calibration.html" title="Interactive camera calibration application"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_calib3d.html" >Camera calibration and 3D reconstruction (calib3d module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

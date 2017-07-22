@@ -1,0 +1,161 @@
+.. index:: pair: page; Creating Widgets
+.. _doxid-d2/d64/tutorial_creating_widgets:
+
+Creating Widgets
+================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to
+
+* Create your own widgets using WidgetAccessor and VTK.
+
+* Show your widget in the visualization window.
+
+.. rubric:: Code
+
+You can download the code from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/viz/creating_widgets.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	
+	#ifndef USE_VTK
+	#include <iostream>
+	int main()
+	{
+	    std::cout << "This sample requires direct compilation with VTK. Stop" << std::endl;
+	    return 0;
+	}
+	#else
+	#include <opencv2/viz.hpp>
+	#include <opencv2/viz/widget_accessor.hpp>
+	#include <iostream>
+	
+	#include <vtkPoints.h>
+	#include <vtkTriangle.h>
+	#include <vtkCellArray.h>
+	#include <vtkPolyData.h>
+	#include <vtkPolyDataMapper.h>
+	#include <vtkIdList.h>
+	#include <vtkActor.h>
+	#include <vtkProp.h>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout
+	    << "--------------------------------------------------------------------------"   << endl
+	    << "This program shows how to create a custom widget. You can create your own "
+	    << "widgets by extending Widget2D/Widget3D, and with the help of WidgetAccessor." << endl
+	    << "Usage:"                                                                       << endl
+	    << "./creating_widgets"                                                           << endl
+	    << endl;
+	}
+	
+	class WTriangle : public :ref:`viz::Widget3D <doxid-d0/d9d/classcv_1_1viz_1_1_widget3_d>`
+	{
+	    public:
+	        WTriangle(const Point3f &pt1, const Point3f &pt2, const Point3f &pt3, const :ref:`viz::Color <doxid-df/d5b/classcv_1_1viz_1_1_color>` & color = :ref:`viz::Color::white <doxid-df/d5b/classcv_1_1viz_1_1_color_1a9e57965ee56731f103c1d9e40bd460c1>`());
+	};
+	
+	WTriangle::WTriangle(const Point3f &pt1, const Point3f &pt2, const Point3f &pt3, const :ref:`viz::Color <doxid-df/d5b/classcv_1_1viz_1_1_color>` & color)
+	{
+	    // Create a triangle
+	    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+	    points->InsertNextPoint(pt1.:ref:`x <doxid-d4/d29/classcv_1_1_point3___1a363a0ec9e4ebce7209438cb14c29ab47>`, pt1.:ref:`y <doxid-d4/d29/classcv_1_1_point3___1aa332b734e658368c647744adb9065810>`, pt1.:ref:`z <doxid-d4/d29/classcv_1_1_point3___1a1af9c182772a3c082e505f50eb5d2ee1>`);
+	    points->InsertNextPoint(pt2.:ref:`x <doxid-d4/d29/classcv_1_1_point3___1a363a0ec9e4ebce7209438cb14c29ab47>`, pt2.:ref:`y <doxid-d4/d29/classcv_1_1_point3___1aa332b734e658368c647744adb9065810>`, pt2.:ref:`z <doxid-d4/d29/classcv_1_1_point3___1a1af9c182772a3c082e505f50eb5d2ee1>`);
+	    points->InsertNextPoint(pt3.:ref:`x <doxid-d4/d29/classcv_1_1_point3___1a363a0ec9e4ebce7209438cb14c29ab47>`, pt3.:ref:`y <doxid-d4/d29/classcv_1_1_point3___1aa332b734e658368c647744adb9065810>`, pt3.:ref:`z <doxid-d4/d29/classcv_1_1_point3___1a1af9c182772a3c082e505f50eb5d2ee1>`);
+	
+	    vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();
+	    triangle->GetPointIds()->SetId(0,0);
+	    triangle->GetPointIds()->SetId(1,1);
+	    triangle->GetPointIds()->SetId(2,2);
+	
+	    vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+	    cells->InsertNextCell(triangle);
+	
+	    // Create a polydata object
+	    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+	
+	    // Add the geometry and topology to the polydata
+	    polyData->SetPoints(points);
+	    polyData->SetPolys(cells);
+	
+	    // Create mapper and actor
+	    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	#if VTK_MAJOR_VERSION <= 5
+	    mapper->SetInput(polyData);
+	#else
+	    mapper->SetInputData(polyData);
+	#endif
+	
+	    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+	    actor->SetMapper(mapper);
+	
+	    // Store this actor in the widget in order that visualizer can access it
+	    :ref:`viz::WidgetAccessor::setProp <doxid-d0/d4d/structcv_1_1viz_1_1_widget_accessor_1acd4eaa43e67c2b55ec36a60e066fd8cb>`(*this, actor);
+	
+	    // Set the color of the widget. This has to be called after WidgetAccessor.
+	    setColor(color);
+	}
+	
+	int main()
+	{
+	    help();
+	
+	    :ref:`viz::Viz3d <doxid-dd/d47/classcv_1_1viz_1_1_viz3d>` myWindow("Creating Widgets");
+	
+	    WTriangle tw(:ref:`Point3f <doxid-dc/d84/group__core__basic_1ga3d79ceeb4419bccd0308dfdf1cd31435>`(0.0,0.0,0.0), :ref:`Point3f <doxid-dc/d84/group__core__basic_1ga3d79ceeb4419bccd0308dfdf1cd31435>`(1.0,1.0,1.0), :ref:`Point3f <doxid-dc/d84/group__core__basic_1ga3d79ceeb4419bccd0308dfdf1cd31435>`(0.0,1.0,0.0), :ref:`viz::Color::red <doxid-df/d5b/classcv_1_1viz_1_1_color_1a1e1372991e755607437574ed62863701>`());
+	
+	    myWindow.showWidget("TRIANGLE", tw);
+	
+	    myWindow.spin();
+	
+	    return 0;
+	}
+	#endif
+
+.. rubric:: Explanation
+
+Here is the general structure of the program:
+
+* Extend Widget3D class to create a new 3D widget.
+  
+  .. ref-code-block:: cpp
+  
+  	class WTriangle : public viz::Widget3D
+  	{
+  	    public:
+  	        WTriangle(const Point3f &pt1, const Point3f &pt2, const Point3f &pt3, const viz::Color & color = viz::Color::white());
+  	};
+
+* Assign a VTK actor to the widget.
+  
+  .. ref-code-block:: cpp
+  
+  	// Store this actor in the widget in order that visualizer can access it
+  	viz::WidgetAccessor::setProp(*this, actor);
+
+* Set color of the widget.
+  
+  .. ref-code-block:: cpp
+  
+  	// Set the color of the widget. This has to be called after WidgetAccessor.
+  	setColor(color);
+
+* Construct a triangle widget and display it in the window.
+  
+  .. ref-code-block:: cpp
+  
+  	WTriangle tw(:ref:`Point3f <doxid-dc/d84/group__core__basic_1ga3d79ceeb4419bccd0308dfdf1cd31435>`(0.0,0.0,0.0), :ref:`Point3f <doxid-dc/d84/group__core__basic_1ga3d79ceeb4419bccd0308dfdf1cd31435>`(1.0,1.0,1.0), :ref:`Point3f <doxid-dc/d84/group__core__basic_1ga3d79ceeb4419bccd0308dfdf1cd31435>`(0.0,1.0,0.0), viz::Color::red());
+  	
+  	myWindow.showWidget("TRIANGLE", tw);
+
+.. rubric:: Results
+
+Here is the result of the program.
+
+.. image:: red_triangle.png
+

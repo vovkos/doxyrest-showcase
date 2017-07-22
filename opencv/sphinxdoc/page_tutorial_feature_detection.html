@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Feature Detection &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Feature Matching with FLANN" href="page_tutorial_feature_flann_matcher.html" />
+    <link rel="prev" title="Feature Description" href="page_tutorial_feature_description.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_feature_flann_matcher.html" title="Feature Matching with FLANN"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_feature_description.html" title="Feature Description"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_features2d.html" accesskey="U">2D Features framework (feature2d module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_feature_description.html"
+                        title="previous chapter">Feature Description</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_feature_flann_matcher.html"
+                        title="next chapter">Feature Matching with FLANN</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="feature-detection">
+<span id="doxid-d7-d66-tutorial-feature-detection"></span><span id="index-0"></span><h1>Feature Detection</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the <a class="reference internal" href="group_features2d.html#doxid-da-d9b-group-features2d-1ga15e1361bda978d83a2bea629b32dfd3c"><span class="std std-ref">cv::FeatureDetector</span></a> interface in order to find interest points. Specifically:<ul>
+<li>Use the cv::xfeatures2d::SURF and its function cv::xfeatures2d::SURF::detect to perform the detection process</li>
+<li>Use the function <a class="reference internal" href="group_features2d_draw.html#doxid-d4-d5d-group-features2d-draw-1gab958f8900dd10f14316521c149a60433"><span class="std std-ref">cv::drawKeypoints</span></a> to draw the detected keypoints</li>
+</ul>
+</li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/core.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/features2d.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/xfeatures2d.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">cv</span><span class="o">::</span><span class="n">xfeatures2d</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">readme</span><span class="p">();</span>
+
+<span class="cm">/* @function main */</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">readme</span><span class="p">();</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_1</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125"><span class="std std-ref">IMREAD_GRAYSCALE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_2</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125"><span class="std std-ref">IMREAD_GRAYSCALE</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">img_1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">data</span></a><span></span> <span class="o">||</span> <span class="o">!</span><span class="n">img_2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">data</span></a><span></span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span> <span class="s">&quot; --(!) Error reading images &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="c1">//-- Step 1: Detect the keypoints using SURF Detector</span>
+  <span class="kt">int</span> <span class="n">minHessian</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+
+  <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;SURF&gt;</span></a><span></span> <span class="n">detector</span> <span class="o">=</span> <span class="n">SURF</span><span class="o">::</span><span class="n">create</span><span class="p">(</span> <span class="n">minHessian</span> <span class="p">);</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">keypoints_1</span><span class="p">,</span> <span class="n">keypoints_2</span><span class="p">;</span>
+
+  <span class="n">detector</span><span class="o">-&gt;</span><span class="n">detect</span><span class="p">(</span> <span class="n">img_1</span><span class="p">,</span> <span class="n">keypoints_1</span> <span class="p">);</span>
+  <span class="n">detector</span><span class="o">-&gt;</span><span class="n">detect</span><span class="p">(</span> <span class="n">img_2</span><span class="p">,</span> <span class="n">keypoints_2</span> <span class="p">);</span>
+
+  <span class="c1">//-- Draw keypoints</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_keypoints_1</span><span class="p">;</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_keypoints_2</span><span class="p">;</span>
+
+  <a class="reference internal" href="group_features2d_draw.html#doxid-d4-d5d-group-features2d-draw-1gab958f8900dd10f14316521c149a60433"><span class="std std-ref">drawKeypoints</span></a><span></span><span class="p">(</span> <span class="n">img_1</span><span class="p">,</span> <span class="n">keypoints_1</span><span class="p">,</span> <span class="n">img_keypoints_1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">Scalar::all</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <a class="reference internal" href="struct_cv_DrawMatchesFlags.html#doxid-d6-d1c-structcv-1-1-draw-matches-flags-1aa2ceb55f7161cc82164e358609453647a48e1d6053ba88b4f14bf1342e6795da6"><span class="std std-ref">DrawMatchesFlags::DEFAULT</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_features2d_draw.html#doxid-d4-d5d-group-features2d-draw-1gab958f8900dd10f14316521c149a60433"><span class="std std-ref">drawKeypoints</span></a><span></span><span class="p">(</span> <span class="n">img_2</span><span class="p">,</span> <span class="n">keypoints_2</span><span class="p">,</span> <span class="n">img_keypoints_2</span><span class="p">,</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">Scalar::all</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <a class="reference internal" href="struct_cv_DrawMatchesFlags.html#doxid-d6-d1c-structcv-1-1-draw-matches-flags-1aa2ceb55f7161cc82164e358609453647a48e1d6053ba88b4f14bf1342e6795da6"><span class="std std-ref">DrawMatchesFlags::DEFAULT</span></a><span></span> <span class="p">);</span>
+
+  <span class="c1">//-- Show detected (drawn) keypoints</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Keypoints 1&quot;</span><span class="p">,</span> <span class="n">img_keypoints_1</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Keypoints 2&quot;</span><span class="p">,</span> <span class="n">img_keypoints_2</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="cm">/* @function readme */</span>
+  <span class="kt">void</span> <span class="n">readme</span><span class="p">()</span>
+  <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; Usage: ./SURF_detector &lt;img1&gt; &lt;img2&gt;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p class="rubric">Result</p>
+<ol class="arabic">
+<li><p class="first">Here is the result of the feature detection applied to the first image:</p>
+<img alt="_images/Feature_Detection_Result_a.jpg" src="_images/Feature_Detection_Result_a.jpg" />
+</li>
+<li><p class="first">And here is the result for the second image:</p>
+<img alt="_images/Feature_Detection_Result_b.jpg" src="_images/Feature_Detection_Result_b.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_feature_flann_matcher.html" title="Feature Matching with FLANN"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_feature_description.html" title="Feature Description"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_features2d.html" >2D Features framework (feature2d module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

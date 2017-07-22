@@ -1,0 +1,217 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Load and Display an Image &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Load, Modify, and Save an Image" href="page_tutorial_load_save_image.html" />
+    <link rel="prev" title="Introduction to OpenCV Development with Clojure" href="page_tutorial_clojure_dev_intro.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_load_save_image.html" title="Load, Modify, and Save an Image"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_clojure_dev_intro.html" title="Introduction to OpenCV Development with Clojure"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_introduction.html" accesskey="U">Introduction to OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_clojure_dev_intro.html"
+                        title="previous chapter">Introduction to OpenCV Development with Clojure</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_load_save_image.html"
+                        title="next chapter">Load, Modify, and Save an Image</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="load-and-display-an-image">
+<span id="doxid-db-deb-tutorial-display-image"></span><span id="index-0"></span><h1>Load and Display an Image</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Load an image (using <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a>)</li>
+<li>Create a named OpenCV window (using <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">cv::namedWindow</span></a>)</li>
+<li>Display an image in an OpenCV window (using <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">cv::imshow</span></a>)</li>
+</ul>
+<p class="rubric">Source Code</p>
+<p>Download the source code from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/introduction/display_image/display_image.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgcodecs.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span> <span class="n">imageName</span><span class="p">(</span> <span class="s">&quot;../data/HappyFish.jpg&quot;</span> <span class="p">);</span> <span class="c1">// by default</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">imageName</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span><span class="p">;</span>
+
+    <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">imageName</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Read the file</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>                      <span class="c1">// Check for invalid input</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span>  <span class="s">&quot;Could not open or find the image&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span> <span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Display window&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span> <span class="c1">// Create a window for display.</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Display window&quot;</span><span class="p">,</span> <span class="n">image</span> <span class="p">);</span>                <span class="c1">// Show our image inside it.</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// Wait for a keystroke in the window</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>In OpenCV 2 we have multiple modules. Each one takes care of a different area or approach towards image processing. You could already observe this in the structure of the user guide of these tutorials itself. Before you use any of them you first need to include the header files where the content of each individual module is declared.</p>
+<p>You’ll almost always end up using the:</p>
+<ul class="simple">
+<li><em>core</em> section, as here are defined the basic building blocks of the library</li>
+<li><em>highgui</em> module, as this contains the functions for input and output operations</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgcodecs.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span>
+</pre>
+<p>We also include the <em>iostream</em> to facilitate console line output and input. To avoid data structure and function name conflicts with other libraries, OpenCV has its own namespace: <em>cv</em>. To avoid the need appending prior each of these the <em>cv::</em> keyword you can import the namespace in the whole file by using the lines:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+</pre>
+<p>This is true for the STL library too (used for console I/O). Now, let’s analyze the <em>main</em> function. We start up assuring that we acquire a valid image name argument from the command line. Otherwise take a picture by default: “HappyFish.jpg”.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">String</span> <span class="nf">imageName</span><span class="p">(</span> <span class="s">&quot;../data/HappyFish.jpg&quot;</span> <span class="p">);</span> <span class="c1">// by default</span>
+<span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">imageName</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+</pre>
+<p>Then create a <em>Mat</em> object that will store the data of the loaded image.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">image</span><span class="p">;</span>
+</pre>
+<p>Now we call the <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a> function which loads the image name specified by the first argument (<em>argv[1]</em>). The second argument specifies the format in what we want the image. This may be:</p>
+<ul class="simple">
+<li>IMREAD_UNCHANGED (&lt;0) loads the image as is (including the alpha channel if present)</li>
+<li>IMREAD_GRAYSCALE ( 0) loads the image as an intensity one</li>
+<li>IMREAD_COLOR (&gt;0) loads the image in the RGB format</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">imageName</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Read the file</span>
+</pre>
+<p>OpenCV offers support for the image formats Windows bitmap (bmp), portable image formats (pbm, pgm, ppm) and Sun raster (sr, ras). With help of plugins (you need to specify to use them if you build yourself the library, nevertheless in the packages we ship present by default) you may also load image formats like JPEG (jpeg, jpg, jpe), JPEG 2000 (jp2 - codenamed in the CMake as Jasper), TIFF files (tiff, tif) and portable network graphics (png). Furthermore, OpenEXR is also a possibility.</p>
+<p>After checking that the image data was loaded correctly, we want to display our image, so we create an OpenCV window using the <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">cv::namedWindow</span></a> function. These are automatically managed by OpenCV once you create them. For this you need to specify its name and how it should handle the change of the image it contains from a size point of view. It may be:</p>
+<ul class="simple">
+<li><em>WINDOW_AUTOSIZE</em> is the only supported one if you do not use the Qt backend. In this case the window size will take up the size of the image it shows. No resize permitted!</li>
+<li><em>WINDOW_NORMAL</em> on Qt you may use this to allow window resize. The image will resize itself according to the current window size. By using the | operator you also need to specify if you would like the image to keep its aspect ratio (<em>WINDOW_KEEPRATIO</em>) or not (<em>WINDOW_FREERATIO</em>).</li>
+</ul>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Display window&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span> <span class="c1">// Create a window for display.</span>
+</pre>
+<p>Finally, to update the content of the OpenCV window with a new image use the <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">cv::imshow</span></a> function. Specify the OpenCV window name to update and the image to use during this operation:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Display window&quot;</span><span class="p">,</span> <span class="n">image</span> <span class="p">);</span>                <span class="c1">// Show our image inside it.</span>
+</pre>
+<p>Because we want our window to be displayed until the user presses a key (otherwise the program would end far too quickly), we use the <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">cv::waitKey</span></a> function whose only parameter is just how long should it wait for a user input (measured in milliseconds). Zero means to wait forever.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// Wait for a keystroke in the window</span>
+</pre>
+<p class="rubric">Result</p>
+<ul>
+<li><p class="first">Compile your code and then run the executable giving an image path as argument. If you’re on Windows the executable will of course contain an <em>exe</em> extension too. Of course assure the image file is near your program file.</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">DisplayImage</span> <span class="n">HappyFish</span><span class="p">.</span><span class="n">jpg</span>
+</pre>
+</li>
+<li><p class="first">You should get a nice window as the one shown below:</p>
+<img alt="_images/Display_Image_Tutorial_Result.jpg" src="_images/Display_Image_Tutorial_Result.jpg" />
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_load_save_image.html" title="Load, Modify, and Save an Image"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_clojure_dev_intro.html" title="Introduction to OpenCV Development with Clojure"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_introduction.html" >Introduction to OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+.. index:: pair: class; Poco::Net::FilePartStore
+.. _doxid-class_poco_1_1_net_1_1_file_part_store:
+
+class Poco::Net::FilePartStore
+==============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An implementation of :ref:`PartSource <doxid-class_poco_1_1_net_1_1_part_source>` for persisting parts (usually email attachment files) to the file system. :ref:`More...<details-class_poco_1_1_net_1_1_file_part_store>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <PartStore.h>
+	
+	class FilePartStore: public :ref:`Poco::Net::PartStore<doxid-class_poco_1_1_net_1_1_part_store>`
+	{
+	public:
+		// construction
+	
+		:ref:`FilePartStore<doxid-class_poco_1_1_net_1_1_file_part_store_1ab8159df3b46e8f5912dbb22fb623bcc2>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& content,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& mediaType,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& filename = ""
+			);
+
+		// methods
+	
+		virtual
+		std::istream&
+		:ref:`stream<doxid-class_poco_1_1_net_1_1_file_part_store_1a7ef416e69a6e1940926e3afea4391217>`();
+	
+		virtual
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`filename<doxid-class_poco_1_1_net_1_1_file_part_store_1ad33736a47624ea77961ecaaf718e1c9a>`() const;
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`path<doxid-class_poco_1_1_net_1_1_file_part_store_1a13a4c02219e7320b0a4eb1a440e0e6e3>`() const;
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// fields
+	
+		static :ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` int :ref:`UNKNOWN_CONTENT_LENGTH<doxid-class_poco_1_1_net_1_1_part_source_1a0dd104eedde9ea7d8d07e2d2c8fc0748>`;
+
+		// methods
+	
+		virtual
+		std::istream&
+		:ref:`stream<doxid-class_poco_1_1_net_1_1_part_source_1ac134c69c00e1683bc0134ba4b5d1b79a>`() = 0;
+	
+		virtual
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`filename<doxid-class_poco_1_1_net_1_1_part_source_1a0e61234e27a21757d02f00490195c5c3>`() const;
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`mediaType<doxid-class_poco_1_1_net_1_1_part_source_1a281adaac391cd0e3f53ef546bfbf84f2>`() const;
+	
+		:ref:`MessageHeader<doxid-class_poco_1_1_net_1_1_message_header>`&
+		:ref:`headers<doxid-class_poco_1_1_net_1_1_part_source_1ad8670328c4e10e678ebb32828c5eb070>`();
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`MessageHeader<doxid-class_poco_1_1_net_1_1_message_header>`&
+		:ref:`headers<doxid-class_poco_1_1_net_1_1_part_source_1aeda71e9097c135cb66691c23f0fe2293>`() const;
+	
+		virtual
+		std::streamsize
+		:ref:`getContentLength<doxid-class_poco_1_1_net_1_1_part_source_1a5a51cd4bfa6ae1f755dfc2daec857f7b>`() const;
+
+.. _details-class_poco_1_1_net_1_1_file_part_store:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An implementation of :ref:`PartSource <doxid-class_poco_1_1_net_1_1_part_source>` for persisting parts (usually email attachment files) to the file system.
+
+Construction
+------------
+
+.. index:: pair: function; FilePartStore
+.. _doxid-class_poco_1_1_net_1_1_file_part_store_1ab8159df3b46e8f5912dbb22fb623bcc2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	FilePartStore(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& content,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& mediaType,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& filename = ""
+		)
+
+Creates the :ref:`FilePartStore <doxid-class_poco_1_1_net_1_1_file_part_store>` for the given MIME type.
+
+For security purposes, attachment filename is NOT used to save file to the file system. A unique temporary file name is used to persist the file. The given filename parameter is the message part (attachment) filename (see :ref:`filename() <doxid-class_poco_1_1_net_1_1_file_part_store_1ad33736a47624ea77961ecaaf718e1c9a>`) only.
+
+Throws an exception if the file cannot be opened.
+
+Methods
+-------
+
+.. index:: pair: function; stream
+.. _doxid-class_poco_1_1_net_1_1_file_part_store_1a7ef416e69a6e1940926e3afea4391217:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	std::istream&
+	stream()
+
+Returns a file input stream for the given file.
+
+.. index:: pair: function; filename
+.. _doxid-class_poco_1_1_net_1_1_file_part_store_1ad33736a47624ea77961ecaaf718e1c9a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+	filename() const
+
+Returns the filename portion of the path.
+
+This is the name under which the file is known to the user of this class (typically, :ref:`MailMessage <doxid-class_poco_1_1_net_1_1_mail_message>` class). The real name of the file as saved to the filesystem can be obtained by calling :ref:`path() <doxid-class_poco_1_1_net_1_1_file_part_store_1a13a4c02219e7320b0a4eb1a440e0e6e3>` member function.
+
+.. index:: pair: function; path
+.. _doxid-class_poco_1_1_net_1_1_file_part_store_1a13a4c02219e7320b0a4eb1a440e0e6e3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+	path() const
+
+Returns the full path to the file as saved to the file system.
+
+For security reasons, file is not saved under the real file name (as specified by the user).
+

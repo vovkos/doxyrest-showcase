@@ -1,0 +1,445 @@
+.. index:: pair: page; Similarity check (PNSR and SSIM) on the GPU
+.. _doxid-dd/d3d/tutorial_gpu_basics_similarity:
+
+Similarity check (PNSR and SSIM) on the GPU
+===========================================
+
+Todo update this tutorial
+
+.. rubric:: Goal
+
+In the :ref:`Video Input with OpenCV and similarity measurement <doxid-d5/dc4/tutorial_video_input_psnr_ssim>` tutorial I already presented the PSNR and SSIM methods for checking the similarity between the two images. And as you could see, the execution process takes quite some time , especially in the case of the SSIM. However, if the performance numbers of an OpenCV implementation for the CPU do not satisfy you and you happen to have an NVidia CUDA GPU device in your system, all is not lost. You may try to port or write your owm algorithm for the video card.
+
+This tutorial will give a good grasp on how to approach coding by using the GPU module of OpenCV. As a prerequisite you should already know how to handle the core, highgui and imgproc modules. So, our main goals are:
+
+* What's different compared to the CPU?
+
+* Create the GPU code for the PSNR and SSIM
+
+* Optimize the code for maximal performance
+
+.. rubric:: The source code
+
+You may also find the source code and the video file in the ``samples/cpp/tutorial_code/gpu/gpu-basics-similarity/gpu-basics-similarity`` directory of the OpenCV source library or download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/gpu/gpu-basics-similarity/gpu-basics-similarity.cpp>`__. The full source code is quite long (due to the controlling of the application via the command line arguments and performance measurement). Therefore, to avoid cluttering up these sections with those you'll find here only the functions itself.
+
+The PSNR returns a float number, that if the two inputs are similar between 30 and 50 (higher is better).
+
+.. ref-code-block:: cpp
+
+	double getPSNR(const Mat& I1, const Mat& I2)
+	{
+	    Mat s1;
+	    :ref:`absdiff <doxid-d2/de8/group__core__array_1ga6fef31bc8c4071cbc114a758a2b79c14>`(I1, I2, s1);       // |I1 - I2|
+	    s1.convertTo(s1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);  // cannot make a square on 8 bits
+	    s1 = s1.mul(s1);           // |I1 - I2|^2
+	
+	    Scalar s = :ref:`sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(s1);         // sum elements per channel
+	
+	    double sse = s.val[0] + s.val[1] + s.val[2]; // sum channels
+	
+	    if( sse <= 1e-10) // for small values return zero
+	        return 0;
+	    else
+	    {
+	        double  mse =sse /(double)(I1.channels() * I1.total());
+	        double psnr = 10.0*:ref:`log10 <doxid-df/dfc/group__cudev_1ga6d7f752d82c289caa24bbb5a278ac31d>`((255*255)/mse);
+	        return psnr;
+	    }
+	}
+
+
+
+.. ref-code-block:: cpp
+
+	double getPSNR_CUDA(const Mat& I1, const Mat& I2)
+	{
+	    cuda::GpuMat gI1, gI2, gs, t1,t2;
+	
+	    gI1.upload(I1);
+	    gI2.upload(I2);
+	
+	    gI1.convertTo(t1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	    gI2.convertTo(t2, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	
+	    :ref:`cuda::absdiff <doxid-d2/de8/group__core__array_1ga6fef31bc8c4071cbc114a758a2b79c14>`(t1.reshape(1), t2.reshape(1), gs);
+	    :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(gs, gs, gs);
+	
+	    Scalar s = :ref:`cuda::sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(gs);
+	    double sse = s.val[0] + s.val[1] + s.val[2];
+	
+	    if( sse <= 1e-10) // for small values return zero
+	        return 0;
+	    else
+	    {
+	        double  mse =sse /(double)(gI1.channels() * I1.total());
+	        double psnr = 10.0*:ref:`log10 <doxid-df/dfc/group__cudev_1ga6d7f752d82c289caa24bbb5a278ac31d>`((255*255)/mse);
+	        return psnr;
+	    }
+	}
+
+
+
+.. ref-code-block:: cpp
+
+	struct BufferPSNR                                     // Optimized CUDA versions
+	{   // Data allocations are very expensive on CUDA. Use a buffer to solve: allocate once reuse later.
+	    cuda::GpuMat gI1, gI2, gs, t1,t2;
+	
+	    cuda::GpuMat buf;
+	};
+
+
+
+.. ref-code-block:: cpp
+
+	double getPSNR_CUDA_optimized(const Mat& I1, const Mat& I2, BufferPSNR& b)
+	{
+	    b.gI1.upload(I1);
+	    b.gI2.upload(I2);
+	
+	    b.gI1.convertTo(b.t1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	    b.gI2.convertTo(b.t2, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	
+	    :ref:`cuda::absdiff <doxid-d2/de8/group__core__array_1ga6fef31bc8c4071cbc114a758a2b79c14>`(b.t1.reshape(1), b.t2.reshape(1), b.gs);
+	    :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.gs, b.gs, b.gs);
+	
+	    double sse = :ref:`cuda::sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(b.gs, b.buf)[0];
+	
+	    if( sse <= 1e-10) // for small values return zero
+	        return 0;
+	    else
+	    {
+	        double mse = sse /(double)(I1.channels() * I1.total());
+	        double psnr = 10.0*:ref:`log10 <doxid-df/dfc/group__cudev_1ga6d7f752d82c289caa24bbb5a278ac31d>`((255*255)/mse);
+	        return psnr;
+	    }
+	}
+
+The SSIM returns the MSSIM of the images. This is too a floating point number between zero and one (higher is better), however we have one for each channel. Therefore, we return a *Scalar* OpenCV data structure:
+
+.. ref-code-block:: cpp
+
+	Scalar getMSSIM( const Mat& i1, const Mat& i2)
+	{
+	    const double C1 = 6.5025, C2 = 58.5225;
+	    /***************************** INITS **********************************/
+	    int d     = :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`;
+	
+	    Mat I1, I2;
+	    i1.convertTo(I1, d);           // cannot calculate on one byte large values
+	    i2.convertTo(I2, d);
+	
+	    Mat I2_2   = I2.mul(I2);        // I2^2
+	    Mat I1_2   = I1.mul(I1);        // I1^2
+	    Mat I1_I2  = I1.mul(I2);        // I1 * I2
+	
+	    /*************************** END INITS **********************************/
+	
+	    Mat mu1, mu2;   // PRELIMINARY COMPUTING
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1, mu1, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I2, mu2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	
+	    Mat mu1_2   =   mu1.mul(mu1);
+	    Mat mu2_2   =   mu2.mul(mu2);
+	    Mat mu1_mu2 =   mu1.mul(mu2);
+	
+	    Mat sigma1_2, sigma2_2, sigma12;
+	
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1_2, sigma1_2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    sigma1_2 -= mu1_2;
+	
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I2_2, sigma2_2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    sigma2_2 -= mu2_2;
+	
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1_I2, sigma12, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    sigma12 -= mu1_mu2;
+	
+	    Mat t1, t2, t3;
+	
+	    t1 = 2 * mu1_mu2 + C1;
+	    t2 = 2 * sigma12 + C2;
+	    t3 = t1.mul(t2);              // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+	
+	    t1 = mu1_2 + mu2_2 + C1;
+	    t2 = sigma1_2 + sigma2_2 + C2;
+	    t1 = t1.mul(t2);               // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+	
+	    Mat ssim_map;
+	    :ref:`divide <doxid-d2/de8/group__core__array_1ga6db555d30115642fedae0cda05604874>`(t3, t1, ssim_map);      // ssim_map =  t3./t1;
+	
+	    Scalar mssim = :ref:`mean <doxid-d2/de8/group__core__array_1ga191389f8a0e58180bb13a727782cd461>`( ssim_map ); // mssim = average of ssim map
+	    return mssim;
+	}
+
+
+
+.. ref-code-block:: cpp
+
+	Scalar getMSSIM_CUDA( const Mat& i1, const Mat& i2)
+	{
+	    const float C1 = 6.5025f, C2 = 58.5225f;
+	    /***************************** INITS **********************************/
+	    cuda::GpuMat gI1, gI2, gs1, tmp1,tmp2;
+	
+	    gI1.upload(i1);
+	    gI2.upload(i2);
+	
+	    gI1.convertTo(tmp1, :ref:`CV_MAKE_TYPE <doxid-d1/d1b/group__core__hal__interface_1gac0f2281e91c4e610de4f450eb0a39993>`(:ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, gI1.channels()));
+	    gI2.convertTo(tmp2, :ref:`CV_MAKE_TYPE <doxid-d1/d1b/group__core__hal__interface_1gac0f2281e91c4e610de4f450eb0a39993>`(:ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, gI2.channels()));
+	
+	    vector<cuda::GpuMat> vI1, vI2;
+	    :ref:`cuda::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(tmp1, vI1);
+	    :ref:`cuda::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(tmp2, vI2);
+	    Scalar mssim;
+	
+	    Ptr<cuda::Filter> gauss = :ref:`cuda::createGaussianFilter <doxid-dc/d66/group__cudafilters_1gaa4df286369114cfd4b144ae211f6a6c8>`(vI2[0].type(), -1, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	
+	    for( int i = 0; i < gI1.channels(); ++i )
+	    {
+	        cuda::GpuMat I2_2, I1_2, I1_I2;
+	
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(vI2[i], vI2[i], I2_2);        // I2^2
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(vI1[i], vI1[i], I1_2);        // I1^2
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(vI1[i], vI2[i], I1_I2);       // I1 * I2
+	
+	        /*************************** END INITS **********************************/
+	        cuda::GpuMat mu1, mu2;   // PRELIMINARY COMPUTING
+	        gauss->apply(vI1[i], mu1);
+	        gauss->apply(vI2[i], mu2);
+	
+	        cuda::GpuMat mu1_2, mu2_2, mu1_mu2;
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(mu1, mu1, mu1_2);
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(mu2, mu2, mu2_2);
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(mu1, mu2, mu1_mu2);
+	
+	        cuda::GpuMat sigma1_2, sigma2_2, sigma12;
+	
+	        gauss->apply(I1_2, sigma1_2);
+	        :ref:`cuda::subtract <doxid-d2/de8/group__core__array_1gaa0f00d98b4b5edeaeb7b8333b2de353b>`(sigma1_2, mu1_2, sigma1_2); // sigma1_2 -= mu1_2;
+	
+	        gauss->apply(I2_2, sigma2_2);
+	        :ref:`cuda::subtract <doxid-d2/de8/group__core__array_1gaa0f00d98b4b5edeaeb7b8333b2de353b>`(sigma2_2, mu2_2, sigma2_2); // sigma2_2 -= mu2_2;
+	
+	        gauss->apply(I1_I2, sigma12);
+	        :ref:`cuda::subtract <doxid-d2/de8/group__core__array_1gaa0f00d98b4b5edeaeb7b8333b2de353b>`(sigma12, mu1_mu2, sigma12); // sigma12 -= mu1_mu2;
+	
+	        cuda::GpuMat t1, t2, t3;
+	
+	        mu1_mu2.convertTo(t1, -1, 2, C1); // t1 = 2 * mu1_mu2 + C1;
+	        sigma12.convertTo(t2, -1, 2, C2); // t2 = 2 * sigma12 + C2;
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(t1, t2, t3);        // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+	
+	        :ref:`cuda::addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`(mu1_2, 1.0, mu2_2, 1.0, C1, t1);       // t1 = mu1_2 + mu2_2 + C1;
+	        :ref:`cuda::addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`(sigma1_2, 1.0, sigma2_2, 1.0, C2, t2); // t2 = sigma1_2 + sigma2_2 + C2;
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(t1, t2, t1);                              // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+	
+	        cuda::GpuMat ssim_map;
+	        :ref:`cuda::divide <doxid-d2/de8/group__core__array_1ga6db555d30115642fedae0cda05604874>`(t3, t1, ssim_map);      // ssim_map =  t3./t1;
+	
+	        Scalar s = :ref:`cuda::sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(ssim_map);
+	        mssim.val[i] = s.val[0] / (ssim_map.rows * ssim_map.cols);
+	
+	    }
+	    return mssim;
+	}
+
+
+
+.. ref-code-block:: cpp
+
+	struct BufferMSSIM                                     // Optimized CUDA versions
+	{   // Data allocations are very expensive on CUDA. Use a buffer to solve: allocate once reuse later.
+	    cuda::GpuMat gI1, gI2, gs, t1,t2;
+	
+	    cuda::GpuMat I1_2, I2_2, I1_I2;
+	    vector<cuda::GpuMat> vI1, vI2;
+	
+	    cuda::GpuMat mu1, mu2;
+	    cuda::GpuMat mu1_2, mu2_2, mu1_mu2;
+	
+	    cuda::GpuMat sigma1_2, sigma2_2, sigma12;
+	    cuda::GpuMat t3;
+	
+	    cuda::GpuMat ssim_map;
+	
+	    cuda::GpuMat buf;
+	};
+
+
+
+.. ref-code-block:: cpp
+
+	Scalar getMSSIM_CUDA_optimized( const Mat& i1, const Mat& i2, BufferMSSIM& b)
+	{
+	    const float C1 = 6.5025f, C2 = 58.5225f;
+	    /***************************** INITS **********************************/
+	
+	    b.gI1.upload(i1);
+	    b.gI2.upload(i2);
+	
+	    cuda::Stream stream;
+	
+	    b.gI1.convertTo(b.t1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, stream);
+	    b.gI2.convertTo(b.t2, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, stream);
+	
+	    :ref:`cuda::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(b.t1, b.vI1, stream);
+	    :ref:`cuda::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(b.t2, b.vI2, stream);
+	    Scalar mssim;
+	
+	    Ptr<cuda::Filter> gauss = :ref:`cuda::createGaussianFilter <doxid-dc/d66/group__cudafilters_1gaa4df286369114cfd4b144ae211f6a6c8>`(b.vI1[0].type(), -1, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	
+	    for( int i = 0; i < b.gI1.channels(); ++i )
+	    {
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.vI2[i], b.vI2[i], b.I2_2, 1, -1, stream);        // I2^2
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.vI1[i], b.vI1[i], b.I1_2, 1, -1, stream);        // I1^2
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.vI1[i], b.vI2[i], b.I1_I2, 1, -1, stream);       // I1 * I2
+	
+	        gauss->apply(b.vI1[i], b.mu1, stream);
+	        gauss->apply(b.vI2[i], b.mu2, stream);
+	
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.mu1, b.mu1, b.mu1_2, 1, -1, stream);
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.mu2, b.mu2, b.mu2_2, 1, -1, stream);
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.mu1, b.mu2, b.mu1_mu2, 1, -1, stream);
+	
+	        gauss->apply(b.I1_2, b.sigma1_2, stream);
+	        :ref:`cuda::subtract <doxid-d2/de8/group__core__array_1gaa0f00d98b4b5edeaeb7b8333b2de353b>`(b.sigma1_2, b.mu1_2, b.sigma1_2, cuda::GpuMat(), -1, stream);
+	        //b.sigma1_2 -= b.mu1_2;  - This would result in an extra data transfer operation
+	
+	        gauss->apply(b.I2_2, b.sigma2_2, stream);
+	        :ref:`cuda::subtract <doxid-d2/de8/group__core__array_1gaa0f00d98b4b5edeaeb7b8333b2de353b>`(b.sigma2_2, b.mu2_2, b.sigma2_2, cuda::GpuMat(), -1, stream);
+	        //b.sigma2_2 -= b.mu2_2;
+	
+	        gauss->apply(b.I1_I2, b.sigma12, stream);
+	        :ref:`cuda::subtract <doxid-d2/de8/group__core__array_1gaa0f00d98b4b5edeaeb7b8333b2de353b>`(b.sigma12, b.mu1_mu2, b.sigma12, cuda::GpuMat(), -1, stream);
+	        //b.sigma12 -= b.mu1_mu2;
+	
+	        //here too it would be an extra data transfer due to call of operator*(Scalar, Mat)
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.mu1_mu2, 2, b.t1, 1, -1, stream); //b.t1 = 2 * b.mu1_mu2 + C1;
+	        :ref:`cuda::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.t1, C1, b.t1, cuda::GpuMat(), -1, stream);
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.sigma12, 2, b.t2, 1, -1, stream); //b.t2 = 2 * b.sigma12 + C2;
+	        :ref:`cuda::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.t2, C2, b.t2, cuda::GpuMat(), -12, stream);
+	
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.t1, b.t2, b.t3, 1, -1, stream);     // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+	
+	        :ref:`cuda::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.mu1_2, b.mu2_2, b.t1, cuda::GpuMat(), -1, stream);
+	        :ref:`cuda::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.t1, C1, b.t1, cuda::GpuMat(), -1, stream);
+	
+	        :ref:`cuda::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.sigma1_2, b.sigma2_2, b.t2, cuda::GpuMat(), -1, stream);
+	        :ref:`cuda::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.t2, C2, b.t2, cuda::GpuMat(), -1, stream);
+	
+	
+	        :ref:`cuda::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.t1, b.t2, b.t1, 1, -1, stream);     // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+	        :ref:`cuda::divide <doxid-d2/de8/group__core__array_1ga6db555d30115642fedae0cda05604874>`(b.t3, b.t1, b.ssim_map, 1, -1, stream);      // ssim_map =  t3./t1;
+	
+	        stream.waitForCompletion();
+	
+	        Scalar s = :ref:`cuda::sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(b.ssim_map, b.buf);
+	        mssim.val[i] = s.val[0] / (b.ssim_map.rows * b.ssim_map.cols);
+	
+	    }
+	    return mssim;
+	}
+
+
+
+.. rubric:: How to do it? - The GPU
+
+As see above, we have three types of functions for each operation. One for the CPU and two for the GPU. The reason I made two for the GPU is too illustrate that often simple porting your CPU to GPU will actually make it slower. If you want some performance gain you will need to remember a few rules, for which I will go into detail later on.
+
+The development of the GPU module was made so that it resembles as much as possible its CPU counterpart. This makes the porting process easier. The first thing you need to do before writing any code is to link the GPU module to your project, and include the header file for the module. All the functions and data structures of the GPU are in a *gpu* sub namespace of the *cv* namespace. You may add this to the default one via the *use namespace* keyword, or mark it everywhere explicitly via the cv:: to avoid confusion. I'll do the later.
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/gpu.hpp>        // GPU structures and methods
+
+GPU stands for "graphics processing unit". It was originally built to render graphical scenes. These scenes somehow build on a lot of data. Nevertheless, these aren't all dependent one from another in a sequential way and as it is possible a parallel processing of them. Due to this a GPU will contain multiple smaller processing units. These aren't the state of the art processors and on a one on one test with a CPU it will fall behind. However, its strength lies in its numbers. In the last years there has been an increasing trend to harvest these massive parallel powers of the GPU in non-graphical scenes; rendering as well. This gave birth to the general-purpose computation on graphics processing units (GPGPU).
+
+The GPU has its own memory. When you read data from the hard drive with OpenCV into a *Mat* object that takes place in your systems memory. The CPU works somehow directly on this (via its cache), however the GPU cannot. It has to transfer the information required for calculations from the system memory to its own. This is done via an upload process and is time consuming. In the end the result will have to be downloaded back to your system memory for your CPU to see and use it. Porting small functions to GPU is not recommended as the upload/download time will be larger than the amount you gain by a parallel execution.
+
+Mat objects are stored only in the system memory (or the CPU cache). For getting an OpenCV matrix to the GPU you'll need to use its GPU counterpart :ref:`cv::cuda::GpuMat <doxid-d5/da3/classcv_1_1cuda_1_1_gpu_mat>`. It works similar to the Mat with a 2D only limitation and no reference returning for its functions (cannot mix GPU references with CPU ones). To upload a Mat object to the GPU you need to call the upload function after creating an instance of the class. To download you may use simple assignment to a Mat object or use the download function.
+
+.. ref-code-block:: cpp
+
+	Mat I1;         // Main memory item - read image into with imread for example
+	gpu::GpuMat gI; // GPU matrix - for now empty
+	gI1.upload(I1); // Upload a data from the system memory to the GPU memory
+	
+	I1 = gI1;       // Download, gI1.download(I1) will work too
+
+Once you have your data up in the GPU memory you may call GPU enabled functions of OpenCV. Most of the functions keep the same name just as on the CPU, with the difference that they only accept *GpuMat* inputs. A full list of these you will find in the documentation: `online here <http://docs.opencv.org/modules/gpu/doc/gpu.html>`__ or the OpenCV reference manual that comes with the source code.
+
+Another thing to keep in mind is that not for all channel numbers you can make efficient algorithms on the GPU. Generally, I found that the input images for the GPU images need to be either one or four channel ones and one of the char or float type for the item sizes. No double support on the GPU, sorry. Passing other types of objects for some functions will result in an exception throw, and an error message on the error output. The documentation details in most of the places the types accepted for the inputs. If you have three channel images as an input you can do two things: either add a new channel (and use char elements) or split up the image and call the function for each image. The first one isn't really recommended as this wastes memory.
+
+For some functions, where the position of the elements (neighbor items) doesn't matter, the quick solution is to reshape it into a single channel image. This is the case for the PSNR implementation where for the *absdiff* method the value of the neighbors is not important. However, for the *GaussianBlur* this isn't an option and such need to use the split method for the SSIM. With this knowledge you can make a GPU viable code (like mine GPU one) and run it. You'll be surprised to see that it might turn out slower than your CPU implementation.
+
+.. rubric:: Optimization
+
+The reason for this is that you're throwing out on the window the price for memory allocation and data transfer. And on the GPU this is damn high. Another possibility for optimization is to introduce asynchronous OpenCV GPU calls too with the help of the :ref:`cv::cuda::Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>`.
+
+#. Memory allocation on the GPU is considerable. Therefore, if it’s possible allocate new memory as few times as possible. If you create a function what you intend to call multiple times it is a good idea to allocate any local parameters for the function only once, during the first call. To do this you create a data structure containing all the local variables you will use. For instance in case of the PSNR these are:
+   
+   .. ref-code-block:: cpp
+   
+   	struct BufferPSNR                                     // Optimized GPU versions
+   	  {   // Data allocations are very expensive on GPU. Use a buffer to solve: allocate once reuse later.
+   	  gpu::GpuMat gI1, gI2, gs, t1,t2;
+   	
+   	  gpu::GpuMat buf;
+   	};
+   
+   Then create an instance of this in the main program:
+   
+   .. ref-code-block:: cpp
+   
+   	BufferPSNR bufferPSNR;
+   
+   And finally pass this to the function each time you call it:
+   
+   .. ref-code-block:: cpp
+   
+   	double getPSNR_GPU_optimized(const Mat& I1, const Mat& I2, BufferPSNR& b)
+   
+   Now you access these local parameters as: *b.gI1*, *b.buf* and so on. The GpuMat will only reallocate itself on a new call if the new matrix size is different from the previous one.
+
+#. Avoid unnecessary function data transfers. Any small data transfer will be significant once you go to the GPU. Therefore, if possible, make all calculations in-place (in other words do not create new memory objects - for reasons explained at the previous point). For example, although expressing arithmetical operations may be easier to express in one line formulas, it will be slower. In case of the SSIM at one point I need to calculate:
+   
+   .. ref-code-block:: cpp
+   
+   	b.t1 = 2 * b.mu1_mu2 + C1;
+   
+   Although the upper call will succeed, observe that there is a hidden data transfer present. Before it makes the addition it needs to store somewhere the multiplication. Therefore, it will create a local matrix in the background, add to that the *C1* value and finally assign that to *t1*. To avoid this we use the gpu functions, instead of the arithmetic operators:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`gpu::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.mu1_mu2, 2, b.t1); //b.t1 = 2 * b.mu1_mu2 + C1;
+   	:ref:`gpu::add <doxid-d2/de8/group__core__array_1ga10ac1bfb180e2cfda1701d06c24fdbd6>`(b.t1, C1, b.t1);
+
+#. Use asynchronous calls (the :ref:`cv::cuda::Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>`). By default whenever you call a GPU function it will wait for the call to finish and return with the result afterwards. However, it is possible to make asynchronous calls, meaning it will call for the operation execution, making the costly data allocations for the algorithm and return back right away. Now you can call another function, if you wish. For the MSSIM this is a small optimization point. In our default implementation we split up the image into channels and call them for each channel the GPU functions. A small degree of parallelization is possible with the stream. By using a stream we can make the data allocation, upload operations while the GPU is already executing a given method. For example, we need to upload two images. We queue these one after another and call the function that processes it. The functions will wait for the upload to finish, however while this happens it makes the output buffer allocations for the function to be executed next.
+   
+   .. ref-code-block:: cpp
+   
+   	gpu::Stream stream;
+   	
+   	stream.enqueueConvert(b.gI1, b.t1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);    // Upload
+   	
+   	:ref:`gpu::split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(b.t1, b.vI1, stream);              // Methods (pass the stream as final parameter).
+   	:ref:`gpu::multiply <doxid-d2/de8/group__core__array_1ga979d898a58d7f61c53003e162e7ad89f>`(b.vI1[i], b.vI1[i], b.I1_2, stream);        // I1^2
+
+.. rubric:: Result and conclusion
+
+On an Intel P8700 laptop CPU paired with a low end NVidia GT220M, here are the performance numbers:
+
+.. ref-code-block:: cpp
+
+	Time of PSNR CPU (averaged for 10 runs): 41.4122 milliseconds. With result of: 19.2506
+	Time of PSNR GPU (averaged for 10 runs): 158.977 milliseconds. With result of: 19.2506
+	Initial call GPU optimized:              31.3418 milliseconds. With result of: 19.2506
+	Time of PSNR GPU OPTIMIZED ( / 10 runs): 24.8171 milliseconds. With result of: 19.2506
+	
+	Time of MSSIM CPU (averaged for 10 runs): 484.343 milliseconds. With result of B0.890964 G0.903845 R0.936934
+	Time of MSSIM GPU (averaged for 10 runs): 745.105 milliseconds. With result of B0.89922 G0.909051 R0.968223
+	Time of MSSIM GPU Initial Call            357.746 milliseconds. With result of B0.890964 G0.903845 R0.936934
+	Time of MSSIM GPU OPTIMIZED ( / 10 runs): 203.091 milliseconds. With result of B0.890964 G0.903845 R0.936934
+
+In both cases we managed a performance increase of almost 100% compared to the CPU implementation. It may be just the improvement needed for your application to work. You may observe a runtime instance of this on the `YouTube here <https://www.youtube.com/watch?v=3_ESXmFlnvY>`__.
+

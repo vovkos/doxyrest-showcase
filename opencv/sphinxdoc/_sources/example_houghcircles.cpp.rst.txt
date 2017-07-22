@@ -1,0 +1,69 @@
+.. index:: pair: example; houghcircles.cpp
+.. _doxid-d7/d5d/houghcircles_8cpp-example:
+
+houghcircles.cpp
+================
+
+An example using the Hough circle detector
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout << "\nThis program demonstrates circle finding with the Hough transform.\n"
+	            "Usage:\n"
+	            "./houghcircles <image_name>, Default is ../data/board.jpg\n" << endl;
+	}
+	
+	int main(int argc, char** argv)
+	{
+	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv,
+	        "{help h ||}{@image|../data/board.jpg|}"
+	    );
+	    if (parser.has("help"))
+	    {
+	        help();
+	        return 0;
+	    }
+	    string filename = parser.get<string>("@image");
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>`);
+	    if(img.empty())
+	    {
+	        help();
+	        cout << "can not open " << filename << endl;
+	        return -1;
+	    }
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` gray;
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(img, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	
+	    :ref:`medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>`(gray, gray, 5);
+	
+	    vector<Vec3f> circles;
+	    :ref:`HoughCircles <doxid-dd/d1a/group__imgproc__feature_1ga47849c3be0d0406ad3ca45db65a25d2d>`(gray, circles, :ref:`HOUGH_GRADIENT <doxid-d7/dbd/group__imgproc_1gga073687a5b96ac7a3ab5802eb5510fe65ab1bf00a90864db34b2f72fa76389931d>`, 1,
+	                 gray.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`/16, // change this value to detect circles with different distances to each other
+	                 100, 30, 1, 30 // change the last two parameters
+	                                // (min_radius & max_radius) to detect larger circles
+	                 );
+	
+	    for( size_t i = 0; i < circles.size(); i++ )
+	    {
+	        :ref:`Vec3i <doxid-db/d93/classcv_1_1_vec>` c = circles[i];
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( img, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(c[0], c[1]), c[2], :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,0,255), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( img, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(c[0], c[1]), 2, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,255,0), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	    }
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("detected circles", img);
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	
+	    return 0;
+	}

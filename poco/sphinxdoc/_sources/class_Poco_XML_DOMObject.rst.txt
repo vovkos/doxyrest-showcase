@@ -1,0 +1,108 @@
+.. index:: pair: class; Poco::XML::DOMObject
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object:
+
+class Poco::XML::DOMObject
+==========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+The base class for all objects in the :ref:`Document <doxid-class_poco_1_1_x_m_l_1_1_document>` Object Model. :ref:`More...<details-class_poco_1_1_x_m_l_1_1_d_o_m_object>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <DOMObject.h>
+	
+	class DOMObject
+	{
+	public:
+		// methods
+	
+		void
+		:ref:`duplicate<doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a492091c0d6748efda278df55b5b2311b>`() const;
+	
+		void
+		:ref:`release<doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a59fcc225a5bcf0fcf7e49d06ecba249a>`() const;
+	
+		virtual
+		void
+		:ref:`autoRelease<doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a39f0ede64e7f87d462b79dd53d844c6c>`() = 0;
+	};
+
+	// direct descendants
+
+	class :ref:`Event<doxid-class_poco_1_1_x_m_l_1_1_event>`;
+	class :ref:`EventTarget<doxid-class_poco_1_1_x_m_l_1_1_event_target>`;
+	class :ref:`NamedNodeMap<doxid-class_poco_1_1_x_m_l_1_1_named_node_map>`;
+	class :ref:`NodeList<doxid-class_poco_1_1_x_m_l_1_1_node_list>`;
+.. _details-class_poco_1_1_x_m_l_1_1_d_o_m_object:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+The base class for all objects in the :ref:`Document <doxid-class_poco_1_1_x_m_l_1_1_document>` Object Model.
+
+:ref:`DOMObject <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object>` defines the rules for memory management in this implementation of the DOM. Violation of these rules, which are outlined in the following, results in memory leaks or dangling pointers.
+
+Every object created by new or by a factory method (for example, Document::create\*) must be released with a call to :ref:`release() <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a59fcc225a5bcf0fcf7e49d06ecba249a>` or :ref:`autoRelease() <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a39f0ede64e7f87d462b79dd53d844c6c>` when it is no longer needed.
+
+Every object created by cloning or importing another object must be released. For every call to :ref:`duplicate() <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a492091c0d6748efda278df55b5b2311b>` there must be a matching call to :ref:`release() <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a59fcc225a5bcf0fcf7e49d06ecba249a>`. An object obtained via any other way must not be released, except ownership of it has been explicitely taken with a call to :ref:`duplicate() <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a492091c0d6748efda278df55b5b2311b>`.
+
+While DOMObjects are safe for use in multithreaded programs, a :ref:`DOMObject <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object>` or one of its subclasses must not be accessed from multiple threads simultaneously.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a5e086a1459679cb680f0739f691f866e:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	~DOMObject()
+
+Destroys the :ref:`DOMObject <doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object>`.
+
+Methods
+-------
+
+.. index:: pair: function; duplicate
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a492091c0d6748efda278df55b5b2311b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	duplicate() const
+
+Increases the object's reference count.
+
+.. index:: pair: function; release
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a59fcc225a5bcf0fcf7e49d06ecba249a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	release() const
+
+Decreases the object's reference count.
+
+If the reference count reaches zero, the object is deleted.
+
+.. index:: pair: function; autoRelease
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_o_m_object_1a39f0ede64e7f87d462b79dd53d844c6c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	autoRelease() = 0
+
+Adds the object to an appropriate :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>`, which is usually the :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>` managed by the :ref:`Document <doxid-class_poco_1_1_x_m_l_1_1_document>` to which this object belongs.
+

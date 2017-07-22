@@ -1,0 +1,117 @@
+.. index:: pair: group; Images stitching
+.. _doxid-d1/d46/group__stitching:
+
+Images stitching
+================
+
+.. toctree::
+	:hidden:
+
+	group_stitching_autocalib.rst
+	group_stitching_exposure.rst
+	group_stitching_match.rst
+	group_stitching_blend.rst
+	group_stitching_warp.rst
+	group_stitching_rotation.rst
+	group_stitching_seam.rst
+	struct_cv_detail_CameraParams.rst
+	struct_cv_detail_GraphEdge.rst
+	class_cv_detail_DisjointSets.rst
+	class_cv_detail_Graph.rst
+	class_cv_Stitcher.rst
+	class_cv_detail_Timelapser.rst
+	class_cv_detail_TimelapserCrop.rst
+
+This figure illustrates the stitching module pipeline implemented in the :ref:`Stitcher <doxid-d7/d79/classcv_1_1_stitcher>` class. Using that class it's possible to configure/remove some steps, i.e. adjust the stitching pipeline according to the particular needs. All building blocks from the pipeline are available in the detail namespace, one can combine and use them separately.
+
+The implemented stitching pipeline is very similar to the one proposed in :ref:`[11] <doxid-d0/de3/citelist_1CITEREF_BL07>`.
+
+.. image:: StitchingPipeline.jpg
+	:alt: stitching pipeline
+
+
+
+.. rubric:: Camera models
+
+There are currently 2 camera models implemented in stitching pipeline.
+
+* *Homography model* expecting perspective transformations between images implemented in :ref:`cv::detail::BestOf2NearestMatcher <doxid-d1/d16/classcv_1_1detail_1_1_best_of2_nearest_matcher>` :ref:`cv::detail::HomographyBasedEstimator <doxid-da/d96/classcv_1_1detail_1_1_homography_based_estimator>` :ref:`cv::detail::BundleAdjusterReproj <doxid-d4/d9d/classcv_1_1detail_1_1_bundle_adjuster_reproj>` :ref:`cv::detail::BundleAdjusterRay <doxid-d2/d79/classcv_1_1detail_1_1_bundle_adjuster_ray>`
+
+* *Affine model* expecting affine transformation with 6 DOF or 4 DOF implemented in :ref:`cv::detail::AffineBestOf2NearestMatcher <doxid-d3/dc2/classcv_1_1detail_1_1_affine_best_of2_nearest_matcher>` :ref:`cv::detail::AffineBasedEstimator <doxid-d1/da3/classcv_1_1detail_1_1_affine_based_estimator>` :ref:`cv::detail::BundleAdjusterAffine <doxid-d6/d86/classcv_1_1detail_1_1_bundle_adjuster_affine>` :ref:`cv::detail::BundleAdjusterAffinePartial <doxid-da/d8b/classcv_1_1detail_1_1_bundle_adjuster_affine_partial>` :ref:`cv::AffineWarper <doxid-d2/d53/classcv_1_1_affine_warper>`
+
+Homography model is useful for creating photo panoramas captured by camera, while affine-based model can be used to stitch scans and object captured by specialized devices. Use :ref:`cv::Stitcher::create <doxid-d7/d79/classcv_1_1_stitcher_1acb32106b3b3e7870d4b39082ab58a26e>` to get preconfigured pipeline for one of those models.
+
+Certain detailed settings of :ref:`cv::Stitcher <doxid-d7/d79/classcv_1_1_stitcher>` might not make sense. Especially you should not mix classes implementing affine model and classes implementing Homography model, as they work with different transformations.
+
+|	:ref:`Autocalibration<doxid-d4/dbc/group__stitching__autocalib>`
+|	:ref:`Exposure Compensation<doxid-dd/dff/group__stitching__exposure>`
+|	:ref:`Features Finding and Images Matching<doxid-df/d8c/group__stitching__match>`
+|	:ref:`Image Blenders<doxid-d9/d46/group__stitching__blend>`
+|	:ref:`Images Warping<doxid-d0/dfa/group__stitching__warp>`
+|	:ref:`Rotation Estimation<doxid-d7/d74/group__stitching__rotation>`
+|	:ref:`Seam Estimation<doxid-d9/d24/group__stitching__seam>`
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// structs
+
+	struct :ref:`cv::detail::CameraParams<doxid-da/d60/structcv_1_1detail_1_1_camera_params>`;
+	struct :ref:`cv::detail::GraphEdge<doxid-d3/d66/structcv_1_1detail_1_1_graph_edge>`;
+
+	// classes
+
+	class :ref:`cv::detail::DisjointSets<doxid-d4/d21/classcv_1_1detail_1_1_disjoint_sets>`;
+	class :ref:`cv::detail::Graph<doxid-db/d7a/classcv_1_1detail_1_1_graph>`;
+	class :ref:`cv::Stitcher<doxid-d7/d79/classcv_1_1_stitcher>`;
+	class :ref:`cv::detail::Timelapser<doxid-d1/d97/classcv_1_1detail_1_1_timelapser>`;
+	class :ref:`cv::detail::TimelapserCrop<doxid-da/d40/classcv_1_1detail_1_1_timelapser_crop>`;
+
+	// global functions
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`Stitcher<doxid-d7/d79/classcv_1_1_stitcher>`>
+	:target:`cv::createStitcher<doxid-d1/d46/group__stitching_1ga2de00132401436e7ddc89590994fd922>`(bool try_use_gpu = false);
+
+	bool
+	:target:`cv::detail::overlapRoi<doxid-d1/d46/group__stitching_1gaf9ff38a39051369119b53529b3d779ab>`(
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` tl1,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` tl2,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` sz1,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` sz2,
+		:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`& roi
+		);
+
+	:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`
+	:target:`cv::detail::resultRoi<doxid-d1/d46/group__stitching_1gab7d43257ae6a1d607ee195f369d51b67>`(
+		const std::vector<:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`>& corners,
+		const std::vector<:ref:`UMat<doxid-d8/d82/classcv_1_1_u_mat>`>& images
+		);
+
+	:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`
+	:target:`cv::detail::resultRoi<doxid-d1/d46/group__stitching_1gaeb641b2481aa8261c3ee087a38016485>`(
+		const std::vector<:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`>& corners,
+		const std::vector<:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`>& sizes
+		);
+
+	:ref:`Rect<doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`
+	:target:`cv::detail::resultRoiIntersection<doxid-d1/d46/group__stitching_1gac27a7690523e62854880225ec2020271>`(
+		const std::vector<:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`>& corners,
+		const std::vector<:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`>& sizes
+		);
+
+	:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`
+	:target:`cv::detail::resultTl<doxid-d1/d46/group__stitching_1ga0714acd404c7b8024017d6d93a0eab3d>`(const std::vector<:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`>& corners);
+
+	void
+	:target:`cv::detail::selectRandomSubset<doxid-d1/d46/group__stitching_1ga73d6882563516f276bda76365d4619ee>`(
+		int count,
+		int size,
+		std::vector<int>& subset
+		);
+
+	int&
+	:target:`cv::detail::stitchingLogLevel<doxid-d1/d46/group__stitching_1ga7616573f03568a19c14e3333f104b2af>`();
+

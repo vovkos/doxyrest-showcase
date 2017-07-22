@@ -1,0 +1,409 @@
+.. index:: pair: group; Image file reading and writing
+.. _doxid-d4/da8/group__imgcodecs:
+
+Image file reading and writing
+==============================
+
+.. toctree::
+	:hidden:
+
+	group_imgcodecs_c.rst
+	group_imgcodecs_ios.rst
+	enum_cv_ImreadModes.rst
+	enum_cv_ImwriteFlags.rst
+	enum_cv_ImwritePAMFlags.rst
+	enum_cv_ImwritePNGFlags.rst
+
+Overview
+~~~~~~~~
+
+
+
+|	:ref:`C API<doxid-da/d0a/group__imgcodecs__c>`
+|	:ref:`iOS glue<doxid-d2/d92/group__imgcodecs__ios>`
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// enums
+
+	enum :ref:`cv::ImreadModes<doxid-d4/da8/group__imgcodecs_1ga61d9b0126a3e57d9277ac48327799c80>`;
+	enum :ref:`cv::ImwriteFlags<doxid-d4/da8/group__imgcodecs_1ga292d81be8d76901bff7988d18d2b42ac>`;
+	enum :ref:`cv::ImwritePAMFlags<doxid-d4/da8/group__imgcodecs_1ga4e6c77a906952525a4d22fb3efea0e01>`;
+	enum :ref:`cv::ImwritePNGFlags<doxid-d4/da8/group__imgcodecs_1gaa60044d347ffd187161b5ec9ea2ef2f9>`;
+
+	// global functions
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	:ref:`cv::imdecode<doxid-d4/da8/group__imgcodecs_1ga26a67788faa58ade337f8d28ba0eb19e>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` buf,
+		int flags
+		);
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	:ref:`cv::imdecode<doxid-d4/da8/group__imgcodecs_1ga5a0acefe5cbe0a81e904e452ec7ca733>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` buf,
+		int flags,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`* dst
+		);
+
+	bool
+	:ref:`cv::imencode<doxid-d4/da8/group__imgcodecs_1ga461f9ac09887e47797a54567df3b8b63>`(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& ext,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img,
+		std::vector<:ref:`uchar<doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>& buf,
+		const std::vector<int>& params = std::vector<int>()
+		);
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	:ref:`cv::imread<doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		int flags = :ref:`IMREAD_COLOR<doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>`
+		);
+
+	bool
+	:ref:`cv::imreadmulti<doxid-d4/da8/group__imgcodecs_1ga4dd47c9ae3d55cc42286cff005825e31>`(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		std::vector<:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`>& mats,
+		int flags = :ref:`IMREAD_ANYCOLOR<doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ab6573b69300c092b61800222fe555953>`
+		);
+
+	bool
+	:ref:`cv::imwrite<doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img,
+		const std::vector<int>& params = std::vector<int>()
+		);
+
+.. _details-d4/da8/group__imgcodecs:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; imdecode
+.. _doxid-d4/da8/group__imgcodecs_1ga26a67788faa58ade337f8d28ba0eb19e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	cv::imdecode(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` buf,
+		int flags
+		)
+
+Reads an image from a buffer in memory.
+
+The function imdecode reads an image from the specified buffer in the memory. If the buffer is too short or contains invalid data, the function returns an empty matrix (:ref:`Mat::data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` ==NULL ).
+
+See :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>` for the list of supported formats and flags description.
+
+In the case of color images, the decoded images will have the channels stored in **B G R** order.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- buf
+
+		- Input array or vector of bytes.
+
+	*
+		- flags
+
+		- The same flags as in :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`, see :ref:`cv::ImreadModes <doxid-d4/da8/group__imgcodecs_1ga61d9b0126a3e57d9277ac48327799c80>`.
+
+.. index:: pair: function; imdecode
+.. _doxid-d4/da8/group__imgcodecs_1ga5a0acefe5cbe0a81e904e452ec7ca733:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	cv::imdecode(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` buf,
+		int flags,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`* dst
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- buf
+
+		- 
+
+	*
+		- flags
+
+		- 
+
+	*
+		- dst
+
+		- The optional output placeholder for the decoded matrix. It can save the image reallocations when the function is called repeatedly for images of the same size.
+
+.. index:: pair: function; imencode
+.. _doxid-d4/da8/group__imgcodecs_1ga461f9ac09887e47797a54567df3b8b63:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	cv::imencode(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& ext,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img,
+		std::vector<:ref:`uchar<doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>& buf,
+		const std::vector<int>& params = std::vector<int>()
+		)
+
+Encodes an image into a memory buffer.
+
+The function imencode compresses the image and stores it in the memory buffer that is resized to fit the result. See :ref:`cv::imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>` for the list of supported formats and flags description.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- ext
+
+		- File extension that defines the output format.
+
+	*
+		- img
+
+		- Image to be written.
+
+	*
+		- buf
+
+		- Output buffer resized to fit the compressed image.
+
+	*
+		- params
+
+		- Format-specific parameters. See :ref:`cv::imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>` and :ref:`cv::ImwriteFlags <doxid-d4/da8/group__imgcodecs_1ga292d81be8d76901bff7988d18d2b42ac>`.
+
+.. index:: pair: function; imread
+.. _doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	cv::imread(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		int flags = :ref:`IMREAD_COLOR<doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>`
+		)
+
+Loads an image from a file.
+
+:target:`doxid-d4/da8/group__imgcodecs_1imread` The function imread loads an image from the specified file and returns it. If the image cannot be read (because of missing file, improper permissions, unsupported or invalid format), the function returns an empty matrix (:ref:`Mat::data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` ==NULL ).
+
+Currently, the following file formats are supported:
+
+* Windows bitmaps - \*.bmp, \*.dib (always supported)
+
+* JPEG files - \*.jpeg, \*.jpg, \*.jpe (see the *Notes* section)
+
+* JPEG 2000 files - \*.jp2 (see the *Notes* section)
+
+* Portable Network Graphics - \*.png (see the *Notes* section)
+
+* WebP - \*.webp (see the *Notes* section)
+
+* Portable image format - \*.pbm, \*.pgm, \*.ppm \*.pxm, \*.pnm (always supported)
+
+* Sun rasters - \*.sr, \*.ras (always supported)
+
+* TIFF files - \*.tiff, \*.tif (see the *Notes* section)
+
+* OpenEXR Image files - \*.exr (see the *Notes* section)
+
+* Radiance HDR - \*.hdr, \*.pic (always supported)
+
+* Raster and Vector geospatial data supported by Gdal (see the *Notes* section)
+
+* The function determines the type of an image by the content, not by the file extension.
+
+* In the case of color images, the decoded images will have the channels stored in **B G R** order.
+
+* On Microsoft Windows\* OS and MacOSX\*, the codecs shipped with an OpenCV image (libjpeg, libpng, libtiff, and libjasper) are used by default. So, OpenCV can always read JPEGs, PNGs, and TIFFs. On MacOSX, there is also an option to use native MacOSX image readers. But beware that currently these native image loaders give images with different pixel values because of the color management embedded into MacOSX.
+
+* On Linux\*, BSD flavors and other Unix-like open-source operating systems, OpenCV looks for codecs supplied with an OS image. Install the relevant packages (do not forget the development files, for example, "libjpeg-dev", in Debian\* and Ubuntu\*) to get the codec support or turn on the OPENCV_BUILD_3RDPARTY_LIBS flag in CMake.
+
+* In the case you set *WITH_GDAL* flag to true in CMake and :ref:`IMREAD_LOAD_GDAL <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896>` to load the image, then `GDAL <http://www.gdal.org>`__ driver will be used in order to decode the image by supporting the following formats: `Raster <http://www.gdal.org/formats_list.html>`__, `Vector <http://www.gdal.org/ogr_formats.html>`__.
+
+* If EXIF information are embedded in the image file, the EXIF orientation will be taken into account and thus the image will be rotated accordingly except if the flag :ref:`IMREAD_IGNORE_ORIENTATION <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a34f91a514cd95127d8ba900840af548e>` is passed.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- filename
+
+		- Name of file to be loaded.
+
+	*
+		- flags
+
+		- Flag that can take values of :ref:`cv::ImreadModes <doxid-d4/da8/group__imgcodecs_1ga61d9b0126a3e57d9277ac48327799c80>`
+
+.. index:: pair: function; imreadmulti
+.. _doxid-d4/da8/group__imgcodecs_1ga4dd47c9ae3d55cc42286cff005825e31:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	cv::imreadmulti(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		std::vector<:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`>& mats,
+		int flags = :ref:`IMREAD_ANYCOLOR<doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ab6573b69300c092b61800222fe555953>`
+		)
+
+Loads a multi-page image from a file.
+
+The function imreadmulti loads a multi-page image from the specified file into a vector of :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` objects.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- filename
+
+		- Name of file to be loaded.
+
+	*
+		- flags
+
+		- Flag that can take values of :ref:`cv::ImreadModes <doxid-d4/da8/group__imgcodecs_1ga61d9b0126a3e57d9277ac48327799c80>`, default with :ref:`cv::IMREAD_ANYCOLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ab6573b69300c092b61800222fe555953>`.
+
+	*
+		- mats
+
+		- A vector of :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` objects holding each page, if more than one.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`
+
+.. index:: pair: function; imwrite
+.. _doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	cv::imwrite(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img,
+		const std::vector<int>& params = std::vector<int>()
+		)
+
+Saves an image to a specified file.
+
+The function imwrite saves the image to the specified file. The image format is chosen based on the filename extension (see :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>` for the list of extensions). Only 8-bit (or 16-bit unsigned (CV_16U) in case of PNG, JPEG 2000, and TIFF) single-channel or 3-channel (with 'BGR' channel order) images can be saved using this function. If the format, depth or channel order is different, use :ref:`Mat::convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`, and :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>` to convert it before saving. Or, use the universal :ref:`FileStorage <doxid-d9/df9/classcv_1_1_file_storage>` I/O functions to save the image to XML or YAML format.
+
+It is possible to store PNG images with an alpha channel using this function. To do this, create 8-bit (or 16-bit) 4-channel image BGRA, where the alpha channel goes last. Fully transparent pixels should have alpha set to 0, fully opaque pixels should have alpha set to 255/65535.
+
+The sample below shows how to create such a BGRA image and store to PNG file. It also demonstrates how to set custom compression parameters :
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/opencv.hpp>
+	
+	using namespace cv;
+	using namespace std;
+	
+	void createAlphaMat(Mat &mat)
+	{
+	    CV_Assert(mat.channels() == 4);
+	    for (int i = 0; i < mat.rows; ++i) {
+	        for (int j = 0; j < mat.cols; ++j) {
+	            Vec4b& bgra = mat.at<Vec4b>(i, j);
+	            bgra[0] = UCHAR_MAX; // Blue
+	            bgra[1] = saturate_cast<uchar>((float (mat.cols - j)) / ((float)mat.cols) * UCHAR_MAX); // Green
+	            bgra[2] = saturate_cast<uchar>((float (mat.rows - i)) / ((float)mat.rows) * UCHAR_MAX); // Red
+	            bgra[3] = saturate_cast<uchar>(0.5 * (bgra[1] + bgra[2])); // Alpha
+	        }
+	    }
+	}
+	
+	int main(int argv, char **argc)
+	{
+	    // Create mat with alpha channel
+	    Mat mat(480, 640, CV_8UC4);
+	    createAlphaMat(mat);
+	
+	    vector<int> compression_params;
+	    compression_params.push_back(IMWRITE_PNG_COMPRESSION);
+	    compression_params.push_back(9);
+	
+	    try {
+	        imwrite("alpha.png", mat, compression_params);
+	    }
+	    catch (cv::Exception& ex) {
+	        fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
+	        return 1;
+	    }
+	
+	    fprintf(stdout, "Saved PNG file with alpha data.\n");
+	    return 0;
+	}
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- filename
+
+		- Name of the file.
+
+	*
+		- img
+
+		- Image to be saved.
+
+	*
+		- params
+
+		- Format-specific parameters encoded as pairs (paramId_1, paramValue_1, paramId_2, paramValue_2, ... .) see :ref:`cv::ImwriteFlags <doxid-d4/da8/group__imgcodecs_1ga292d81be8d76901bff7988d18d2b42ac>`
+

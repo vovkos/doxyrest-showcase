@@ -1,0 +1,227 @@
+.. index:: pair: class; Poco::AtomicCounter
+.. _doxid-class_poco_1_1_atomic_counter:
+
+class Poco::AtomicCounter
+=========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class implements a simple counter, which provides atomic operations that are safe to use in a multithreaded environment. :ref:`More...<details-class_poco_1_1_atomic_counter>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <AtomicCounter.h>
+	
+	class AtomicCounter
+	{
+	public:
+		// typedefs
+	
+		typedef int :ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`;
+
+		// construction
+	
+		:ref:`AtomicCounter<doxid-class_poco_1_1_atomic_counter_1abb4f18840c2ed355fe7ca0fbc6680b49>`();
+		:ref:`AtomicCounter<doxid-class_poco_1_1_atomic_counter_1a21da7367b98dd76ec517bee10b040751>`(:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>` initialValue);
+		:ref:`AtomicCounter<doxid-class_poco_1_1_atomic_counter_1ae9ee1a227badd563612198196cef7aaf>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` AtomicCounter& counter);
+
+		// methods
+	
+		AtomicCounter&
+		:ref:`operator=<doxid-class_poco_1_1_atomic_counter_1a30a04f5c761e64c8db1c0fcbd2416dda>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` AtomicCounter& counter);
+	
+		AtomicCounter&
+		:ref:`operator=<doxid-class_poco_1_1_atomic_counter_1abb53b07882e6e06c1dd25e0ffa457d39>`(:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>` value);
+	
+		:ref:`operator ValueType<doxid-class_poco_1_1_atomic_counter_1a2a706bd5e43e78a0a06b370429d111b7>`() const;
+	
+		:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+		:ref:`value<doxid-class_poco_1_1_atomic_counter_1a790ac9809d66350de0777c51e5890ab0>`() const;
+	
+		:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+		:ref:`operator++<doxid-class_poco_1_1_atomic_counter_1a1f04f4baa8b2482495a4055eb83a108d>`();
+	
+		:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+		:ref:`operator++<doxid-class_poco_1_1_atomic_counter_1a201000aa1c180ec7de8acc0bb41b4fd1>`(int);
+	
+		:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+		:ref:`operator--<doxid-class_poco_1_1_atomic_counter_1a1929d3bfde948b668d520d30a5416557>`();
+	
+		:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+		:ref:`operator--<doxid-class_poco_1_1_atomic_counter_1a3323500cf1057df04bb87fd277258b94>`(int);
+	
+		bool
+		:ref:`operator!<doxid-class_poco_1_1_atomic_counter_1acd8310690a31b32078fe6529d341d7d9>`() const;
+	};
+.. _details-class_poco_1_1_atomic_counter:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements a simple counter, which provides atomic operations that are safe to use in a multithreaded environment.
+
+Typical usage of :ref:`AtomicCounter <doxid-class_poco_1_1_atomic_counter>` is for implementing reference counting and similar things.
+
+On some platforms, the implementation of :ref:`AtomicCounter <doxid-class_poco_1_1_atomic_counter>` is based on atomic primitives specific to the platform (such as InterlockedIncrement, etc. on Windows), and thus very efficient. On platforms that do not support atomic primitives, operations are guarded by a :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>`.
+
+The following platforms currently have atomic primitives:
+
+.. ref-code-block:: cpp
+
+	- Windows
+	- Mac OS X
+	- GCC 4.1+ (Intel platforms only)
+
+Typedefs
+--------
+
+.. index:: pair: typedef; ValueType
+.. _doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	typedef int ValueType
+
+The underlying integer type.
+
+Construction
+------------
+
+.. index:: pair: function; AtomicCounter
+.. _doxid-class_poco_1_1_atomic_counter_1abb4f18840c2ed355fe7ca0fbc6680b49:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	AtomicCounter()
+
+Creates a new :ref:`AtomicCounter <doxid-class_poco_1_1_atomic_counter>` and initializes it to zero.
+
+.. index:: pair: function; AtomicCounter
+.. _doxid-class_poco_1_1_atomic_counter_1a21da7367b98dd76ec517bee10b040751:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	AtomicCounter(:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>` initialValue)
+
+Creates a new :ref:`AtomicCounter <doxid-class_poco_1_1_atomic_counter>` and initializes it with the given value.
+
+.. index:: pair: function; AtomicCounter
+.. _doxid-class_poco_1_1_atomic_counter_1ae9ee1a227badd563612198196cef7aaf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	AtomicCounter(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` AtomicCounter& counter)
+
+Creates the counter by copying another one.
+
+Methods
+-------
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_atomic_counter_1a30a04f5c761e64c8db1c0fcbd2416dda:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	AtomicCounter&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` AtomicCounter& counter)
+
+Assigns the value of another :ref:`AtomicCounter <doxid-class_poco_1_1_atomic_counter>`.
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_atomic_counter_1abb53b07882e6e06c1dd25e0ffa457d39:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	AtomicCounter&
+	operator=(:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>` value)
+
+Assigns a value to the counter.
+
+.. index:: pair: function; operator ValueType
+.. _doxid-class_poco_1_1_atomic_counter_1a2a706bd5e43e78a0a06b370429d111b7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	operator ValueType() const
+
+Returns the value of the counter.
+
+.. index:: pair: function; value
+.. _doxid-class_poco_1_1_atomic_counter_1a790ac9809d66350de0777c51e5890ab0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+	value() const
+
+Returns the value of the counter.
+
+.. index:: pair: function; operator++
+.. _doxid-class_poco_1_1_atomic_counter_1a1f04f4baa8b2482495a4055eb83a108d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+	operator++()
+
+Increments the counter and returns the result.
+
+.. index:: pair: function; operator++
+.. _doxid-class_poco_1_1_atomic_counter_1a201000aa1c180ec7de8acc0bb41b4fd1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+	operator++(int)
+
+Increments the counter and returns the previous value.
+
+.. index:: pair: function; operator--
+.. _doxid-class_poco_1_1_atomic_counter_1a1929d3bfde948b668d520d30a5416557:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+	operator--()
+
+Decrements the counter and returns the result.
+
+.. index:: pair: function; operator--
+.. _doxid-class_poco_1_1_atomic_counter_1a3323500cf1057df04bb87fd277258b94:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`ValueType<doxid-class_poco_1_1_atomic_counter_1aa69b5af1343b50e78352482786bb3954>`
+	operator--(int)
+
+Decrements the counter and returns the previous value.
+
+.. index:: pair: function; operator!
+.. _doxid-class_poco_1_1_atomic_counter_1acd8310690a31b32078fe6529d341d7d9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	operator!() const
+
+Returns true if the counter is zero, false otherwise.
+

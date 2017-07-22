@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Histograms - 2: Histogram Equalization &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Histograms - 3 : 2D Histograms" href="page_tutorial_py_2d_histogram.html" />
+    <link rel="prev" title="Histograms - 1 : Find, Plot, Analyze !!!" href="page_tutorial_py_histogram_begins.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_photo.html">Computational Photography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_core.html">Core Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_feature2d.html">Feature Detection and Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_gui.html">Gui Features in OpenCV</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_canny.html">Canny Edge Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_colorspaces.html">Changing Colorspaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_table_of_contents_contours.html">Contours in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_geometric_transformations.html">Geometric Transformations of Images</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="page_tutorial_py_table_of_contents_histograms.html">Histograms in OpenCV</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="page_tutorial_py_histogram_backprojection.html">Histogram - 4 : Histogram Backprojection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="page_tutorial_py_histogram_begins.html">Histograms - 1 : Find, Plot, Analyze !!!</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Histograms - 2: Histogram Equalization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="page_tutorial_py_2d_histogram.html">Histograms - 3 : 2D Histograms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_houghcircles.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_houghlines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_gradients.html">Image Gradients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_watershed.html">Image Segmentation with Watershed Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_thresholding.html">Image Thresholding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_table_of_contents_transforms.html">Image Transforms in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_grabcut.html">Interactive Foreground Extraction using GrabCut Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_morphological_ops.html">Morphological Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_filtering.html">Smoothing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_py_template_matching.html">Template Matching</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_setup.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_ml.html">Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_objdetect.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_bindings.html">OpenCV-Python Bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_py_table_of_contents_video.html">Video Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_table_of_contents_imgproc.html">Image Processing in OpenCV</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_py_table_of_contents_histograms.html">Histograms in OpenCV</a> &raquo;</li>
+        
+      <li>Histograms - 2: Histogram Equalization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="histograms-2-histogram-equalization">
+<span id="doxid-d5-daf-tutorial-py-histogram-equalization"></span><span id="index-0"></span><h1>Histograms - 2: Histogram Equalization</h1>
+<p class="rubric">Goal</p>
+<p>In this section,</p>
+<ul class="simple">
+<li>We will learn the concepts of histogram equalization and use it to improve the contrast of our images.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>Consider an image whose pixel values are confined to some specific range of values only. For eg, brighter image will have all pixels confined to high values. But a good image will have pixels from all regions of the image. So you need to stretch this histogram to either ends (as given in below image, from wikipedia) and that is what Histogram Equalization does (in simple words). This normally improves the contrast of the image.</p>
+<img alt="image" src="_images/histogram_equalization.png" />
+<p>I would recommend you to read the wikipedia page on <a class="reference external" href="http://en.wikipedia.org/wiki/Histogram_equalization">Histogram Equalization</a> for more details about it. It has a very good explanation with worked out examples, so that you would understand almost everything after reading that. Instead, here we will see its Numpy implementation. After that, we will see OpenCV function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;wiki.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">hist</span><span class="p">,</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">flatten</span><span class="p">(),</span><span class="mi">256</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">])</span>
+
+<span class="n">cdf</span> <span class="o">=</span> <span class="n">hist</span><span class="p">.</span><span class="n">cumsum</span><span class="p">()</span>
+<span class="n">cdf_normalized</span> <span class="o">=</span> <span class="n">cdf</span> <span class="o">*</span> <span class="n">hist</span><span class="p">.</span><span class="n">max</span><span class="p">()</span><span class="o">/</span> <span class="n">cdf</span><span class="p">.</span><span class="n">max</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cdf_normalized</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="sc">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">flatten</span><span class="p">(),</span><span class="mi">256</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">])</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">((</span><span class="sc">&#39;cdf&#39;</span><span class="p">,</span><span class="sc">&#39;histogram&#39;</span><span class="p">),</span> <span class="n">loc</span> <span class="o">=</span> <span class="sc">&#39;upper left&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<img alt="image" src="_images/histeq_numpy1.jpg" />
+<p>You can see histogram lies in brighter region. We need the full spectrum. For that, we need a transformation function which maps the input pixels in brighter region to output pixels in full region. That is what histogram equalization does.</p>
+<p>Now we find the minimum histogram value (excluding 0) and apply the histogram equalization equation as given in wiki page. But I have used here, the masked array concept array from Numpy. For masked array, all operations are performed on non-masked elements. You can read more about it from Numpy docs on masked arrays.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cdf_m</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">ma</span><span class="p">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cdf_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">cdf_m</span> <span class="o">-</span> <span class="n">cdf_m</span><span class="p">.</span><span class="n">min</span><span class="p">())</span><span class="o">*</span><span class="mi">255</span><span class="o">/</span><span class="p">(</span><span class="n">cdf_m</span><span class="p">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">cdf_m</span><span class="p">.</span><span class="n">min</span><span class="p">())</span>
+<span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">ma</span><span class="p">.</span><span class="n">filled</span><span class="p">(</span><span class="n">cdf_m</span><span class="p">,</span><span class="mi">0</span><span class="p">).</span><span class="n">astype</span><span class="p">(</span><span class="sc">&#39;uint8&#39;</span><span class="p">)</span>
+</pre>
+<p>Now we have the look-up table that gives us the information on what is the output pixel value for every input pixel value. So we just apply the transform.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img2</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">[</span><span class="n">img</span><span class="p">]</span>
+</pre>
+<p>Now we calculate its histogram and cdf as before ( you do it) and result looks like below :</p>
+<img alt="image" src="_images/histeq_numpy2.jpg" />
+<p>Another important feature is that, even if the image was a darker image (instead of a brighter one we used), after equalization we will get almost the same image as we got. As a result, this is used as a “reference tool” to make all images with same lighting conditions. This is useful in many cases. For example, in face recognition, before training the face data, the images of faces are histogram equalized to make them all with same lighting conditions.</p>
+<p class="rubric">Histograms Equalization in OpenCV</p>
+<p>OpenCV has a function to do this, <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga7e54091f0c937d49bf84152a16f76d6e"><span class="std std-ref">cv2.equalizeHist()</span></a>. Its input is just grayscale image and output is our histogram equalized image.</p>
+<p>Below is a simple code snippet showing its usage for same image we used :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;wiki.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">equ</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">equalizeHist</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">img</span><span class="p">,</span><span class="n">equ</span><span class="p">))</span> <span class="err">#</span><span class="n">stacking</span> <span class="n">images</span> <span class="n">side</span><span class="o">-</span><span class="n">by</span><span class="o">-</span><span class="n">side</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;res.png&#39;</span><span class="p">,</span><span class="n">res</span><span class="p">)</span>
+</pre>
+<img alt="image" src="_images/equalization_opencv.jpg" />
+<p>So now you can take different images with different light conditions, equalize it and check the results.</p>
+<p>Histogram equalization is good when histogram of the image is confined to a particular region. It won’t work good in places where there is large intensity variations where histogram covers a large region, ie both bright and dark pixels are present. Please check the SOF links in Additional Resources.</p>
+<p class="rubric">CLAHE (Contrast Limited Adaptive Histogram Equalization)</p>
+<p>The first histogram equalization we just saw, considers the global contrast of the image. In many cases, it is not a good idea. For example, below image shows an input image and its result after global histogram equalization.</p>
+<img alt="image" src="_images/clahe_1.jpg" />
+<p>It is true that the background contrast has improved after histogram equalization. But compare the face of statue in both images. We lost most of the information there due to over-brightness. It is because its histogram is not confined to a particular region as we saw in previous cases (Try to plot histogram of input image, you will get more intuition).</p>
+<p>So to solve this problem, <strong>adaptive histogram equalization</strong> is used. In this, image is divided into small blocks called “tiles” (tileSize is 8x8 by default in OpenCV). Then each of these blocks are histogram equalized as usual. So in a small area, histogram would confine to a small region (unless there is noise). If noise is there, it will be amplified. To avoid this, <strong>contrast limiting</strong> is applied. If any histogram bin is above the specified contrast limit (by default 40 in OpenCV), those pixels are clipped and distributed uniformly to other bins before applying histogram equalization. After equalization, to remove artifacts in tile borders, bilinear interpolation is applied.</p>
+<p>Below code snippet shows how to apply CLAHE in OpenCV:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;tsukuba_l.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># create a CLAHE object (Arguments are optional).</span>
+<span class="n">clahe</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">createCLAHE</span><span class="p">(</span><span class="n">clipLimit</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">tileGridSize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">cl1</span> <span class="o">=</span> <span class="n">clahe</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;clahe_2.jpg&#39;</span><span class="p">,</span><span class="n">cl1</span><span class="p">)</span>
+</pre>
+<p>See the result below and compare it with results above, especially the statue region:</p>
+<img alt="image" src="_images/clahe_2.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>Wikipedia page on <a class="reference external" href="http://en.wikipedia.org/wiki/Histogram_equalization">Histogram Equalization</a></li>
+<li><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.html">Masked Arrays in Numpy</a></li>
+</ol>
+<p>Also check these SOF questions regarding contrast adjustment:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://stackoverflow.com/questions/10549245/how-can-i-adjust-contrast-in-opencv-in-c">How can I adjust contrast in OpenCV in C?</a></li>
+<li><a class="reference external" href="http://stackoverflow.com/questions/10561222/how-do-i-equalize-contrast-brightness-of-images-using-opencv">How do I equalize contrast &amp; brightness of images using opencv?</a></li>
+</ol>
+<p class="rubric">Exercises</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_py_2d_histogram.html" class="btn btn-neutral float-right" title="Histograms - 3 : 2D Histograms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_py_histogram_begins.html" class="btn btn-neutral float-left" title="Histograms - 1 : Find, Plot, Analyze !!!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

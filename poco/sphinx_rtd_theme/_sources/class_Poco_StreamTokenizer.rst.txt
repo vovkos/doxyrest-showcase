@@ -1,0 +1,139 @@
+.. index:: pair: class; Poco::StreamTokenizer
+.. _doxid-class_poco_1_1_stream_tokenizer:
+
+class Poco::StreamTokenizer
+===========================
+
+.. toctree::
+	:hidden:
+
+	struct_Poco_StreamTokenizer_TokenInfo.rst
+
+Overview
+~~~~~~~~
+
+A stream tokenizer splits an input stream into a sequence of tokens of different kinds. :ref:`More...<details-class_poco_1_1_stream_tokenizer>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <StreamTokenizer.h>
+	
+	class StreamTokenizer
+	{
+	public:
+		// structs
+	
+		struct :ref:`TokenInfo<doxid-struct_poco_1_1_stream_tokenizer_1_1_token_info>`;
+
+		// construction
+	
+		:ref:`StreamTokenizer<doxid-class_poco_1_1_stream_tokenizer_1a91b774d47fab9129345888cad1370388>`();
+		:ref:`StreamTokenizer<doxid-class_poco_1_1_stream_tokenizer_1a5ec8f38615722473504964d416dabbde>`(std::istream& istr);
+
+		// methods
+	
+		void
+		:ref:`attachToStream<doxid-class_poco_1_1_stream_tokenizer_1a27e26279f1194c57e135937e6d0bc393>`(std::istream& istr);
+	
+		void
+		:ref:`addToken<doxid-class_poco_1_1_stream_tokenizer_1a1073f11219174ed50bcec73360bb295f>`(:ref:`Token<doxid-class_poco_1_1_token>`* pToken);
+	
+		void
+		:ref:`addToken<doxid-class_poco_1_1_stream_tokenizer_1ab7cef7f34c25feeb98d398c1f4e5ffb1>`(
+			:ref:`Token<doxid-class_poco_1_1_token>`* pToken,
+			bool ignore
+			);
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Token<doxid-class_poco_1_1_token>`*
+		:ref:`next<doxid-class_poco_1_1_stream_tokenizer_1aee12044d096e974d8c3bb28f748b1041>`();
+	};
+.. _details-class_poco_1_1_stream_tokenizer:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A stream tokenizer splits an input stream into a sequence of tokens of different kinds.
+
+Various token kinds can be registered with the tokenizer.
+
+Construction
+------------
+
+.. index:: pair: function; StreamTokenizer
+.. _doxid-class_poco_1_1_stream_tokenizer_1a91b774d47fab9129345888cad1370388:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	StreamTokenizer()
+
+Creates a :ref:`StreamTokenizer <doxid-class_poco_1_1_stream_tokenizer>` with no attached stream.
+
+.. index:: pair: function; StreamTokenizer
+.. _doxid-class_poco_1_1_stream_tokenizer_1a5ec8f38615722473504964d416dabbde:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	StreamTokenizer(std::istream& istr)
+
+Creates a :ref:`StreamTokenizer <doxid-class_poco_1_1_stream_tokenizer>` with no attached stream.
+
+Methods
+-------
+
+.. index:: pair: function; attachToStream
+.. _doxid-class_poco_1_1_stream_tokenizer_1a27e26279f1194c57e135937e6d0bc393:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	attachToStream(std::istream& istr)
+
+Attaches the tokenizer to an input stream.
+
+.. index:: pair: function; addToken
+.. _doxid-class_poco_1_1_stream_tokenizer_1a1073f11219174ed50bcec73360bb295f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	addToken(:ref:`Token<doxid-class_poco_1_1_token>`* pToken)
+
+Adds a token class to the tokenizer.
+
+The tokenizer takes ownership of the token and deletes it when no longer needed. Comment and whitespace tokens will be marked as ignorable, which means that :ref:`next() <doxid-class_poco_1_1_stream_tokenizer_1aee12044d096e974d8c3bb28f748b1041>` will not return them.
+
+.. index:: pair: function; addToken
+.. _doxid-class_poco_1_1_stream_tokenizer_1ab7cef7f34c25feeb98d398c1f4e5ffb1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	addToken(
+		:ref:`Token<doxid-class_poco_1_1_token>`* pToken,
+		bool ignore
+		)
+
+Adds a token class to the tokenizer.
+
+The tokenizer takes ownership of the token and deletes it when no longer needed. If ignore is true, the token will be marked as ignorable, which means that :ref:`next() <doxid-class_poco_1_1_stream_tokenizer_1aee12044d096e974d8c3bb28f748b1041>` will not return it.
+
+.. index:: pair: function; next
+.. _doxid-class_poco_1_1_stream_tokenizer_1aee12044d096e974d8c3bb28f748b1041:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Token<doxid-class_poco_1_1_token>`*
+	next()
+
+Extracts the next token from the input stream.
+
+Returns a pointer to an :ref:`EOFToken <doxid-class_poco_1_1_e_o_f_token>` if there are no more characters to read. Returns a pointer to an :ref:`InvalidToken <doxid-class_poco_1_1_invalid_token>` if an invalid character is encountered. If a token is marked as ignorable, it will not be returned, and the next token will be examined. Never returns a NULL pointer. You must not delete the token returned by :ref:`next() <doxid-class_poco_1_1_stream_tokenizer_1aee12044d096e974d8c3bb28f748b1041>`.
+

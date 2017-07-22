@@ -1,0 +1,274 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>How to use the OpenCV parallel_for_ to parallelize your code &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Intel® IPP Asynchronous C/C++ library in OpenCV" href="page_tutorial_how_to_use_ippa_conversion.html" />
+    <link rel="prev" title="How to scan images, lookup tables and time measurement with OpenCV" href="page_tutorial_how_to_scan_images.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_use_ippa_conversion.html" title="Intel® IPP Asynchronous C/C++ library in OpenCV"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_scan_images.html" title="How to scan images, lookup tables and time measurement with OpenCV"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" accesskey="U">The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_how_to_scan_images.html"
+                        title="previous chapter">How to scan images, lookup tables and time measurement with OpenCV</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_how_to_use_ippa_conversion.html"
+                        title="next chapter">Intel® IPP Asynchronous C/C++ library in OpenCV</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-use-the-opencv-parallel-for-to-parallelize-your-code">
+<span id="doxid-de-d33-tutorial-how-to-use-open-c-v-parallel-for"></span><span id="index-0"></span><h1>How to use the OpenCV parallel_for_ to parallelize your code</h1>
+<p class="rubric">Goal</p>
+<p>The goal of this tutorial is to show you how to use the OpenCV <code class="docutils literal notranslate"><span class="pre">parallel_for_</span></code> framework to easily parallelize your code. To illustrate the concept, we will write a program to draw a Mandelbrot set exploiting almost all the CPU load available. The full tutorial code is <a class="reference external" href="https://github.com/opencv/opencv/blob/master/samples/cpp/tutorial_code/core/how_to_use_OpenCV_parallel_for_/how_to_use_OpenCV_parallel_for_.cpp">here</a>. If you want more information about multithreading, you will have to refer to a reference book or course as this tutorial is intended to remain simple.</p>
+<p class="rubric">Precondition</p>
+<p>The first precondition is to have OpenCV built with a parallel framework. In OpenCV 3.2, the following parallel frameworks are available in that order:</p>
+<ol class="arabic simple">
+<li>Intel Threading Building Blocks (3rdparty library, should be explicitly enabled)</li>
+<li>C= Parallel C/C++ Programming Language Extension (3rdparty library, should be explicitly enabled)</li>
+<li>OpenMP (integrated to compiler, should be explicitly enabled)</li>
+<li>APPLE GCD (system wide, used automatically (APPLE only))</li>
+<li>Windows RT concurrency (system wide, used automatically (Windows RT only))</li>
+<li>Windows concurrency (part of runtime, used automatically (Windows only - MSVC++ &gt;= 10))</li>
+<li>Pthreads (if available)</li>
+</ol>
+<p>As you can see, several parallel frameworks can be used in the OpenCV library. Some parallel libraries are third party libraries and have to be explictly built and enabled in CMake (e.g. TBB, C=), others are automatically available with the platform (e.g. APPLE GCD) but chances are that you should be enable to have access to a parallel framework either directly or by enabling the option in CMake and rebuild the library.</p>
+<p>The second (weak) precondition is more related to the task you want to achieve as not all computations are suitable / can be adatapted to be run in a parallel way. To remain simple, tasks that can be splitted into multiple elementary operations with no memory dependency (no possible race condition) are easily parallelizable. Computer vision processing are often easily parallelizable as most of the time the processing of one pixel does not depend to the state of other pixels.</p>
+<p class="rubric">Simple example: drawing a Mandelbrot set</p>
+<p>We will use the example of drawing a Mandelbrot set to show how from a regular sequential code you can easily adapt the code to parallize the computation.</p>
+<p class="rubric">Theory</p>
+<p>The Mandelbrot set definition has been named in tribute to the mathematician Benoit Mandelbrot by the mathematician Adrien Douady. It has been famous outside of the mathematics field as the image representation is an example of a class of fractals, a mathematical set that exhibits a repeating pattern displayed at every scale (even more, a Mandelbrot set is self-similar as the whole shape can be repeatedly seen at different scale). For a more in-depth introduction, you can look at the corresponding <a class="reference external" href="https://en.wikipedia.org/wiki/Mandelbrot_set">Wikipedia article</a>. Here, we will just introduce the formula to draw the Mandelbrot set (from the mentioned Wikipedia article).</p>
+<p>The Mandelbrot set is the set of values of <span class="math notranslate nohighlight">\(c\)</span> in the complex plane for which the orbit of 0 under iteration of the quadratic map</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases} z_0 = 0 \\ z_{n+1} = z_n^2 + c \end{cases}\end{split}\]</div>
+<p>remains bounded. That is, a complex number <span class="math notranslate nohighlight">\(c\)</span> is part of the Mandelbrot set if, when starting with <span class="math notranslate nohighlight">\(z_0 = 0\)</span> and applying the iteration repeatedly, the absolute value of <span class="math notranslate nohighlight">\(z_n\)</span> remains bounded however large <span class="math notranslate nohighlight">\(n\)</span> gets. This can also be represented as</p>
+<div class="math notranslate nohighlight">
+\[\limsup_{n\to\infty}|z_{n+1}|\leqslant2\]</div>
+<p class="rubric">Pseudocode</p>
+<p>A simple algorithm to generate a representation of the Mandelbrot set is called the <a class="reference external" href="https://en.wikipedia.org/wiki/Mandelbrot_set#Escape_time_algorithm">“escape time algorithm”</a>. For each pixel in the rendered image, we test using the recurrence relation if the complex number is bounded or not under a maximum number of iterations. Pixels that do not belong to the Mandelbrot set will escape quickly whereas we assume that the pixel is in the set after a fixed maximum number of iterations. A high value of iterations will produce a more detailed image but the computation time will increase accordingly. We use the number of iterations needed to “escape” to depict the pixel value in the image.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">For</span> <span class="n">each</span> <span class="nf">pixel</span> <span class="p">(</span><span class="n">Px</span><span class="p">,</span> <span class="n">Py</span><span class="p">)</span> <span class="n">on</span> <span class="n">the</span> <span class="n">screen</span><span class="p">,</span> <span class="k">do</span><span class="o">:</span>
+<span class="p">{</span>
+  <span class="n">x0</span> <span class="o">=</span> <span class="n">scaled</span> <span class="n">x</span> <span class="n">coordinate</span> <span class="n">of</span> <span class="n">pixel</span> <span class="p">(</span><span class="n">scaled</span> <span class="n">to</span> <span class="n">lie</span> <span class="n">in</span> <span class="n">the</span> <span class="n">Mandelbrot</span> <span class="n">X</span> <span class="n">scale</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="n">y0</span> <span class="o">=</span> <span class="n">scaled</span> <span class="n">y</span> <span class="n">coordinate</span> <span class="n">of</span> <span class="n">pixel</span> <span class="p">(</span><span class="n">scaled</span> <span class="n">to</span> <span class="n">lie</span> <span class="n">in</span> <span class="n">the</span> <span class="n">Mandelbrot</span> <span class="n">Y</span> <span class="n">scale</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="mf">0.0</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
+  <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">max_iteration</span> <span class="o">=</span> <span class="mi">1000</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">*</span><span class="mi">2</span>  <span class="n">AND</span>  <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iteration</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">xtemp</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">x0</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">y0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">xtemp</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="n">iteration</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="p">}</span>
+  <span class="n">color</span> <span class="o">=</span> <span class="n">palette</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span>
+  <span class="n">plot</span><span class="p">(</span><span class="n">Px</span><span class="p">,</span> <span class="n">Py</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+<span class="p">}</span>
+</pre>
+<p>To relate between the pseudocode and the theory, we have:</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(z = x + iy\)</span></li>
+<li><span class="math notranslate nohighlight">\(z^2 = x^2 + i2xy - y^2\)</span></li>
+<li><span class="math notranslate nohighlight">\(c = x_0 + iy_0\)</span></li>
+</ul>
+<img alt="_images/how_to_use_OpenCV_parallel_for_640px-Mandelset_hires.png" src="_images/how_to_use_OpenCV_parallel_for_640px-Mandelset_hires.png" />
+<p>On this figure, we recall that the real part of a complex number is on the x-axis and the imaginary part on the y-axis. You can see that the whole shape can be repeatedly visible if we zoom at particular locations.</p>
+<p class="rubric">Implementation</p>
+<p class="rubric">Escape time algorithm implementation</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">mandelbrot</span><span class="p">(</span><span class="k">const</span> <span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">z0</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span> <a class="reference internal" href="class_cv_MatExpr.html#doxid-d9-ddc-classcv-1-1-mat-expr-1a6dff8b6e9105b6d817b493e7be157c90"><span class="std std-ref">max</span></a><span></span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">z</span> <span class="o">=</span> <span class="n">z0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">t</span> <span class="o">&lt;</span> <a class="reference internal" href="class_cv_MatExpr.html#doxid-d9-ddc-classcv-1-1-mat-expr-1a6dff8b6e9105b6d817b493e7be157c90"><span class="std std-ref">max</span></a><span></span><span class="p">;</span> <span class="n">t</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span><span class="p">.</span><span class="n">real</span><span class="p">()</span><span class="o">*</span><span class="n">z</span><span class="p">.</span><span class="n">real</span><span class="p">()</span> <span class="o">+</span> <span class="n">z</span><span class="p">.</span><span class="n">imag</span><span class="p">()</span><span class="o">*</span><span class="n">z</span><span class="p">.</span><span class="n">imag</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">4.0f</span><span class="p">)</span> <span class="k">return</span> <span class="n">t</span><span class="p">;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">z0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <a class="reference internal" href="class_cv_MatExpr.html#doxid-d9-ddc-classcv-1-1-mat-expr-1a6dff8b6e9105b6d817b493e7be157c90"><span class="std std-ref">max</span></a><span></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>Here, we used the ` &lt;<a class="reference external" href="http://en.cppreference.com/w/cpp/numeric/complex">http://en.cppreference.com/w/cpp/numeric/complex</a>&gt;`__ template class to represent a complex number. This function performs the test to check if the pixel is in set or not and returns the “escaped” iteration.</p>
+<p class="rubric">Sequential Mandelbrot implementation</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">sequentialMandelbrot</span><span class="p">(</span><span class="n">Mat</span> <span class="o">&amp;</span><span class="n">img</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">x1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">y1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">scaleX</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">scaleY</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">img</span><span class="p">.</span><span class="n">rows</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">img</span><span class="p">.</span><span class="n">cols</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">float</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">j</span> <span class="o">/</span> <span class="n">scaleX</span> <span class="o">+</span> <span class="n">x1</span><span class="p">;</span>
+            <span class="kt">float</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="n">scaleY</span> <span class="o">+</span> <span class="n">y1</span><span class="p">;</span>
+
+            <span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">z0</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">);</span>
+            <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)</span> <span class="n">mandelbrotFormula</span><span class="p">(</span><span class="n">z0</span><span class="p">);</span>
+            <span class="n">img</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>In this implementation, we sequentially iterate over the pixels in the rendered image to perform the test to check if the pixel is likely to belong to the Mandelbrot set or not.</p>
+<p>Another thing to do is to transform the pixel coordinate into the Mandelbrot set space with:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">mandelbrotImg</span><span class="p">(</span><span class="mi">4800</span><span class="p">,</span> <span class="mi">5400</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>
+<span class="kt">float</span> <span class="n">x1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.1f</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="mf">0.6f</span><span class="p">;</span>
+<span class="kt">float</span> <span class="n">y1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.2f</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="mf">1.2f</span><span class="p">;</span>
+<span class="kt">float</span> <span class="n">scaleX</span> <span class="o">=</span> <span class="n">mandelbrotImg</span><span class="p">.</span><span class="n">cols</span> <span class="o">/</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">);</span>
+<span class="kt">float</span> <span class="n">scaleY</span> <span class="o">=</span> <span class="n">mandelbrotImg</span><span class="p">.</span><span class="n">rows</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">);</span>
+</pre>
+<p>Finally, to assign the grayscale value to the pixels, we use the following rule:</p>
+<ul class="simple">
+<li>a pixel is black if it reaches the maximum number of iterations (pixel is assumed to be in the Mandelbrot set),</li>
+<li>otherwise we assign a grayscale value depending on the escaped iteration and scaled to fit the grayscale range.</li>
+</ul>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="nf">mandelbrotFormula</span><span class="p">(</span><span class="k">const</span> <span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">z0</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="n">mandelbrot</span><span class="p">(</span><span class="n">z0</span><span class="p">,</span> <span class="n">maxIter</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">maxIter</span> <span class="o">-</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a682082a1892db64a2856403ec17ba297"><span class="std std-ref">sqrt</span></a><span></span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">maxIter</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>Using a linear scale transformation is not enough to perceive the grayscale variation. To overcome this, we will boost the perception by using a square root scale transformation (borrowed from Jeremy D. Frens in his <a class="reference external" href="http://www.programming-during-recess.net/2016/06/26/color-schemes-for-mandelbrot-sets/">blog post</a>): <span class="math notranslate nohighlight">\(f \left( x \right) = \sqrt{\frac{x}{\text{maxIter}}} \times 255\)</span></p>
+<img alt="_images/how_to_use_OpenCV_parallel_for_sqrt_scale_transformation.png" src="_images/how_to_use_OpenCV_parallel_for_sqrt_scale_transformation.png" />
+<p>The green curve corresponds to a simple linear scale transformation, the blue one to a square root scale transformation and you can observe how the lowest values will be boosted when looking at the slope at these positions.</p>
+<p class="rubric">Parallel Mandelbrot implementation</p>
+<p>When looking at the sequential implementation, we can notice that each pixel is computed independently. To optimize the computation, we can perform multiple pixel calculations in parallel, by exploiting the multi-core architecture of modern processor. To achieve this easily, we will use the OpenCV <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaa42ec9937b847cb52a97c613fc894c4a"><span class="std std-ref">cv::parallel_for_</span></a> framework.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">class</span> <span class="nl">ParallelMandelbrot</span> <span class="p">:</span> <span class="k">public</span> <span class="n">ParallelLoopBody</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">ParallelMandelbrot</span> <span class="p">(</span><span class="n">Mat</span> <span class="o">&amp;</span><span class="n">img</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">x1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">y1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">scaleX</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span> <span class="n">scaleY</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">m_img</span><span class="p">(</span><span class="n">img</span><span class="p">),</span> <span class="n">m_x1</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">m_y1</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="n">m_scaleX</span><span class="p">(</span><span class="n">scaleX</span><span class="p">),</span> <span class="n">m_scaleY</span><span class="p">(</span><span class="n">scaleY</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="k">operator</span> <span class="p">()(</span><span class="k">const</span> <span class="n">Range</span><span class="o">&amp;</span> <span class="n">range</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">range</span><span class="p">.</span><span class="n">start</span><span class="p">;</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">range</span><span class="p">.</span><span class="n">end</span><span class="p">;</span> <span class="n">r</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">r</span> <span class="o">/</span> <span class="n">m_img</span><span class="p">.</span><span class="n">cols</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">r</span> <span class="o">%</span> <span class="n">m_img</span><span class="p">.</span><span class="n">cols</span><span class="p">;</span>
+
+            <span class="kt">float</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">j</span> <span class="o">/</span> <span class="n">m_scaleX</span> <span class="o">+</span> <span class="n">m_x1</span><span class="p">;</span>
+            <span class="kt">float</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="n">m_scaleY</span> <span class="o">+</span> <span class="n">m_y1</span><span class="p">;</span>
+
+            <span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">z0</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">);</span>
+            <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)</span> <span class="n">mandelbrotFormula</span><span class="p">(</span><span class="n">z0</span><span class="p">);</span>
+            <span class="n">m_img</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">ParallelMandelbrot</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">ParallelMandelbrot</span> <span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">Mat</span> <span class="o">&amp;</span><span class="n">m_img</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">m_x1</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">m_y1</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">m_scaleX</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">m_scaleY</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<p>The first thing is to declare a custom class that inherits from <a class="reference internal" href="class_cv_ParallelLoopBody.html#doxid-d2-d46-classcv-1-1-parallel-loop-body"><span class="std std-ref">cv::ParallelLoopBody</span></a> and to override the <code class="docutils literal notranslate"><span class="pre">virtual</span> <span class="pre">void</span> <span class="pre">operator</span> <span class="pre">()(const</span> <span class="pre">cv::Range&amp;</span> <span class="pre">range)</span> <span class="pre">const</span></code>.</p>
+<p>The range in the <code class="docutils literal notranslate"><span class="pre">operator</span> <span class="pre">()</span></code> represents the subset of pixels that will be treated by an individual thread. This splitting is done automatically to distribuate equally the computation load. We have to convert the pixel index coordinate to a 2D <code class="docutils literal notranslate"><span class="pre">[row,</span> <span class="pre">col]</span></code> coordinate. Also note that we have to keep a reference on the mat image to be able to modify in-place the image.</p>
+<p>The parallel execution is called with:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">ParallelMandelbrot</span> <span class="nf">parallelMandelbrot</span><span class="p">(</span><span class="n">mandelbrotImg</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">scaleX</span><span class="p">,</span> <span class="n">scaleY</span><span class="p">);</span>
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaa42ec9937b847cb52a97c613fc894c4a"><span class="std std-ref">parallel_for_</span></a><span></span><span class="p">(</span><span class="n">Range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mandelbrotImg</span><span class="p">.</span><span class="n">rows</span><span class="o">*</span><span class="n">mandelbrotImg</span><span class="p">.</span><span class="n">cols</span><span class="p">),</span> <span class="n">parallelMandelbrot</span><span class="p">);</span>
+</pre>
+<p>Here, the range represents the total number of operations to be executed, so the total number of pixels in the image. To set the number of threads, you can use: <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae78625c3c2aa9e0b83ed31b73c6549c0"><span class="std std-ref">cv::setNumThreads</span></a>. You can also specify the number of splitting using the nstripes parameter in <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaa42ec9937b847cb52a97c613fc894c4a"><span class="std std-ref">cv::parallel_for_</span></a>. For instance, if your processor has 4 threads, setting <code class="docutils literal notranslate"><span class="pre">cv::setNumThreads(2)</span></code> or setting <code class="docutils literal notranslate"><span class="pre">nstripes=2</span></code> should be the same as by default it will use all the processor threads available but will split the workload only on two threads.</p>
+<p class="rubric">Results</p>
+<p>You can find the full tutorial code <a class="reference external" href="https://github.com/opencv/opencv/blob/master/samples/cpp/tutorial_code/core/how_to_use_OpenCV_parallel_for_/how_to_use_OpenCV_parallel_for_.cpp">here</a>. The performance of the parallel implementation depends of the type of CPU you have. For instance, on 4 cores / 8 threads CPU, you can expect a speed-up of around 6.9X. There are many factors to explain why we do not achieve a speed-up of almost 8X. Main reasons should be mostly due to:</p>
+<ul class="simple">
+<li>the overhead to create and manage the threads,</li>
+<li>background processes running in parallel,</li>
+<li>the difference between 4 hardware cores with 2 logical threads for each core and 8 hardware cores.</li>
+</ul>
+<p>The resulting image produced by the tutorial code (you can modify the code to use more iterations and assign a pixel color depending on the escaped iteration and using a color palette to get more aesthetic images):</p>
+<img alt="Mandelbrot set with xMin=-2.1, xMax=0.6, yMin=-1.2, yMax=1.2, maxIterations=500" src="_images/how_to_use_OpenCV_parallel_for_Mandelbrot.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_use_ippa_conversion.html" title="Intel® IPP Asynchronous C/C++ library in OpenCV"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_scan_images.html" title="How to scan images, lookup tables and time measurement with OpenCV"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" >The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

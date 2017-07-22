@@ -1,0 +1,787 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Fisheye camera model &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="namespace cv::fisheye" href="namespace_cv_fisheye.html" />
+    <link rel="prev" title="struct CvStereoBMState" href="struct_CvStereoBMState.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="namespace_cv_fisheye.html" title="namespace cv::fisheye"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="struct_CvStereoBMState.html" title="struct CvStereoBMState"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="group_calib3d.html" accesskey="U">Camera Calibration and 3D Reconstruction</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fisheye camera model</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="struct_CvStereoBMState.html"
+                        title="previous chapter">struct CvStereoBMState</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="namespace_cv_fisheye.html"
+                        title="next chapter">namespace cv::fisheye</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fisheye-camera-model">
+<span id="doxid-db-d58-group-calib3d-fisheye"></span><span id="index-0"></span><h1>Fisheye camera model</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<p>Definitions: Let P be a point in 3D of coordinates X in the world reference frame (stored in the matrix X) The coordinate vector of P in the camera reference frame is:</p>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// namespaces</span>
+
+<span class="k">namespace</span> <a class="reference internal" href="namespace_cv_fisheye.html#doxid-d2-d14-namespacecv-1-1fisheye"><span class="std std-ref">cv::fisheye</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// enums</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca0899eaa2f96d6eed9927c4b4f4464e05">cv::fisheye::&#64;151::CALIB_USE_INTRINSIC_GUESS</span><span></span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca98ab6fae454ae53e5c3e731e4b5ae39a">cv::fisheye::&#64;151::CALIB_RECOMPUTE_EXTRINSIC</span><span></span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca4bfca5f912b78a97ed9a6b7498983b91">cv::fisheye::&#64;151::CALIB_CHECK_COND</span><span></span>          <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cad10382c27dd97f326b1cd01477e4db7e">cv::fisheye::&#64;151::CALIB_FIX_SKEW</span><span></span>            <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">3</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cab42b5b79bad18428edc607c8f5a4d8db">cv::fisheye::&#64;151::CALIB_FIX_K1</span><span></span>              <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">4</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca0a4eed079d81e401bc3f3802e2ea29a0">cv::fisheye::&#64;151::CALIB_FIX_K2</span><span></span>              <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">5</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24caf269e67db66ed6bce32b61ad2555ab20">cv::fisheye::&#64;151::CALIB_FIX_K3</span><span></span>              <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">6</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca959d6c9a9c55e4d0baee9e69f32912db">cv::fisheye::&#64;151::CALIB_FIX_K4</span><span></span>              <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">7</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cae4ade803e9503dc58975b2156836e724">cv::fisheye::&#64;151::CALIB_FIX_INTRINSIC</span><span></span>       <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">8</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cab7d86700c6c4017df7501a29370279a0">cv::fisheye::&#64;151::CALIB_FIX_PRINCIPAL_POINT</span><span></span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span><span class="mi">9</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">double</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1gad626a78de2b1dae7489e152a5a5a89e1"><span class="std std-ref">cv::fisheye::calibrate</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">imagePoints</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">image_size</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga889a09549b98223016170d9b613715de"><span class="std std-ref">OutputArrayOfArrays</span></a><span></span> <span class="n">rvecs</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga889a09549b98223016170d9b613715de"><span class="std std-ref">OutputArrayOfArrays</span></a><span></span> <span class="n">tvecs</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">DBL_EPSILON</span><span class="p">)</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga75d8877a98e38d0b29b6892c5f8d7765"><span class="std std-ref">cv::fisheye::distortPoints</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">undistorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">distorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga384940fdf04c03e362e94b6eb9b673c9"><span class="std std-ref">cv::fisheye::estimateNewCameraMatrixForUndistortRectify</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">image_size</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">P</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">balance</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">new_size</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span>
+    <span class="kt">double</span> <span class="n">fov_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga0d37b45f780b32f63ed19c21aa9fd333"><span class="std std-ref">cv::fisheye::initUndistortRectifyMap</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">P</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">cv::Size</span></a><span></span><span class="o">&amp;</span> <span class="n">size</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">m1type</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">map1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">map2</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1gab1ad1dc30c42ee1a50ce570019baf2c4"><span class="std std-ref">cv::fisheye::projectPoints</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">imagePoints</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1ga0b49177f52ed1b43e3f5a198baeee203"><span class="std std-ref">Affine3d</span></a><span></span><span class="o">&amp;</span> <span class="n">affine</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">jacobian</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga719a1b99cd5cb1fec92d0d1aedbb6841"><span class="std std-ref">cv::fisheye::projectPoints</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">imagePoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">rvec</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">tvec</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">jacobian</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">double</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1gadbb3a6ca6429528ef302c784df47949b"><span class="std std-ref">cv::fisheye::stereoCalibrate</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">imagePoints1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">imagePoints2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">K1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">D1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">K2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">D2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">imageSize</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">T</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cae4ade803e9503dc58975b2156836e724"><span class="std std-ref">fisheye::CALIB_FIX_INTRINSIC</span></a><span></span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">DBL_EPSILON</span><span class="p">)</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1gac1af58774006689056b0f2ef1db55ecc"><span class="std std-ref">cv::fisheye::stereoRectify</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D2</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">imageSize</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">tvec</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">R1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">R2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">P1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">P2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">Q</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">newImageSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span>
+    <span class="kt">double</span> <span class="n">balance</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">fov_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga167df4b00a6fd55287ba829fbf9913b9"><span class="std std-ref">cv::fisheye::undistortImage</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">distorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">undistorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">Knew</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">cv::noArray</span></a><span></span><span class="p">(),</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">new_size</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1gab738cdf90ceee97b2b52b0d0e7511541"><span class="std std-ref">cv::fisheye::undistortPoints</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">distorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">undistorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">P</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-db-d58-group-calib3d-fisheye"></span><h2>Detailed Documentation</h2>
+<p>Definitions: Let P be a point in 3D of coordinates X in the world reference frame (stored in the matrix X) The coordinate vector of P in the camera reference frame is:</p>
+<div class="math notranslate nohighlight">
+\[Xc = R X + T\]</div>
+<p>where R is the rotation matrix corresponding to the rotation vector om: R = rodrigues(om); call x, y and z the 3 coordinates of Xc:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x = Xc_1 \\ y = Xc_2 \\ z = Xc_3\end{split}\]</div>
+<p>The pinhole projection coordinates of P is [a; b] where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}a = x / z \ and \ b = y / z \\ r^2 = a^2 + b^2 \\ \theta = atan(r)\end{split}\]</div>
+<p>Fisheye distortion:</p>
+<div class="math notranslate nohighlight">
+\[\theta_d = \theta (1 + k_1 \theta^2 + k_2 \theta^4 + k_3 \theta^6 + k_4 \theta^8)\]</div>
+<p>The distorted point coordinates are [x’; y’] where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x' = (\theta_d / r) a \\ y' = (\theta_d / r) b\end{split}\]</div>
+<p>Finally, conversion into pixel coordinates: The final pixel coordinates vector [u; v] where:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}u = f_x (x' + \alpha y') + c_x \\ v = f_y y' + c_y\end{split}\]</div>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1gad626a78de2b1dae7489e152a5a5a89e1">
+<span id="index-1"></span><span></span><span class="kt">double</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">calibrate</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">imagePoints</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">image_size</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga889a09549b98223016170d9b613715de"><span class="std std-ref">OutputArrayOfArrays</span></a><span></span> <span class="n">rvecs</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga889a09549b98223016170d9b613715de"><span class="std std-ref">OutputArrayOfArrays</span></a><span></span> <span class="n">tvecs</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">DBL_EPSILON</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre>
+<p>Performs camera calibaration.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>objectPoints</td>
+<td>vector of vectors of calibration pattern points in the calibration pattern coordinate space.</td>
+</tr>
+<tr class="row-even"><td>imagePoints</td>
+<td>vector of vectors of the projections of calibration pattern points. imagePoints.size() and objectPoints.size() and imagePoints[i].size() must be equal to objectPoints[i].size() for each i.</td>
+</tr>
+<tr class="row-odd"><td>image_size</td>
+<td>Size of the image used only to initialize the intrinsic camera matrix.</td>
+</tr>
+<tr class="row-even"><td>K</td>
+<td>Output 3x3 floating-point camera matrix <span class="math notranslate nohighlight">\(A = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\)</span>. If <a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca0899eaa2f96d6eed9927c4b4f4464e05"><span class="std std-ref">fisheye::CALIB_USE_INTRINSIC_GUESS</span></a> / is specified, some or all of fx, fy, cx, cy must be initialized before calling the function.</td>
+</tr>
+<tr class="row-odd"><td>D</td>
+<td>Output vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-even"><td>rvecs</td>
+<td>Output vector of rotation vectors (see Rodrigues ) estimated for each pattern view. That is, each k-th rotation vector together with the corresponding k-th translation vector (see the next output parameter description) brings the calibration pattern from the model coordinate space (in which object points are specified) to the world coordinate space, that is, a real position of the calibration pattern in the k-th pattern view (k=0.. <em>M</em> -1).</td>
+</tr>
+<tr class="row-odd"><td>tvecs</td>
+<td>Output vector of translation vectors estimated for each pattern view.</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td><p class="first">Different flags that may be zero or a combination of the following values:</p>
+<ul class="last simple">
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca0899eaa2f96d6eed9927c4b4f4464e05"><span class="std std-ref">fisheye::CALIB_USE_INTRINSIC_GUESS</span></a> cameraMatrix contains valid initial values of fx, fy, cx, cy that are optimized further. Otherwise, (cx, cy) is initially set to the image center ( imageSize is used), and focal distances are computed in a least-squares fashion.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca98ab6fae454ae53e5c3e731e4b5ae39a"><span class="std std-ref">fisheye::CALIB_RECOMPUTE_EXTRINSIC</span></a> Extrinsic will be recomputed after each iteration of intrinsic optimization.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca4bfca5f912b78a97ed9a6b7498983b91"><span class="std std-ref">fisheye::CALIB_CHECK_COND</span></a> The functions will check validity of condition number.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cad10382c27dd97f326b1cd01477e4db7e"><span class="std std-ref">fisheye::CALIB_FIX_SKEW</span></a> Skew coefficient (alpha) is set to zero and stay zero.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cab42b5b79bad18428edc607c8f5a4d8db"><span class="std std-ref">fisheye::CALIB_FIX_K1</span></a>.. <a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca959d6c9a9c55e4d0baee9e69f32912db"><span class="std std-ref">fisheye::CALIB_FIX_K4</span></a> Selected distortion coefficients are set to zeros and stay zero.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cab7d86700c6c4017df7501a29370279a0"><span class="std std-ref">fisheye::CALIB_FIX_PRINCIPAL_POINT</span></a> The principal point is not changed during the global optimization. It stays at the center or at a different location specified when CALIB_USE_INTRINSIC_GUESS is set too.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>criteria</td>
+<td>Termination criteria for the iterative optimization algorithm.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1ga75d8877a98e38d0b29b6892c5f8d7765">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">distortPoints</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">undistorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">distorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span>
+</pre>
+<p>Distorts 2D points using fisheye model.</p>
+<p>Note that the function assumes the camera matrix of the undistorted points to be indentity. This means if you want to transform back points undistorted with <a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1gab738cdf90ceee97b2b52b0d0e7511541"><span class="std std-ref">undistortPoints()</span></a> you have to multiply them with <span class="math notranslate nohighlight">\(P^{-1}\)</span>.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>undistorted</td>
+<td>Array of object points, 1xN/Nx1 2-channel (or vector&lt;Point2f&gt; ), where N is the number of points in the view.</td>
+</tr>
+<tr class="row-even"><td>K</td>
+<td>Camera matrix <span class="math notranslate nohighlight">\(K = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\)</span>.</td>
+</tr>
+<tr class="row-odd"><td>D</td>
+<td>Input vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-even"><td>alpha</td>
+<td>The skew coefficient.</td>
+</tr>
+<tr class="row-odd"><td>distorted</td>
+<td>Output array of image points, 1xN/Nx1 2-channel, or vector&lt;Point2f&gt; .</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1ga384940fdf04c03e362e94b6eb9b673c9">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">estimateNewCameraMatrixForUndistortRectify</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">image_size</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">P</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">balance</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">new_size</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span>
+    <span class="kt">double</span> <span class="n">fov_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">)</span>
+</pre>
+<p>Estimates new camera matrix for undistortion or rectification.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>K</td>
+<td>Camera matrix <span class="math notranslate nohighlight">\(K = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\)</span>.</td>
+</tr>
+<tr class="row-even"><td>image_size</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>D</td>
+<td>Input vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-even"><td>R</td>
+<td>Rectification transformation in the object space: 3x3 1-channel, or vector: 3x1/1x3 1-channel or 1x1 3-channel</td>
+</tr>
+<tr class="row-odd"><td>P</td>
+<td>New camera matrix (3x3) or new projection matrix (3x4)</td>
+</tr>
+<tr class="row-even"><td>balance</td>
+<td>Sets the new focal length in range between the min focal length and the max focal length. Balance is in range of [0, 1].</td>
+</tr>
+<tr class="row-odd"><td>new_size</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>fov_scale</td>
+<td>Divisor for new focal length.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1ga0d37b45f780b32f63ed19c21aa9fd333">
+<span id="index-4"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">initUndistortRectifyMap</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">P</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">cv::Size</span></a><span></span><span class="o">&amp;</span> <span class="n">size</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">m1type</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">map1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">map2</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes undistortion and rectification maps for image transform by <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1gab75ef31ce5cdfb5c44b6da5f3b908ea4"><span class="std std-ref">cv::remap()</span></a>. If D is empty zero distortion is used, if R or P is empty identity matrixes are used.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>K</td>
+<td>Camera matrix <span class="math notranslate nohighlight">\(K = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\)</span>.</td>
+</tr>
+<tr class="row-even"><td>D</td>
+<td>Input vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-odd"><td>R</td>
+<td>Rectification transformation in the object space: 3x3 1-channel, or vector: 3x1/1x3 1-channel or 1x1 3-channel</td>
+</tr>
+<tr class="row-even"><td>P</td>
+<td>New camera matrix (3x3) or new projection matrix (3x4)</td>
+</tr>
+<tr class="row-odd"><td>size</td>
+<td>Undistorted image size.</td>
+</tr>
+<tr class="row-even"><td>m1type</td>
+<td>Type of the first output map that can be CV_32FC1 or CV_16SC2 . See <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1ga9156732fa8f01be9ebd1a194f2728b7f"><span class="std std-ref">convertMaps()</span></a> for details.</td>
+</tr>
+<tr class="row-odd"><td>map1</td>
+<td>The first output map.</td>
+</tr>
+<tr class="row-even"><td>map2</td>
+<td>The second output map.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1gab1ad1dc30c42ee1a50ce570019baf2c4">
+<span id="index-5"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">projectPoints</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">imagePoints</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1ga0b49177f52ed1b43e3f5a198baeee203"><span class="std std-ref">Affine3d</span></a><span></span><span class="o">&amp;</span> <span class="n">affine</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">jacobian</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Projects points using fisheye model.</p>
+<p>The function computes projections of 3D points to the image plane given intrinsic and extrinsic camera parameters. Optionally, the function computes Jacobians - matrices of partial derivatives of image points coordinates (as functions of all the input parameters) with respect to the particular parameters, intrinsic and/or extrinsic.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>objectPoints</td>
+<td>Array of object points, 1xN/Nx1 3-channel (or vector&lt;Point3f&gt; ), where N is the number of points in the view.</td>
+</tr>
+<tr class="row-even"><td>imagePoints</td>
+<td>Output array of image points, 2xN/Nx2 1-channel or 1xN/Nx1 2-channel, or vector&lt;Point2f&gt;.</td>
+</tr>
+<tr class="row-odd"><td>affine</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>K</td>
+<td>Camera matrix <span class="math notranslate nohighlight">\(K = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\)</span>.</td>
+</tr>
+<tr class="row-odd"><td>D</td>
+<td>Input vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-even"><td>alpha</td>
+<td>The skew coefficient.</td>
+</tr>
+<tr class="row-odd"><td>jacobian</td>
+<td>Optional output 2Nx15 jacobian matrix of derivatives of image points with respect to components of the focal lengths, coordinates of the principal point, distortion coefficients, rotation vector, translation vector, and the skew. In the old interface different components of the jacobian are returned via different output parameters.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1ga719a1b99cd5cb1fec92d0d1aedbb6841">
+<span id="index-6"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">projectPoints</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">imagePoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">rvec</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">tvec</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">jacobian</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1gadbb3a6ca6429528ef302c784df47949b">
+<span id="index-7"></span><span></span><span class="kt">double</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">stereoCalibrate</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">objectPoints</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">imagePoints1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga606feabe3b50ab6838f1ba89727aa07a"><span class="std std-ref">InputArrayOfArrays</span></a><span></span> <span class="n">imagePoints2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">K1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">D1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">K2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">D2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">imageSize</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">T</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cae4ade803e9503dc58975b2156836e724"><span class="std std-ref">fisheye::CALIB_FIX_INTRINSIC</span></a><span></span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">DBL_EPSILON</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre>
+<p>Performs stereo calibration.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>objectPoints</td>
+<td>Vector of vectors of the calibration pattern points.</td>
+</tr>
+<tr class="row-even"><td>imagePoints1</td>
+<td>Vector of vectors of the projections of the calibration pattern points, observed by the first camera.</td>
+</tr>
+<tr class="row-odd"><td>imagePoints2</td>
+<td>Vector of vectors of the projections of the calibration pattern points, observed by the second camera.</td>
+</tr>
+<tr class="row-even"><td>K1</td>
+<td>Input/output first camera matrix: <span class="math notranslate nohighlight">\(\vecthreethree{f_x^{(j)}}{0}{c_x^{(j)}}{0}{f_y^{(j)}}{c_y^{(j)}}{0}{0}{1}\)</span>, <span class="math notranslate nohighlight">\(j = 0,\, 1\)</span>. If any of <a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca0899eaa2f96d6eed9927c4b4f4464e05"><span class="std std-ref">fisheye::CALIB_USE_INTRINSIC_GUESS</span></a>, <a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cae4ade803e9503dc58975b2156836e724"><span class="std std-ref">fisheye::CALIB_FIX_INTRINSIC</span></a> are specified, some or all of the matrix components must be initialized.</td>
+</tr>
+<tr class="row-odd"><td>D1</td>
+<td>Input/output vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span> of 4 elements.</td>
+</tr>
+<tr class="row-even"><td>K2</td>
+<td>Input/output second camera matrix. The parameter is similar to K1 .</td>
+</tr>
+<tr class="row-odd"><td>D2</td>
+<td>Input/output lens distortion coefficients for the second camera. The parameter is similar to D1 .</td>
+</tr>
+<tr class="row-even"><td>imageSize</td>
+<td>Size of the image used only to initialize intrinsic camera matrix.</td>
+</tr>
+<tr class="row-odd"><td>R</td>
+<td>Output rotation matrix between the 1st and the 2nd camera coordinate systems.</td>
+</tr>
+<tr class="row-even"><td>T</td>
+<td>Output translation vector between the coordinate systems of the cameras.</td>
+</tr>
+<tr class="row-odd"><td>flags</td>
+<td><p class="first">Different flags that may be zero or a combination of the following values:</p>
+<ul class="last simple">
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cae4ade803e9503dc58975b2156836e724"><span class="std std-ref">fisheye::CALIB_FIX_INTRINSIC</span></a> Fix K1, K2? and D1, D2? so that only R, T matrices are estimated.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca0899eaa2f96d6eed9927c4b4f4464e05"><span class="std std-ref">fisheye::CALIB_USE_INTRINSIC_GUESS</span></a> K1, K2 contains valid initial values of fx, fy, cx, cy that are optimized further. Otherwise, (cx, cy) is initially set to the image center (imageSize is used), and focal distances are computed in a least-squares fashion.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca98ab6fae454ae53e5c3e731e4b5ae39a"><span class="std std-ref">fisheye::CALIB_RECOMPUTE_EXTRINSIC</span></a> Extrinsic will be recomputed after each iteration of intrinsic optimization.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24ca4bfca5f912b78a97ed9a6b7498983b91"><span class="std std-ref">fisheye::CALIB_CHECK_COND</span></a> The functions will check validity of condition number.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cad10382c27dd97f326b1cd01477e4db7e"><span class="std std-ref">fisheye::CALIB_FIX_SKEW</span></a> Skew coefficient (alpha) is set to zero and stay zero.</li>
+<li><a class="reference internal" href="namespace_cv_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1ggaeb8b145b1fc476e4e97d3b332447b24cab42b5b79bad18428edc607c8f5a4d8db"><span class="std std-ref">fisheye::CALIB_FIX_K1</span></a>..4 Selected distortion coefficients are set to zeros and stay zero.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>criteria</td>
+<td>Termination criteria for the iterative optimization algorithm.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1gac1af58774006689056b0f2ef1db55ecc">
+<span id="index-8"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">stereoRectify</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D2</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">imageSize</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">tvec</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">R1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">R2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">P1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">P2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">Q</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">newImageSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span>
+    <span class="kt">double</span> <span class="n">balance</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">fov_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">)</span>
+</pre>
+<p>Stereo rectification for fisheye camera model.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>K1</td>
+<td>First camera matrix.</td>
+</tr>
+<tr class="row-even"><td>D1</td>
+<td>First camera distortion parameters.</td>
+</tr>
+<tr class="row-odd"><td>K2</td>
+<td>Second camera matrix.</td>
+</tr>
+<tr class="row-even"><td>D2</td>
+<td>Second camera distortion parameters.</td>
+</tr>
+<tr class="row-odd"><td>imageSize</td>
+<td>Size of the image used for stereo calibration.</td>
+</tr>
+<tr class="row-even"><td>R</td>
+<td>Rotation matrix between the coordinate systems of the first and the second cameras.</td>
+</tr>
+<tr class="row-odd"><td>tvec</td>
+<td>Translation vector between coordinate systems of the cameras.</td>
+</tr>
+<tr class="row-even"><td>R1</td>
+<td>Output 3x3 rectification transform (rotation matrix) for the first camera.</td>
+</tr>
+<tr class="row-odd"><td>R2</td>
+<td>Output 3x3 rectification transform (rotation matrix) for the second camera.</td>
+</tr>
+<tr class="row-even"><td>P1</td>
+<td>Output 3x4 projection matrix in the new (rectified) coordinate systems for the first camera.</td>
+</tr>
+<tr class="row-odd"><td>P2</td>
+<td>Output 3x4 projection matrix in the new (rectified) coordinate systems for the second camera.</td>
+</tr>
+<tr class="row-even"><td>Q</td>
+<td>Output <span class="math notranslate nohighlight">\(4 \times 4\)</span> disparity-to-depth mapping matrix (see reprojectImageTo3D ).</td>
+</tr>
+<tr class="row-odd"><td>flags</td>
+<td>Operation flags that may be zero or CALIB_ZERO_DISPARITY . If the flag is set, the function makes the principal points of each camera have the same pixel coordinates in the rectified views. And if the flag is not set, the function may still shift the images in the horizontal or vertical direction (depending on the orientation of epipolar lines) to maximize the useful image area.</td>
+</tr>
+<tr class="row-even"><td>newImageSize</td>
+<td>New image resolution after rectification. The same size should be passed to initUndistortRectifyMap (see the stereo_calib.cpp sample in OpenCV samples directory). When (0,0) is passed (default), it is set to the original imageSize . Setting it to larger value can help you preserve details in the original image, especially when there is a big radial distortion.</td>
+</tr>
+<tr class="row-odd"><td>balance</td>
+<td>Sets the new focal length in range between the min focal length and the max focal length. Balance is in range of [0, 1].</td>
+</tr>
+<tr class="row-even"><td>fov_scale</td>
+<td>Divisor for new focal length.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1ga167df4b00a6fd55287ba829fbf9913b9">
+<span id="index-9"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">undistortImage</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">distorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">undistorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">Knew</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">cv::noArray</span></a><span></span><span class="p">(),</span>
+    <span class="k">const</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="o">&amp;</span> <span class="n">new_size</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Transforms an image to compensate for fisheye lens distortion.</p>
+<p>The function is simply a combination of <a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga0d37b45f780b32f63ed19c21aa9fd333"><span class="std std-ref">fisheye::initUndistortRectifyMap</span></a> (with unity R ) and remap (with bilinear interpolation). See the former function for details of the transformation being performed.</p>
+<p>See below the results of undistortImage.</p>
+<ul>
+<li><ol class="first loweralpha simple">
+<li>result of undistort of perspective camera model (all possible coefficients (k_1, k_2, k_3, k_4, k_5, k_6) of distortion were optimized under calibration)</li>
+</ol>
+<ul class="simple">
+<li><ol class="first loweralpha" start="2">
+<li>result of <a class="reference internal" href="#doxid-db-d58-group-calib3d-fisheye-1ga167df4b00a6fd55287ba829fbf9913b9"><span class="std std-ref">fisheye::undistortImage</span></a> of fisheye camera model (all possible coefficients (k_1, k_2, k_3, k_4) of fisheye distortion were optimized under calibration)</li>
+</ol>
+</li>
+<li><ol class="first loweralpha" start="3">
+<li>original image was captured with fisheye lens</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>Pictures a) and b) almost the same. But if we consider points of image located far from the center of image, we can notice that on image a) these points are distorted.</p>
+<img alt="image" src="_images/fisheye_undistorted.jpg" />
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>distorted</td>
+<td>image with fisheye lens distortion.</td>
+</tr>
+<tr class="row-even"><td>undistorted</td>
+<td>Output image with compensated fisheye lens distortion.</td>
+</tr>
+<tr class="row-odd"><td>K</td>
+<td>Camera matrix <span class="math notranslate nohighlight">\(K = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\)</span>.</td>
+</tr>
+<tr class="row-even"><td>D</td>
+<td>Input vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-odd"><td>Knew</td>
+<td>Camera matrix of the distorted image. By default, it is the identity matrix but you may additionally scale and shift the result by using a different matrix.</td>
+</tr>
+<tr class="row-even"><td>new_size</td>
+<td>The function transforms an image to compensate radial and tangential lens distortion.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-db-d58-group-calib3d-fisheye-1gab738cdf90ceee97b2b52b0d0e7511541">
+<span id="index-10"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">fisheye</span><span class="o">::</span><span class="n">undistortPoints</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">distorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">undistorted</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">K</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">D</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">R</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">P</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Undistorts 2D points using fisheye model.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>distorted</td>
+<td>Array of object points, 1xN/Nx1 2-channel (or vector&lt;Point2f&gt; ), where N is the number of points in the view.</td>
+</tr>
+<tr class="row-even"><td>K</td>
+<td>Camera matrix <span class="math notranslate nohighlight">\(K = \vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\)</span>.</td>
+</tr>
+<tr class="row-odd"><td>D</td>
+<td>Input vector of distortion coefficients <span class="math notranslate nohighlight">\((k_1, k_2, k_3, k_4)\)</span>.</td>
+</tr>
+<tr class="row-even"><td>R</td>
+<td>Rectification transformation in the object space: 3x3 1-channel, or vector: 3x1/1x3 1-channel or 1x1 3-channel</td>
+</tr>
+<tr class="row-odd"><td>P</td>
+<td>New camera matrix (3x3) or new projection matrix (3x4)</td>
+</tr>
+<tr class="row-even"><td>undistorted</td>
+<td>Output array of image points, 1xN/Nx1 2-channel, or vector&lt;Point2f&gt; .</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="namespace_cv_fisheye.html" title="namespace cv::fisheye"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="struct_CvStereoBMState.html" title="struct CvStereoBMState"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="group_calib3d.html" >Camera Calibration and 3D Reconstruction</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

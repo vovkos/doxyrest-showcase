@@ -1,0 +1,108 @@
+.. index:: pair: enum; CovarFlags
+.. _doxid-d0/de1/group__core_1ga719ebd4a73f30f4fab258ab7616d0f0f:
+
+enum cv::CovarFlags
+===================
+
+Overview
+~~~~~~~~
+
+Covariation flags. :ref:`More...<details-d0/de1/group__core_1ga719ebd4a73f30f4fab258ab7616d0f0f>`
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <core.hpp>
+
+	enum CovarFlags
+	{
+	    :ref:`COVAR_SCRAMBLED<doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fa6fb4e6e0255e4fe67972a00d1c7936d6>` = 0,
+	    :ref:`COVAR_NORMAL<doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fa5ff1530be25ae14f9a652788a4c26a92>`    = 1,
+	    :ref:`COVAR_USE_AVG<doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fa460c69e5ccfb86ea54c61222ab62dea6>`   = 2,
+	    :ref:`COVAR_SCALE<doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fac9b7943fc9402898978cbfa22717441c>`     = 4,
+	    :ref:`COVAR_ROWS<doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fadbac775ac8245aad5bfef994731c635f>`      = 8,
+	    :ref:`COVAR_COLS<doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fac8cc5a80914e18d6100184a2829aa3c0>`      = 16,
+	};
+
+.. _details-d0/de1/group__core_1ga719ebd4a73f30f4fab258ab7616d0f0f:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Covariation flags.
+
+Enum Values
+-----------
+
+.. index:: pair: enumvalue; COVAR_SCRAMBLED
+.. _doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fa6fb4e6e0255e4fe67972a00d1c7936d6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	COVAR_SCRAMBLED
+
+The output covariance matrix is calculated as:
+
+.. math::
+
+	\texttt{scale} \cdot [ \texttt{vects} [0]- \texttt{mean} , \texttt{vects} [1]- \texttt{mean} ,...]^T \cdot [ \texttt{vects} [0]- \texttt{mean} , \texttt{vects} [1]- \texttt{mean} ,...],
+
+The covariance matrix will be nsamples x nsamples. Such an unusual covariance matrix is used for fast :ref:`PCA <doxid-d3/d39/classcv_1_1_p_c_a>` of a set of very large vectors (see, for example, the EigenFaces technique for face recognition). Eigenvalues of this "scrambled" matrix match the eigenvalues of the true covariance matrix. The "true" eigenvectors can be easily calculated from the eigenvectors of the "scrambled" covariance matrix.
+
+.. index:: pair: enumvalue; COVAR_NORMAL
+.. _doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fa5ff1530be25ae14f9a652788a4c26a92:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	COVAR_NORMAL
+
+The output covariance matrix is calculated as:
+
+.. math::
+
+	\texttt{scale} \cdot [ \texttt{vects} [0]- \texttt{mean} , \texttt{vects} [1]- \texttt{mean} ,...] \cdot [ \texttt{vects} [0]- \texttt{mean} , \texttt{vects} [1]- \texttt{mean} ,...]^T,
+
+covar will be a square matrix of the same size as the total number of elements in each input vector. One and only one of COVAR_SCRAMBLED and COVAR_NORMAL must be specified.
+
+.. index:: pair: enumvalue; COVAR_USE_AVG
+.. _doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fa460c69e5ccfb86ea54c61222ab62dea6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	COVAR_USE_AVG
+
+If the flag is specified, the function does not calculate mean from the input vectors but, instead, uses the passed mean vector. This is useful if mean has been pre-calculated or known in advance, or if the covariance matrix is calculated by parts. In this case, mean is not a mean vector of the input sub-set of vectors but rather the mean vector of the whole set.
+
+.. index:: pair: enumvalue; COVAR_SCALE
+.. _doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fac9b7943fc9402898978cbfa22717441c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	COVAR_SCALE
+
+If the flag is specified, the covariance matrix is scaled. In the "normal" mode, scale is 1./nsamples . In the "scrambled" mode, scale is the reciprocal of the total number of elements in each input vector. By default (if the flag is not specified), the covariance matrix is not scaled ( scale=1 ).
+
+.. index:: pair: enumvalue; COVAR_ROWS
+.. _doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fadbac775ac8245aad5bfef994731c635f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	COVAR_ROWS
+
+If the flag is specified, all the input vectors are stored as rows of the samples matrix. mean should be a single-row vector in this case.
+
+.. index:: pair: enumvalue; COVAR_COLS
+.. _doxid-d0/de1/group__core_1gga719ebd4a73f30f4fab258ab7616d0f0fac8cc5a80914e18d6100184a2829aa3c0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	COVAR_COLS
+
+If the flag is specified, all the input vectors are stored as columns of the samples matrix. mean should be a single-column vector in this case.
+

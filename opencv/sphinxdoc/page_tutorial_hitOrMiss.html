@@ -1,0 +1,169 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hit-or-Miss &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hough Circle Transform" href="page_tutorial_hough_circle.html" />
+    <link rel="prev" title="Histogram Equalization" href="page_tutorial_histogram_equalization.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_hough_circle.html" title="Hough Circle Transform"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_histogram_equalization.html" title="Histogram Equalization"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_histogram_equalization.html"
+                        title="previous chapter">Histogram Equalization</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_hough_circle.html"
+                        title="next chapter">Hough Circle Transform</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hit-or-miss">
+<span id="doxid-dd-dbf-tutorial-hit-or-miss"></span><span id="index-0"></span><h1>Hit-or-Miss</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to find a given configuration or pattern in a binary image by using the Hit-or-Miss transform (also known as Hit-and-Miss transform). This transform is also the basis of more advanced morphological operations such as thinning or pruning.</p>
+<p>We will use the OpenCV function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">cv::morphologyEx</span></a>.</p>
+<p class="rubric">Hit-or-Miss theory</p>
+<p>Morphological operators process images based on their shape. These operators apply one or more <em>structuring elements</em> to an input image to obtain the output image. The two basic morphological operations are the <em>erosion</em> and the <em>dilation</em>. The combination of these two operations generate advanced morphological transformations such as <em>opening</em>, <em>closing</em>, or <em>top-hat</em> transform. To know more about these and other basic morphological operations refer to previous tutorials <a class="reference internal" href="page_tutorial_erosion_dilatation.html#doxid-db-df6-tutorial-erosion-dilatation"><span class="std std-ref">here</span></a> and <a class="reference internal" href="page_tutorial_opening_closing_hats.html#doxid-d3-dbe-tutorial-opening-closing-hats"><span class="std std-ref">here</span></a>.</p>
+<p>The Hit-or-Miss transformation is useful to find patterns in binary images. In particular, it finds those pixels whose neighbourhood matches the shape of a first structuring element <span class="math notranslate nohighlight">\(B_1\)</span> while not matching the shape of a second structuring element <span class="math notranslate nohighlight">\(B_2\)</span> at the same time. Mathematically, the operation applied to an image <span class="math notranslate nohighlight">\(A\)</span> can be expressed as follows:</p>
+<div class="math notranslate nohighlight">
+\[A\circledast B = (A\ominus B_1) \cap (A^c\ominus B_2)\]</div>
+<p>Therefore, the hit-or-miss operation comprises three steps:</p>
+<ol class="arabic simple">
+<li>Erode image <span class="math notranslate nohighlight">\(A\)</span> with structuring element <span class="math notranslate nohighlight">\(B_1\)</span>.</li>
+<li>Erode the complement of image <span class="math notranslate nohighlight">\(A\)</span> (<span class="math notranslate nohighlight">\(A^c\)</span>) with structuring element <span class="math notranslate nohighlight">\(B_2\)</span>.</li>
+<li>AND results from step 1 and step 2.</li>
+</ol>
+<p>The structuring elements <span class="math notranslate nohighlight">\(B_1\)</span> and <span class="math notranslate nohighlight">\(B_2\)</span> can be combined into a single element <span class="math notranslate nohighlight">\(B\)</span>. Let’s see an example:</p>
+<img alt="Structuring elements (kernels). Left: kernel to 'hit'. Middle: kernel to 'miss'. Right: final combined kernel" src="_images/hitmiss_kernels.png" />
+<p>In this case, we are looking for a pattern in which the central pixel belongs to the background while the north, south, east, and west pixels belong to the foreground. The rest of pixels in the neighbourhood can be of any kind, we don’t care about them. Now, let’s apply this kernel to an input image:</p>
+<img alt="Input binary image" src="_images/hitmiss_input.png" />
+<img alt="Output binary image" src="_images/hitmiss_output.png" />
+<p>You can see that the pattern is found in just one location within the image.</p>
+<p class="rubric">Code</p>
+<p>The code corresponding to the previous example is shown below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/HitMiss.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgproc.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">input_image</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat"><span class="std std-ref">Mat_&lt;uchar&gt;</span></a><span></span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&lt;&lt;</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat"><span class="std std-ref">Mat_&lt;int&gt;</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">&lt;&lt;</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">output_image</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">morphologyEx</span></a><span></span><span class="p">(</span><span class="n">input_image</span><span class="p">,</span> <span class="n">output_image</span><span class="p">,</span> <a class="reference internal" href="enum_cv_MorphTypes.html#doxid-d4-d86-group-imgproc-filter-1gga7be549266bad7b2e6a04db49827f9f32acf55ff766595ec0174ba42852f0ac264"><span class="std std-ref">MORPH_HITMISS</span></a><span></span><span class="p">,</span> <span class="n">kernel</span><span class="p">);</span>
+
+    <span class="k">const</span> <span class="kt">int</span> <span class="n">rate</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">kernel</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">127</span><span class="p">;</span>
+    <span class="n">kernel</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1ga47a974309e9102f5f08231edc7e7529d"><span class="std std-ref">resize</span></a><span></span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span> <span class="n">rate</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <a class="reference internal" href="enum_cv_InterpolationFlags.html#doxid-da-d54-group-imgproc-transform-1gga5bb5a1fea74ea38e1a5445ca803ff121aa5521d8e080972c762467c45f3b70e6c"><span class="std std-ref">INTER_NEAREST</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;kernel&quot;</span><span class="p">,</span> <span class="n">kernel</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1ga47a974309e9102f5f08231edc7e7529d"><span class="std std-ref">resize</span></a><span></span><span class="p">(</span><span class="n">input_image</span><span class="p">,</span> <span class="n">input_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span> <span class="n">rate</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <a class="reference internal" href="enum_cv_InterpolationFlags.html#doxid-da-d54-group-imgproc-transform-1gga5bb5a1fea74ea38e1a5445ca803ff121aa5521d8e080972c762467c45f3b70e6c"><span class="std std-ref">INTER_NEAREST</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Original&quot;</span><span class="p">,</span> <span class="n">input_image</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1ga47a974309e9102f5f08231edc7e7529d"><span class="std std-ref">resize</span></a><span></span><span class="p">(</span><span class="n">output_image</span><span class="p">,</span> <span class="n">output_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(),</span> <span class="n">rate</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <a class="reference internal" href="enum_cv_InterpolationFlags.html#doxid-da-d54-group-imgproc-transform-1gga5bb5a1fea74ea38e1a5445ca803ff121aa5521d8e080972c762467c45f3b70e6c"><span class="std std-ref">INTER_NEAREST</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Hit or Miss&quot;</span><span class="p">,</span> <span class="n">output_image</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>As you can see, it is as simple as using the function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">cv::morphologyEx</span></a> with the operation type <a class="reference internal" href="enum_cv_MorphTypes.html#doxid-d4-d86-group-imgproc-filter-1gga7be549266bad7b2e6a04db49827f9f32acf55ff766595ec0174ba42852f0ac264"><span class="std std-ref">cv::MORPH_HITMISS</span></a> and the chosen kernel.</p>
+<p class="rubric">Other examples</p>
+<p>Here you can find the output results of applying different kernels to the same input image used before:</p>
+<img alt="Kernel and output result for finding top-right corners" src="_images/hitmiss_example2.png" />
+<img alt="Kernel and output result for finding left end points" src="_images/hitmiss_example3.png" />
+<p>Now try your own patterns!</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_hough_circle.html" title="Hough Circle Transform"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_histogram_equalization.html" title="Histogram Equalization"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

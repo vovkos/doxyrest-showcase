@@ -1,0 +1,407 @@
+.. index:: pair: page; Video Input with OpenCV and similarity measurement
+.. _doxid-d5/dc4/tutorial_video_input_psnr_ssim:
+
+Video Input with OpenCV and similarity measurement
+==================================================
+
+.. rubric:: Goal
+
+Today it is common to have a digital video recording system at your disposal. Therefore, you will eventually come to the situation that you no longer process a batch of images, but video streams. These may be of two kinds: real-time image feed (in the case of a webcam) or prerecorded and hard disk drive stored files. Luckily OpenCV threats these two in the same manner, with the same C++ class. So here's what you'll learn in this tutorial:
+
+* How to open and read video streams
+
+* Two ways for checking image similarity: PSNR and SSIM
+
+.. rubric:: The source code
+
+As a test case where to show off these using OpenCV I've created a small program that reads in two video files and performs a similarity check between them. This is something you could use to check just how well a new video compressing algorithms works. Let there be a reference (original) video like `this small Megamind clip <https://github.com/opencv/opencv/tree/master/samples/data/Megamind.avi>`__ and `a compressed version of it <https://github.com/opencv/opencv/tree/master/samples/data/Megamind_bugy.avi>`__. You may also find the source code and these video file in the ``samples/data`` folder of the OpenCV source library.
+
+.. ref-code-block:: cpp
+
+	#include <iostream> // for standard I/O
+	#include <string>   // for strings
+	#include <iomanip>  // for controlling float print precision
+	#include <sstream>  // string to number conversion
+	
+	#include <opencv2/core.hpp>     // Basic OpenCV structures (cv::Mat, Scalar)
+	#include <opencv2/imgproc.hpp>  // Gaussian Blur
+	#include <opencv2/videoio.hpp>
+	#include <opencv2/highgui.hpp>  // OpenCV window I/O
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	double getPSNR ( const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& I1, const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& I2);
+	Scalar getMSSIM( const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& I1, const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& I2);
+	
+	static void help()
+	{
+	    cout
+	        << "------------------------------------------------------------------------------" << endl
+	        << "This program shows how to read a video file with OpenCV. In addition, it "
+	        << "tests the similarity of two input videos first with PSNR, and for the frames "
+	        << "below a PSNR trigger value, also with MSSIM."                                   << endl
+	        << "Usage:"                                                                         << endl
+	        << "./video-input-psnr-ssim <referenceVideo> <useCaseTestVideo> <PSNR_Trigger_Value> <Wait_Between_Frames> " << endl
+	        << "--------------------------------------------------------------------------"     << endl
+	        << endl;
+	}
+	
+	int main(int argc, char *argv[])
+	{
+	    help();
+	
+	    if (argc != 5)
+	    {
+	        cout << "Not enough parameters" << endl;
+	        return -1;
+	    }
+	
+	    stringstream conv;
+	
+	    const string sourceReference = argv[1], sourceCompareWith = argv[2];
+	    int psnrTriggerValue, delay;
+	    conv << argv[3] << endl << argv[4];       // put in the strings
+	    conv >> psnrTriggerValue >> delay;        // take out the numbers
+	
+	    int frameNum = -1;          // Frame counter
+	
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` captRefrnc(sourceReference), captUndTst(sourceCompareWith);
+	
+	    if (!captRefrnc.isOpened())
+	    {
+	        cout  << "Could not open reference " << sourceReference << endl;
+	        return -1;
+	    }
+	
+	    if (!captUndTst.isOpened())
+	    {
+	        cout  << "Could not open case test " << sourceCompareWith << endl;
+	        return -1;
+	    }
+	
+	    Size refS = :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`((int) captRefrnc.get(:ref:`CAP_PROP_FRAME_WIDTH <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad>`),
+	                     (int) captRefrnc.get(:ref:`CAP_PROP_FRAME_HEIGHT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e>`)),
+	         uTSi = :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`((int) captUndTst.get(:ref:`CAP_PROP_FRAME_WIDTH <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad>`),
+	                     (int) captUndTst.get(:ref:`CAP_PROP_FRAME_HEIGHT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e>`));
+	
+	    if (refS != uTSi)
+	    {
+	        cout << "Inputs have different size!!! Closing." << endl;
+	        return -1;
+	    }
+	
+	    const char* WIN_UT = "Under Test";
+	    const char* WIN_RF = "Reference";
+	
+	    // Windows
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`(WIN_RF, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`(WIN_UT, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	    :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`(WIN_RF, 400       , 0);         //750,  2 (bernat =0)
+	    :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`(WIN_UT, refS.:ref:`width <doxid-dd/da0/classcv_1_1_size___1abfe0367b32c407ddccf5ddf92667c73d>`, 0);         //1500, 2
+	
+	    cout << "Reference frame resolution: Width=" << refS.:ref:`width <doxid-dd/da0/classcv_1_1_size___1abfe0367b32c407ddccf5ddf92667c73d>` << "  Height=" << refS.:ref:`height <doxid-dd/da0/classcv_1_1_size___1a1d289dce6b5d8006a54f3ee0259fc545>`
+	         << " of nr#: " << captRefrnc.get(:ref:`CAP_PROP_FRAME_COUNT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2>`) << endl;
+	
+	    cout << "PSNR trigger value " << setiosflags(ios::fixed) << setprecision(3)
+	         << psnrTriggerValue << endl;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frameReference, frameUnderTest;
+	    double psnrV;
+	    Scalar mssimV;
+	
+	    for(;;) //Show the image captured in the window and repeat
+	    {
+	        captRefrnc >> frameReference;
+	        captUndTst >> frameUnderTest;
+	
+	        if (frameReference.empty() || frameUnderTest.empty())
+	        {
+	            cout << " < < <  Game over!  > > > ";
+	            break;
+	        }
+	
+	        ++frameNum;
+	        cout << "Frame: " << frameNum << "# ";
+	
+	        psnrV = getPSNR(frameReference,frameUnderTest);
+	        cout << setiosflags(ios::fixed) << setprecision(3) << psnrV << "dB";
+	
+	        if (psnrV < psnrTriggerValue && psnrV)
+	        {
+	            mssimV = getMSSIM(frameReference, frameUnderTest);
+	
+	            cout << " MSSIM: "
+	                << " R " << setiosflags(ios::fixed) << setprecision(2) << mssimV.:ref:`val <doxid-db/d15/classcv_1_1_matx_1afa9ad3bc5b09ebcdfc6f98f44c15191d>`[2] * 100 << "%"
+	                << " G " << setiosflags(ios::fixed) << setprecision(2) << mssimV.:ref:`val <doxid-db/d15/classcv_1_1_matx_1afa9ad3bc5b09ebcdfc6f98f44c15191d>`[1] * 100 << "%"
+	                << " B " << setiosflags(ios::fixed) << setprecision(2) << mssimV.:ref:`val <doxid-db/d15/classcv_1_1_matx_1afa9ad3bc5b09ebcdfc6f98f44c15191d>`[0] * 100 << "%";
+	        }
+	
+	        cout << endl;
+	
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`(WIN_RF, frameReference);
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`(WIN_UT, frameUnderTest);
+	
+	        char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(delay);
+	        if (c == 27) break;
+	    }
+	
+	    return 0;
+	}
+	
+	double getPSNR(const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& I1, const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& I2)
+	{
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` s1;
+	    :ref:`absdiff <doxid-d2/de8/group__core__array_1ga6fef31bc8c4071cbc114a758a2b79c14>`(I1, I2, s1);       // |I1 - I2|
+	    s1.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(s1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);  // cannot make a square on 8 bits
+	    s1 = s1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(s1);           // |I1 - I2|^2
+	
+	    Scalar s = :ref:`sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(s1);        // sum elements per channel
+	
+	    double sse = s.:ref:`val <doxid-db/d15/classcv_1_1_matx_1afa9ad3bc5b09ebcdfc6f98f44c15191d>`[0] + s.:ref:`val <doxid-db/d15/classcv_1_1_matx_1afa9ad3bc5b09ebcdfc6f98f44c15191d>`[1] + s.:ref:`val <doxid-db/d15/classcv_1_1_matx_1afa9ad3bc5b09ebcdfc6f98f44c15191d>`[2]; // sum channels
+	
+	    if( sse <= 1e-10) // for small values return zero
+	        return 0;
+	    else
+	    {
+	        double mse  = sse / (double)(I1.:ref:`channels <doxid-db/de6/classcv_1_1_mat_1aa11336b9ac538e0475d840657ce164be>`() * I1.:ref:`total <doxid-db/de6/classcv_1_1_mat_1aa4d317d43fb0cba9c2503f3c61b866c8>`());
+	        double psnr = 10.0 * :ref:`log10 <doxid-df/dfc/group__cudev_1ga6d7f752d82c289caa24bbb5a278ac31d>`((255 * 255) / mse);
+	        return psnr;
+	    }
+	}
+	
+	Scalar getMSSIM( const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& i1, const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& i2)
+	{
+	    const double C1 = 6.5025, C2 = 58.5225;
+	    /***************************** INITS **********************************/
+	    int d = :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` I1, I2;
+	    i1.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(I1, d);            // cannot calculate on one byte large values
+	    i2.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(I2, d);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` I2_2   = I2.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(I2);        // I2^2
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` I1_2   = I1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(I1);        // I1^2
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` I1_I2  = I1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(I2);        // I1 * I2
+	
+	    /*************************** END INITS **********************************/
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mu1, mu2;                   // PRELIMINARY COMPUTING
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1, mu1, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I2, mu2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mu1_2   =   mu1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(mu1);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mu2_2   =   mu2.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(mu2);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mu1_mu2 =   mu1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(mu2);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` sigma1_2, sigma2_2, sigma12;
+	
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1_2, sigma1_2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    sigma1_2 -= mu1_2;
+	
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I2_2, sigma2_2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    sigma2_2 -= mu2_2;
+	
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1_I2, sigma12, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	    sigma12 -= mu1_mu2;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` t1, t2, t3;
+	
+	    t1 = 2 * mu1_mu2 + C1;
+	    t2 = 2 * sigma12 + C2;
+	    t3 = t1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(t2);                 // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+	
+	    t1 = mu1_2 + mu2_2 + C1;
+	    t2 = sigma1_2 + sigma2_2 + C2;
+	    t1 = t1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(t2);                 // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` ssim_map;
+	    :ref:`divide <doxid-d2/de8/group__core__array_1ga6db555d30115642fedae0cda05604874>`(t3, t1, ssim_map);        // ssim_map =  t3./t1;
+	
+	    Scalar mssim = :ref:`mean <doxid-d2/de8/group__core__array_1ga191389f8a0e58180bb13a727782cd461>`(ssim_map);   // mssim = average of ssim map
+	    return mssim;
+	}
+
+.. rubric:: How to read a video stream (online-camera or offline-file)?
+
+Essentially, all the functionalities required for video manipulation is integrated in the :ref:`cv::VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` C++ class. This on itself builds on the FFmpeg open source library. This is a basic dependency of OpenCV so you shouldn't need to worry about this. A video is composed of a succession of images, we refer to these in the literature as frames. In case of a video file there is a *frame rate* specifying just how long is between two frames. While for the video cameras usually there is a limit of just how many frames they can digitalize per second, this property is less important as at any time the camera sees the current snapshot of the world.
+
+The first task you need to do is to assign to a :ref:`cv::VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` class its source. You can do this either via the :ref:`cv::VideoCapture::VideoCapture <doxid-df/dcb/classcv_1_1_video_capture_1a57c0e81e83e60f36c83027dc2a188e80>` or its :ref:`cv::VideoCapture::open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>` function. If this argument is an integer then you will bind the class to a camera, a device. The number passed here is the ID of the device, assigned by the operating system. If you have a single camera attached to your system its ID will probably be zero and further ones increasing from there. If the parameter passed to these is a string it will refer to a video file, and the string points to the location and name of the file. For example, to the upper source code a valid command line is:
+
+.. ref-code-block:: cpp
+
+	video/Megamind.avi video/Megamind_bug.avi  35 10
+
+We do a similarity check. This requires a reference and a test case video file. The first two arguments refer to this. Here we use a relative address. This means that the application will look into its current working directory and open the video folder and try to find inside this the *Megamind.avi* and the *Megamind_bug.avi*.
+
+.. ref-code-block:: cpp
+
+	const string sourceReference = argv[1],sourceCompareWith = argv[2];
+	
+	VideoCapture captRefrnc(sourceReference);
+	// or
+	VideoCapture captUndTst;
+	captUndTst.open(sourceCompareWith);
+
+To check if the binding of the class to a video source was successful or not use the :ref:`cv::VideoCapture::isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>` function:
+
+.. ref-code-block:: cpp
+
+	if ( !captRefrnc.isOpened())
+	  {
+	  cout  << "Could not open reference " << sourceReference << endl;
+	  return -1;
+	  }
+
+Closing the video is automatic when the objects destructor is called. However, if you want to close it before this you need to call its :ref:`cv::VideoCapture::release <doxid-df/dcb/classcv_1_1_video_capture_1afb4ab689e553ba2c8f0fec41b9344ae6>` function. The frames of the video are just simple images. Therefore, we just need to extract them from the :ref:`cv::VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` object and put them inside a *Mat* one. The video streams are sequential. You may get the frames one after another by the :ref:`cv::VideoCapture::read <doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1>` or the overloaded >> operator:
+
+.. ref-code-block:: cpp
+
+	Mat frameReference, frameUnderTest;
+	captRefrnc >> frameReference;
+	captUndTst.open(frameUnderTest);
+
+The upper read operations will leave empty the *Mat* objects if no frame could be acquired (either cause the video stream was closed or you got to the end of the video file). We can check this with a simple if:
+
+.. ref-code-block:: cpp
+
+	if( frameReference.empty()  || frameUnderTest.empty())
+	{
+	 // exit the program
+	}
+
+A read method is made of a frame grab and a decoding applied on that. You may call explicitly these two by using the :ref:`cv::VideoCapture::grab <doxid-df/dcb/classcv_1_1_video_capture_1ae38c2a053d39d6b20c9c649e08ff0146>` and then the :ref:`cv::VideoCapture::retrieve <doxid-df/dcb/classcv_1_1_video_capture_1a9ac7f4b1cdfe624663478568486e6712>` functions.
+
+Videos have many-many information attached to them besides the content of the frames. These are usually numbers, however in some case it may be short character sequences (4 bytes or less). Due to this to acquire these information there is a general function named :ref:`cv::VideoCapture::get <doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>` that returns double values containing these properties. Use bitwise operations to decode the characters from a double type and conversions where valid values are only integers. Its single argument is the ID of the queried property. For example, here we get the size of the frames in the reference and test case video file; plus the number of frames inside the reference.
+
+.. ref-code-block:: cpp
+
+	Size refS = :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`((int) captRefrnc.get(:ref:`CAP_PROP_FRAME_WIDTH <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad>`),
+	                 (int) captRefrnc.get(:ref:`CAP_PROP_FRAME_HEIGHT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e>`)),
+	
+	cout << "Reference frame resolution: Width=" << refS.:ref:`width <doxid-dd/da0/classcv_1_1_size___1abfe0367b32c407ddccf5ddf92667c73d>` << "  Height=" << refS.height
+	     << " of nr#: " << captRefrnc.get(:ref:`CAP_PROP_FRAME_COUNT <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2>`) << endl;
+
+When you are working with videos you may often want to control these values yourself. To do this there is a :ref:`cv::VideoCapture::set <doxid-df/dcb/classcv_1_1_video_capture_1a8c6d8c2d37505b5ca61ffd4bb54e9a7c>` function. Its first argument remains the name of the property you want to change and there is a second of double type containing the value to be set. It will return true if it succeeds and false otherwise. Good examples for this is seeking in a video file to a given time or frame:
+
+.. ref-code-block:: cpp
+
+	captRefrnc.set(:ref:`CAP_PROP_POS_MSEC <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da7c2fa550ba270713fca1405397b90ae0>`, 1.2);  // go to the 1.2 second in the video
+	captRefrnc.set(:ref:`CAP_PROP_POS_FRAMES <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068>`, 10); // go to the 10th frame of the video
+	// now a read operation would read the frame at the set position
+
+For properties you can read and change look into the documentation of the :ref:`cv::VideoCapture::get <doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>` and :ref:`cv::VideoCapture::set <doxid-df/dcb/classcv_1_1_video_capture_1a8c6d8c2d37505b5ca61ffd4bb54e9a7c>` functions.
+
+.. rubric:: Image similarity - PSNR and SSIM
+
+We want to check just how imperceptible our video converting operation went, therefore we need a system to check frame by frame the similarity or differences. The most common algorithm used for this is the PSNR (aka **Peak signal-to-noise ratio**). The simplest definition of this starts out from the *mean squad error*. Let there be two images: I1 and I2; with a two dimensional size i and j, composed of c number of channels.
+
+.. math::
+
+	MSE = \frac{1}{c*i*j} \sum{(I_1-I_2)^2}
+
+Then the PSNR is expressed as:
+
+.. math::
+
+	PSNR = 10 \cdot \log_{10} \left( \frac{MAX_I^2}{MSE} \right)
+
+Here the :math:`MAX_I^2` is the maximum valid value for a pixel. In case of the simple single byte image per pixel per channel this is 255. When two images are the same the MSE will give zero, resulting in an invalid divide by zero operation in the PSNR formula. In this case the PSNR is undefined and as we'll need to handle this case separately. The transition to a logarithmic scale is made because the pixel values have a very wide dynamic range. All this translated to OpenCV and a C++ function looks like:
+
+.. ref-code-block:: cpp
+
+	double getPSNR(const Mat& I1, const Mat& I2)
+	{
+	 Mat s1;
+	 :ref:`absdiff <doxid-d2/de8/group__core__array_1ga6fef31bc8c4071cbc114a758a2b79c14>`(I1, I2, s1);       // |I1 - I2|
+	 s1.convertTo(s1, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);  // cannot make a square on 8 bits
+	 s1 = s1.mul(s1);           // |I1 - I2|^2
+	
+	 Scalar s = :ref:`sum <doxid-d2/de8/group__core__array_1ga716e10a2dd9e228e4d3c95818f106722>`(s1);        // sum elements per channel
+	
+	 double sse = s.val[0] + s.val[1] + s.val[2]; // sum channels
+	
+	 if( sse <= 1e-10) // for small values return zero
+	     return 0;
+	 else
+	 {
+	     double  mse =sse /(double)(I1.channels() * I1.total());
+	     double psnr = 10.0*:ref:`log10 <doxid-df/dfc/group__cudev_1ga6d7f752d82c289caa24bbb5a278ac31d>`((255*255)/mse);
+	     return psnr;
+	 }
+	}
+
+Typically result values are anywhere between 30 and 50 for video compression, where higher is better. If the images significantly differ you'll get much lower ones like 15 and so. This similarity check is easy and fast to calculate, however in practice it may turn out somewhat inconsistent with human eye perception. The **structural similarity** algorithm aims to correct this.
+
+Describing the methods goes well beyond the purpose of this tutorial. For that I invite you to read the article introducing it. Nevertheless, you can get a good image of it by looking at the OpenCV implementation below.
+
+.. ref-code-block:: cpp
+
+	Scalar getMSSIM( const Mat& i1, const Mat& i2)
+	{
+	 const double C1 = 6.5025, C2 = 58.5225;
+	 /***************************** INITS **********************************/
+	 int d     = :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`;
+	
+	 Mat I1, I2;
+	 i1.convertTo(I1, d);           // cannot calculate on one byte large values
+	 i2.convertTo(I2, d);
+	
+	 Mat I2_2   = I2.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(I2);        // I2^2
+	 Mat I1_2   = I1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(I1);        // I1^2
+	 Mat I1_I2  = I1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(I2);        // I1 * I2
+	
+	 /***********************PRELIMINARY COMPUTING ******************************/
+	
+	 Mat mu1, mu2;   //
+	 :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1, mu1, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	 :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I2, mu2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	
+	 Mat mu1_2   =   mu1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(mu1);
+	 Mat mu2_2   =   mu2.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(mu2);
+	 Mat mu1_mu2 =   mu1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(mu2);
+	
+	 Mat sigma1_2, sigma2_2, sigma12;
+	
+	 :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1_2, sigma1_2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	 sigma1_2 -= mu1_2;
+	
+	 :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I2_2, sigma2_2, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	 sigma2_2 -= mu2_2;
+	
+	 :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(I1_I2, sigma12, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11, 11), 1.5);
+	 sigma12 -= mu1_mu2;
+	
+	 Mat t1, t2, t3;
+	
+	 t1 = 2 * mu1_mu2 + C1;
+	 t2 = 2 * sigma12 + C2;
+	 t3 = t1.:ref:`mul <doxid-db/de6/classcv_1_1_mat_1a385c09827713dc3e6d713bfad8460706>`(t2);              // t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))
+	
+	 t1 = mu1_2 + mu2_2 + C1;
+	 t2 = sigma1_2 + sigma2_2 + C2;
+	 t1 = t1.:ref:`mul <doxid-d9/ddc/classcv_1_1_mat_expr_1a0e80cbf0fa6ed1187294697ab2b674ca>`(t2);               // t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))
+	
+	 Mat ssim_map;
+	 :ref:`divide <doxid-d2/de8/group__core__array_1ga6db555d30115642fedae0cda05604874>`(t3, t1, ssim_map);      // ssim_map =  t3./t1;
+	
+	 Scalar mssim = :ref:`mean <doxid-d2/de8/group__core__array_1ga191389f8a0e58180bb13a727782cd461>`( ssim_map ); // mssim = average of ssim map
+	 return mssim;
+	}
+
+This will return a similarity index for each channel of the image. This value is between zero and one, where one corresponds to perfect fit. Unfortunately, the many Gaussian blurring is quite costly, so while the PSNR may work in a real time like environment (24 frame per second) this will take significantly more than to accomplish similar performance results.
+
+Therefore, the source code presented at the start of the tutorial will perform the PSNR measurement for each frame, and the SSIM only for the frames where the PSNR falls below an input value. For visualization purpose we show both images in an OpenCV window and print the PSNR and MSSIM values to the console. Expect to see something like:
+
+.. image:: outputVideoInput.png
+
+You may observe a runtime instance of this on the `YouTube here <https://www.youtube.com/watch?v=iOcNljutOgg>`__.
+
+
+
+.. rubric:: See also:
+
+SSIM is described more in-depth in the: "Z. Wang, A. C. Bovik, H. R. Sheikh and E. P.
+    Simoncelli, "Image quality assessment: From error visibility to structural similarity," IEEE
+    Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004." article.
+

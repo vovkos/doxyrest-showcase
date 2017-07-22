@@ -1,0 +1,310 @@
+.. index:: pair: class; Poco::Task
+.. _doxid-class_poco_1_1_task:
+
+class Poco::Task
+================
+
+.. toctree::
+	:hidden:
+
+	enum_Poco_Task_TaskState.rst
+
+Overview
+~~~~~~~~
+
+A :ref:`Task <doxid-class_poco_1_1_task>` is a subclass of :ref:`Runnable <doxid-class_poco_1_1_runnable>` that has a name and supports progress reporting and cancellation. :ref:`More...<details-class_poco_1_1_task>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Task.h>
+	
+	class Task:
+	    public :ref:`Poco::Runnable<doxid-class_poco_1_1_runnable>`,
+	    public :ref:`Poco::RefCountedObject<doxid-class_poco_1_1_ref_counted_object>`
+	{
+	public:
+		// enums
+	
+		enum :ref:`TaskState<doxid-class_poco_1_1_task_1a33beaf1923b417e4b6f36ebbd9175638>`;
+
+		// construction
+	
+		:ref:`Task<doxid-class_poco_1_1_task_1a88621c0a73d968abb7cb2e7a9384bb75>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name);
+
+		// methods
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`name<doxid-class_poco_1_1_task_1aa83801fbaa3bd395c1f9258a2b9dd6ed>`() const;
+	
+		float
+		:ref:`progress<doxid-class_poco_1_1_task_1a63ca5c6ab5b381dc47ed7eafdb1026c3>`() const;
+	
+		virtual
+		void
+		:ref:`cancel<doxid-class_poco_1_1_task_1ac87407ae165f324e1c7def5cf835fa4b>`();
+	
+		bool
+		:ref:`isCancelled<doxid-class_poco_1_1_task_1a003efcd76afb8ffcefd1b18ba96dc6be>`() const;
+	
+		:ref:`TaskState<doxid-class_poco_1_1_task_1a33beaf1923b417e4b6f36ebbd9175638>`
+		:ref:`state<doxid-class_poco_1_1_task_1a7f6d1958f8206a7577207a5c4b68f282>`() const;
+	
+		void
+		:ref:`reset<doxid-class_poco_1_1_task_1a976e559f54b9786c72f873f7332e9dca>`();
+	
+		virtual
+		void
+		:ref:`runTask<doxid-class_poco_1_1_task_1af9c9915eedbcf83716c944b708779b52>`() = 0;
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_task_1a5a26fa436cba1413a5480480d5c59ac2>`();
+
+	protected:
+		// methods
+	
+		bool
+		:ref:`sleep<doxid-class_poco_1_1_task_1a7230f204b58c41d30cb4c465487c6c4b>`(long milliseconds);
+	
+		void
+		:ref:`setProgress<doxid-class_poco_1_1_task_1a4ebfdca601211aa33dba16d1037ef6f7>`(float progress);
+	
+		virtual
+		void
+		:ref:`postNotification<doxid-class_poco_1_1_task_1ac7621f464ce3f21346fb355cd7e4357c>`(:ref:`Notification<doxid-class_poco_1_1_notification>`* pNf);
+	
+		void
+		:ref:`setOwner<doxid-class_poco_1_1_task_1a4cced4e05c40e8ff30798f1303956223>`(:ref:`TaskManager<doxid-class_poco_1_1_task_manager>`* pOwner);
+	
+		:ref:`TaskManager<doxid-class_poco_1_1_task_manager>`*
+		:ref:`getOwner<doxid-class_poco_1_1_task_1a35f766e7e683c55169bf879dcfbf597e>`() const;
+	
+		void
+		:ref:`setState<doxid-class_poco_1_1_task_1ac72f92221edce825709ceb0587f8ffaa>`(:ref:`TaskState<doxid-class_poco_1_1_task_1a33beaf1923b417e4b6f36ebbd9175638>` state);
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>`() = 0;
+	
+		void
+		:ref:`duplicate<doxid-class_poco_1_1_ref_counted_object_1a13296da57127169ed0709b3dde86bf0d>`() const;
+	
+		void
+		:ref:`release<doxid-class_poco_1_1_ref_counted_object_1a14bf204923a6ba4b97df6f8fdb9deb72>`() const;
+	
+		int
+		:ref:`referenceCount<doxid-class_poco_1_1_ref_counted_object_1a45b62ccd833bcb06055399c2d889eb35>`() const;
+
+.. _details-class_poco_1_1_task:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`Task <doxid-class_poco_1_1_task>` is a subclass of :ref:`Runnable <doxid-class_poco_1_1_runnable>` that has a name and supports progress reporting and cancellation.
+
+A :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` object can be used to take care of the lifecycle of a :ref:`Task <doxid-class_poco_1_1_task>`.
+
+Construction
+------------
+
+.. index:: pair: function; Task
+.. _doxid-class_poco_1_1_task_1a88621c0a73d968abb7cb2e7a9384bb75:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Task(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name)
+
+Creates the :ref:`Task <doxid-class_poco_1_1_task>`.
+
+Methods
+-------
+
+.. index:: pair: function; name
+.. _doxid-class_poco_1_1_task_1aa83801fbaa3bd395c1f9258a2b9dd6ed:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+	name() const
+
+Returns the task's name.
+
+.. index:: pair: function; progress
+.. _doxid-class_poco_1_1_task_1a63ca5c6ab5b381dc47ed7eafdb1026c3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	float
+	progress() const
+
+Returns the task's progress.
+
+The value will be between 0.0 (just started) and 1.0 (completed).
+
+.. index:: pair: function; cancel
+.. _doxid-class_poco_1_1_task_1ac87407ae165f324e1c7def5cf835fa4b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	cancel()
+
+Requests the task to cancel itself.
+
+For cancellation to work, the task's :ref:`runTask() <doxid-class_poco_1_1_task_1af9c9915eedbcf83716c944b708779b52>` method must periodically call :ref:`isCancelled() <doxid-class_poco_1_1_task_1a003efcd76afb8ffcefd1b18ba96dc6be>` and react accordingly.
+
+Can be overridden to implement custom behavior, but the base class implementation of :ref:`cancel() <doxid-class_poco_1_1_task_1ac87407ae165f324e1c7def5cf835fa4b>` should be called to ensure proper behavior.
+
+.. index:: pair: function; isCancelled
+.. _doxid-class_poco_1_1_task_1a003efcd76afb8ffcefd1b18ba96dc6be:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	isCancelled() const
+
+Returns true if cancellation of the task has been requested.
+
+A :ref:`Task <doxid-class_poco_1_1_task>` 's :ref:`runTask() <doxid-class_poco_1_1_task_1af9c9915eedbcf83716c944b708779b52>` method should periodically call this method and stop whatever it is doing in an orderly way when this method returns true.
+
+.. index:: pair: function; state
+.. _doxid-class_poco_1_1_task_1a7f6d1958f8206a7577207a5c4b68f282:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`TaskState<doxid-class_poco_1_1_task_1a33beaf1923b417e4b6f36ebbd9175638>`
+	state() const
+
+Returns the task's current state.
+
+.. index:: pair: function; reset
+.. _doxid-class_poco_1_1_task_1a976e559f54b9786c72f873f7332e9dca:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	reset()
+
+Sets the task's progress to zero and clears the cancel flag.
+
+.. index:: pair: function; runTask
+.. _doxid-class_poco_1_1_task_1af9c9915eedbcf83716c944b708779b52:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	runTask() = 0
+
+Do whatever the task needs to do.
+
+Must be overridden by subclasses.
+
+.. index:: pair: function; run
+.. _doxid-class_poco_1_1_task_1a5a26fa436cba1413a5480480d5c59ac2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	run()
+
+Calls the task's :ref:`runTask() <doxid-class_poco_1_1_task_1af9c9915eedbcf83716c944b708779b52>` method and notifies the owner of the task's start and completion.
+
+.. index:: pair: function; sleep
+.. _doxid-class_poco_1_1_task_1a7230f204b58c41d30cb4c465487c6c4b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	sleep(long milliseconds)
+
+Suspends the current thread for the specified amount of time.
+
+If the task is cancelled while it is sleeping, :ref:`sleep() <doxid-class_poco_1_1_task_1a7230f204b58c41d30cb4c465487c6c4b>` will return immediately and the return value will be true. If the time interval passes without the task being cancelled, the return value is false.
+
+A :ref:`Task <doxid-class_poco_1_1_task>` should use this method in favor of :ref:`Thread::sleep() <doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7>`.
+
+.. index:: pair: function; setProgress
+.. _doxid-class_poco_1_1_task_1a4ebfdca601211aa33dba16d1037ef6f7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setProgress(float progress)
+
+Sets the task's progress.
+
+The value should be between 0.0 (just started) and 1.0 (completed).
+
+.. index:: pair: function; postNotification
+.. _doxid-class_poco_1_1_task_1ac7621f464ce3f21346fb355cd7e4357c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	postNotification(:ref:`Notification<doxid-class_poco_1_1_notification>`* pNf)
+
+Posts a notification to the task manager's notification center.
+
+A task can use this method to post custom notifications about its progress.
+
+.. index:: pair: function; setOwner
+.. _doxid-class_poco_1_1_task_1a4cced4e05c40e8ff30798f1303956223:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setOwner(:ref:`TaskManager<doxid-class_poco_1_1_task_manager>`* pOwner)
+
+Sets the (optional) owner of the task.
+
+.. index:: pair: function; getOwner
+.. _doxid-class_poco_1_1_task_1a35f766e7e683c55169bf879dcfbf597e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`TaskManager<doxid-class_poco_1_1_task_manager>`*
+	getOwner() const
+
+Returns the owner of the task, which may be NULL.
+
+.. index:: pair: function; setState
+.. _doxid-class_poco_1_1_task_1ac72f92221edce825709ceb0587f8ffaa:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setState(:ref:`TaskState<doxid-class_poco_1_1_task_1a33beaf1923b417e4b6f36ebbd9175638>` state)
+
+Sets the task's state.
+

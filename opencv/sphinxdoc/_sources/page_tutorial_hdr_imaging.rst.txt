@@ -1,0 +1,158 @@
+.. index:: pair: page; High Dynamic Range Imaging
+.. _doxid-d3/db7/tutorial_hdr_imaging:
+
+High Dynamic Range Imaging
+==========================
+
+.. rubric:: Introduction
+
+Today most digital images and imaging devices use 8 bits per channel thus limiting the dynamic range of the device to two orders of magnitude (actually 256 levels), while human eye can adapt to lighting conditions varying by ten orders of magnitude. When we take photographs of a real world scene bright regions may be overexposed, while the dark ones may be underexposed, so we can’t capture all details using a single exposure. HDR imaging works with images that use more that 8 bits per channel (usually 32-bit float values), allowing much wider dynamic range.
+
+There are different ways to obtain HDR images, but the most common one is to use photographs of the scene taken with different exposure values. To combine this exposures it is useful to know your camera’s response function and there are algorithms to estimate it. After the HDR image has been blended it has to be converted back to 8-bit to view it on usual displays. This process is called tonemapping. Additional complexities arise when objects of the scene or camera move between shots, since images with different exposures should be registered and aligned.
+
+In this tutorial we show how to generate and display HDR image from an exposure sequence. In our case images are already aligned and there are no moving objects. We also demonstrate an alternative approach called exposure fusion that produces low dynamic range image. Each step of HDR pipeline can be implemented using different algorithms so take a look at the reference manual to see them all.
+
+.. rubric:: Exposure sequence
+
+.. image:: memorial.png
+
+.. rubric:: Source Code
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/photo.hpp>
+	#include "opencv2/imgcodecs.hpp"
+	#include <opencv2/highgui.hpp>
+	#include <vector>
+	#include <iostream>
+	#include <fstream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	void loadExposureSeq(:ref:`String <doxid-dc/d0e/classcv_1_1_string>`, vector<Mat>&, vector<float>&);
+	
+	int main(int, char**argv)
+	{
+	    vector<Mat> images;
+	    vector<float> times;
+	    loadExposureSeq(argv[1], images, times);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` response;
+	    :ref:`Ptr\<CalibrateDebevec> <doxid-d2/d56/structcv_1_1_ptr>` :ref:`calibrate <doxid-db/d58/group__calib3d__fisheye_1gad626a78de2b1dae7489e152a5a5a89e1>` = :ref:`createCalibrateDebevec <doxid-d6/df5/group__photo__hdr_1ga7fed9707ad5f2cc0e633888867109f90>`();
+	    calibrate->:ref:`process <doxid-d6/d43/classcv_1_1_calibrate_c_r_f_1a7bd220808762094e0b48819f63437196>`(images, response, times);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` hdr;
+	    :ref:`Ptr\<MergeDebevec> <doxid-d2/d56/structcv_1_1_ptr>` merge_debevec = :ref:`createMergeDebevec <doxid-d6/df5/group__photo__hdr_1gaa8eab36bc764abb2a225db7c945f87f9>`();
+	    merge_debevec->:ref:`process <doxid-df/d17/classcv_1_1_merge_debevec_1ae5bb2bef786549e1a1db8c2bbcee2e13>`(images, hdr, times, response);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` ldr;
+	    :ref:`Ptr\<TonemapDurand> <doxid-d2/d56/structcv_1_1_ptr>` tonemap = :ref:`createTonemapDurand <doxid-d6/df5/group__photo__hdr_1ga19150c9a4b670437e374e51a3e865654>`(2.2f);
+	    tonemap->:ref:`process <doxid-d0/dd3/classcv_1_1_tonemap_1aa705c3b7226f7028a5c117dffab60fe4>`(hdr, ldr);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` fusion;
+	    :ref:`Ptr\<MergeMertens> <doxid-d2/d56/structcv_1_1_ptr>` merge_mertens = :ref:`createMergeMertens <doxid-d6/df5/group__photo__hdr_1ga79d59aa3cb3a7c664e59a4b5acc1ccb6>`();
+	    merge_mertens->:ref:`process <doxid-df/d3e/classcv_1_1_merge_mertens_1a3b5ae3fe6c15bd7db83f213903858ea0>`(images, fusion);
+	
+	    :ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("fusion.png", fusion * 255);
+	    :ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("ldr.png", ldr * 255);
+	    :ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("hdr.hdr", hdr);
+	
+	    return 0;
+	}
+	
+	void loadExposureSeq(:ref:`String <doxid-dc/d0e/classcv_1_1_string>` path, vector<Mat>& images, vector<float>& times)
+	{
+	    path = path + std::string("/");
+	    ifstream list_file((path + "list.txt").c_str());
+	    string name;
+	    float val;
+	    while(list_file >> name >> val) {
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(path + name);
+	        images.push_back(img);
+	        times.push_back(1 / val);
+	    }
+	    list_file.close();
+	}
+
+.. rubric:: Explanation
+
+#. **Load images and exposure times**
+   
+   .. ref-code-block:: cpp
+   
+   	vector<Mat> images;
+   	vector<float> times;
+   	loadExposureSeq(argv[1], images, times);
+   
+   Firstly we load input images and exposure times from user-defined folder. The folder should contain images and *list.txt* - file that contains file names and inverse exposure times.
+   
+   For our image sequence the list is following:
+   
+   .. ref-code-block:: cpp
+   
+   	memorial00.png 0.03125
+   	memorial01.png 0.0625
+   	...
+   	memorial15.png 1024
+
+#. **Estimate camera response**
+   
+   .. ref-code-block:: cpp
+   
+   	Mat response;
+   	Ptr<CalibrateDebevec> calibrate = :ref:`createCalibrateDebevec <doxid-d6/df5/group__photo__hdr_1ga7fed9707ad5f2cc0e633888867109f90>`();
+   	calibrate->process(images, response, times);
+   
+   It is necessary to know camera response function (CRF) for a lot of HDR construction algorithms. We use one of the calibration algorithms to estimate inverse CRF for all 256 pixel values.
+
+#. **Make HDR image**
+   
+   .. ref-code-block:: cpp
+   
+   	Mat hdr;
+   	Ptr<MergeDebevec> merge_debevec = :ref:`createMergeDebevec <doxid-d6/df5/group__photo__hdr_1gaa8eab36bc764abb2a225db7c945f87f9>`();
+   	merge_debevec->process(images, hdr, times, response);
+   
+   We use Debevec's weighting scheme to construct HDR image using response calculated in the previous item.
+
+#. **Tonemap HDR image**
+   
+   .. ref-code-block:: cpp
+   
+   	Mat ldr;
+   	Ptr<TonemapDurand> tonemap = :ref:`createTonemapDurand <doxid-d6/df5/group__photo__hdr_1ga19150c9a4b670437e374e51a3e865654>`(2.2f);
+   	tonemap->process(hdr, ldr);
+   
+   Since we want to see our results on common LDR display we have to map our HDR image to 8-bit range preserving most details. It is the main goal of tonemapping methods. We use tonemapper with bilateral filtering and set 2.2 as the value for gamma correction.
+
+#. **Perform exposure fusion**
+   
+   .. ref-code-block:: cpp
+   
+   	Mat fusion;
+   	Ptr<MergeMertens> merge_mertens = :ref:`createMergeMertens <doxid-d6/df5/group__photo__hdr_1ga79d59aa3cb3a7c664e59a4b5acc1ccb6>`();
+   	merge_mertens->process(images, fusion);
+   
+   There is an alternative way to merge our exposures in case when we don't need HDR image. This process is called exposure fusion and produces LDR image that doesn't require gamma correction. It also doesn't use exposure values of the photographs.
+
+#. **Write results**
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("fusion.png", fusion * 255);
+   	:ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("ldr.png", ldr * 255);
+   	:ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("hdr.hdr", hdr);
+   
+   Now it's time to look at the results. Note that HDR image can't be stored in one of common image formats, so we save it to Radiance image (.hdr). Also all HDR imaging functions return results in [0, 1] range so we should multiply result by 255.
+
+.. rubric:: Results
+
+.. rubric:: Tonemapped image
+
+.. image:: ldr.png
+
+.. rubric:: Exposure fusion
+
+.. image:: fusion.png
+

@@ -1,0 +1,192 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Histogram - 4 : Histogram Backprojection &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Histograms - 1 : Find, Plot, Analyze !!!" href="page_tutorial_py_histogram_begins.html" />
+    <link rel="prev" title="Histograms in OpenCV" href="page_tutorial_py_table_of_contents_histograms.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_histogram_begins.html" title="Histograms - 1 : Find, Plot, Analyze !!!"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_histograms.html" title="Histograms in OpenCV"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_table_of_contents_histograms.html" accesskey="U">Histograms in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_histograms.html"
+                        title="previous chapter">Histograms in OpenCV</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_histogram_begins.html"
+                        title="next chapter">Histograms - 1 : Find, Plot, Analyze !!!</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="histogram-4-histogram-backprojection">
+<span id="doxid-dc-df6-tutorial-py-histogram-backprojection"></span><span id="index-0"></span><h1>Histogram - 4 : Histogram Backprojection</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter, we will learn about histogram backprojection.</p>
+<p class="rubric">Theory</p>
+<p>It was proposed by <strong>Michael J. Swain , Dana H. Ballard</strong> in their paper <strong>Indexing via color histograms</strong>.</p>
+<p><strong>What is it actually in simple words?</strong> It is used for image segmentation or finding objects of interest in an image. In simple words, it creates an image of the same size (but single channel) as that of our input image, where each pixel corresponds to the probability of that pixel belonging to our object. In more simpler worlds, the output image will have our object of interest in more white compared to remaining part. Well, that is an intuitive explanation. (I can’t make it more simpler). Histogram Backprojection is used with camshift algorithm etc.</p>
+<p><strong>How do we do it ?</strong> We create a histogram of an image containing our object of interest (in our case, the ground, leaving player and other things). The object should fill the image as far as possible for better results. And a color histogram is preferred over grayscale histogram, because color of the object is a better way to define the object than its grayscale intensity. We then “back-project” this histogram over our test image where we need to find the object, ie in other words, we calculate the probability of every pixel belonging to the ground and show it. The resulting output on proper thresholding gives us the ground alone.</p>
+<p class="rubric">Algorithm in Numpy</p>
+<ol class="arabic">
+<li><p class="first">First we need to calculate the color histogram of both the object we need to find (let it be ‘M’) and the image where we are going to search (let it be ‘I’).</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="cp">#roi is the object or region of object we need to find</span>
+<span class="n">roi</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;rose_red.png&#39;</span><span class="p">)</span>
+<span class="n">hsv</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+<span class="cp">#target is the image we search in</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;rose.png&#39;</span><span class="p">)</span>
+<span class="n">hsvt</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+<span class="cp"># Find the histograms using calcHist. Can be done with np.histogram2d also</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">hsv</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">None</span><span class="p">,</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mi">256</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span> <span class="p">)</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">hsvt</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">None</span><span class="p">,</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mi">256</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span> <span class="p">)</span>
+</pre>
+</li>
+<li><p class="first">Find the ratio <span class="math notranslate nohighlight">\(R = \frac{M}{I}\)</span>. Then backproject R, ie use R as palette and create a new image with every pixel as its corresponding probability of being target. ie B(x,y) = R[h(x,y),s(x,y)] where h is hue and s is saturation of the pixel at (x,y). After that apply the condition <span class="math notranslate nohighlight">\(B(x,y) = min[B(x,y), 1]\)</span>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">h</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">hsvt</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">h</span><span class="p">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">s</span><span class="p">.</span><span class="n">ravel</span><span class="p">()]</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">B</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">hsvt</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">:</span><span class="mi">2</span><span class="p">])</span>
+</pre>
+</li>
+<li><p class="first">Now apply a convolution with a circular disc, <span class="math notranslate nohighlight">\(B = D \ast B\)</span>, where D is the disc kernel.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">disc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">getStructuringElement</span><span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">MORPH_ELLIPSE</span><span class="p">,(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">disc</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">)</span>
+</pre>
+</li>
+<li><p class="first">Now the location of maximum intensity gives us the location of object. If we are expecting a region in the image, thresholding for a suitable value gives a nice result.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">ret</span><span class="p">,</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre>
+<p>That’s it !!</p>
+</li>
+</ol>
+<p class="rubric">Backprojection in OpenCV</p>
+<p>OpenCV provides an inbuilt function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga3a0af640716b456c3d14af8aee12e3ca"><span class="std std-ref">cv2.calcBackProject()</span></a>. Its parameters are almost same as the <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">cv2.calcHist()</span></a> function. One of its parameter is histogram which is histogram of the object and we have to find it. Also, the object histogram should be normalized before passing on to the backproject function. It returns the probability image. Then we convolve the image with a disc kernel and apply threshold. Below is my code and output :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="n">roi</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;rose_red.png&#39;</span><span class="p">)</span>
+<span class="n">hsv</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;rose.png&#39;</span><span class="p">)</span>
+<span class="n">hsvt</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+<span class="cp"># calculating object histogram</span>
+<span class="n">roihist</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">hsv</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">None</span><span class="p">,</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mi">256</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span> <span class="p">)</span>
+
+<span class="cp"># normalize histogram and apply backprojection</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">roihist</span><span class="p">,</span><span class="n">roihist</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">NORM_MINMAX</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">calcBackProject</span><span class="p">([</span><span class="n">hsvt</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">roihist</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="cp"># Now convolute with circular disc</span>
+<span class="n">disc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">getStructuringElement</span><span class="p">(</span><span class="n">cv2</span><span class="p">.</span><span class="n">MORPH_ELLIPSE</span><span class="p">,(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">disc</span><span class="p">,</span><span class="n">dst</span><span class="p">)</span>
+
+<span class="cp"># threshold and binary AND</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">merge</span><span class="p">((</span><span class="n">thresh</span><span class="p">,</span><span class="n">thresh</span><span class="p">,</span><span class="n">thresh</span><span class="p">))</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="n">thresh</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">target</span><span class="p">,</span><span class="n">thresh</span><span class="p">,</span><span class="n">res</span><span class="p">))</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;res.jpg&#39;</span><span class="p">,</span><span class="n">res</span><span class="p">)</span>
+</pre>
+<p>Below is one example I worked with. I used the region inside blue rectangle as sample object and I wanted to extract the full ground.</p>
+<img alt="image" src="_images/backproject_opencv.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>“Indexing via color histograms”, Swain, Michael J. , Third international conference on computer vision,1990.</li>
+</ol>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_histogram_begins.html" title="Histograms - 1 : Find, Plot, Analyze !!!"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_histograms.html" title="Histograms in OpenCV"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_table_of_contents_histograms.html" >Histograms in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

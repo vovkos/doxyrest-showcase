@@ -1,0 +1,157 @@
+.. index:: pair: group; Clustering and Search in Multi-Dimensional Spaces
+.. _doxid-dc/de5/group__flann:
+
+Clustering and Search in Multi-Dimensional Spaces
+=================================================
+
+.. toctree::
+	:hidden:
+
+	struct_cv_flann_CvType.rst
+	struct_cv_flann_CvType-2.rst
+	struct_cv_flann_CvType-3.rst
+	struct_cv_flann_CvType-4.rst
+	struct_cv_flann_CvType-5.rst
+	struct_cv_flann_CvType-6.rst
+	struct_cv_flann_CvType-7.rst
+	class_cv_flann_GenericIndex.rst
+	class_cv_flann_Index_.rst
+
+Overview
+~~~~~~~~
+
+This section documents OpenCV's interface to the FLANN library. :ref:`More...<details-dc/de5/group__flann>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// structs
+
+	template <typename T>
+	struct :ref:`cv::flann::CvType<doxid-dd/d12/structcv_1_1flann_1_1_cv_type>`;
+
+	template <>
+	struct :ref:`cv::flann::CvType<short><doxid-dc/d28/structcv_1_1flann_1_1_cv_type_3_01short_01_4>`;
+
+	template <>
+	struct :ref:`cv::flann::CvType<unsigned char><doxid-da/d40/structcv_1_1flann_1_1_cv_type_3_01unsigned_01char_01_4>`;
+
+	template <>
+	struct :ref:`cv::flann::CvType<float><doxid-d9/d05/structcv_1_1flann_1_1_cv_type_3_01float_01_4>`;
+
+	template <>
+	struct :ref:`cv::flann::CvType<char><doxid-d5/d5b/structcv_1_1flann_1_1_cv_type_3_01char_01_4>`;
+
+	template <>
+	struct :ref:`cv::flann::CvType<double><doxid-d4/d40/structcv_1_1flann_1_1_cv_type_3_01double_01_4>`;
+
+	template <>
+	struct :ref:`cv::flann::CvType<unsigned short><doxid-dc/de4/structcv_1_1flann_1_1_cv_type_3_01unsigned_01short_01_4>`;
+
+	// classes
+
+	template <typename Distance>
+	class :ref:`cv::flann::GenericIndex<doxid-dd/dde/classcv_1_1flann_1_1_generic_index>`;
+
+	template <typename T>
+	class :ref:`cv::flann::Index_<doxid-df/d09/classcv_1_1flann_1_1_index__>`;
+
+	// global functions
+
+	template <typename Distance>
+	int
+	:ref:`cv::flann::hierarchicalClustering<doxid-dc/de5/group__flann_1gaf89c8914eb439855c9a24c3de01bfd82>`(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& features,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& centers,
+		const :::ref:`cvflann::KMeansIndexParams<doxid-d6/d17/structcvflann_1_1_k_means_index_params>`& params,
+		Distance d = Distance()
+		);
+
+	template <
+		typename ELEM_TYPE,
+		typename DIST_TYPE
+		>
+	int
+	:ref:`cv::flann::hierarchicalClustering<doxid-dc/de5/group__flann_1gac265f640e407fc7a7541923a4cbc40ed>`(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& features,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& centers,
+		const :::ref:`cvflann::KMeansIndexParams<doxid-d6/d17/structcvflann_1_1_k_means_index_params>`& params
+		);
+
+.. _details-dc/de5/group__flann:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This section documents OpenCV's interface to the FLANN library. FLANN (Fast Library for Approximate Nearest Neighbors) is a library that contains a collection of algorithms optimized for fast nearest neighbor search in large datasets and for high dimensional features. More information about FLANN can be found in :ref:`[61] <doxid-d0/de3/citelist_1CITEREF_Muja2009>`.
+
+Global Functions
+----------------
+
+.. index:: pair: function; hierarchicalClustering
+.. _doxid-dc/de5/group__flann_1gaf89c8914eb439855c9a24c3de01bfd82:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Distance>
+	int
+	cv::flann::hierarchicalClustering(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& features,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& centers,
+		const :::ref:`cvflann::KMeansIndexParams<doxid-d6/d17/structcvflann_1_1_k_means_index_params>`& params,
+		Distance d = Distance()
+		)
+
+Clusters features using hierarchical k-means algorithm.
+
+The method clusters the given feature vectors by constructing a hierarchical k-means tree and choosing a cut in the tree that minimizes the cluster's variance. It returns the number of clusters found.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- features
+
+		- The points to be clustered. The matrix must have elements of type Distance::ElementType.
+
+	*
+		- centers
+
+		- The centers of the clusters obtained. The matrix must have type Distance::ResultType. The number of rows in this matrix represents the number of clusters desired, however, because of the way the cut in the hierarchical tree is chosen, the number of clusters computed will be the highest number of the form (branching-1)\*k+1 that's lower than the number of clusters desired, where branching is the tree's branching factor (see description of the :ref:`KMeansIndexParams <doxid-db/da7/structcv_1_1flann_1_1_k_means_index_params>`).
+
+	*
+		- params
+
+		- Parameters used in the construction of the hierarchical k-means tree.
+
+	*
+		- d
+
+		- Distance to be used for clustering.
+
+.. index:: pair: function; hierarchicalClustering
+.. _doxid-dc/de5/group__flann_1gac265f640e407fc7a7541923a4cbc40ed:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <
+		typename ELEM_TYPE,
+		typename DIST_TYPE
+		>
+	int
+	cv::flann::hierarchicalClustering(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& features,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& centers,
+		const :::ref:`cvflann::KMeansIndexParams<doxid-d6/d17/structcvflann_1_1_k_means_index_params>`& params
+		)
+
+Deprecated
+

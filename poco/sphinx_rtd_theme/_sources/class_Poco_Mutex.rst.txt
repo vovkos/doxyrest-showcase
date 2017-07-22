@@ -1,0 +1,156 @@
+.. index:: pair: class; Poco::Mutex
+.. _doxid-class_poco_1_1_mutex:
+
+class Poco::Mutex
+=================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`Mutex <doxid-class_poco_1_1_mutex>` (mutual exclusion) is a synchronization mechanism used to control access to a shared resource in a concurrent (multithreaded) scenario. :ref:`More...<details-class_poco_1_1_mutex>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Mutex.h>
+	
+	class Mutex: private :ref:`Poco::MutexImpl<doxid-class_poco_1_1_mutex_impl>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`Poco::ScopedLock<doxid-class_poco_1_1_scoped_lock>`<Mutex> :target:`ScopedLock<doxid-class_poco_1_1_mutex_1a9d2d78438bc20c6a6d13e280fa9adab5>`;
+
+		// methods
+	
+		void
+		:ref:`lock<doxid-class_poco_1_1_mutex_1a84fe4f3cb5654283e6936ddd4024c7c4>`();
+	
+		void
+		:ref:`lock<doxid-class_poco_1_1_mutex_1a152b3fae7b4ca1704cb79791d3d53617>`(long milliseconds);
+	
+		bool
+		:ref:`tryLock<doxid-class_poco_1_1_mutex_1a95e532ca453e46adda1278dd4f44ff70>`();
+	
+		bool
+		:ref:`tryLock<doxid-class_poco_1_1_mutex_1a11cb99d50609b8dd7990db3b24c56af8>`(long milliseconds);
+	
+		void
+		:ref:`unlock<doxid-class_poco_1_1_mutex_1a54ef696a19f9447b2f751a8b10ff7a7c>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	protected:
+		// methods
+	
+		void
+		:ref:`lockImpl<doxid-class_poco_1_1_mutex_impl_1a2d1eb72d1f8bc63971feb7c34b5ad2db>`();
+	
+		bool
+		:ref:`tryLockImpl<doxid-class_poco_1_1_mutex_impl_1af6912745580c04c99d3e12110a516c93>`();
+	
+		bool
+		:ref:`tryLockImpl<doxid-class_poco_1_1_mutex_impl_1ad43e90a41d5d0731fe95062a4b96104b>`(long milliseconds);
+	
+		void
+		:ref:`unlockImpl<doxid-class_poco_1_1_mutex_impl_1ae6c2b2db1b69a8184debbb95bd32775e>`();
+
+.. _details-class_poco_1_1_mutex:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`Mutex <doxid-class_poco_1_1_mutex>` (mutual exclusion) is a synchronization mechanism used to control access to a shared resource in a concurrent (multithreaded) scenario.
+
+Mutexes are recursive, that is, the same mutex can be locked multiple times by the same thread (but, of course, not by other threads). Using the :ref:`ScopedLock <doxid-class_poco_1_1_scoped_lock>` class is the preferred way to automatically lock and unlock a mutex.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_mutex_1af5db47e8c6963011df3c1644f33fa3a0:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~Mutex()
+
+destroys the :ref:`Mutex <doxid-class_poco_1_1_mutex>`.
+
+Methods
+-------
+
+.. index:: pair: function; lock
+.. _doxid-class_poco_1_1_mutex_1a84fe4f3cb5654283e6936ddd4024c7c4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	lock()
+
+Locks the mutex.
+
+Blocks if the mutex is held by another thread.
+
+.. index:: pair: function; lock
+.. _doxid-class_poco_1_1_mutex_1a152b3fae7b4ca1704cb79791d3d53617:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	lock(long milliseconds)
+
+Locks the mutex.
+
+Blocks up to the given number of milliseconds if the mutex is held by another thread. Throws a TimeoutException if the mutex can not be locked within the given timeout.
+
+Performance Note: On most platforms (including Windows), this member function is implemented using a loop calling (the equivalent of) :ref:`tryLock() <doxid-class_poco_1_1_mutex_1a95e532ca453e46adda1278dd4f44ff70>` and :ref:`Thread::sleep() <doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7>`. On POSIX platforms that support pthread_mutex_timedlock(), this is used.
+
+.. index:: pair: function; tryLock
+.. _doxid-class_poco_1_1_mutex_1a95e532ca453e46adda1278dd4f44ff70:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryLock()
+
+Tries to lock the mutex.
+
+Returns false immediately if the mutex is already held by another thread. Returns true if the mutex was successfully locked.
+
+.. index:: pair: function; tryLock
+.. _doxid-class_poco_1_1_mutex_1a11cb99d50609b8dd7990db3b24c56af8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryLock(long milliseconds)
+
+Locks the mutex.
+
+Blocks up to the given number of milliseconds if the mutex is held by another thread. Returns true if the mutex was successfully locked.
+
+Performance Note: On most platforms (including Windows), this member function is implemented using a loop calling (the equivalent of) :ref:`tryLock() <doxid-class_poco_1_1_mutex_1a95e532ca453e46adda1278dd4f44ff70>` and :ref:`Thread::sleep() <doxid-class_poco_1_1_thread_1aaa3d7740f70533cb058483fcaedd9cf7>`. On POSIX platforms that support pthread_mutex_timedlock(), this is used.
+
+.. index:: pair: function; unlock
+.. _doxid-class_poco_1_1_mutex_1a54ef696a19f9447b2f751a8b10ff7a7c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	unlock()
+
+Unlocks the mutex so that it can be acquired by other threads.
+

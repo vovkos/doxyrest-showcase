@@ -1,0 +1,173 @@
+.. index:: pair: class; cv::ml::ParamGrid
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid:
+
+class cv::ml::ParamGrid
+=======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+The structure represents the logarithmic grid range of statmodel parameters. :ref:`More...<details-d0/deb/classcv_1_1ml_1_1_param_grid>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ml.hpp>
+	
+	class ParamGrid
+	{
+	public:
+		// fields
+	
+		double :ref:`logStep<doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a577e7820786e30214651d8a9702fd940>`;
+		double :ref:`maxVal<doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a46c726cefa11ac616833ee3b67192acb>`;
+		double :ref:`minVal<doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a7ce2f9514d5e05b99c325627dbbcba09>`;
+
+		// construction
+	
+		:ref:`ParamGrid<doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a41f16ee1570e78af0d7362231138cc6c>`();
+	
+		:ref:`ParamGrid<doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a4b8034d10d8dd7f083967176dc71d09b>`(
+			double _minVal,
+			double _maxVal,
+			double _logStep
+			);
+
+		// methods
+	
+		static
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<ParamGrid>
+		:ref:`create<doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a0f7cb2424b2a1f5c45670b20c83acc96>`(
+			double minVal = 0.,
+			double maxVal = 0.,
+			double logstep = 1.
+			);
+	};
+.. _details-d0/deb/classcv_1_1ml_1_1_param_grid:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+The structure represents the logarithmic grid range of statmodel parameters.
+
+It is used for optimizing statmodel accuracy by varying model parameters, the accuracy estimate being computed by cross-validation.
+
+Fields
+------
+
+.. index:: pair: variable; logStep
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a577e7820786e30214651d8a9702fd940:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double logStep
+
+Logarithmic step for iterating the statmodel parameter.
+
+The grid determines the following iteration sequence of the statmodel parameter values:
+
+.. math::
+
+	(minVal, minVal*step, minVal*{step}^2, \dots, minVal*{logStep}^n),
+
+where :math:`n` is the maximal index satisfying
+
+.. math::
+
+	\texttt{minVal} * \texttt{logStep} ^n < \texttt{maxVal}
+
+The grid is logarithmic, so logStep must always be greater then 1. Default value is 1.
+
+.. index:: pair: variable; maxVal
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a46c726cefa11ac616833ee3b67192acb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double maxVal
+
+Maximum value of the statmodel parameter. Default value is 0.
+
+.. index:: pair: variable; minVal
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a7ce2f9514d5e05b99c325627dbbcba09:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double minVal
+
+Minimum value of the statmodel parameter. Default value is 0.
+
+Construction
+------------
+
+.. index:: pair: function; ParamGrid
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a41f16ee1570e78af0d7362231138cc6c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ParamGrid()
+
+Default constructor.
+
+.. index:: pair: function; ParamGrid
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a4b8034d10d8dd7f083967176dc71d09b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ParamGrid(
+		double _minVal,
+		double _maxVal,
+		double _logStep
+		)
+
+Constructor with parameters.
+
+Methods
+-------
+
+.. index:: pair: function; create
+.. _doxid-d0/deb/classcv_1_1ml_1_1_param_grid_1a0f7cb2424b2a1f5c45670b20c83acc96:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<ParamGrid>
+	create(
+		double minVal = 0.,
+		double maxVal = 0.,
+		double logstep = 1.
+		)
+
+Creates a :ref:`ParamGrid <doxid-d0/deb/classcv_1_1ml_1_1_param_grid>` :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` that can be given to the SVM::trainAuto method.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- minVal
+
+		- minimum value of the parameter grid
+
+	*
+		- maxVal
+
+		- maximum value of the parameter grid
+
+	*
+		- logstep
+
+		- Logarithmic step for iterating the statmodel parameter
+

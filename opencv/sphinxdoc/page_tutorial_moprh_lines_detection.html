@@ -1,0 +1,375 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Extract horizontal and vertical lines by using morphological operations &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Finding contours in your image" href="page_tutorial_find_contours.html" />
+    <link rel="prev" title="Eroding and Dilating" href="page_tutorial_erosion_dilatation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_find_contours.html" title="Finding contours in your image"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_erosion_dilatation.html" title="Eroding and Dilating"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_erosion_dilatation.html"
+                        title="previous chapter">Eroding and Dilating</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_find_contours.html"
+                        title="next chapter">Finding contours in your image</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="extract-horizontal-and-vertical-lines-by-using-morphological-operations">
+<span id="doxid-d1-dee-tutorial-moprh-lines-detection"></span><span id="index-0"></span><h1>Extract horizontal and vertical lines by using morphological operations</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul>
+<li><p class="first">Apply two very common morphology operators (i.e. Dilation and Erosion), with the creation of custom kernels, in order to extract straight lines on the horizontal and vertical axes. For this purpose, you will use the following OpenCV functions:</p>
+<ul class="simple">
+<li><a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">cv::erode</span></a></li>
+<li><a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">cv::dilate</span></a></li>
+<li><a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">cv::getStructuringElement</span></a></li>
+</ul>
+<p>in an example where your goal will be to extract the music notes from a music sheet.</p>
+</li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">Morphology Operations</p>
+<p>Morphology is a set of image processing operations that process images based on predefined <em>structuring elements</em> known also as kernels. The value of each pixel in the output image is based on a comparison of the corresponding pixel in the input image with its neighbors. By choosing the size and shape of the kernel, you can construct a morphological operation that is sensitive to specific shapes regarding the input image.</p>
+<p>Two of the most basic morphological operations are dilation and erosion. Dilation adds pixels to the boundaries of the object in an image, while erosion does exactly the opposite. The amount of pixels added or removed, respectively depends on the size and shape of the structuring element used to process the image. In general the rules followed from these two operations have as follows:</p>
+<ul>
+<li><p class="first"><strong>Dilation</strong> : The value of the output pixel is the <em>maximum</em> value of all the pixels that fall within the structuring element’s size and shape. For example in a binary image, if any of the pixels of the input image falling within the range of the kernel is set to the value 1, the corresponding pixel of the output image will be set to 1 as well. The latter applies to any type of image (e.g. grayscale, bgr, etc).</p>
+<img alt="Dilation on a Binary Image" src="_images/morph21.gif" />
+<img alt="Dilation on a Grayscale Image" src="_images/morph6.gif" />
+</li>
+<li><p class="first"><strong>Erosion</strong> : The vise versa applies for the erosion operation. The value of the output pixel is the <em>minimum</em> value of all the pixels that fall within the structuring element’s size and shape. Look the at the example figures below:</p>
+<img alt="Erosion on a Binary Image" src="_images/morph211.png" />
+<img alt="Erosion on a Grayscale Image" src="_images/morph61.png" />
+<p class="rubric">Structuring Elements</p>
+</li>
+</ul>
+<p>As it can be seen above and in general in any morphological operation the structuring element used to probe the input image, is the most important part.</p>
+<p>A structuring element is a matrix consisting of only 0’s and 1’s that can have any arbitrary shape and size. Typically are much smaller than the image being processed, while the pixels with values of 1 define the neighborhood. The center pixel of the structuring element, called the origin, identifies the pixel of interest the pixel being processed.</p>
+<p>For example, the following illustrates a diamond-shaped structuring element of 7x7 size.</p>
+<img alt="A Diamond-Shaped Structuring Element and its Origin" src="_images/morph12.gif" />
+<p>A structuring element can have many common shapes, such as lines, diamonds, disks, periodic lines, and circles and sizes. You typically choose a structuring element the same size and shape as the objects you want to process/extract in the input image. For example, to find lines in an image, create a linear structuring element as you will see later.</p>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Morphology_3.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/opencv.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Load the image</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+
+    <span class="c1">// Check if image is loaded fine</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">data</span></a><span></span><span class="p">)</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Problem loading image!!!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <span class="c1">// Show source image</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;src&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
+
+    <span class="c1">// Transform source image to gray if it is not</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">gray</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa11336b9ac538e0475d840657ce164be"><span class="std std-ref">channels</span></a><span></span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd"><span class="std std-ref">CV_BGR2GRAY</span></a><span></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">src</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Show gray image</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;gray&quot;</span><span class="p">,</span> <span class="n">gray</span><span class="p">);</span>
+
+    <span class="c1">// Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">bw</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga72b913f352e4a1b1b397736707afcde3"><span class="std std-ref">adaptiveThreshold</span></a><span></span><span class="p">(</span><span class="o">~</span><span class="n">gray</span><span class="p">,</span> <span class="n">bw</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278"><span class="std std-ref">CV_ADAPTIVE_THRESH_MEAN_C</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_ThresholdTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59"><span class="std std-ref">THRESH_BINARY</span></a><span></span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="c1">// Show binary image</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;binary&quot;</span><span class="p">,</span> <span class="n">bw</span><span class="p">);</span>
+
+    <span class="c1">// Create the images that will use to extract the horizontal and vertical lines</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">horizontal</span> <span class="o">=</span> <span class="n">bw</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">vertical</span> <span class="o">=</span> <span class="n">bw</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+
+    <span class="c1">// Specify size on horizontal axis</span>
+    <span class="kt">int</span> <span class="n">horizontalsize</span> <span class="o">=</span> <span class="n">horizontal</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="o">/</span> <span class="mi">30</span><span class="p">;</span>
+
+    <span class="c1">// Create structure element for extracting horizontal lines through morphology operations</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">horizontalStructure</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="n">horizontalsize</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+
+    <span class="c1">// Apply morphology operations</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">erode</span></a><span></span><span class="p">(</span><span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span><span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+
+    <span class="c1">// Show extracted horizontal lines</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">);</span>
+
+    <span class="c1">// Specify size on vertical axis</span>
+    <span class="kt">int</span> <span class="n">verticalsize</span> <span class="o">=</span> <span class="n">vertical</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="o">/</span> <span class="mi">30</span><span class="p">;</span>
+
+    <span class="c1">// Create structure element for extracting vertical lines through morphology operations</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">verticalStructure</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span><span class="n">verticalsize</span><span class="p">));</span>
+
+    <span class="c1">// Apply morphology operations</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">erode</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">vertical</span><span class="p">,</span> <span class="n">verticalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">vertical</span><span class="p">,</span> <span class="n">verticalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+
+    <span class="c1">// Show extracted vertical lines</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+
+    <span class="c1">// Inverse vertical image</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0002cf8b418479f4cb49a75442baee2f"><span class="std std-ref">bitwise_not</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;vertical_bit&quot;</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+
+    <span class="c1">// Extract edges and smooth image according to the logic</span>
+    <span class="c1">// 1. extract edges</span>
+    <span class="c1">// 2. dilate(edges)</span>
+    <span class="c1">// 3. src.copyTo(smooth)</span>
+    <span class="c1">// 4. blur smooth img</span>
+    <span class="c1">// 5. smooth.copyTo(src, edges)</span>
+
+    <span class="c1">// Step 1</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">edges</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga72b913f352e4a1b1b397736707afcde3"><span class="std std-ref">adaptiveThreshold</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278"><span class="std std-ref">CV_ADAPTIVE_THRESH_MEAN_C</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_ThresholdTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59"><span class="std std-ref">THRESH_BINARY</span></a><span></span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;edges&quot;</span><span class="p">,</span> <span class="n">edges</span><span class="p">);</span>
+
+    <span class="c1">// Step 2</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">kernel</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">kernel</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;dilate&quot;</span><span class="p">,</span> <span class="n">edges</span><span class="p">);</span>
+
+    <span class="c1">// Step 3</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">smooth</span><span class="p">;</span>
+    <span class="n">vertical</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span><span class="n">smooth</span><span class="p">);</span>
+
+    <span class="c1">// Step 4</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga8c45db9afe636703801b0b2e440fce37"><span class="std std-ref">blur</span></a><span></span><span class="p">(</span><span class="n">smooth</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+
+    <span class="c1">// Step 5</span>
+    <span class="n">smooth</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">edges</span><span class="p">);</span>
+
+    <span class="c1">// Show final result</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;smooth&quot;</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation / Result</p>
+<ol class="arabic">
+<li><p class="first">Load the source image and check if it is loaded without any problem, then show it:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Load the image</span>
+<span class="n">Mat</span> <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+
+<span class="c1">// Check if image is loaded fine</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">src</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Problem loading image!!!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+<span class="c1">// Show source image</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;src&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
+</pre>
+<img alt="_images/src.png" src="_images/src.png" />
+</li>
+<li><p class="first">Then transform image to grayscale if it not already:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Transform source image to gray if it is not</span>
+<span class="n">Mat</span> <span class="n">gray</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd"><span class="std std-ref">CV_BGR2GRAY</span></a><span></span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+    <span class="n">gray</span> <span class="o">=</span> <span class="n">src</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Show gray image</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;gray&quot;</span><span class="p">,</span> <span class="n">gray</span><span class="p">);</span>
+</pre>
+<img alt="_images/gray.png" src="_images/gray.png" />
+</li>
+<li><p class="first">Afterwards transform grayscale image to binary. Notice the ~ symbol which indicates that we use the inverse (i.e. bitwise_not) version of it:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol</span>
+<span class="n">Mat</span> <span class="n">bw</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga72b913f352e4a1b1b397736707afcde3"><span class="std std-ref">adaptiveThreshold</span></a><span></span><span class="p">(</span><span class="o">~</span><span class="n">gray</span><span class="p">,</span> <span class="n">bw</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278"><span class="std std-ref">CV_ADAPTIVE_THRESH_MEAN_C</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_ThresholdTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59"><span class="std std-ref">THRESH_BINARY</span></a><span></span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c1">// Show binary image</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;binary&quot;</span><span class="p">,</span> <span class="n">bw</span><span class="p">);</span>
+</pre>
+<img alt="_images/binary.png" src="_images/binary.png" />
+</li>
+<li><p class="first">Now we are ready to apply morphological operations in order to extract the horizontal and vertical lines and as a consequence to separate the the music notes from the music sheet, but first let’s initialize the output images that we will use for that reason:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Create the images that will use to extract the horizontal and vertical lines</span>
+<span class="n">Mat</span> <span class="n">horizontal</span> <span class="o">=</span> <span class="n">bw</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+<span class="n">Mat</span> <span class="n">vertical</span> <span class="o">=</span> <span class="n">bw</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+</pre>
+</li>
+<li><p class="first">As we specified in the theory in order to extract the object that we desire, we need to create the corresponding structure element. Since here we want to extract the horizontal lines, a corresponding structure element for that purpose will have the following shape:</p>
+<img alt="_images/linear_horiz.png" src="_images/linear_horiz.png" />
+<p>and in the source code this is represented by the following code snippet:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Specify size on horizontal axis</span>
+<span class="kt">int</span> <span class="n">horizontalsize</span> <span class="o">=</span> <span class="n">horizontal</span><span class="p">.</span><span class="n">cols</span> <span class="o">/</span> <span class="mi">30</span><span class="p">;</span>
+
+<span class="c1">// Create structure element for extracting horizontal lines through morphology operations</span>
+<span class="n">Mat</span> <span class="n">horizontalStructure</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="n">horizontalsize</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+
+<span class="c1">// Apply morphology operations</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">erode</span></a><span></span><span class="p">(</span><span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span><span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">horizontalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+
+<span class="c1">// Show extracted horizontal lines</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">);</span>
+</pre>
+<img alt="_images/horiz.png" src="_images/horiz.png" />
+</li>
+<li><p class="first">The same applies for the vertical lines, with the corresponding structure element:</p>
+<img alt="_images/linear_vert.png" src="_images/linear_vert.png" />
+<p>and again this is represented as follows:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Specify size on vertical axis</span>
+<span class="kt">int</span> <span class="n">verticalsize</span> <span class="o">=</span> <span class="n">vertical</span><span class="p">.</span><span class="n">rows</span> <span class="o">/</span> <span class="mi">30</span><span class="p">;</span>
+
+<span class="c1">// Create structure element for extracting vertical lines through morphology operations</span>
+<span class="n">Mat</span> <span class="n">verticalStructure</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span><span class="n">verticalsize</span><span class="p">));</span>
+
+<span class="c1">// Apply morphology operations</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">erode</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">vertical</span><span class="p">,</span> <span class="n">verticalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">vertical</span><span class="p">,</span> <span class="n">verticalStructure</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+
+<span class="c1">// Show extracted vertical lines</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+</pre>
+<img alt="_images/vert.png" src="_images/vert.png" />
+</li>
+<li><p class="first">As you can see we are almost there. However, at that point you will notice that the edges of the notes are a bit rough. For that reason we need to refine the edges in order to obtain a smoother result:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Inverse vertical image</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0002cf8b418479f4cb49a75442baee2f"><span class="std std-ref">bitwise_not</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;vertical_bit&quot;</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+
+<span class="c1">// Extract edges and smooth image according to the logic</span>
+<span class="c1">// 1. extract edges</span>
+<span class="c1">// 2. dilate(edges)</span>
+<span class="c1">// 3. src.copyTo(smooth)</span>
+<span class="c1">// 4. blur smooth img</span>
+<span class="c1">// 5. smooth.copyTo(src, edges)</span>
+
+<span class="c1">// Step 1</span>
+<span class="n">Mat</span> <span class="n">edges</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga72b913f352e4a1b1b397736707afcde3"><span class="std std-ref">adaptiveThreshold</span></a><span></span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278"><span class="std std-ref">CV_ADAPTIVE_THRESH_MEAN_C</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_ThresholdTypes.html#doxid-d7-d1b-group-imgproc-misc-1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59"><span class="std std-ref">THRESH_BINARY</span></a><span></span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;edges&quot;</span><span class="p">,</span> <span class="n">edges</span><span class="p">);</span>
+
+<span class="c1">// Step 2</span>
+<span class="n">Mat</span> <span class="n">kernel</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span><span class="p">);</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">kernel</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;dilate&quot;</span><span class="p">,</span> <span class="n">edges</span><span class="p">);</span>
+
+<span class="c1">// Step 3</span>
+<span class="n">Mat</span> <span class="n">smooth</span><span class="p">;</span>
+<span class="n">vertical</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span><span class="n">smooth</span><span class="p">);</span>
+
+<span class="c1">// Step 4</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga8c45db9afe636703801b0b2e440fce37"><span class="std std-ref">blur</span></a><span></span><span class="p">(</span><span class="n">smooth</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+
+<span class="c1">// Step 5</span>
+<span class="n">smooth</span><span class="p">.</span><span class="n">copyTo</span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">edges</span><span class="p">);</span>
+
+<span class="c1">// Show final result</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;smooth&quot;</span><span class="p">,</span> <span class="n">vertical</span><span class="p">);</span>
+</pre>
+<img alt="_images/smooth.png" src="_images/smooth.png" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_find_contours.html" title="Finding contours in your image"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_erosion_dilatation.html" title="Eroding and Dilating"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

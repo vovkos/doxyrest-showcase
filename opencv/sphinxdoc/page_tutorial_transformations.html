@@ -1,0 +1,259 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Transformations &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OpenCV iOS" href="page_tutorial_table_of_content_ios.html" />
+    <link rel="prev" title="Pose of a widget" href="page_tutorial_widget_pose.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_ios.html" title="OpenCV iOS"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_widget_pose.html" title="Pose of a widget"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_viz.html" accesskey="U">OpenCV Viz</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_widget_pose.html"
+                        title="previous chapter">Pose of a widget</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_ios.html"
+                        title="next chapter">OpenCV iOS</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="transformations">
+<span id="doxid-d7-d72-tutorial-transformations"></span><span id="index-0"></span><h1>Transformations</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to</p>
+<ul class="simple">
+<li>How to use makeTransformToGlobal to compute pose</li>
+<li>How to use makeCameraPose and Viz3d::setViewerPose</li>
+<li>How to visualize camera position by axes and by viewing frustum</li>
+</ul>
+<p class="rubric">Code</p>
+<p>You can download the code from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/viz/transformations.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/viz.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;--------------------------------------------------------------------------&quot;</span>   <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;This program shows how to use makeTransformToGlobal() to compute required pose,&quot;</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;how to use makeCameraPose and Viz3d::setViewerPose. You can observe the scene &quot;</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;from camera point of view (C) or global point of view (G)&quot;</span>                    <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:&quot;</span>                                                                       <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;./transformations [ G | C ]&quot;</span>                                                 <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">cvcloud_load</span><span class="p">()</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">cloud</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1889</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga0610d99405b809062622588c25ed5c8f"><span class="std std-ref">CV_32FC3</span></a><span></span><span class="p">);</span>
+    <span class="n">ifstream</span> <span class="nf">ifs</span><span class="p">(</span><span class="s">&quot;bunny.ply&quot;</span><span class="p">);</span>
+
+    <span class="n">string</span> <span class="n">str</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">getline</span><span class="p">(</span><span class="n">ifs</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>
+
+    <span class="n">Point3f</span><span class="o">*</span> <span class="n">data</span> <span class="o">=</span> <span class="n">cloud</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Point3_.html#doxid-d4-d29-classcv-1-1-point3"><span class="std std-ref">cv::Point3f</span></a><span></span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="kt">float</span> <span class="n">dummy1</span><span class="p">,</span> <span class="n">dummy2</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1889</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">ifs</span> <span class="o">&gt;&gt;</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&gt;&gt;</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">z</span> <span class="o">&gt;&gt;</span> <span class="n">dummy1</span> <span class="o">&gt;&gt;</span> <span class="n">dummy2</span><span class="p">;</span>
+
+    <span class="n">cloud</span> <span class="o">*=</span> <span class="mf">5.0f</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">cloud</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argn</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">argn</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Missing arguments.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">bool</span> <span class="n">camera_pov</span> <span class="o">=</span> <span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;C&#39;</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d"><span class="std std-ref">viz::Viz3d</span></a><span></span> <span class="n">myWindow</span><span class="p">(</span><span class="s">&quot;Coordinate Frame&quot;</span><span class="p">);</span>
+
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;Coordinate Widget&quot;</span><span class="p">,</span> <a class="reference internal" href="class_cv_viz_WCoordinateSystem.html#doxid-d2-d31-classcv-1-1viz-1-1-w-coordinate-system"><span class="std std-ref">viz::WCoordinateSystem</span></a><span></span><span class="p">());</span>
+
+    <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3f</span></a><span></span> <span class="n">cam_pos</span><span class="p">(</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">),</span> <span class="n">cam_focal_point</span><span class="p">(</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">2.0f</span><span class="p">),</span> <span class="n">cam_y_dir</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Affine3.html#doxid-d3-d84-classcv-1-1-affine3"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">cam_pose</span> <span class="o">=</span> <a class="reference internal" href="group_viz.html#doxid-d1-d19-group-viz-1gab04d43faa448940bb58754af6356955b"><span class="std std-ref">viz::makeCameraPose</span></a><span></span><span class="p">(</span><span class="n">cam_pos</span><span class="p">,</span> <span class="n">cam_focal_point</span><span class="p">,</span> <span class="n">cam_y_dir</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Affine3.html#doxid-d3-d84-classcv-1-1-affine3"><span class="std std-ref">Affine3f</span></a><span></span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga393164aa54bb9169ce0a8cc44e08ff22"><span class="std std-ref">transform</span></a><span></span> <span class="o">=</span> <a class="reference internal" href="group_viz.html#doxid-d1-d19-group-viz-1ga16ef52f42849f13a36b715d488ce5b9f"><span class="std std-ref">viz::makeTransformToGlobal</span></a><span></span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="mf">0.0f</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">),</span> <span class="n">cam_pos</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">bunny_cloud</span> <span class="o">=</span> <span class="n">cvcloud_load</span><span class="p">();</span>
+    <a class="reference internal" href="class_cv_viz_WCloud.html#doxid-df-d84-classcv-1-1viz-1-1-w-cloud"><span class="std std-ref">viz::WCloud</span></a><span></span> <span class="n">cloud_widget</span><span class="p">(</span><span class="n">bunny_cloud</span><span class="p">,</span> <a class="reference internal" href="class_cv_viz_Color.html#doxid-df-d5b-classcv-1-1viz-1-1-color-1a7b6c40bb6c8a6aec8f28a358913db3e2"><span class="std std-ref">viz::Color::green</span></a><span></span><span class="p">());</span>
+
+    <a class="reference internal" href="class_cv_Affine3.html#doxid-d3-d84-classcv-1-1-affine3"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">cloud_pose</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1gae10a81cba3f3232648be48e28759a7bc"><span class="std std-ref">Affine3f</span></a><span></span><span class="p">().</span><span class="n">translate</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">));</span>
+    <a class="reference internal" href="class_cv_Affine3.html#doxid-d3-d84-classcv-1-1-affine3"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">cloud_pose_global</span> <span class="o">=</span> <span class="n">transform</span> <span class="o">*</span> <span class="n">cloud_pose</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">camera_pov</span><span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="class_cv_viz_WCameraPosition.html#doxid-d7-d84-classcv-1-1viz-1-1-w-camera-position"><span class="std std-ref">viz::WCameraPosition</span></a><span></span> <span class="n">cpw</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span> <span class="c1">// Coordinate axes</span>
+        <a class="reference internal" href="class_cv_viz_WCameraPosition.html#doxid-d7-d84-classcv-1-1viz-1-1-w-camera-position"><span class="std std-ref">viz::WCameraPosition</span></a><span></span> <span class="n">cpw_frustum</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga392bb4f8a6b9e0dde07f31dc28e73319"><span class="std std-ref">Vec2f</span></a><span></span><span class="p">(</span><span class="mf">0.889484</span><span class="p">,</span> <span class="mf">0.523599</span><span class="p">));</span> <span class="c1">// Camera frustum</span>
+        <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;CPW&quot;</span><span class="p">,</span> <span class="n">cpw</span><span class="p">,</span> <span class="n">cam_pose</span><span class="p">);</span>
+        <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;CPW_FRUSTUM&quot;</span><span class="p">,</span> <span class="n">cpw_frustum</span><span class="p">,</span> <span class="n">cam_pose</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;bunny&quot;</span><span class="p">,</span> <span class="n">cloud_widget</span><span class="p">,</span> <span class="n">cloud_pose_global</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">camera_pov</span><span class="p">)</span>
+        <span class="n">myWindow</span><span class="p">.</span><span class="n">setViewerPose</span><span class="p">(</span><span class="n">cam_pose</span><span class="p">);</span>
+
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">spin</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>Here is the general structure of the program:</p>
+<ul>
+<li><p class="first">Create a visualization window.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">viz</span><span class="o">::</span><span class="n">Viz3d</span> <span class="n">myWindow</span><span class="p">(</span><span class="s">&quot;Transformations&quot;</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Get camera pose from camera position, camera focal point and y direction.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Point3f</span> <span class="nf">cam_pos</span><span class="p">(</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">),</span> <span class="n">cam_focal_point</span><span class="p">(</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">,</span><span class="mf">2.0f</span><span class="p">),</span> <span class="n">cam_y_dir</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1gae10a81cba3f3232648be48e28759a7bc"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">cam_pose</span> <span class="o">=</span> <a class="reference internal" href="group_viz.html#doxid-d1-d19-group-viz-1gab04d43faa448940bb58754af6356955b"><span class="std std-ref">viz::makeCameraPose</span></a><span></span><span class="p">(</span><span class="n">cam_pos</span><span class="p">,</span> <span class="n">cam_focal_point</span><span class="p">,</span> <span class="n">cam_y_dir</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Obtain transform matrix knowing the axes of camera coordinate system.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1gae10a81cba3f3232648be48e28759a7bc"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">transform</span> <span class="o">=</span> <a class="reference internal" href="group_viz.html#doxid-d1-d19-group-viz-1ga16ef52f42849f13a36b715d488ce5b9f"><span class="std std-ref">viz::makeTransformToGlobal</span></a><span></span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="mf">0.0f</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0f</span><span class="p">),</span> <span class="n">cam_pos</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Create a cloud widget from bunny.ply file</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">bunny_cloud</span> <span class="o">=</span> <span class="n">cvcloud_load</span><span class="p">();</span>
+<span class="n">viz</span><span class="o">::</span><span class="n">WCloud</span> <span class="n">cloud_widget</span><span class="p">(</span><span class="n">bunny_cloud</span><span class="p">,</span> <span class="n">viz</span><span class="o">::</span><span class="n">Color</span><span class="o">::</span><span class="n">green</span><span class="p">());</span>
+</pre>
+</li>
+<li><p class="first">Given the pose in camera coordinate system, estimate the global pose.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1gae10a81cba3f3232648be48e28759a7bc"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">cloud_pose</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1gae10a81cba3f3232648be48e28759a7bc"><span class="std std-ref">Affine3f</span></a><span></span><span class="p">().</span><span class="n">translate</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gab9e0ab642a3e01742916763173b72232"><span class="std std-ref">Vec3f</span></a><span></span><span class="p">(</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">0.0f</span><span class="p">,</span><span class="mf">3.0f</span><span class="p">));</span>
+<a class="reference internal" href="namespace_cv.html#doxid-d0-de1-group-core-1gae10a81cba3f3232648be48e28759a7bc"><span class="std std-ref">Affine3f</span></a><span></span> <span class="n">cloud_pose_global</span> <span class="o">=</span> <span class="n">transform</span> <span class="o">*</span> <span class="n">cloud_pose</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">If the view point is set to be global, visualize camera coordinate frame and viewing frustum.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">camera_pov</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">viz</span><span class="o">::</span><span class="n">WCameraPosition</span> <span class="n">cpw</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span> <span class="c1">// Coordinate axes</span>
+    <span class="n">viz</span><span class="o">::</span><span class="n">WCameraPosition</span> <span class="n">cpw_frustum</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga392bb4f8a6b9e0dde07f31dc28e73319"><span class="std std-ref">Vec2f</span></a><span></span><span class="p">(</span><span class="mf">0.889484</span><span class="p">,</span> <span class="mf">0.523599</span><span class="p">));</span> <span class="c1">// Camera frustum</span>
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;CPW&quot;</span><span class="p">,</span> <span class="n">cpw</span><span class="p">,</span> <span class="n">cam_pose</span><span class="p">);</span>
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;CPW_FRUSTUM&quot;</span><span class="p">,</span> <span class="n">cpw_frustum</span><span class="p">,</span> <span class="n">cam_pose</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Visualize the cloud widget with the estimated global pose</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">myWindow</span><span class="p">.</span><span class="n">showWidget</span><span class="p">(</span><span class="s">&quot;bunny&quot;</span><span class="p">,</span> <span class="n">cloud_widget</span><span class="p">,</span> <span class="n">cloud_pose_global</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">If the view point is set to be camera’s, set viewer pose to <strong>cam_pose</strong>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span> <span class="p">(</span><span class="n">camera_pov</span><span class="p">)</span>
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">setViewerPose</span><span class="p">(</span><span class="n">cam_pose</span><span class="p">);</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Results</p>
+<ol class="arabic">
+<li><p class="first">Here is the result from the camera point of view.</p>
+<img alt="_images/camera_view_point.png" src="_images/camera_view_point.png" />
+</li>
+<li><p class="first">Here is the result from global point of view.</p>
+<img alt="_images/global_view_point.png" src="_images/global_view_point.png" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_ios.html" title="OpenCV iOS"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_widget_pose.html" title="Pose of a widget"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_viz.html" >OpenCV Viz</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

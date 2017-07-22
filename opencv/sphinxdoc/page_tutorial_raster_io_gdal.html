@@ -1,0 +1,400 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Reading Geospatial Raster files with GDAL &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Image Processing (imgproc module)" href="page_tutorial_table_of_content_imgproc.html" />
+    <link rel="prev" title="Image Input and Output (imgcodecs module)" href="page_tutorial_table_of_content_imgcodecs.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_imgproc.html" title="Image Processing (imgproc module)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_imgcodecs.html" title="Image Input and Output (imgcodecs module)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgcodecs.html" accesskey="U">Image Input and Output (imgcodecs module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_imgcodecs.html"
+                        title="previous chapter">Image Input and Output (imgcodecs module)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_imgproc.html"
+                        title="next chapter">Image Processing (imgproc module)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="reading-geospatial-raster-files-with-gdal">
+<span id="doxid-d7-d73-tutorial-raster-io-gdal"></span><span id="index-0"></span><h1>Reading Geospatial Raster files with GDAL</h1>
+<p>Geospatial raster data is a heavily used product in Geographic Information Systems and Photogrammetry. Raster data typically can represent imagery and Digital Elevation Models (DEM). The standard library for loading GIS imagery is the Geographic Data Abstraction Library <a class="reference external" href="http://www.gdal.org">(GDAL)</a>. In this example, we will show techniques for loading GIS raster formats using native OpenCV functions. In addition, we will show some an example of how OpenCV can use this data for novel and interesting purposes.</p>
+<p class="rubric">Goals</p>
+<p>The primary objectives for this tutorial:</p>
+<ul class="simple">
+<li>How to use OpenCV <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1imread"><span class="std std-ref">imread</span></a> to load satellite imagery.</li>
+<li>How to use OpenCV <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1imread"><span class="std std-ref">imread</span></a> to load SRTM Digital Elevation Models</li>
+<li>Given the corner coordinates of both the image and DEM, correllate the elevation data to the image to find elevations for each pixel.</li>
+<li>Show a basic, easy-to-implement example of a terrain heat map.</li>
+<li>Show a basic use of DEM data coupled with ortho-rectified imagery.</li>
+</ul>
+<p>To implement these goals, the following code takes a Digital Elevation Model as well as a GeoTiff image of San Francisco as input. The image and DEM data is processed and generates a terrain heat map of the image as well as labels areas of the city which would be affected should the water level of the bay rise 10, 50, and 100 meters.</p>
+<p class="rubric">Code</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/*</span>
+<span class="cm"> * gdal_image.cpp -- Load GIS data into OpenCV Containers using the Geospatial Data Abstraction Library</span>
+<span class="cm">*/</span>
+
+<span class="c1">// OpenCV Headers</span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/core.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="c1">// C++ Standard Libraries</span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// define the corner points</span>
+<span class="c1">//    Note that GDAL library can natively determine this</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">tl</span><span class="p">(</span> <span class="o">-</span><span class="mf">122.441017</span><span class="p">,</span> <span class="mf">37.815664</span> <span class="p">);</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">tr</span><span class="p">(</span> <span class="o">-</span><span class="mf">122.370919</span><span class="p">,</span> <span class="mf">37.815311</span> <span class="p">);</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">bl</span><span class="p">(</span> <span class="o">-</span><span class="mf">122.441533</span><span class="p">,</span> <span class="mf">37.747167</span> <span class="p">);</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">br</span><span class="p">(</span> <span class="o">-</span><span class="mf">122.3715</span><span class="p">,</span>   <span class="mf">37.746814</span> <span class="p">);</span>
+
+<span class="c1">// determine dem corners</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">dem_bl</span><span class="p">(</span> <span class="o">-</span><span class="mf">122.0</span><span class="p">,</span> <span class="mi">38</span><span class="p">);</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">dem_tr</span><span class="p">(</span> <span class="o">-</span><span class="mf">123.0</span><span class="p">,</span> <span class="mi">37</span><span class="p">);</span>
+
+<span class="c1">// range of the heat map colors</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">color_range</span><span class="p">;</span>
+
+
+<span class="c1">// List of all function prototypes</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">lerp</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="kt">double</span><span class="o">&amp;</span> <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span> <span class="n">get_dem_color</span><span class="p">(</span> <span class="k">const</span> <span class="kt">double</span><span class="o">&amp;</span> <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">world2dem</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size"><span class="std std-ref">cv::Size</span></a><span></span><span class="o">&amp;</span><span class="p">);</span>
+
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">pixel2world</span><span class="p">(</span> <span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size"><span class="std std-ref">cv::Size</span></a><span></span><span class="o">&amp;</span> <span class="p">);</span>
+
+<span class="kt">void</span> <span class="n">add_color</span><span class="p">(</span> <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&amp;</span> <span class="n">pix</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&amp;</span> <span class="n">b</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&amp;</span> <span class="n">g</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&amp;</span> <span class="n">r</span> <span class="p">);</span>
+
+
+
+<span class="cm">/*</span>
+<span class="cm"> * Linear Interpolation</span>
+<span class="cm"> * p1 - Point 1</span>
+<span class="cm"> * p2 - Point 2</span>
+<span class="cm"> * t  - Ratio from Point 1 to Point 2</span>
+<span class="cm">*/</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">lerp</span><span class="p">(</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p2</span><span class="p">,</span> <span class="k">const</span> <span class="kt">double</span><span class="o">&amp;</span> <span class="n">t</span> <span class="p">){</span>
+    <span class="k">return</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga32986d8c6fd05949688352abd112509f"><span class="std std-ref">cv::Point2d</span></a><span></span><span class="p">(</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">p1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="n">p2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span><span class="p">),</span>
+                        <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">p1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="n">p2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Interpolate Colors</span>
+<span class="cm">*/</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">DATATYPE</span><span class="p">,</span> <span class="kt">int</span> <span class="n">N</span><span class="o">&gt;</span>
+<a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec&lt;DATATYPE,N&gt;</span></a><span></span> <span class="n">lerp</span><span class="p">(</span> <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec&lt;DATATYPE,N&gt;</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">minColor</span><span class="p">,</span>
+                          <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec&lt;DATATYPE,N&gt;</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">maxColor</span><span class="p">,</span>
+                          <span class="kt">double</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">t</span> <span class="p">){</span>
+
+    <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec&lt;DATATYPE,N&gt;</span></a><span></span> <span class="n">output</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">){</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)(((</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">minColor</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">maxColor</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">output</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Compute the dem color</span>
+<span class="cm">*/</span>
+<a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span> <span class="n">get_dem_color</span><span class="p">(</span> <span class="k">const</span> <span class="kt">double</span><span class="o">&amp;</span> <span class="n">elevation</span> <span class="p">){</span>
+
+    <span class="c1">// if the elevation is below the minimum, return the minimum</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">elevation</span> <span class="o">&lt;</span> <span class="n">color_range</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">second</span> <span class="p">){</span>
+        <span class="k">return</span> <span class="n">color_range</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">first</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// if the elevation is above the maximum, return the maximum</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">elevation</span> <span class="o">&gt;</span> <span class="n">color_range</span><span class="p">.</span><span class="n">back</span><span class="p">().</span><span class="n">second</span> <span class="p">){</span>
+        <span class="k">return</span> <span class="n">color_range</span><span class="p">.</span><span class="n">back</span><span class="p">().</span><span class="n">first</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// otherwise, find the proper starting index</span>
+    <span class="kt">int</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">x</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">color_range</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span> <span class="n">x</span><span class="o">++</span> <span class="p">){</span>
+
+        <span class="c1">// if the current elevation is below the next item, then use the current</span>
+        <span class="c1">// two colors as our range</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">elevation</span> <span class="o">&lt;</span> <span class="n">color_range</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">second</span> <span class="p">){</span>
+            <span class="n">idx</span><span class="o">=</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">color_range</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">second</span> <span class="o">-</span> <span class="n">elevation</span><span class="p">)</span><span class="o">/</span>
+                <span class="p">(</span><span class="n">color_range</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">second</span> <span class="o">-</span> <span class="n">color_range</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">second</span><span class="p">);</span>
+
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// interpolate the color</span>
+    <span class="k">return</span> <span class="n">lerp</span><span class="p">(</span> <span class="n">color_range</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">first</span><span class="p">,</span> <span class="n">color_range</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">first</span><span class="p">,</span> <span class="n">t</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Given a pixel coordinate and the size of the input image, compute the pixel location</span>
+<span class="cm"> * on the DEM image.</span>
+<span class="cm">*/</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">world2dem</span><span class="p">(</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">coordinate</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size"><span class="std std-ref">cv::Size</span></a><span></span><span class="o">&amp;</span> <span class="n">dem_size</span>   <span class="p">){</span>
+
+
+    <span class="c1">// relate this to the dem points</span>
+    <span class="c1">// ASSUMING THAT DEM DATA IS ORTHORECTIFIED</span>
+    <span class="kt">double</span> <span class="n">demRatioX</span> <span class="o">=</span> <span class="p">((</span><span class="n">dem_tr</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">coordinate</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">dem_tr</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">dem_bl</span><span class="p">.</span><span class="n">x</span><span class="p">));</span>
+    <span class="kt">double</span> <span class="n">demRatioY</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="p">((</span><span class="n">dem_tr</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">coordinate</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">dem_tr</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">dem_bl</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
+
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">output</span><span class="p">;</span>
+    <span class="n">output</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">=</span> <span class="n">demRatioX</span> <span class="o">*</span> <span class="n">dem_size</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1abfe0367b32c407ddccf5ddf92667c73d"><span class="std std-ref">width</span></a><span></span><span class="p">;</span>
+    <span class="n">output</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">=</span> <span class="n">demRatioY</span> <span class="o">*</span> <span class="n">dem_size</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1a1d289dce6b5d8006a54f3ee0259fc545"><span class="std std-ref">height</span></a><span></span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">output</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Convert a pixel coordinate to world coordinates</span>
+<span class="cm">*/</span>
+<a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">pixel2world</span><span class="p">(</span> <span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size"><span class="std std-ref">cv::Size</span></a><span></span><span class="o">&amp;</span> <span class="n">size</span> <span class="p">){</span>
+
+    <span class="c1">// compute the ratio of the pixel location to its dimension</span>
+    <span class="kt">double</span> <span class="n">rx</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">x</span> <span class="o">/</span> <span class="n">size</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1abfe0367b32c407ddccf5ddf92667c73d"><span class="std std-ref">width</span></a><span></span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">ry</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">y</span> <span class="o">/</span> <span class="n">size</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1a1d289dce6b5d8006a54f3ee0259fc545"><span class="std std-ref">height</span></a><span></span><span class="p">;</span>
+
+    <span class="c1">// compute LERP of each coordinate</span>
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">rightSide</span> <span class="o">=</span> <span class="n">lerp</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">br</span><span class="p">,</span> <span class="n">ry</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">leftSide</span>  <span class="o">=</span> <span class="n">lerp</span><span class="p">(</span><span class="n">tl</span><span class="p">,</span> <span class="n">bl</span><span class="p">,</span> <span class="n">ry</span><span class="p">);</span>
+
+    <span class="c1">// compute the actual Lat/Lon coordinate of the interpolated coordinate</span>
+    <span class="k">return</span> <span class="nf">lerp</span><span class="p">(</span> <span class="n">leftSide</span><span class="p">,</span> <span class="n">rightSide</span><span class="p">,</span> <span class="n">rx</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Add color to a specific pixel color value</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="n">add_color</span><span class="p">(</span> <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&amp;</span> <span class="n">pix</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&amp;</span> <span class="n">b</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&amp;</span> <span class="n">g</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&amp;</span> <span class="n">r</span> <span class="p">){</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">pix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">255</span> <span class="o">&amp;&amp;</span> <span class="n">pix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">pix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">b</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">pix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">g</span> <span class="o">&lt;</span> <span class="mi">255</span> <span class="o">&amp;&amp;</span> <span class="n">pix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">pix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">g</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">pix</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">255</span> <span class="o">&amp;&amp;</span> <span class="n">pix</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">pix</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">r</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> * Main Function</span>
+<span class="cm">*/</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[]</span> <span class="p">){</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Check input arguments</span>
+<span class="cm">    */</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="p">){</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;usage: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &lt;image_name&gt; &lt;dem_model_name&gt;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// load the image (note that we don&#39;t have the projection information.  You will</span>
+    <span class="c1">// need to load that yourself or use the full GDAL driver.  The values are pre-defined</span>
+    <span class="c1">// at the top of this file</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896"><span class="std std-ref">cv::IMREAD_LOAD_GDAL</span></a><span></span> <span class="o">|</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">cv::IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+
+    <span class="c1">// load the dem model</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">dem</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896"><span class="std std-ref">cv::IMREAD_LOAD_GDAL</span></a><span></span> <span class="o">|</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a0b486c93c25e8a0b0712681bb7254c18"><span class="std std-ref">cv::IMREAD_ANYDEPTH</span></a><span></span> <span class="p">);</span>
+
+    <span class="c1">// create our output products</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">output_dem</span><span class="p">(</span>   <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">output_dem_flood</span><span class="p">(</span>   <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+
+    <span class="c1">// for sanity sake, make sure GDAL Loads it as a signed short</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">dem</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1af2d2652e552d7de635988f18a84b53e5"><span class="std std-ref">type</span></a><span></span><span class="p">()</span> <span class="o">!=</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga3515053e24377cf079fa1027d208ad52"><span class="std std-ref">CV_16SC1</span></a><span></span> <span class="p">){</span> <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;DEM image type must be CV_16SC1&quot;</span><span class="p">);</span> <span class="p">}</span>
+
+    <span class="c1">// define the color range to create our output DEM heat map</span>
+    <span class="c1">//  Pair format ( Color, elevation );  Push from low to high</span>
+    <span class="c1">//  Note:  This would be perfect for a configuration file, but is here for a working demo.</span>
+    <span class="n">color_range</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="p">(</span> <span class="mi">188</span><span class="p">,</span> <span class="mi">154</span><span class="p">,</span>  <span class="mi">46</span><span class="p">),</span>   <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">color_range</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="p">(</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">110</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">));</span>
+    <span class="n">color_range</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="p">(</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">230</span><span class="p">),</span>   <span class="mi">20</span><span class="p">));</span>
+    <span class="n">color_range</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="p">(</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>   <span class="mi">75</span><span class="p">));</span>
+    <span class="n">color_range</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="p">(</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>  <span class="mi">100</span><span class="p">));</span>
+    <span class="n">color_range</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">cv</span><span class="o">::</span><span class="n">Vec3b</span><span class="p">,</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="p">(</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">140</span><span class="p">),</span>  <span class="mi">200</span><span class="p">));</span>
+
+    <span class="c1">// define a minimum elevation</span>
+    <span class="kt">double</span> <span class="n">minElevation</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">;</span>
+
+    <span class="c1">// iterate over each pixel in the image, computing the dem point</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">y</span><span class="o">&lt;</span><span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="n">y</span><span class="o">++</span> <span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">x</span><span class="o">&lt;</span><span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">;</span> <span class="n">x</span><span class="o">++</span> <span class="p">){</span>
+
+        <span class="c1">// convert the pixel coordinate to lat/lon coordinates</span>
+        <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">coordinate</span> <span class="o">=</span> <span class="n">pixel2world</span><span class="p">(</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+
+        <span class="c1">// compute the dem image pixel coordinate from lat/lon</span>
+        <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2d</span></a><span></span> <span class="n">dem_coordinate</span> <span class="o">=</span> <span class="n">world2dem</span><span class="p">(</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">dem</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+
+        <span class="c1">// extract the elevation</span>
+        <span class="kt">double</span> <span class="n">dz</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">dem_coordinate</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;=</span>    <span class="mi">0</span>    <span class="o">&amp;&amp;</span> <span class="n">dem_coordinate</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;=</span>    <span class="mi">0</span>     <span class="o">&amp;&amp;</span>
+            <span class="n">dem_coordinate</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">dem</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="o">&amp;&amp;</span> <span class="n">dem_coordinate</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">dem</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="p">){</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="n">dem</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">short</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dem_coordinate</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="n">minElevation</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// write the pixel value to the file</span>
+        <span class="n">output_dem_flood</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">);</span>
+
+        <span class="c1">// compute the color for the heat map output</span>
+        <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span> <span class="n">actualColor</span> <span class="o">=</span> <span class="n">get_dem_color</span><span class="p">(</span><span class="n">dz</span><span class="p">);</span>
+        <span class="n">output_dem</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">actualColor</span><span class="p">;</span>
+
+        <span class="c1">// show effect of a 10 meter increase in ocean levels</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">dz</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="p">){</span>
+            <span class="n">add_color</span><span class="p">(</span> <span class="n">output_dem_flood</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">// show effect of a 50 meter increase in ocean levels</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">dz</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="p">){</span>
+            <span class="n">add_color</span><span class="p">(</span> <span class="n">output_dem_flood</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">// show effect of a 100 meter increase in ocean levels</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">dz</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="p">){</span>
+            <span class="n">add_color</span><span class="p">(</span> <span class="n">output_dem_flood</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">cv::Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span> <span class="p">);</span>
+        <span class="p">}</span>
+
+    <span class="p">}}</span>
+
+    <span class="c1">// print our heat map</span>
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a><span></span><span class="p">(</span> <span class="s">&quot;heat-map.jpg&quot;</span>   <span class="p">,</span>  <span class="n">output_dem</span> <span class="p">);</span>
+
+    <span class="c1">// print the flooding effect image</span>
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a><span></span><span class="p">(</span> <span class="s">&quot;flooded.jpg&quot;</span><span class="p">,</span>  <span class="n">output_dem_flood</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">How to Read Raster Data using GDAL</p>
+<p>This demonstration uses the default OpenCV imread function. The primary difference is that in order to force GDAL to load the image, you must use the appropriate flag.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896"><span class="std std-ref">cv::IMREAD_LOAD_GDAL</span></a><span></span> <span class="o">|</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">cv::IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+</pre>
+<p>When loading digital elevation models, the actual numeric value of each pixel is essential and cannot be scaled or truncated. For example, with image data a pixel represented as a double with a value of 1 has an equal appearance to a pixel which is represented as an unsigned character with a value of 255. With terrain data, the pixel value represents the elevation in meters. In order to ensure that OpenCV preserves the native value, use the GDAL flag in imread with the ANYDEPTH flag.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// load the dem model</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">dem</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896"><span class="std std-ref">cv::IMREAD_LOAD_GDAL</span></a><span></span> <span class="o">|</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80a0b486c93c25e8a0b0712681bb7254c18"><span class="std std-ref">cv::IMREAD_ANYDEPTH</span></a><span></span> <span class="p">);</span>
+</pre>
+<p>If you know beforehand the type of DEM model you are loading, then it may be a safe bet to test the Mat::type() or Mat::depth() using an assert or other mechanism. NASA or DOD specification documents can provide the input types for various elevation models. The major types, SRTM and DTED, are both signed shorts.</p>
+<p class="rubric">Notes</p>
+<p class="rubric">Lat/Lon (Geographic) Coordinates should normally be avoided</p>
+<p>The Geographic Coordinate System is a spherical coordinate system, meaning that using them with Cartesian mathematics is technically incorrect. This demo uses them to increase the readability and is accurate enough to make the point. A better coordinate system would be Universal Transverse Mercator.</p>
+<p class="rubric">Finding the corner coordinates</p>
+<p>One easy method to find the corner coordinates of an image is to use the command-line tool gdalinfo. For imagery which is ortho-rectified and contains the projection information, you can use the <a class="reference external" href="http://http://earthexplorer.usgs.gov">USGS EarthExplorer</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="err">\</span><span class="n">f</span><span class="err">$</span><span class="o">&gt;</span> <span class="n">gdalinfo</span> <span class="n">N37W123</span><span class="p">.</span><span class="n">hgt</span>
+
+   <span class="nl">Driver</span><span class="p">:</span> <span class="n">SRTMHGT</span><span class="o">/</span><span class="n">SRTMHGT</span> <span class="n">File</span> <span class="n">Format</span>
+   <span class="nl">Files</span><span class="p">:</span> <span class="n">N37W123</span><span class="p">.</span><span class="n">hgt</span>
+   <span class="n">Size</span> <span class="n">is</span> <span class="mi">3601</span><span class="p">,</span> <span class="mi">3601</span>
+   <span class="n">Coordinate</span> <span class="n">System</span> <span class="nl">is</span><span class="p">:</span>
+   <span class="n">GEOGCS</span><span class="p">[</span><span class="s">&quot;WGS 84&quot;</span><span class="p">,</span>
+   <span class="n">DATUM</span><span class="p">[</span><span class="s">&quot;WGS_1984&quot;</span><span class="p">,</span>
+
+   <span class="p">...</span> <span class="n">more</span> <span class="n">output</span> <span class="p">...</span>
+
+   <span class="n">Corner</span> <span class="nl">Coordinates</span><span class="p">:</span>
+   <span class="n">Upper</span> <span class="n">Left</span>  <span class="p">(</span><span class="o">-</span><span class="mf">123.0001389</span><span class="p">,</span>  <span class="mf">38.0001389</span><span class="p">)</span> <span class="p">(</span><span class="mi">123</span><span class="n">d</span> <span class="mi">0</span><span class="sc">&#39; 0.50&quot;W, 38d 0&#39;</span> <span class="mf">0.50</span><span class="s">&quot;N)</span>
+   <span class="n">Lower</span> <span class="n">Left</span>  <span class="p">(</span><span class="o">-</span><span class="mf">123.0001389</span><span class="p">,</span>  <span class="mf">36.9998611</span><span class="p">)</span> <span class="p">(</span><span class="mi">123</span><span class="n">d</span> <span class="mi">0</span><span class="sc">&#39; 0.50&quot;W, 36d59&#39;</span><span class="mf">59.50</span><span class="s">&quot;N)</span>
+   <span class="n">Upper</span> <span class="n">Right</span> <span class="p">(</span><span class="o">-</span><span class="mf">121.9998611</span><span class="p">,</span>  <span class="mf">38.0001389</span><span class="p">)</span> <span class="p">(</span><span class="mi">121</span><span class="n">d59</span><span class="sc">&#39;59.50&quot;W, 38d 0&#39;</span> <span class="mf">0.50</span><span class="s">&quot;N)</span>
+   <span class="n">Lower</span> <span class="n">Right</span> <span class="p">(</span><span class="o">-</span><span class="mf">121.9998611</span><span class="p">,</span>  <span class="mf">36.9998611</span><span class="p">)</span> <span class="p">(</span><span class="mi">121</span><span class="n">d59</span><span class="sc">&#39;59.50&quot;W, 36d59&#39;</span><span class="mf">59.50</span><span class="s">&quot;N)</span>
+   <span class="n">Center</span>      <span class="p">(</span><span class="o">-</span><span class="mf">122.5000000</span><span class="p">,</span>  <span class="mf">37.5000000</span><span class="p">)</span> <span class="p">(</span><span class="mi">122</span><span class="n">d30</span><span class="sc">&#39; 0.00&quot;W, 37d30&#39;</span> <span class="mf">0.00</span><span class="s">&quot;N)</span>
+
+    <span class="p">...</span> <span class="n">more</span> <span class="n">output</span> <span class="p">...</span>
+</pre>
+<p class="rubric">Results</p>
+<p>Below is the output of the program. Use the first image as the input. For the DEM model, download the SRTM file located at the USGS here. <a class="reference external" href="http://dds.cr.usgs.gov/srtm/version2_1/SRTM1/Region_04/N37W123.hgt.zip">http://dds.cr.usgs.gov/srtm/version2_1/SRTM1/Region_04/N37W123.hgt.zip</a></p>
+<img alt="Input Image" src="_images/gdal_output.jpg" />
+<img alt="Heat Map" src="_images/gdal_heat-map.jpg" />
+<img alt="Heat Map Overlay" src="_images/gdal_flood-zone.jpg" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_imgproc.html" title="Image Processing (imgproc module)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_imgcodecs.html" title="Image Input and Output (imgcodecs module)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgcodecs.html" >Image Input and Output (imgcodecs module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,208 @@
+.. index:: pair: page; Adding borders to your images
+.. _doxid-d0/da1/tutorial_copy_make_border:
+
+Adding borders to your images
+=============================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::copyMakeBorder <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>` to set the borders (extra padding to your image).
+
+.. rubric:: Theory
+
+The explanation below belongs to the book **Learning OpenCV** by Bradski and Kaehler.
+
+
+
+#. In our previous tutorial we learned to use convolution to operate on images. One problem that naturally arises is how to handle the boundaries. How can we convolve them if the evaluated points are at the edge of the image?
+
+#. What most of OpenCV functions do is to copy a given image onto another slightly larger image and then automatically pads the boundary (by any of the methods explained in the sample code just below). This way, the convolution can be performed over the needed pixels without problems (the extra padding is cut after the operation is done).
+
+#. In this tutorial, we will briefly explore two ways of defining the extra padding (border) for an image:
+   
+   #. **BORDER_CONSTANT** : Pad the image with a constant value (i.e. black or :math:`0`
+   
+   #. **BORDER_REPLICATE** : The row or column at the very edge of the original is replicated to the extra border.
+   
+   This will be seen more clearly in the Code section.
+
+.. rubric:: Code
+
+#. **What does this program do?**
+   
+   * Load an image
+   
+   * Let the user choose what kind of padding use in the input image. There are two options:
+     
+     #. *Constant value border* : Applies a padding of a constant value for the whole border. This value will be updated randomly each 0.5 seconds.
+     
+     #. *Replicated border* : The border will be replicated from the pixel values at the edges of the original image.
+     
+     The user chooses either option by pressing 'c' (constant) or 'r' (replicate)
+   
+   * The program finishes when the user presses 'ESC'
+
+#. The tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/copyMakeBorder_demo.cpp>`__
+   
+   .. ref-code-block:: cpp
+   
+   	
+   	#include "opencv2/imgproc.hpp"
+   	#include "opencv2/imgcodecs.hpp"
+   	#include "opencv2/highgui.hpp"
+   	
+   	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+   	
+   	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, dst;
+   	int top, bottom, left, right;
+   	int borderType;
+   	const char* window_name = "copyMakeBorder Demo";
+   	:ref:`RNG <doxid-d3/df8/classcv_1_1_r_n_g>` rng(12345);
+   	
+   	int main( int, char** argv )
+   	{
+   	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+   	
+   	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+   	    {
+   	      printf(" No data entered, please enter the path to an image file \n");
+   	      return -1;
+   	    }
+   	
+   	  printf( "\n \t copyMakeBorder Demo: \n" );
+   	  printf( "\t -------------------- \n" );
+   	  printf( " ** Press 'c' to set the border to a random constant value \n");
+   	  printf( " ** Press 'r' to set the border to be replicated \n");
+   	  printf( " ** Press 'ESC' to exit the program \n");
+   	
+   	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_name, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+   	
+   	  top = (int) (0.05*src.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`); bottom = (int) (0.05*src.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`);
+   	  left = (int) (0.05*src.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`); right = (int) (0.05*src.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`);
+   	
+   	  dst = src;
+   	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+   	
+   	  for(;;)
+   	       {
+   	         char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(500);
+   	         if( c == 27 )
+   	           { break; }
+   	         else if( c == 'c' )
+   	           { borderType = :ref:`BORDER_CONSTANT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838>`; }
+   	         else if( c == 'r' )
+   	           { borderType = :ref:`BORDER_REPLICATE <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5aa1de4cff95e3377d6d0cbe7569bd4e9f>`; }
+   	
+   	         Scalar value( rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255) );
+   	
+   	         :ref:`copyMakeBorder <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>`( src, dst, top, bottom, left, right, borderType, value );
+   	
+   	         :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+   	       }
+   	
+   	  return 0;
+   	}
+
+.. rubric:: Explanation
+
+#. First we declare the variables we are going to use:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat src, dst;
+   	int top, bottom, left, right;
+   	int borderType;
+   	const char* window_name = "copyMakeBorder Demo";
+   	RNG rng(12345);
+   
+   Especial attention deserves the variable *rng* which is a random number generator. We use it to generate the random border color, as we will see soon.
+
+#. As usual we load our source image *src* :
+   
+   .. ref-code-block:: cpp
+   
+   	src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+   
+   	if( src.empty() )
+   	  {
+   	    printf(" No data entered, please enter the path to an image file \n");
+   	    return -1;
+   	  }
+
+#. After giving a short intro of how to use the program, we create a window:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_name, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+
+#. Now we initialize the argument that defines the size of the borders (*top*, *bottom*, *left* and *right*). We give them a value of 5% the size of *src*.
+   
+   .. ref-code-block:: cpp
+   
+   	top = (int) (0.05*src.rows); bottom = (int) (0.05*src.rows);
+   	left = (int) (0.05*src.cols); right = (int) (0.05*src.cols);
+
+#. The program runs in a **for** loop. If the user presses 'c' or 'r', the *borderType* variable takes the value of *BORDER_CONSTANT* or *BORDER_REPLICATE* respectively:
+   
+   .. ref-code-block:: cpp
+   
+   	char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(500);
+   	if( c == 27 )
+   	  { break; }
+   	else if( c == 'c' )
+   	  { borderType = :ref:`BORDER_CONSTANT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838>`; }
+   	else if( c == 'r' )
+   	  { borderType = :ref:`BORDER_REPLICATE <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5aa1de4cff95e3377d6d0cbe7569bd4e9f>`; }
+
+#. In each iteration (after 0.5 seconds), the variable *value* is updated...
+   
+   .. ref-code-block:: cpp
+   
+   	Scalar value( rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255) );
+   
+   with a random value generated by the **RNG** variable *rng*. This value is a number picked randomly in the range :math:`[0,255]`
+
+#. Finally, we call the function :ref:`cv::copyMakeBorder <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>` to apply the respective padding:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`copyMakeBorder <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>`( src, dst, top, bottom, left, right, borderType, value );
+   
+   The arguments are:
+   
+   #. *src* : Source image
+   
+   #. *dst* : Destination image
+   
+   #. *top*, *bottom*, *left*, *right* : Length in pixels of the borders at each side of the image. We define them as being 5% of the original size of the image.
+   
+   #. *borderType* : Define what type of border is applied. It can be constant or replicate for this example.
+   
+   #. *value* : If *borderType* is *BORDER_CONSTANT*, this is the value used to fill the border pixels.
+
+#. We display our output image in the image created previously
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+   
+   
+   
+   .. rubric:: Results
+
+#. After compiling the code above, you can execute it giving as argument the path of an image. The result should be:
+   
+   * By default, it begins with the border set to BORDER_CONSTANT. Hence, a succession of random colored borders will be shown.
+   
+   * If you press 'r', the border will become a replica of the edge pixels.
+   
+   * If you press 'c', the random colored borders will appear again
+   
+   * If you press 'ESC' the program will exit.
+   
+   Below some screenshot showing how the border changes color and how the *BORDER_REPLICATE* option looks:
+   
+   .. image:: CopyMakeBorder_Tutorial_Results.jpg
+

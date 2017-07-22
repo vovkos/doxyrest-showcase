@@ -1,0 +1,127 @@
+.. index:: pair: class; Poco::NamedMutex
+.. _doxid-class_poco_1_1_named_mutex:
+
+class Poco::NamedMutex
+======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`NamedMutex <doxid-class_poco_1_1_named_mutex>` (mutual exclusion) is a global synchronization mechanism used to control access to a shared resource in a concurrent (multi process) scenario. :ref:`More...<details-class_poco_1_1_named_mutex>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <NamedMutex.h>
+	
+	class NamedMutex: private :ref:`Poco::NamedMutexImpl<doxid-class_poco_1_1_named_mutex_impl>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`Poco::ScopedLock<doxid-class_poco_1_1_scoped_lock>`<NamedMutex> :target:`ScopedLock<doxid-class_poco_1_1_named_mutex_1a5041005b013fc7e5e0f085fa04cd8edd>`;
+
+		// construction
+	
+		:ref:`NamedMutex<doxid-class_poco_1_1_named_mutex_1ad0aa3f8350d47ebfeed5a4328f131c24>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name);
+
+		// methods
+	
+		void
+		:ref:`lock<doxid-class_poco_1_1_named_mutex_1a860f735565597fbb9dfe3147e46d97af>`();
+	
+		bool
+		:ref:`tryLock<doxid-class_poco_1_1_named_mutex_1ab8bc31181d34e720ce03c52945431350>`();
+	
+		void
+		:ref:`unlock<doxid-class_poco_1_1_named_mutex_1a3cb844b74908d2ca04ad40485c677281>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	protected:
+		// methods
+	
+		void
+		:ref:`lockImpl<doxid-class_poco_1_1_named_mutex_impl_1a305c698863b974b4ff94460163b90990>`();
+	
+		bool
+		:ref:`tryLockImpl<doxid-class_poco_1_1_named_mutex_impl_1a6ed91820cb8db8e943ea82fbf292f80a>`();
+	
+		void
+		:ref:`unlockImpl<doxid-class_poco_1_1_named_mutex_impl_1ab31db04ad84ed29994404ed4e646f973>`();
+
+.. _details-class_poco_1_1_named_mutex:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`NamedMutex <doxid-class_poco_1_1_named_mutex>` (mutual exclusion) is a global synchronization mechanism used to control access to a shared resource in a concurrent (multi process) scenario.
+
+Using the :ref:`ScopedLock <doxid-class_poco_1_1_scoped_lock>` class is the preferred way to automatically lock and unlock a mutex.
+
+Unlike a :ref:`Mutex <doxid-class_poco_1_1_mutex>` or a :ref:`FastMutex <doxid-class_poco_1_1_fast_mutex>`, which itself is the unit of synchronization, a :ref:`NamedMutex <doxid-class_poco_1_1_named_mutex>` refers to a named operating system resource being the unit of synchronization. In other words, there can be multiple instances of :ref:`NamedMutex <doxid-class_poco_1_1_named_mutex>` referring to the same actual synchronization object.
+
+There should not be more than one instance of :ref:`NamedMutex <doxid-class_poco_1_1_named_mutex>` for a given name in a process. Otherwise, the instances may interfere with each other.
+
+Construction
+------------
+
+.. index:: pair: function; NamedMutex
+.. _doxid-class_poco_1_1_named_mutex_1ad0aa3f8350d47ebfeed5a4328f131c24:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	NamedMutex(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name)
+
+creates the :ref:`Mutex <doxid-class_poco_1_1_mutex>`.
+
+Methods
+-------
+
+.. index:: pair: function; lock
+.. _doxid-class_poco_1_1_named_mutex_1a860f735565597fbb9dfe3147e46d97af:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	lock()
+
+Locks the mutex.
+
+Blocks if the mutex is held by another process or thread.
+
+.. index:: pair: function; tryLock
+.. _doxid-class_poco_1_1_named_mutex_1ab8bc31181d34e720ce03c52945431350:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryLock()
+
+Tries to lock the mutex.
+
+Returns false immediately if the mutex is already held by another process or thread. Returns true if the mutex was successfully locked.
+
+.. index:: pair: function; unlock
+.. _doxid-class_poco_1_1_named_mutex_1a3cb844b74908d2ca04ad40485c677281:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	unlock()
+
+Unlocks the mutex so that it can be acquired by other threads.
+

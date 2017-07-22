@@ -1,0 +1,107 @@
+.. index:: pair: page; Hit-or-Miss
+.. _doxid-dd/dbf/tutorial_hit_or_miss:
+
+Hit-or-Miss
+===========
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to find a given configuration or pattern in a binary image by using the Hit-or-Miss transform (also known as Hit-and-Miss transform). This transform is also the basis of more advanced morphological operations such as thinning or pruning.
+
+We will use the OpenCV function :ref:`cv::morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`.
+
+.. rubric:: Hit-or-Miss theory
+
+Morphological operators process images based on their shape. These operators apply one or more *structuring elements* to an input image to obtain the output image. The two basic morphological operations are the *erosion* and the *dilation*. The combination of these two operations generate advanced morphological transformations such as *opening*, *closing*, or *top-hat* transform. To know more about these and other basic morphological operations refer to previous tutorials :ref:`here <doxid-db/df6/tutorial_erosion_dilatation>` and :ref:`here <doxid-d3/dbe/tutorial_opening_closing_hats>`.
+
+The Hit-or-Miss transformation is useful to find patterns in binary images. In particular, it finds those pixels whose neighbourhood matches the shape of a first structuring element :math:`B_1` while not matching the shape of a second structuring element :math:`B_2` at the same time. Mathematically, the operation applied to an image :math:`A` can be expressed as follows:
+
+.. math::
+
+	A\circledast B = (A\ominus B_1) \cap (A^c\ominus B_2)
+
+Therefore, the hit-or-miss operation comprises three steps:
+
+#. Erode image :math:`A` with structuring element :math:`B_1`.
+
+#. Erode the complement of image :math:`A` (:math:`A^c`) with structuring element :math:`B_2`.
+
+#. AND results from step 1 and step 2.
+
+The structuring elements :math:`B_1` and :math:`B_2` can be combined into a single element :math:`B`. Let's see an example:
+
+.. image:: hitmiss_kernels.png
+	:alt: Structuring elements (kernels). Left: kernel to 'hit'. Middle: kernel to 'miss'. Right: final combined kernel
+
+In this case, we are looking for a pattern in which the central pixel belongs to the background while the north, south, east, and west pixels belong to the foreground. The rest of pixels in the neighbourhood can be of any kind, we don't care about them. Now, let's apply this kernel to an input image:
+
+.. image:: hitmiss_input.png
+	:alt: Input binary image
+
+
+
+.. image:: hitmiss_output.png
+	:alt: Output binary image
+
+You can see that the pattern is found in just one location within the image.
+
+.. rubric:: Code
+
+The code corresponding to the previous example is shown below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/HitMiss.cpp>`__
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/core.hpp>
+	#include <opencv2/imgproc.hpp>
+	#include <opencv2/highgui.hpp>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	int main(){
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` input_image = (:ref:`Mat_\<uchar> <doxid-d9/de0/classcv_1_1_mat__>`(8, 8) <<
+	        0, 0, 0, 0, 0, 0, 0, 0,
+	        0, 255, 255, 255, 0, 0, 0, 255,
+	        0, 255, 255, 255, 0, 0, 0, 0,
+	        0, 255, 255, 255, 0, 255, 0, 0,
+	        0, 0, 255, 0, 0, 0, 0, 0,
+	        0, 0, 255, 0, 0, 255, 255, 0,
+	        0, 255, 0, 255, 0, 0, 255, 0,
+	        0, 255, 255, 255, 0, 0, 0, 0);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` kernel = (:ref:`Mat_\<int> <doxid-d9/de0/classcv_1_1_mat__>`(3, 3) <<
+	        0, 1, 0,
+	        1, -1, 1,
+	        0, 1, 0);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` output_image;
+	    :ref:`morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`(input_image, output_image, :ref:`MORPH_HITMISS <doxid-d4/d86/group__imgproc__filter_1gga7be549266bad7b2e6a04db49827f9f32acf55ff766595ec0174ba42852f0ac264>`, kernel);
+	
+	    const int rate = 10;
+	    kernel = (kernel + 1) * 127;
+	    kernel.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(kernel, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`);
+	    :ref:`resize <doxid-da/d54/group__imgproc__transform_1ga47a974309e9102f5f08231edc7e7529d>`(kernel, kernel, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(), rate, rate, :ref:`INTER_NEAREST <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121aa5521d8e080972c762467c45f3b70e6c>`);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("kernel", kernel);
+	    :ref:`resize <doxid-da/d54/group__imgproc__transform_1ga47a974309e9102f5f08231edc7e7529d>`(input_image, input_image, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(), rate, rate, :ref:`INTER_NEAREST <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121aa5521d8e080972c762467c45f3b70e6c>`);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Original", input_image);
+	    :ref:`resize <doxid-da/d54/group__imgproc__transform_1ga47a974309e9102f5f08231edc7e7529d>`(output_image, output_image, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(), rate, rate, :ref:`INTER_NEAREST <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121aa5521d8e080972c762467c45f3b70e6c>`);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Hit or Miss", output_image);
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	    return 0;
+	}
+
+As you can see, it is as simple as using the function :ref:`cv::morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>` with the operation type :ref:`cv::MORPH_HITMISS <doxid-d4/d86/group__imgproc__filter_1gga7be549266bad7b2e6a04db49827f9f32acf55ff766595ec0174ba42852f0ac264>` and the chosen kernel.
+
+.. rubric:: Other examples
+
+Here you can find the output results of applying different kernels to the same input image used before:
+
+.. image:: hitmiss_example2.png
+	:alt: Kernel and output result for finding top-right corners
+
+
+
+.. image:: hitmiss_example3.png
+	:alt: Kernel and output result for finding left end points
+
+Now try your own patterns!
+

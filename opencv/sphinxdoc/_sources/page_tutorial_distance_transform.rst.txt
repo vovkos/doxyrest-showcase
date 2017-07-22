@@ -1,0 +1,375 @@
+.. index:: pair: page; Image Segmentation with Distance Transform and Watershed Algorithm
+.. _doxid-d2/dbd/tutorial_distance_transform:
+
+Image Segmentation with Distance Transform and Watershed Algorithm
+==================================================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::filter2D <doxid-d4/d86/group__imgproc__filter_1ga27c049795ce870216ddfb366086b5a04>` in order to perform some laplacian filtering for image sharpening
+
+* Use the OpenCV function :ref:`cv::distanceTransform <doxid-d7/d1b/group__imgproc__misc_1ga8a0b7fdfcb7a13dde018988ba3a43042>` in order to obtain the derived representation of a binary image, where the value of each pixel is replaced by its distance to the nearest background pixel
+
+* Use the OpenCV function :ref:`cv::watershed <doxid-d7/d1b/group__imgproc__misc_1ga3267243e4d3f95165d55a618c65ac6e1>` in order to isolate objects in the image from the background
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/imageSegmentation.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	
+	#include <opencv2/opencv.hpp>
+	#include <iostream>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	int main(int, char** argv)
+	{
+	    // Load the image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1]);
+	
+	    // Check if everything was fine
+	    if (!src.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>`)
+	        return -1;
+	
+	    // Show source image
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Source Image", src);
+	
+	    // Change the background from white to black, since that will help later to extract
+	    // better results during the use of Distance Transform
+	    for( int x = 0; x < src.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; x++ ) {
+	      for( int y = 0; y < src.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; y++ ) {
+	          if ( src.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(x, y) == :ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`(255,255,255) ) {
+	            src.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(x, y)[0] = 0;
+	            src.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(x, y)[1] = 0;
+	            src.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(x, y)[2] = 0;
+	          }
+	        }
+	    }
+	
+	    // Show output image
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Black Background Image", src);
+	
+	    // Create a kernel that we will use for accuting/sharpening our image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` kernel = (:ref:`Mat_\<float> <doxid-d9/de0/classcv_1_1_mat__>`(3,3) <<
+	            1,  1, 1,
+	            1, -8, 1,
+	            1,  1, 1); // an approximation of second derivative, a quite strong kernel
+	
+	    // do the laplacian filtering as it is
+	    // well, we need to convert everything in something more deeper then CV_8U
+	    // because the kernel has some negative values,
+	    // and we can expect in general to have a Laplacian image with negative values
+	    // BUT a 8bits unsigned int (the one we are working with) can contain values from 0 to 255
+	    // so the possible negative number will be truncated
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` imgLaplacian;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` sharp = src; // copy source image to another temporary one
+	    :ref:`filter2D <doxid-d5/df1/group__imgproc__hal__functions_1ga42c2468ab3a1238fbf48458c57169081>`(sharp, imgLaplacian, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, kernel);
+	    src.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(sharp, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` imgResult = sharp - imgLaplacian;
+	
+	    // convert back to 8bits gray scale
+	    imgResult.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(imgResult, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	    imgLaplacian.convertTo(imgLaplacian, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	
+	    // imshow( "Laplace Filtered Image", imgLaplacian );
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "New Sharped Image", imgResult );
+	
+	    src = imgResult; // copy back
+	
+	    // Create binary image from source image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` bw;
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(src, bw, :ref:`CV_BGR2GRAY <doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd>`);
+	    :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(bw, bw, 40, 255, :ref:`CV_THRESH_BINARY <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>` | :ref:`CV_THRESH_OTSU <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa2456934f4f01402e80006a317ea2693e>`);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Binary Image", bw);
+	
+	    // Perform the distance transform algorithm
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dist;
+	    :ref:`distanceTransform <doxid-d7/d1b/group__imgproc__misc_1ga8a0b7fdfcb7a13dde018988ba3a43042>`(bw, dist, :ref:`CV_DIST_L2 <doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae60a48ac6e8738abf6746c4beb4a9962>`, 3);
+	
+	    // Normalize the distance image for range = {0.0, 1.0}
+	    // so we can visualize and threshold it
+	    :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(dist, dist, 0, 1., :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Distance Transform Image", dist);
+	
+	    // Threshold to obtain the peaks
+	    // This will be the markers for the foreground objects
+	    :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(dist, dist, .4, 1., :ref:`CV_THRESH_BINARY <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>`);
+	
+	    // Dilate a bit the dist image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` kernel1 = Mat::ones(3, 3, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	    :ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(dist, dist, kernel1);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Peaks", dist);
+	
+	    // Create the CV_8U version of the distance image
+	    // It is needed for findContours()
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dist_8u;
+	    dist.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(dist_8u, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`);
+	
+	    // Find total markers
+	    vector<vector<Point> > contours;
+	    :ref:`findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>`(dist_8u, contours, :ref:`CV_RETR_EXTERNAL <doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531a826a46df86827e600ae618c02dd83966>`, :ref:`CV_CHAIN_APPROX_SIMPLE <doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`);
+	
+	    // Create the marker image for the watershed algorithm
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` markers = Mat::zeros(dist.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_32SC1 <doxid-d1/d1b/group__core__hal__interface_1ga32f03fbb8f73bff70215b77f5c3cac11>`);
+	
+	    // Draw the foreground markers
+	    for (size_t i = 0; i < contours.size(); i++)
+	        :ref:`drawContours <doxid-d6/d6e/group__imgproc__draw_1ga746c0625f1781f1ffc9056259103edbc>`(markers, contours, static_cast<int>(i), Scalar::all(static_cast<int>(i)+1), -1);
+	
+	    // Draw the background marker
+	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`(markers, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(5,5), 3, :ref:`CV_RGB <doxid-df/d4e/group__imgproc__c_1ga16fe14b01ea8dffdf2405dc5534e5f15>`(255,255,255), -1);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Markers", markers*10000);
+	
+	    // Perform the watershed algorithm
+	    :ref:`watershed <doxid-d7/d1b/group__imgproc__misc_1ga3267243e4d3f95165d55a618c65ac6e1>`(src, markers);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` mark = Mat::zeros(markers.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	    markers.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(mark, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	    :ref:`bitwise_not <doxid-d2/de8/group__core__array_1ga0002cf8b418479f4cb49a75442baee2f>`(mark, mark);
+	//    imshow("Markers_v2", mark); // uncomment this if you want to see how the mark
+	                                  // image looks like at that point
+	
+	    // Generate random colors
+	    vector<Vec3b> colors;
+	    for (size_t i = 0; i < contours.size(); i++)
+	    {
+	        int b = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`().:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(0, 255);
+	        int g = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`().:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(0, 255);
+	        int r = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`().:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(0, 255);
+	
+	        colors.push_back(:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`((:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)b, (:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)g, (:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)r));
+	    }
+	
+	    // Create the result image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst = Mat::zeros(markers.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	
+	    // Fill labeled objects with random colors
+	    for (int i = 0; i < markers.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; i++)
+	    {
+	        for (int j = 0; j < markers.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; j++)
+	        {
+	            int index = markers.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<int>(i,j);
+	            if (index > 0 && index <= static_cast<int>(contours.size()))
+	                dst.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(i,j) = colors[index-1];
+	            else
+	                dst.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(i,j) = :ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`(0,0,0);
+	        }
+	    }
+	
+	    // Visualize the final image
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Final Result", dst);
+	
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	    return 0;
+	}
+
+.. rubric:: Explanation / Result
+
+#. Load the source image and check if it is loaded without any problem, then show it:
+   
+   .. ref-code-block:: cpp
+   
+   	// Load the image
+   	Mat src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1]);
+   
+   	// Check if everything was fine
+   	if (!src.data)
+   	    return -1;
+   
+   	// Show source image
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Source Image", src);
+   
+   
+   
+   .. image:: source.jpeg
+
+#. Then if we have an image with white background, it is good to tranform it black. This will help us to desciminate the foreground objects easier when we will apply the Distance Transform:
+   
+   .. ref-code-block:: cpp
+   
+   	// Change the background from white to black, since that will help later to extract
+   	// better results during the use of Distance Transform
+   	for( int x = 0; x < src.rows; x++ ) {
+   	  for( int y = 0; y < src.:ref:`cols <doxid-db/d15/classcv_1_1_matx_1a1828fc4421f037a80fdb750eeedcb60ca0be112b36f43fbfe06e8f9d1361f51b6>`; y++ ) {
+   	      if ( src.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(x, y) == :ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`(255,255,255) ) {
+   	        src.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(x, y)[0] = 0;
+   	        src.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(x, y)[1] = 0;
+   	        src.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(x, y)[2] = 0;
+   	      }
+   	    }
+   	}
+   
+   	// Show output image
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Black Background Image", src);
+   
+   
+   
+   .. image:: black_bg.jpeg
+
+#. Afterwards we will sharp our image in order to acute the edges of the foreground objects. We will apply a laplacian filter with a quite strong filter (an approximation of second derivative):
+   
+   .. ref-code-block:: cpp
+   
+   	// Create a kernel that we will use for accuting/sharpening our image
+   	Mat kernel = (Mat_<float>(3,3) <<
+   	        1,  1, 1,
+   	        1, -8, 1,
+   	        1,  1, 1); // an approximation of second derivative, a quite strong kernel
+   
+   	// do the laplacian filtering as it is
+   	// well, we need to convert everything in something more deeper then CV_8U
+   	// because the kernel has some negative values,
+   	// and we can expect in general to have a Laplacian image with negative values
+   	// BUT a 8bits unsigned int (the one we are working with) can contain values from 0 to 255
+   	// so the possible negative number will be truncated
+   	Mat imgLaplacian;
+   	Mat sharp = src; // copy source image to another temporary one
+   	:ref:`filter2D <doxid-d5/df1/group__imgproc__hal__functions_1ga42c2468ab3a1238fbf48458c57169081>`(sharp, imgLaplacian, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`, kernel);
+   	src.convertTo(sharp, :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`);
+   	Mat imgResult = sharp - imgLaplacian;
+   
+   	// convert back to 8bits gray scale
+   	imgResult.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(imgResult, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+   	imgLaplacian.convertTo(imgLaplacian, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+   
+   	// imshow( "Laplace Filtered Image", imgLaplacian );
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "New Sharped Image", imgResult );
+   
+   
+   
+   .. image:: laplace.jpeg
+   
+   
+   
+   .. image:: sharp.jpeg
+
+#. Now we tranfrom our new sharped source image to a grayscale and a binary one, respectively:
+   
+   .. ref-code-block:: cpp
+   
+   	// Create binary image from source image
+   	Mat bw;
+   	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(src, bw, :ref:`CV_BGR2GRAY <doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd>`);
+   	:ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(bw, bw, 40, 255, :ref:`CV_THRESH_BINARY <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>` | :ref:`CV_THRESH_OTSU <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa2456934f4f01402e80006a317ea2693e>`);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Binary Image", bw);
+   
+   
+   
+   .. image:: bin.jpeg
+
+#. We are ready now to apply the Distance Tranform on the binary image. Moreover, we normalize the output image in order to be able visualize and threshold the result:
+   
+   .. ref-code-block:: cpp
+   
+   	// Perform the distance transform algorithm
+   	Mat dist;
+   	:ref:`distanceTransform <doxid-d7/d1b/group__imgproc__misc_1ga8a0b7fdfcb7a13dde018988ba3a43042>`(bw, dist, :ref:`CV_DIST_L2 <doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae60a48ac6e8738abf6746c4beb4a9962>`, 3);
+   
+   	// Normalize the distance image for range = {0.0, 1.0}
+   	// so we can visualize and threshold it
+   	:ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(dist, dist, 0, 1., :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Distance Transform Image", dist);
+   
+   
+   
+   .. image:: dist_transf.jpeg
+
+#. We threshold the *dist* image and then perform some morphology operation (i.e. dilation) in order to extract the peaks from the above image:
+   
+   .. ref-code-block:: cpp
+   
+   	// Threshold to obtain the peaks
+   	// This will be the markers for the foreground objects
+   	:ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`(dist, dist, .4, 1., :ref:`CV_THRESH_BINARY <doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>`);
+   
+   	// Dilate a bit the dist image
+   	Mat kernel1 = Mat::ones(3, 3, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+   	:ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(dist, dist, kernel1);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Peaks", dist);
+   
+   
+   
+   .. image:: peaks.jpeg
+
+#. From each blob then we create a seed/marker for the watershed algorithm with the help of the :ref:`cv::findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>` function:
+   
+   .. ref-code-block:: cpp
+   
+   	// Create the CV_8U version of the distance image
+   	// It is needed for findContours()
+   	Mat dist_8u;
+   	dist.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(dist_8u, :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`);
+   
+   	// Find total markers
+   	vector<vector<Point> > contours;
+   	:ref:`findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>`(dist_8u, contours, :ref:`CV_RETR_EXTERNAL <doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531a826a46df86827e600ae618c02dd83966>`, :ref:`CV_CHAIN_APPROX_SIMPLE <doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`);
+   
+   	// Create the marker image for the watershed algorithm
+   	Mat markers = Mat::zeros(dist.size(), :ref:`CV_32SC1 <doxid-d1/d1b/group__core__hal__interface_1ga32f03fbb8f73bff70215b77f5c3cac11>`);
+   
+   	// Draw the foreground markers
+   	for (size_t i = 0; i < contours.size(); i++)
+   	    :ref:`drawContours <doxid-d6/d6e/group__imgproc__draw_1ga746c0625f1781f1ffc9056259103edbc>`(markers, contours, static_cast<int>(i), Scalar::all(static_cast<int>(i)+1), -1);
+   
+   	// Draw the background marker
+   	:ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`(markers, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(5,5), 3, :ref:`CV_RGB <doxid-df/d4e/group__imgproc__c_1ga16fe14b01ea8dffdf2405dc5534e5f15>`(255,255,255), -1);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Markers", markers*10000);
+   
+   
+   
+   .. image:: markers.jpeg
+
+#. Finally, we can apply the watershed algorithm, and visualize the result:
+   
+   .. ref-code-block:: cpp
+   
+   	    // Perform the watershed algorithm
+   	    :ref:`watershed <doxid-d7/d1b/group__imgproc__misc_1ga3267243e4d3f95165d55a618c65ac6e1>`(src, markers);
+   	
+   	    Mat mark = Mat::zeros(markers.size(), :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+   	    markers.:ref:`convertTo <doxid-db/de6/classcv_1_1_mat_1adf88c60c5b4980e05bb556080916978b>`(mark, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+   	    :ref:`bitwise_not <doxid-d2/de8/group__core__array_1ga0002cf8b418479f4cb49a75442baee2f>`(mark, mark);
+   	//    imshow("Markers_v2", mark); // uncomment this if you want to see how the mark
+   	                                  // image looks like at that point
+   	
+   	    // Generate random colors
+   	    vector<Vec3b> colors;
+   	    for (size_t i = 0; i < contours.size(); i++)
+   	    {
+   	        int b = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`().:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(0, 255);
+   	        int g = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`().:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(0, 255);
+   	        int r = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`().:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(0, 255);
+   	
+   	        colors.push_back(:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`((:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)b, (:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)g, (:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)r));
+   	    }
+   	
+   	    // Create the result image
+   	    Mat dst = Mat::zeros(markers.size(), :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+   	
+   	    // Fill labeled objects with random colors
+   	    for (int i = 0; i < markers.rows; i++)
+   	    {
+   	        for (int j = 0; j < markers.cols; j++)
+   	        {
+   	            int index = markers.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<int>(i,j);
+   	            if (index > 0 && index <= static_cast<int>(contours.size()))
+   	                dst.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(i,j) = colors[index-1];
+   	            else
+   	                dst.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(i,j) = :ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`(0,0,0);
+   	        }
+   	    }
+   	
+   	    // Visualize the final image
+   	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Final Result", dst);
+   
+   
+   
+   .. image:: final.jpeg
+

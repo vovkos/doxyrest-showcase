@@ -1,0 +1,147 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Camera calibration with square chessboard &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interactive camera calibration application" href="page_tutorial_interactive_calibration.html" />
+    <link rel="prev" title="Camera calibration With OpenCV" href="page_tutorial_camera_calibration.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_interactive_calibration.html" title="Interactive camera calibration application"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_camera_calibration.html" title="Camera calibration With OpenCV"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_calib3d.html" accesskey="U">Camera calibration and 3D reconstruction (calib3d module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_camera_calibration.html"
+                        title="previous chapter">Camera calibration With OpenCV</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_interactive_calibration.html"
+                        title="next chapter">Interactive camera calibration application</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="camera-calibration-with-square-chessboard">
+<span id="doxid-dc-d43-tutorial-camera-calibration-square-chess"></span><span id="index-0"></span><h1>Camera calibration with square chessboard</h1>
+<p>The goal of this tutorial is to learn how to calibrate a camera given a set of chessboard images.</p>
+<p><em>Test data</em> : use images in your data/chess folder.</p>
+<ul class="simple">
+<li>Compile OpenCV with samples by setting BUILD_EXAMPLES to ON in cmake configuration.</li>
+<li>Go to bin folder and use imagelist_creator to create an XML/YAML list of your images.</li>
+<li>Then, run calibration sample to get camera parameters. Use square size equal to 3cm.</li>
+</ul>
+<p class="rubric">Pose estimation</p>
+<p>Now, let us write code that detects a chessboard in an image and finds its distance from the camera. You can apply this method to any object with known 3D geometry; which you detect in an image.</p>
+<p><em>Test data</em> : use chess_test*.jpg images from your data folder.</p>
+<ul>
+<li><p class="first">Create an empty console project. Load a test image :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Mat</span> <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">IMREAD_GRAYSCALE</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Detect a chessboard in this image using findChessboard function :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">found</span> <span class="o">=</span> <span class="n">findChessboardCorners</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">boardSize</span><span class="p">,</span> <span class="n">ptvec</span><span class="p">,</span> <span class="n">CALIB_CB_ADAPTIVE_THRESH</span> <span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now, write a function that generates a vector&lt;Point3f&gt; array of 3d coordinates of a chessboard in any coordinate system. For simplicity, let us choose a system such that one of the chessboard corners is in the origin and the board is in the plane <em>z = 0</em></p>
+</li>
+<li><p class="first">Read camera parameters from XML/YAML file :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FileStorage</span> <span class="nf">fs</span><span class="p">(</span> <span class="n">filename</span><span class="p">,</span> <span class="n">FileStorage</span><span class="o">::</span><span class="n">READ</span> <span class="p">);</span>
+<span class="n">Mat</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">distortion</span><span class="p">;</span>
+<span class="n">fs</span><span class="p">[</span><span class="s">&quot;camera_matrix&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">intrinsics</span><span class="p">;</span>
+<span class="n">fs</span><span class="p">[</span><span class="s">&quot;distortion_coefficients&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">distortion</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now we are ready to find a chessboard pose by running <cite>solvePnP</cite> :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3f</span><span class="o">&gt;</span> <span class="n">boardPoints</span><span class="p">;</span>
+<span class="c1">// fill the array</span>
+<span class="p">...</span>
+
+<span class="n">solvePnP</span><span class="p">(</span><span class="n">Mat</span><span class="p">(</span><span class="n">boardPoints</span><span class="p">),</span> <span class="n">Mat</span><span class="p">(</span><span class="n">foundBoardCorners</span><span class="p">),</span> <span class="n">cameraMatrix</span><span class="p">,</span>
+                     <span class="n">distCoeffs</span><span class="p">,</span> <span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Calculate reprojection error like it is done in calibration sample (see opencv/samples/cpp/calibration.cpp, function computeReprojectionErrors).</p>
+</li>
+</ul>
+<p>Question: how would you calculate distance from the camera origin to any one of the corners? Answer: As our image lies in a 3D space, firstly we would calculate the relative camera pose. This would give us 3D to 2D correspondences. Next, we can apply a simple L2 norm to calculate distance between any point (end point for corners).</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_interactive_calibration.html" title="Interactive camera calibration application"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_camera_calibration.html" title="Camera calibration With OpenCV"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_calib3d.html" >Camera calibration and 3D reconstruction (calib3d module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

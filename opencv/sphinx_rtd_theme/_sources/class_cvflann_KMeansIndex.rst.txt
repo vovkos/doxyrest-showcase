@@ -1,0 +1,472 @@
+.. index:: pair: class; cvflann::KMeansIndex
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index:
+
+template class cvflann::KMeansIndex
+===================================
+
+.. toctree::
+	:hidden:
+
+	struct_cvflann_KMeansIndex_KMeansNode.rst
+	class_cvflann_KMeansIndex_KMeansDistanceComputer.rst
+
+Overview
+~~~~~~~~
+
+Hierarchical kmeans index
+
+Contains a tree constructed through a hierarchical kmeans clustering and other information for indexing a set of points for nearest-neighbour matching. :ref:`More...<details-d8/d69/classcvflann_1_1_k_means_index>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <kmeans_index.h>
+	
+	template <typename Distance>
+	class KMeansIndex: public :ref:`cvflann::NNIndex<doxid-df/d08/classcvflann_1_1_n_n_index>`
+	{
+	public:
+		// typedefs
+	
+		typedef void(KMeansIndex::* :target:`centersAlgFunction<doxid-d8/d69/classcvflann_1_1_k_means_index_1acdd18637694a7b41c142f122df9945ec>`)(
+			int,
+			int *,
+			int,
+			int *,
+			int &
+			);
+	
+		typedef Distance::ResultType :target:`DistanceType<doxid-d8/d69/classcvflann_1_1_k_means_index_1adcf3e940c1ab76474f113c4db65d36c5>`;
+		typedef Distance::ElementType :target:`ElementType<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2a28d6535e3e452320f97417f6c127ef>`;
+
+		// structs
+	
+		struct :ref:`KMeansNode<doxid-d2/d38/structcvflann_1_1_k_means_index_1_1_k_means_node>`;
+
+		// classes
+	
+		class :ref:`KMeansDistanceComputer<doxid-d8/d6f/classcvflann_1_1_k_means_index_1_1_k_means_distance_computer>`;
+
+		// fields
+	
+		:ref:`centersAlgFunction<doxid-d8/d69/classcvflann_1_1_k_means_index_1acdd18637694a7b41c142f122df9945ec>` :ref:`chooseCenters<doxid-d8/d69/classcvflann_1_1_k_means_index_1af02aa808b786b448cc5aaac95104d0d7>`;
+
+		// construction
+	
+		:ref:`KMeansIndex<doxid-d8/d69/classcvflann_1_1_k_means_index_1ae4bea160d9e9d70f0f8177be8e0d1f0e>`(
+			const :ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<:ref:`ElementType<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2a28d6535e3e452320f97417f6c127ef>`>& inputData,
+			const :ref:`IndexParams<doxid-dc/d8c/namespacecvflann_1ad55c74ae3144004b728d68382edbca45>`& params = :ref:`KMeansIndexParams<doxid-d6/d17/structcvflann_1_1_k_means_index_params>`(),
+			Distance d = Distance()
+			);
+	
+		:target:`KMeansIndex<doxid-d8/d69/classcvflann_1_1_k_means_index_1a6099d9d9abb2414e5a772d35ca73ee0e>`(const KMeansIndex&);
+
+		// methods
+	
+		virtual
+		void
+		:ref:`buildIndex<doxid-d8/d69/classcvflann_1_1_k_means_index_1a8018b120cc79371b02e58b50f8992634>`();
+	
+		void
+		:ref:`chooseCentersGonzales<doxid-d8/d69/classcvflann_1_1_k_means_index_1a224fbbe5fdc60db9374ddbf499b0e9d3>`(
+			int k,
+			int* indices,
+			int indices_length,
+			int* centers,
+			int& centers_length
+			);
+	
+		void
+		:ref:`chooseCentersKMeanspp<doxid-d8/d69/classcvflann_1_1_k_means_index_1a02bf5e31ac3996251fea5e2de6bd3fea>`(
+			int k,
+			int* indices,
+			int indices_length,
+			int* centers,
+			int& centers_length
+			);
+	
+		void
+		:ref:`chooseCentersRandom<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2dd49d64f6cdc7751990ee1f1920609e>`(
+			int k,
+			int* indices,
+			int indices_length,
+			int* centers,
+			int& centers_length
+			);
+	
+		virtual
+		void
+		:ref:`findNeighbors<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2e666baa48e5094e755c0ccdeb908b55>`(
+			:ref:`ResultSet<doxid-d2/d1c/classcvflann_1_1_result_set>`<:ref:`DistanceType<doxid-d8/d69/classcvflann_1_1_k_means_index_1adcf3e940c1ab76474f113c4db65d36c5>`>& result,
+			const :ref:`ElementType<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2a28d6535e3e452320f97417f6c127ef>`* vec,
+			const :ref:`SearchParams<doxid-d1/d18/structcvflann_1_1_search_params>`& searchParams
+			);
+	
+		int
+		:ref:`getClusterCenters<doxid-d8/d69/classcvflann_1_1_k_means_index_1a773a603be17320c0d106662548407336>`(:ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<:ref:`DistanceType<doxid-d8/d69/classcvflann_1_1_k_means_index_1adcf3e940c1ab76474f113c4db65d36c5>`>& centers);
+	
+		virtual
+		:ref:`IndexParams<doxid-dc/d8c/namespacecvflann_1ad55c74ae3144004b728d68382edbca45>`
+		:ref:`getParameters<doxid-d8/d69/classcvflann_1_1_k_means_index_1a0951ee1b9c96014726e8da180ec241e3>`() const;
+	
+		virtual
+		:ref:`flann_algorithm_t<doxid-dc/d8c/namespacecvflann_1a4e3e6c98d774ea77fd7f0045c9bc7817>`
+		:ref:`getType<doxid-d8/d69/classcvflann_1_1_k_means_index_1aac9b9c22794a180a71d0a222cfbd9320>`() const;
+	
+		virtual
+		void
+		:ref:`loadIndex<doxid-d8/d69/classcvflann_1_1_k_means_index_1a11e0ff42576490042f640c2c382999d0>`(FILE* stream);
+	
+		KMeansIndex&
+		:target:`operator=<doxid-d8/d69/classcvflann_1_1_k_means_index_1a8d2472fca09e17b351ed52b90e0d3b25>`(const KMeansIndex&);
+	
+		virtual
+		void
+		:ref:`saveIndex<doxid-d8/d69/classcvflann_1_1_k_means_index_1a4c388bc8fab9af7ec567e00366ea14f6>`(FILE* stream);
+	
+		void
+		:target:`set_cb_index<doxid-d8/d69/classcvflann_1_1_k_means_index_1ac65e5ca1bc0c0e1a4663438eff141861>`(float index);
+	
+		virtual
+		:ref:`size_t<doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`
+		:ref:`size<doxid-d8/d69/classcvflann_1_1_k_means_index_1a050941f76b48af36b2337d7ef039c007>`() const;
+	
+		virtual
+		int
+		:ref:`usedMemory<doxid-d8/d69/classcvflann_1_1_k_means_index_1aa22a15553b3a035c9f1489e120b7bdac>`() const;
+	
+		virtual
+		:ref:`size_t<doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`
+		:ref:`veclen<doxid-d8/d69/classcvflann_1_1_k_means_index_1aaad1e9d8b9ae1a5c463b0bdf53b0730d>`() const;
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`buildIndex<doxid-df/d08/classcvflann_1_1_n_n_index_1aaa8811509bb2f30e91570cefe4dc71e2>`() = 0;
+	
+		virtual
+		void
+		:ref:`findNeighbors<doxid-df/d08/classcvflann_1_1_n_n_index_1ac038c51dc941c7c1a55b08c17e213e41>`(
+			:ref:`ResultSet<doxid-d2/d1c/classcvflann_1_1_result_set>`<DistanceType>& result,
+			const ElementType* vec,
+			const :ref:`SearchParams<doxid-d1/d18/structcvflann_1_1_search_params>`& searchParams
+			) = 0;
+	
+		virtual
+		:ref:`IndexParams<doxid-dc/d8c/namespacecvflann_1ad55c74ae3144004b728d68382edbca45>`
+		:ref:`getParameters<doxid-df/d08/classcvflann_1_1_n_n_index_1afbc22ebf77f4f376d9e7922727d0abfe>`() const = 0;
+	
+		virtual
+		:ref:`flann_algorithm_t<doxid-dc/d8c/namespacecvflann_1a4e3e6c98d774ea77fd7f0045c9bc7817>`
+		:ref:`getType<doxid-df/d08/classcvflann_1_1_n_n_index_1ac40469dbc16bcb0fb4b0c9912c5f8acb>`() const = 0;
+	
+		virtual
+		void
+		:ref:`knnSearch<doxid-df/d08/classcvflann_1_1_n_n_index_1a8cf5c942430421358bf67d93565942db>`(
+			const :ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<ElementType>& queries,
+			:ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<int>& indices,
+			:ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<DistanceType>& dists,
+			int knn,
+			const :ref:`SearchParams<doxid-d1/d18/structcvflann_1_1_search_params>`& params
+			);
+	
+		virtual
+		void
+		:ref:`loadIndex<doxid-df/d08/classcvflann_1_1_n_n_index_1a4bcaf48ee2ac65a1b3cebea99d021611>`(FILE* stream) = 0;
+	
+		virtual
+		int
+		:ref:`radiusSearch<doxid-df/d08/classcvflann_1_1_n_n_index_1a142da9423596dd59766d1dcbcac433e9>`(
+			const :ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<ElementType>& query,
+			:ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<int>& indices,
+			:ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<DistanceType>& dists,
+			float radius,
+			const :ref:`SearchParams<doxid-d1/d18/structcvflann_1_1_search_params>`& params
+			);
+	
+		virtual
+		void
+		:ref:`saveIndex<doxid-df/d08/classcvflann_1_1_n_n_index_1aad5c63116e3dbeccc96de7c70f0a8db7>`(FILE* stream) = 0;
+	
+		virtual
+		:ref:`size_t<doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`
+		:ref:`size<doxid-df/d08/classcvflann_1_1_n_n_index_1ae75fd979d25a239b4aba751114493fe0>`() const = 0;
+	
+		virtual
+		int
+		:ref:`usedMemory<doxid-df/d08/classcvflann_1_1_n_n_index_1ac172cb3774f8ae39ff1107bee4fadbf9>`() const = 0;
+	
+		virtual
+		:ref:`size_t<doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`
+		:ref:`veclen<doxid-df/d08/classcvflann_1_1_n_n_index_1acdcc255d1b67d5636a0f76b68809e6be>`() const = 0;
+
+.. _details-d8/d69/classcvflann_1_1_k_means_index:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Hierarchical kmeans index
+
+Contains a tree constructed through a hierarchical kmeans clustering and other information for indexing a set of points for nearest-neighbour matching.
+
+Fields
+------
+
+.. index:: pair: variable; chooseCenters
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1af02aa808b786b448cc5aaac95104d0d7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`centersAlgFunction<doxid-d8/d69/classcvflann_1_1_k_means_index_1acdd18637694a7b41c142f122df9945ec>` chooseCenters
+
+The function used for choosing the cluster centers.
+
+Construction
+------------
+
+.. index:: pair: function; KMeansIndex
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1ae4bea160d9e9d70f0f8177be8e0d1f0e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	KMeansIndex(
+		const :ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<:ref:`ElementType<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2a28d6535e3e452320f97417f6c127ef>`>& inputData,
+		const :ref:`IndexParams<doxid-dc/d8c/namespacecvflann_1ad55c74ae3144004b728d68382edbca45>`& params = :ref:`KMeansIndexParams<doxid-d6/d17/structcvflann_1_1_k_means_index_params>`(),
+		Distance d = Distance()
+		)
+
+:ref:`Index <doxid-d2/df9/classcvflann_1_1_index>` constructor
+
+Params: inputData = dataset with the input features params = parameters passed to the hierarchical k-means algorithm
+
+Methods
+-------
+
+.. index:: pair: function; buildIndex
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a8018b120cc79371b02e58b50f8992634:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	buildIndex()
+
+Builds the index
+
+.. index:: pair: function; chooseCentersGonzales
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a224fbbe5fdc60db9374ddbf499b0e9d3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	chooseCentersGonzales(
+		int k,
+		int* indices,
+		int indices_length,
+		int* centers,
+		int& centers_length
+		)
+
+Chooses the initial centers in the k-means using Gonzales' algorithm so that the centers are spaced apart from each other.
+
+Params: k = number of centers vecs = the dataset of points indices = indices in the dataset Returns:
+
+.. index:: pair: function; chooseCentersKMeanspp
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a02bf5e31ac3996251fea5e2de6bd3fea:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	chooseCentersKMeanspp(
+		int k,
+		int* indices,
+		int indices_length,
+		int* centers,
+		int& centers_length
+		)
+
+Chooses the initial centers in the k-means using the algorithm proposed in the KMeans++ paper: Arthur, David; Vassilvitskii, Sergei - k-means++: The Advantages of Careful Seeding
+
+Implementation of this function was converted from the one provided in Arthur's code.
+
+Params: k = number of centers vecs = the dataset of points indices = indices in the dataset Returns:
+
+.. index:: pair: function; chooseCentersRandom
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a2dd49d64f6cdc7751990ee1f1920609e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	chooseCentersRandom(
+		int k,
+		int* indices,
+		int indices_length,
+		int* centers,
+		int& centers_length
+		)
+
+Chooses the initial centers in the k-means clustering in a random manner.
+
+Params: k = number of centers vecs = the dataset of points indices = indices in the dataset indices_length = length of indices vector
+
+.. index:: pair: function; findNeighbors
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a2e666baa48e5094e755c0ccdeb908b55:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	findNeighbors(
+		:ref:`ResultSet<doxid-d2/d1c/classcvflann_1_1_result_set>`<:ref:`DistanceType<doxid-d8/d69/classcvflann_1_1_k_means_index_1adcf3e940c1ab76474f113c4db65d36c5>`>& result,
+		const :ref:`ElementType<doxid-d8/d69/classcvflann_1_1_k_means_index_1a2a28d6535e3e452320f97417f6c127ef>`* vec,
+		const :ref:`SearchParams<doxid-d1/d18/structcvflann_1_1_search_params>`& searchParams
+		)
+
+Find set of nearest neighbors to vec. Their indices are stored inside the result object.
+
+Params: result = the result object in which the indices of the nearest-neighbors are stored vec = the vector for which to search the nearest neighbors searchParams = parameters that influence the search algorithm (checks, cb_index)
+
+.. index:: pair: function; getClusterCenters
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a773a603be17320c0d106662548407336:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	getClusterCenters(:ref:`Matrix<doxid-d7/d79/classcvflann_1_1_matrix>`<:ref:`DistanceType<doxid-d8/d69/classcvflann_1_1_k_means_index_1adcf3e940c1ab76474f113c4db65d36c5>`>& centers)
+
+Clustering function that takes a cut in the hierarchical k-means tree and return the clusters centers of that clustering. Params: numClusters = number of clusters to have in the clustering computed Returns: number of cluster centers
+
+.. index:: pair: function; getParameters
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a0951ee1b9c96014726e8da180ec241e3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`IndexParams<doxid-dc/d8c/namespacecvflann_1ad55c74ae3144004b728d68382edbca45>`
+	getParameters() const
+
+
+
+.. rubric:: Returns:
+
+The index parameters
+
+.. index:: pair: function; getType
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1aac9b9c22794a180a71d0a222cfbd9320:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`flann_algorithm_t<doxid-dc/d8c/namespacecvflann_1a4e3e6c98d774ea77fd7f0045c9bc7817>`
+	getType() const
+
+
+
+.. rubric:: Returns:
+
+The index type (kdtree, kmeans,...)
+
+.. index:: pair: function; loadIndex
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a11e0ff42576490042f640c2c382999d0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	loadIndex(FILE* stream)
+
+Loads the index from a stream.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- stream
+
+		- The stream from which the index is loaded
+
+.. index:: pair: function; saveIndex
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a4c388bc8fab9af7ec567e00366ea14f6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	saveIndex(FILE* stream)
+
+Saves the index to a stream.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- stream
+
+		- The stream to save the index to
+
+.. index:: pair: function; size
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1a050941f76b48af36b2337d7ef039c007:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`size_t<doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`
+	size() const
+
+Returns size of index.
+
+.. index:: pair: function; usedMemory
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1aa22a15553b3a035c9f1489e120b7bdac:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	int
+	usedMemory() const
+
+Computes the inde memory usage Returns: memory used by the index
+
+.. index:: pair: function; veclen
+.. _doxid-d8/d69/classcvflann_1_1_k_means_index_1aaad1e9d8b9ae1a5c463b0bdf53b0730d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	:ref:`size_t<doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`
+	veclen() const
+
+Returns the length of an index feature.
+

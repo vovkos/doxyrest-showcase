@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Adding borders to your images &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Affine Transformations" href="page_tutorial_warp_affine.html" />
+    <link rel="prev" title="Image Processing (imgproc module)" href="page_tutorial_table_of_content_imgproc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_warp_affine.html" title="Affine Transformations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_imgproc.html" title="Image Processing (imgproc module)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_imgproc.html"
+                        title="previous chapter">Image Processing (imgproc module)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_warp_affine.html"
+                        title="next chapter">Affine Transformations</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="adding-borders-to-your-images">
+<span id="doxid-d0-da1-tutorial-copy-make-border"></span><span id="index-0"></span><h1>Adding borders to your images</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga2ac1049c2c3dd25c2b41bffe17658a36"><span class="std std-ref">cv::copyMakeBorder</span></a> to set the borders (extra padding to your image).</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler.</p>
+<ol class="arabic">
+<li><p class="first">In our previous tutorial we learned to use convolution to operate on images. One problem that naturally arises is how to handle the boundaries. How can we convolve them if the evaluated points are at the edge of the image?</p>
+</li>
+<li><p class="first">What most of OpenCV functions do is to copy a given image onto another slightly larger image and then automatically pads the boundary (by any of the methods explained in the sample code just below). This way, the convolution can be performed over the needed pixels without problems (the extra padding is cut after the operation is done).</p>
+</li>
+<li><p class="first">In this tutorial, we will briefly explore two ways of defining the extra padding (border) for an image:</p>
+<ol class="arabic simple">
+<li><strong>BORDER_CONSTANT</strong> : Pad the image with a constant value (i.e. black or <span class="math notranslate nohighlight">\(0\)</span></li>
+<li><strong>BORDER_REPLICATE</strong> : The row or column at the very edge of the original is replicated to the extra border.</li>
+</ol>
+<p>This will be seen more clearly in the Code section.</p>
+</li>
+</ol>
+<p class="rubric">Code</p>
+<ol class="arabic">
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul>
+<li><p class="first">Load an image</p>
+</li>
+<li><p class="first">Let the user choose what kind of padding use in the input image. There are two options:</p>
+<ol class="arabic simple">
+<li><em>Constant value border</em> : Applies a padding of a constant value for the whole border. This value will be updated randomly each 0.5 seconds.</li>
+<li><em>Replicated border</em> : The border will be replicated from the pixel values at the edges of the original image.</li>
+</ol>
+<p>The user chooses either option by pressing ‘c’ (constant) or ‘r’ (replicate)</p>
+</li>
+<li><p class="first">The program finishes when the user presses ‘ESC’</p>
+</li>
+</ul>
+</li>
+<li><p class="first">The tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/copyMakeBorder_demo.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">borderType</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;copyMakeBorder Demo&quot;</span><span class="p">;</span>
+<a class="reference internal" href="class_cv_RNG.html#doxid-d3-df8-classcv-1-1-r-n-g"><span class="std std-ref">RNG</span></a><span></span> <span class="n">rng</span><span class="p">(</span><span class="mi">12345</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">printf</span><span class="p">(</span><span class="s">&quot; No data entered, please enter the path to an image file </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="n">printf</span><span class="p">(</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s"> </span><span class="se">\t</span><span class="s"> copyMakeBorder Demo: </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s"> -------------------- </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span> <span class="s">&quot; ** Press &#39;c&#39; to set the border to a random constant value </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span> <span class="s">&quot; ** Press &#39;r&#39; to set the border to be replicated </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span> <span class="s">&quot; ** Press &#39;ESC&#39; to exit the program </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+
+  <span class="n">top</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">);</span> <span class="n">bottom</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">);</span>
+  <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">);</span> <span class="n">right</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">);</span>
+
+  <span class="n">dst</span> <span class="o">=</span> <span class="n">src</span><span class="p">;</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(;;)</span>
+       <span class="p">{</span>
+         <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+         <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span>
+           <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+         <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;c&#39;</span> <span class="p">)</span>
+           <span class="p">{</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838"><span class="std std-ref">BORDER_CONSTANT</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+         <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span> <span class="p">)</span>
+           <span class="p">{</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5aa1de4cff95e3377d6d0cbe7569bd4e9f"><span class="std std-ref">BORDER_REPLICATE</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+
+         <span class="n">Scalar</span> <span class="n">value</span><span class="p">(</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span> <span class="p">);</span>
+
+         <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga2ac1049c2c3dd25c2b41bffe17658a36"><span class="std std-ref">copyMakeBorder</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">borderType</span><span class="p">,</span> <span class="n">value</span> <span class="p">);</span>
+
+         <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+       <span class="p">}</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">First we declare the variables we are going to use:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">borderType</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;copyMakeBorder Demo&quot;</span><span class="p">;</span>
+<span class="n">RNG</span> <span class="nf">rng</span><span class="p">(</span><span class="mi">12345</span><span class="p">);</span>
+</pre>
+<p>Especial attention deserves the variable <em>rng</em> which is a random number generator. We use it to generate the random border color, as we will see soon.</p>
+</li>
+<li><p class="first">As usual we load our source image <em>src</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+<span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot; No data entered, please enter the path to an image file </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">After giving a short intro of how to use the program, we create a window:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Now we initialize the argument that defines the size of the borders (<em>top</em>, <em>bottom</em>, <em>left</em> and <em>right</em>). We give them a value of 5% the size of <em>src</em>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">top</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><span class="n">rows</span><span class="p">);</span> <span class="n">bottom</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><span class="n">rows</span><span class="p">);</span>
+<span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><span class="n">cols</span><span class="p">);</span> <span class="n">right</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.05</span><span class="o">*</span><span class="n">src</span><span class="p">.</span><span class="n">cols</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">The program runs in a <strong>for</strong> loop. If the user presses ‘c’ or ‘r’, the <em>borderType</em> variable takes the value of <em>BORDER_CONSTANT</em> or <em>BORDER_REPLICATE</em> respectively:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;c&#39;</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838"><span class="std std-ref">BORDER_CONSTANT</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+<span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5aa1de4cff95e3377d6d0cbe7569bd4e9f"><span class="std std-ref">BORDER_REPLICATE</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">In each iteration (after 0.5 seconds), the variable <em>value</em> is updated…</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Scalar</span> <span class="nf">value</span><span class="p">(</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span> <span class="p">);</span>
+</pre>
+<p>with a random value generated by the <strong>RNG</strong> variable <em>rng</em>. This value is a number picked randomly in the range <span class="math notranslate nohighlight">\([0,255]\)</span></p>
+</li>
+<li><p class="first">Finally, we call the function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga2ac1049c2c3dd25c2b41bffe17658a36"><span class="std std-ref">cv::copyMakeBorder</span></a> to apply the respective padding:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga2ac1049c2c3dd25c2b41bffe17658a36"><span class="std std-ref">copyMakeBorder</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">borderType</span><span class="p">,</span> <span class="n">value</span> <span class="p">);</span>
+</pre>
+<p>The arguments are:</p>
+<ol class="arabic simple">
+<li><em>src</em> : Source image</li>
+<li><em>dst</em> : Destination image</li>
+<li><em>top</em>, <em>bottom</em>, <em>left</em>, <em>right</em> : Length in pixels of the borders at each side of the image. We define them as being 5% of the original size of the image.</li>
+<li><em>borderType</em> : Define what type of border is applied. It can be constant or replicate for this example.</li>
+<li><em>value</em> : If <em>borderType</em> is <em>BORDER_CONSTANT</em>, this is the value used to fill the border pixels.</li>
+</ol>
+</li>
+<li><p class="first">We display our output image in the image created previously</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+</pre>
+<p class="rubric">Results</p>
+</li>
+<li><p class="first">After compiling the code above, you can execute it giving as argument the path of an image. The result should be:</p>
+<ul class="simple">
+<li>By default, it begins with the border set to BORDER_CONSTANT. Hence, a succession of random colored borders will be shown.</li>
+<li>If you press ‘r’, the border will become a replica of the edge pixels.</li>
+<li>If you press ‘c’, the random colored borders will appear again</li>
+<li>If you press ‘ESC’ the program will exit.</li>
+</ul>
+<p>Below some screenshot showing how the border changes color and how the <em>BORDER_REPLICATE</em> option looks:</p>
+<img alt="_images/CopyMakeBorder_Tutorial_Results.jpg" src="_images/CopyMakeBorder_Tutorial_Results.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_warp_affine.html" title="Affine Transformations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_imgproc.html" title="Image Processing (imgproc module)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

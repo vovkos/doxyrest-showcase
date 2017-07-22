@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using a cv::cuda::GpuMat with thrust &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="High Level GUI and Media (highgui module)" href="page_tutorial_table_of_content_highgui.html" />
+    <link rel="prev" title="Similarity check (PNSR and SSIM) on the GPU" href="page_tutorial_gpu_basics_similarity.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_gpu_basics_similarity.html">Similarity check (PNSR and SSIM) on the GPU</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Using a cv::cuda::GpuMat with thrust</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a> &raquo;</li>
+        
+      <li>Using a cv::cuda::GpuMat with thrust</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-a-cv-cuda-gpumat-with-thrust">
+<span id="doxid-d8-db9-tutorial-gpu-thrust-interop"></span><span id="index-0"></span><h1>Using a cv::cuda::GpuMat with thrust</h1>
+<p class="rubric">Goal</p>
+<p>Thrust is an extremely powerful library for various cuda accelerated algorithms. However thrust is designed to work with vectors and not pitched matricies. The following tutorial will discuss wrapping <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">cv::cuda::GpuMat</span></a> ‘s into thrust iterators that can be used with thrust algorithms.</p>
+<p>This tutorial should show you how to:</p>
+<ul class="simple">
+<li>Wrap a GpuMat into a thrust iterator</li>
+<li>Fill a GpuMat with random numbers</li>
+<li>Sort a column of a GpuMat in place</li>
+<li>Copy values greater than 0 to a new gpu matrix</li>
+<li>Use streams with thrust</li>
+</ul>
+<p class="rubric">Wrapping a GpuMat into a thrust iterator</p>
+<p>The following code will produce an iterator for a GpuMat</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/*</span>
+<span class="cm">    @Brief GpuMatBeginItr returns a thrust compatible iterator to the beginning of a GPU mat&#39;s memory.</span>
+<span class="cm">    @Param mat is the input matrix</span>
+<span class="cm">    @Param channel is the channel of the matrix that the iterator is accessing.  If set to -1, the iterator will access every element in sequential order</span>
+<span class="cm">*/</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">thrust</span><span class="o">::</span><span class="n">permutation_iterator</span><span class="o">&lt;</span><span class="n">thrust</span><span class="o">::</span><span class="n">device_ptr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">thrust</span><span class="o">::</span><span class="n">transform_iterator</span><span class="o">&lt;</span><span class="n">step_functor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">thrust</span><span class="o">::</span><span class="n">counting_iterator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span>  <span class="n">GpuMatBeginItr</span><span class="p">(</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">cv::cuda::GpuMat</span></a><span></span> <span class="n">mat</span><span class="p">,</span> <span class="kt">int</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">channel</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a408e22ed824d1ddf59f58bda895017a8"><span class="std std-ref">reshape</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1aaa229d9b2b2f60ecae3b5fbf0603c1b9"><span class="std std-ref">depth</span></a><span></span><span class="p">()</span> <span class="o">==</span> <a class="reference internal" href="class_cv_DataType.html#doxid-da-da2-classcv-1-1-data-type"><span class="std std-ref">cv::DataType&lt;T&gt;::depth</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a538fc6d75281b4ecb7ad50e4555f3fc6"><span class="std std-ref">channels</span></a><span></span><span class="p">());</span>
+    <span class="k">return</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_permutation_iterator</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">device_pointer_cast</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1aa83fa0825c60eb22a11a87a98c3cd5ed"><span class="std std-ref">ptr</span></a><span></span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">channel</span><span class="p">),</span>
+        <span class="n">thrust</span><span class="o">::</span><span class="n">make_transform_iterator</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">step_functor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a9265a32d8d29fe29804a0cb8f57213e9"><span class="std std-ref">cols</span></a><span></span><span class="p">,</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1af46427ea4c9b3fe7687e3afa84baede3"><span class="std std-ref">step</span></a><span></span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a538fc6d75281b4ecb7ad50e4555f3fc6"><span class="std std-ref">channels</span></a><span></span><span class="p">())));</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/*</span>
+<span class="cm">@Brief GpuMatEndItr returns a thrust compatible iterator to the end of a GPU mat&#39;s memory.</span>
+<span class="cm">@Param mat is the input matrix</span>
+<span class="cm">@Param channel is the channel of the matrix that the iterator is accessing.  If set to -1, the iterator will access every element in sequential order</span>
+<span class="cm">*/</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">thrust</span><span class="o">::</span><span class="n">permutation_iterator</span><span class="o">&lt;</span><span class="n">thrust</span><span class="o">::</span><span class="n">device_ptr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">thrust</span><span class="o">::</span><span class="n">transform_iterator</span><span class="o">&lt;</span><span class="n">step_functor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">thrust</span><span class="o">::</span><span class="n">counting_iterator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span>  <span class="n">GpuMatEndItr</span><span class="p">(</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">cv::cuda::GpuMat</span></a><span></span> <span class="n">mat</span><span class="p">,</span> <span class="kt">int</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">channel</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a408e22ed824d1ddf59f58bda895017a8"><span class="std std-ref">reshape</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1aaa229d9b2b2f60ecae3b5fbf0603c1b9"><span class="std std-ref">depth</span></a><span></span><span class="p">()</span> <span class="o">==</span> <a class="reference internal" href="class_cv_DataType.html#doxid-da-da2-classcv-1-1-data-type"><span class="std std-ref">cv::DataType&lt;T&gt;::depth</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a538fc6d75281b4ecb7ad50e4555f3fc6"><span class="std std-ref">channels</span></a><span></span><span class="p">());</span>
+    <span class="k">return</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_permutation_iterator</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">device_pointer_cast</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1aa83fa0825c60eb22a11a87a98c3cd5ed"><span class="std std-ref">ptr</span></a><span></span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">channel</span><span class="p">),</span>
+        <span class="n">thrust</span><span class="o">::</span><span class="n">make_transform_iterator</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a7385022ca9114e5f5058dbb2f12467cb"><span class="std std-ref">rows</span></a><span></span><span class="o">*</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a9265a32d8d29fe29804a0cb8f57213e9"><span class="std std-ref">cols</span></a><span></span><span class="p">),</span> <span class="n">step_functor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a9265a32d8d29fe29804a0cb8f57213e9"><span class="std std-ref">cols</span></a><span></span><span class="p">,</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1af46427ea4c9b3fe7687e3afa84baede3"><span class="std std-ref">step</span></a><span></span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a538fc6d75281b4ecb7ad50e4555f3fc6"><span class="std std-ref">channels</span></a><span></span><span class="p">())));</span>
+<span class="p">}</span>
+</pre>
+<p>Our goal is to have an iterator that will start at the beginning of the matrix, and increment correctly to access continuous matrix elements. This is trivial for a continuous row, but how about for a column of a pitched matrix? To do this we need the iterator to be aware of the matrix dimensions and step. This information is embedded in the step_functor.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nl">step_functor</span> <span class="p">:</span> <span class="k">public</span> <span class="n">thrust</span><span class="o">::</span><span class="n">unary_function</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">columns</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">step</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">channels</span><span class="p">;</span>
+    <span class="n">__host__</span> <span class="n">__device__</span> <span class="nf">step_functor</span><span class="p">(</span><span class="kt">int</span> <span class="n">columns_</span><span class="p">,</span> <span class="kt">int</span> <span class="n">step_</span><span class="p">,</span> <span class="kt">int</span> <span class="n">channels_</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="n">columns</span><span class="p">(</span><span class="n">columns_</span><span class="p">),</span> <span class="n">step</span><span class="p">(</span><span class="n">step_</span><span class="p">),</span> <span class="n">channels</span><span class="p">(</span><span class="n">channels_</span><span class="p">)</span>  <span class="p">{</span>   <span class="p">};</span>
+    <span class="n">__host__</span> <span class="n">step_functor</span><span class="p">(</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">cv::cuda::GpuMat</span></a><span></span><span class="o">&amp;</span> <span class="n">mat</span><span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1aaa229d9b2b2f60ecae3b5fbf0603c1b9"><span class="std std-ref">depth</span></a><span></span><span class="p">()</span> <span class="o">==</span> <a class="reference internal" href="class_cv_DataType.html#doxid-da-da2-classcv-1-1-data-type"><span class="std std-ref">cv::DataType&lt;T&gt;::depth</span></a><span></span><span class="p">);</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a9265a32d8d29fe29804a0cb8f57213e9"><span class="std std-ref">cols</span></a><span></span><span class="p">;</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1af46427ea4c9b3fe7687e3afa84baede3"><span class="std std-ref">step</span></a><span></span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="n">mat</span><span class="p">.</span><a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat-1a538fc6d75281b4ecb7ad50e4555f3fc6"><span class="std std-ref">channels</span></a><span></span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">__host__</span> <span class="n">__device__</span>
+        <span class="kt">int</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">row</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">columns</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">%</span> <span class="n">columns</span><span class="p">)</span><span class="o">*</span><span class="n">channels</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">idx</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+<p>The step functor takes in an index value and returns the appropriate offset from the beginning of the matrix. The counting iterator simply increments over the range of pixel elements. Combined into the transform_iterator we have an iterator that counts from 0 to M*N and correctly increments to account for the pitched memory of a GpuMat. Unfortunately this does not include any memory location information, for that we need a thrust::device_ptr. By combining a device pointer with the transform_iterator we can point thrust to the first element of our matrix and have it step accordingly.</p>
+<p class="rubric">Fill a GpuMat with random numbers</p>
+<p>Now that we have some nice functions for making iterators for thrust, lets use them to do some things OpenCV can’t do. Unfortunately at the time of this writing, OpenCV doesn’t have any Gpu random number generation. Thankfully thrust does and it’s now trivial to interop between the two. Example taken from <a class="reference external" href="http://stackoverflow.com/questions/12614164/generating-a-random-number-vector-between-0-and-1-0-using-thrust">http://stackoverflow.com/questions/12614164/generating-a-random-number-vector-between-0-and-1-0-using-thrust</a></p>
+<p>First we need to write a functor that will produce our random values.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">struct</span> <span class="n">prg</span>
+<span class="p">{</span>
+  <span class="kt">float</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+
+  <span class="n">__host__</span> <span class="n">__device__</span>
+    <span class="nf">prg</span><span class="p">(</span><span class="kt">float</span> <span class="n">_a</span> <span class="o">=</span> <span class="mf">0.f</span><span class="p">,</span> <span class="kt">float</span> <span class="n">_b</span> <span class="o">=</span> <span class="mf">1.f</span><span class="p">)</span> <span class="o">:</span> <span class="n">a</span><span class="p">(</span><span class="n">_a</span><span class="p">),</span> <span class="n">b</span><span class="p">(</span><span class="n">_b</span><span class="p">)</span> <span class="p">{};</span>
+
+  <span class="n">__host__</span> <span class="n">__device__</span>
+    <span class="kt">float</span> <span class="nf">operator</span><span class="p">()(</span><span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="n">thrust</span><span class="o">::</span><span class="n">default_random_engine</span> <span class="n">rng</span><span class="p">;</span>
+    <span class="n">thrust</span><span class="o">::</span><span class="n">uniform_real_distribution</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">dist</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+    <span class="n">rng</span><span class="p">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">dist</span><span class="p">(</span><span class="n">rng</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+<p>This will take in an integer value and output a value between a and b. Now we will populate our matrix with values between 0 and 10 with a thrust transform.</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">{</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">d_value</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">CV_32F</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">valueBegin</span> <span class="o">=</span> <span class="n">GpuMatBeginItr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_value</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">valueEnd</span> <span class="o">=</span> <span class="n">GpuMatEndItr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_value</span><span class="p">);</span>
+  <span class="n">thrust</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="n">d_value</span><span class="p">.</span><span class="n">cols</span><span class="p">),</span> <span class="n">valueBegin</span><span class="p">,</span> <span class="n">prg</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+
+  <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">h_value</span><span class="p">(</span><span class="n">d_value</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Sort a column of a GpuMat in place</p>
+<p>Lets fill matrix elements with random values and an index. Afterwards we will sort the random numbers and the indecies.</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">{</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">d_data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">CV_32SC2</span><span class="p">);</span>
+  <span class="c1">// Thrust compatible begin and end iterators to channel 1 of this matrix</span>
+  <span class="k">auto</span> <span class="n">keyBegin</span> <span class="o">=</span> <span class="n">GpuMatBeginItr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_data</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">keyEnd</span> <span class="o">=</span> <span class="n">GpuMatEndItr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_data</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="c1">// Thrust compatible begin and end iterators to channel 0 of this matrix</span>
+  <span class="k">auto</span> <span class="n">idxBegin</span> <span class="o">=</span> <span class="n">GpuMatBeginItr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_data</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">idxEnd</span> <span class="o">=</span> <span class="n">GpuMatEndItr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_data</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="c1">// Fill the index channel with a sequence of numbers from 0 to 100</span>
+  <span class="n">thrust</span><span class="o">::</span><span class="n">sequence</span><span class="p">(</span><span class="n">idxBegin</span><span class="p">,</span> <span class="n">idxEnd</span><span class="p">);</span>
+  <span class="c1">// Fill the key channel with random numbers between 0 and 10.  A counting iterator is used here to give an integer value for each location as an input to prg::operator()</span>
+  <span class="n">thrust</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="n">d_data</span><span class="p">.</span><span class="n">cols</span><span class="p">),</span> <span class="n">keyBegin</span><span class="p">,</span> <span class="n">prg</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">));</span>
+  <span class="c1">// Sort the key channel and index channel such that the keys and indecies stay together</span>
+  <span class="n">thrust</span><span class="o">::</span><span class="n">sort_by_key</span><span class="p">(</span><span class="n">keyBegin</span><span class="p">,</span> <span class="n">keyEnd</span><span class="p">,</span> <span class="n">idxBegin</span><span class="p">);</span>
+
+  <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">h_idx</span><span class="p">(</span><span class="n">d_data</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Copy values greater than 0 to a new gpu matrix while using streams</p>
+<p>In this example we’re going to see how cv::cuda::Streams can be used with thrust. Unfortunately this specific example uses functions that must return results to the CPU so it isn’t the optimal use of streams.</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">{</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">d_value</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">CV_32F</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">valueBegin</span> <span class="o">=</span> <span class="n">GpuMatBeginItr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_value</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">valueEnd</span> <span class="o">=</span> <span class="n">GpuMatEndItr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_value</span><span class="p">);</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">Stream</span> <span class="n">stream</span><span class="p">;</span>
+  <span class="c1">//! [random_gen_stream]</span>
+  <span class="c1">// Same as the random generation code from before except now the transformation is being performed on a stream</span>
+  <span class="n">thrust</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">par</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">StreamAccessor</span><span class="o">::</span><span class="n">getStream</span><span class="p">(</span><span class="n">stream</span><span class="p">)),</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="n">d_value</span><span class="p">.</span><span class="n">cols</span><span class="p">),</span> <span class="n">valueBegin</span><span class="p">,</span> <span class="n">prg</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+  <span class="c1">//! [random_gen_stream]</span>
+  <span class="c1">// Count the number of values we are going to copy</span>
+  <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="n">thrust</span><span class="o">::</span><span class="n">count_if</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">par</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">StreamAccessor</span><span class="o">::</span><span class="n">getStream</span><span class="p">(</span><span class="n">stream</span><span class="p">)),</span> <span class="n">valueBegin</span><span class="p">,</span> <span class="n">valueEnd</span><span class="p">,</span> <span class="n">pred_greater</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">0.0</span><span class="p">));</span>
+  <span class="c1">// Allocate a destination for copied values</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">d_valueGreater</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">CV_32F</span><span class="p">);</span>
+  <span class="c1">// Copy values that satisfy the predicate.</span>
+  <span class="n">thrust</span><span class="o">::</span><span class="n">copy_if</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">par</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">StreamAccessor</span><span class="o">::</span><span class="n">getStream</span><span class="p">(</span><span class="n">stream</span><span class="p">)),</span> <span class="n">valueBegin</span><span class="p">,</span> <span class="n">valueEnd</span><span class="p">,</span> <span class="n">GpuMatBeginItr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">d_valueGreater</span><span class="p">),</span> <span class="n">pred_greater</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">0.0</span><span class="p">));</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">h_greater</span><span class="p">(</span><span class="n">d_valueGreater</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>First we will populate a GPU mat with randomly generated data between -1 and 1 on a stream.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Same as the random generation code from before except now the transformation is being performed on a stream</span>
+<span class="n">thrust</span><span class="o">::</span><span class="n">transform</span><span class="p">(</span><span class="n">thrust</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">par</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">StreamAccessor</span><span class="o">::</span><span class="n">getStream</span><span class="p">(</span><span class="n">stream</span><span class="p">)),</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">thrust</span><span class="o">::</span><span class="n">make_counting_iterator</span><span class="p">(</span><span class="n">d_value</span><span class="p">.</span><span class="n">cols</span><span class="p">),</span> <span class="n">valueBegin</span><span class="p">,</span> <span class="n">prg</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+</pre>
+<p>Notice the use of thrust::system::cuda::par.on(…), this creates an execution policy for executing thrust code on a stream. There is a bug in the version of thrust distributed with the cuda toolkit, as of version 7.5 this has not been fixed. This bug causes code to not execute on streams. The bug can however be fixed by using the newest version of thrust from the git repository. (<a class="reference external" href="http://github.com/thrust/thrust.git">http://github.com/thrust/thrust.git</a>) Next we will determine how many values are greater than 0 by using thrust::count_if with the following predicate:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">pred_greater</span>
+<span class="p">{</span>
+  <span class="n">T</span> <span class="n">value</span><span class="p">;</span>
+  <span class="n">__host__</span> <span class="n">__device__</span> <span class="nf">pred_greater</span><span class="p">(</span><span class="n">T</span> <span class="n">value_</span><span class="p">)</span> <span class="o">:</span> <span class="n">value</span><span class="p">(</span><span class="n">value_</span><span class="p">){}</span>
+  <span class="n">__host__</span> <span class="n">__device__</span> <span class="kt">bool</span> <span class="nf">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">value</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+<p>We will use those results to create an output buffer for storing the copied values, we will then use copy_if with the same predicate to populate the output buffer. Lastly we will download the values into a CPU mat for viewing.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_table_of_content_highgui.html" class="btn btn-neutral float-right" title="High Level GUI and Media (highgui module)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_gpu_basics_similarity.html" class="btn btn-neutral float-left" title="Similarity check (PNSR and SSIM) on the GPU" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

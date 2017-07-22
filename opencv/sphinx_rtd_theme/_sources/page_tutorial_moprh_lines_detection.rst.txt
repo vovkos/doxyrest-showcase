@@ -1,0 +1,336 @@
+.. index:: pair: page; Extract horizontal and vertical lines by using morphological operations
+.. _doxid-d1/dee/tutorial_moprh_lines_detection:
+
+Extract horizontal and vertical lines by using morphological operations
+=======================================================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Apply two very common morphology operators (i.e. Dilation and Erosion), with the creation of custom kernels, in order to extract straight lines on the horizontal and vertical axes. For this purpose, you will use the following OpenCV functions:
+  
+  * :ref:`cv::erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`
+  
+  * :ref:`cv::dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`
+  
+  * :ref:`cv::getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`
+  
+  in an example where your goal will be to extract the music notes from a music sheet.
+
+.. rubric:: Theory
+
+.. rubric:: Morphology Operations
+
+Morphology is a set of image processing operations that process images based on predefined *structuring elements* known also as kernels. The value of each pixel in the output image is based on a comparison of the corresponding pixel in the input image with its neighbors. By choosing the size and shape of the kernel, you can construct a morphological operation that is sensitive to specific shapes regarding the input image.
+
+Two of the most basic morphological operations are dilation and erosion. Dilation adds pixels to the boundaries of the object in an image, while erosion does exactly the opposite. The amount of pixels added or removed, respectively depends on the size and shape of the structuring element used to process the image. In general the rules followed from these two operations have as follows:
+
+* **Dilation** : The value of the output pixel is the *maximum* value of all the pixels that fall within the structuring element's size and shape. For example in a binary image, if any of the pixels of the input image falling within the range of the kernel is set to the value 1, the corresponding pixel of the output image will be set to 1 as well. The latter applies to any type of image (e.g. grayscale, bgr, etc).
+  
+  .. image:: morph21.gif
+  	:alt: Dilation on a Binary Image
+  
+  
+  
+  .. image:: morph6.gif
+  	:alt: Dilation on a Grayscale Image
+
+* **Erosion** : The vise versa applies for the erosion operation. The value of the output pixel is the *minimum* value of all the pixels that fall within the structuring element's size and shape. Look the at the example figures below:
+  
+  .. image:: morph211.png
+  	:alt: Erosion on a Binary Image
+  
+  
+  
+  .. image:: morph61.png
+  	:alt: Erosion on a Grayscale Image
+  
+  
+  
+  .. rubric:: Structuring Elements
+
+As it can be seen above and in general in any morphological operation the structuring element used to probe the input image, is the most important part.
+
+A structuring element is a matrix consisting of only 0's and 1's that can have any arbitrary shape and size. Typically are much smaller than the image being processed, while the pixels with values of 1 define the neighborhood. The center pixel of the structuring element, called the origin, identifies the pixel of interest the pixel being processed.
+
+For example, the following illustrates a diamond-shaped structuring element of 7x7 size.
+
+.. image:: morph12.gif
+	:alt: A Diamond-Shaped Structuring Element and its Origin
+
+A structuring element can have many common shapes, such as lines, diamonds, disks, periodic lines, and circles and sizes. You typically choose a structuring element the same size and shape as the objects you want to process/extract in the input image. For example, to find lines in an image, create a linear structuring element as you will see later.
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Morphology_3.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	
+	#include <iostream>
+	#include <opencv2/opencv.hpp>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	int main(int, char** argv)
+	{
+	    // Load the image
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1]);
+	
+	    // Check if image is loaded fine
+	    if(!src.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>`)
+	        cerr << "Problem loading image!!!" << endl;
+	
+	    // Show source image
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("src", src);
+	
+	    // Transform source image to gray if it is not
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` gray;
+	
+	    if (src.:ref:`channels <doxid-db/de6/classcv_1_1_mat_1aa11336b9ac538e0475d840657ce164be>`() == 3)
+	    {
+	        :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(src, gray, :ref:`CV_BGR2GRAY <doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd>`);
+	    }
+	    else
+	    {
+	        gray = src;
+	    }
+	
+	    // Show gray image
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("gray", gray);
+	
+	    // Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` bw;
+	    :ref:`adaptiveThreshold <doxid-d7/d1b/group__imgproc__misc_1ga72b913f352e4a1b1b397736707afcde3>`(~gray, bw, 255, :ref:`CV_ADAPTIVE_THRESH_MEAN_C <doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`, :ref:`THRESH_BINARY <doxid-d7/d1b/group__imgproc__misc_1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59>`, 15, -2);
+	
+	    // Show binary image
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("binary", bw);
+	
+	    // Create the images that will use to extract the horizontal and vertical lines
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` horizontal = bw.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` vertical = bw.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+	
+	    // Specify size on horizontal axis
+	    int horizontalsize = horizontal.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` / 30;
+	
+	    // Create structure element for extracting horizontal lines through morphology operations
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` horizontalStructure = :ref:`getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`(:ref:`MORPH_RECT <doxid-d4/d86/group__imgproc__filter_1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f>`, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(horizontalsize,1));
+	
+	    // Apply morphology operations
+	    :ref:`erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`(horizontal, horizontal, horizontalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+	    :ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(horizontal, horizontal, horizontalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+	
+	    // Show extracted horizontal lines
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("horizontal", horizontal);
+	
+	    // Specify size on vertical axis
+	    int verticalsize = vertical.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` / 30;
+	
+	    // Create structure element for extracting vertical lines through morphology operations
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` verticalStructure = :ref:`getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`(:ref:`MORPH_RECT <doxid-d4/d86/group__imgproc__filter_1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f>`, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( 1,verticalsize));
+	
+	    // Apply morphology operations
+	    :ref:`erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`(vertical, vertical, verticalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+	    :ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(vertical, vertical, verticalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+	
+	    // Show extracted vertical lines
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("vertical", vertical);
+	
+	    // Inverse vertical image
+	    :ref:`bitwise_not <doxid-d2/de8/group__core__array_1ga0002cf8b418479f4cb49a75442baee2f>`(vertical, vertical);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("vertical_bit", vertical);
+	
+	    // Extract edges and smooth image according to the logic
+	    // 1. extract edges
+	    // 2. dilate(edges)
+	    // 3. src.copyTo(smooth)
+	    // 4. blur smooth img
+	    // 5. smooth.copyTo(src, edges)
+	
+	    // Step 1
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` edges;
+	    :ref:`adaptiveThreshold <doxid-d7/d1b/group__imgproc__misc_1ga72b913f352e4a1b1b397736707afcde3>`(vertical, edges, 255, :ref:`CV_ADAPTIVE_THRESH_MEAN_C <doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`, :ref:`THRESH_BINARY <doxid-d7/d1b/group__imgproc__misc_1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59>`, 3, -2);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("edges", edges);
+	
+	    // Step 2
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` kernel = Mat::ones(2, 2, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+	    :ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(edges, edges, kernel);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("dilate", edges);
+	
+	    // Step 3
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` smooth;
+	    vertical.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(smooth);
+	
+	    // Step 4
+	    :ref:`blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`(smooth, smooth, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(2, 2));
+	
+	    // Step 5
+	    smooth.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(vertical, edges);
+	
+	    // Show final result
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("smooth", vertical);
+	
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	    return 0;
+	}
+
+.. rubric:: Explanation / Result
+
+#. Load the source image and check if it is loaded without any problem, then show it:
+   
+   .. ref-code-block:: cpp
+   
+   	// Load the image
+   	Mat src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1]);
+   
+   	// Check if image is loaded fine
+   	if(!src.data)
+   	    cerr << "Problem loading image!!!" << endl;
+   
+   	// Show source image
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("src", src);
+   
+   
+   
+   .. image:: src.png
+
+#. Then transform image to grayscale if it not already:
+   
+   .. ref-code-block:: cpp
+   
+   	// Transform source image to gray if it is not
+   	Mat gray;
+   
+   	if (src.channels() == 3)
+   	{
+   	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(src, gray, :ref:`CV_BGR2GRAY <doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd>`);
+   	}
+   	else
+   	{
+   	    gray = src;
+   	}
+   
+   	// Show gray image
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("gray", gray);
+   
+   
+   
+   .. image:: gray.png
+
+#. Afterwards transform grayscale image to binary. Notice the ~ symbol which indicates that we use the inverse (i.e. bitwise_not) version of it:
+   
+   .. ref-code-block:: cpp
+   
+   	// Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol
+   	Mat bw;
+   	:ref:`adaptiveThreshold <doxid-d7/d1b/group__imgproc__misc_1ga72b913f352e4a1b1b397736707afcde3>`(~gray, bw, 255, :ref:`CV_ADAPTIVE_THRESH_MEAN_C <doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`, :ref:`THRESH_BINARY <doxid-d7/d1b/group__imgproc__misc_1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59>`, 15, -2);
+   
+   	// Show binary image
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("binary", bw);
+   
+   
+   
+   .. image:: binary.png
+
+#. Now we are ready to apply morphological operations in order to extract the horizontal and vertical lines and as a consequence to separate the the music notes from the music sheet, but first let's initialize the output images that we will use for that reason:
+   
+   .. ref-code-block:: cpp
+   
+   	// Create the images that will use to extract the horizontal and vertical lines
+   	Mat horizontal = bw.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+   	Mat vertical = bw.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+
+#. As we specified in the theory in order to extract the object that we desire, we need to create the corresponding structure element. Since here we want to extract the horizontal lines, a corresponding structure element for that purpose will have the following shape:
+   
+   .. image:: linear_horiz.png
+   
+   and in the source code this is represented by the following code snippet:
+   
+   .. ref-code-block:: cpp
+   
+   	// Specify size on horizontal axis
+   	int horizontalsize = horizontal.cols / 30;
+   
+   	// Create structure element for extracting horizontal lines through morphology operations
+   	Mat horizontalStructure = :ref:`getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`(:ref:`MORPH_RECT <doxid-d4/d86/group__imgproc__filter_1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f>`, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(horizontalsize,1));
+   
+   	// Apply morphology operations
+   	:ref:`erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`(horizontal, horizontal, horizontalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+   	:ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(horizontal, horizontal, horizontalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+   
+   	// Show extracted horizontal lines
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("horizontal", horizontal);
+   
+   
+   
+   .. image:: horiz.png
+
+#. The same applies for the vertical lines, with the corresponding structure element:
+   
+   .. image:: linear_vert.png
+   
+   and again this is represented as follows:
+   
+   .. ref-code-block:: cpp
+   
+   	// Specify size on vertical axis
+   	int verticalsize = vertical.rows / 30;
+   
+   	// Create structure element for extracting vertical lines through morphology operations
+   	Mat verticalStructure = :ref:`getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`(:ref:`MORPH_RECT <doxid-d4/d86/group__imgproc__filter_1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f>`, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( 1,verticalsize));
+   
+   	// Apply morphology operations
+   	:ref:`erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`(vertical, vertical, verticalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+   	:ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(vertical, vertical, verticalStructure, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1, -1));
+   
+   	// Show extracted vertical lines
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("vertical", vertical);
+   
+   
+   
+   .. image:: vert.png
+
+#. As you can see we are almost there. However, at that point you will notice that the edges of the notes are a bit rough. For that reason we need to refine the edges in order to obtain a smoother result:
+   
+   .. ref-code-block:: cpp
+   
+   	// Inverse vertical image
+   	:ref:`bitwise_not <doxid-d2/de8/group__core__array_1ga0002cf8b418479f4cb49a75442baee2f>`(vertical, vertical);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("vertical_bit", vertical);
+   
+   	// Extract edges and smooth image according to the logic
+   	// 1. extract edges
+   	// 2. dilate(edges)
+   	// 3. src.copyTo(smooth)
+   	// 4. blur smooth img
+   	// 5. smooth.copyTo(src, edges)
+   
+   	// Step 1
+   	Mat edges;
+   	:ref:`adaptiveThreshold <doxid-d7/d1b/group__imgproc__misc_1ga72b913f352e4a1b1b397736707afcde3>`(vertical, edges, 255, :ref:`CV_ADAPTIVE_THRESH_MEAN_C <doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`, :ref:`THRESH_BINARY <doxid-d7/d1b/group__imgproc__misc_1ggaa9e58d2860d4afa658ef70a9b1115576a147222a96556ebc1d948b372bcd7ac59>`, 3, -2);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("edges", edges);
+   
+   	// Step 2
+   	Mat kernel = Mat::ones(2, 2, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`);
+   	:ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(edges, edges, kernel);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("dilate", edges);
+   
+   	// Step 3
+   	Mat smooth;
+   	vertical.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(smooth);
+   
+   	// Step 4
+   	:ref:`blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`(smooth, smooth, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(2, 2));
+   
+   	// Step 5
+   	smooth.copyTo(vertical, edges);
+   
+   	// Show final result
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("smooth", vertical);
+   
+   
+   
+   .. image:: smooth.png
+

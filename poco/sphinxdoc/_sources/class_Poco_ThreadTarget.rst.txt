@@ -1,0 +1,105 @@
+.. index:: pair: class; Poco::ThreadTarget
+.. _doxid-class_poco_1_1_thread_target:
+
+class Poco::ThreadTarget
+========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This adapter simplifies using static member functions as well as standalone functions as targets for threads. :ref:`More...<details-class_poco_1_1_thread_target>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ThreadTarget.h>
+	
+	class ThreadTarget: public :ref:`Poco::Runnable<doxid-class_poco_1_1_runnable>`
+	{
+	public:
+		// typedefs
+	
+		typedef void (*:target:`Callback<doxid-class_poco_1_1_thread_target_1a7ba2c8171f55f553ada3b9d911422e59>`)();
+
+		// construction
+	
+		:target:`ThreadTarget<doxid-class_poco_1_1_thread_target_1a41f2f4a84ef79f26dc48ac6e0a456953>`(:ref:`Callback<doxid-class_poco_1_1_thread_target_1a7ba2c8171f55f553ada3b9d911422e59>` method);
+		:target:`ThreadTarget<doxid-class_poco_1_1_thread_target_1aab9f961a86c65821a3e821e3373efb84>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` ThreadTarget& te);
+
+		// methods
+	
+		ThreadTarget&
+		:target:`operator=<doxid-class_poco_1_1_thread_target_1aaf9de5d24e93bcd9b26cbb1a3357465b>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` ThreadTarget& te);
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_thread_target_1abd3e3769a2fbbd61c5b822f9b9acd5ff>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>`() = 0;
+
+.. _details-class_poco_1_1_thread_target:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This adapter simplifies using static member functions as well as standalone functions as targets for threads.
+
+Note that it is possible to pass those entities directly to :ref:`Thread::start() <doxid-class_poco_1_1_thread_1aca167199ed123ca70ef94b166806321a>`. This adapter is provided as a convenience for higher abstraction level scenarios where :ref:`Runnable <doxid-class_poco_1_1_runnable>` abstract class is used.
+
+For using a non-static member function as a thread target, please see the :ref:`RunnableAdapter <doxid-class_poco_1_1_runnable_adapter>` class.
+
+Usage:
+
+.. ref-code-block:: cpp
+
+	class MyObject
+	{
+	    static void doSomething() {}
+	};
+	ThreadTarget ra(&MyObject::doSomething);
+	Thread thr;
+	thr.start(ra);
+
+or:
+
+.. ref-code-block:: cpp
+
+	void doSomething() {}
+	
+	ThreadTarget ra(doSomething);
+	Thread thr;
+	thr.start(ra);
+
+Methods
+-------
+
+.. index:: pair: function; run
+.. _doxid-class_poco_1_1_thread_target_1abd3e3769a2fbbd61c5b822f9b9acd5ff:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	run()
+
+Do whatever the thread needs to do.
+
+Must be overridden by subclasses.
+

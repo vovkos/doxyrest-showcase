@@ -1,0 +1,339 @@
+.. index:: pair: page; Reading Geospatial Raster files with GDAL
+.. _doxid-d7/d73/tutorial_raster_io_gdal:
+
+Reading Geospatial Raster files with GDAL
+=========================================
+
+Geospatial raster data is a heavily used product in Geographic Information Systems and Photogrammetry. Raster data typically can represent imagery and Digital Elevation Models (DEM). The standard library for loading GIS imagery is the Geographic Data Abstraction Library `(GDAL) <http://www.gdal.org>`__. In this example, we will show techniques for loading GIS raster formats using native OpenCV functions. In addition, we will show some an example of how OpenCV can use this data for novel and interesting purposes.
+
+.. rubric:: Goals
+
+The primary objectives for this tutorial:
+
+* How to use OpenCV :ref:`imread <doxid-d4/da8/group__imgcodecs_1imread>` to load satellite imagery.
+
+* How to use OpenCV :ref:`imread <doxid-d4/da8/group__imgcodecs_1imread>` to load SRTM Digital Elevation Models
+
+* Given the corner coordinates of both the image and DEM, correllate the elevation data to the image to find elevations for each pixel.
+
+* Show a basic, easy-to-implement example of a terrain heat map.
+
+* Show a basic use of DEM data coupled with ortho-rectified imagery.
+
+To implement these goals, the following code takes a Digital Elevation Model as well as a GeoTiff image of San Francisco as input. The image and DEM data is processed and generates a terrain heat map of the image as well as labels areas of the city which would be affected should the water level of the bay rise 10, 50, and 100 meters.
+
+.. rubric:: Code
+
+.. ref-code-block:: cpp
+
+	/*
+	 * gdal_image.cpp -- Load GIS data into OpenCV Containers using the Geospatial Data Abstraction Library
+	*/
+	
+	// OpenCV Headers
+	#include "opencv2/core.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	// C++ Standard Libraries
+	#include <cmath>
+	#include <iostream>
+	#include <stdexcept>
+	#include <vector>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	// define the corner points
+	//    Note that GDAL library can natively determine this
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` tl( -122.441017, 37.815664 );
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` tr( -122.370919, 37.815311 );
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` bl( -122.441533, 37.747167 );
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` br( -122.3715,   37.746814 );
+	
+	// determine dem corners
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` dem_bl( -122.0, 38);
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` dem_tr( -123.0, 37);
+	
+	// range of the heat map colors
+	std::vector<std::pair<cv::Vec3b,double> > color_range;
+	
+	
+	// List of all function prototypes
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` lerp( const :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>`&, const :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>`&, const double& );
+	
+	:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>` get_dem_color( const double& );
+	
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` world2dem( const :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>`&, const :ref:`cv::Size <doxid-dd/da0/classcv_1_1_size__>`&);
+	
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` pixel2world( const int&, const int&, const :ref:`cv::Size <doxid-dd/da0/classcv_1_1_size__>`& );
+	
+	void add_color( :ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`& pix, const :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& b, const :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& g, const :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& r );
+	
+	
+	
+	/*
+	 * Linear Interpolation
+	 * p1 - Point 1
+	 * p2 - Point 2
+	 * t  - Ratio from Point 1 to Point 2
+	*/
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` lerp( :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` const& p1, :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` const& p2, const double& t ){
+	    return :ref:`cv::Point2d <doxid-dc/d84/group__core__basic_1ga32986d8c6fd05949688352abd112509f>`( ((1-t)*p1.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`) + (t*p2.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`),
+	                        ((1-t)*p1.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`) + (t*p2.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`));
+	}
+	
+	/*
+	 * Interpolate Colors
+	*/
+	template <typename DATATYPE, int N>
+	:ref:`cv::Vec\<DATATYPE,N> <doxid-db/d93/classcv_1_1_vec>` lerp( :ref:`cv::Vec\<DATATYPE,N> <doxid-db/d93/classcv_1_1_vec>` const& minColor,
+	                          :ref:`cv::Vec\<DATATYPE,N> <doxid-db/d93/classcv_1_1_vec>` const& maxColor,
+	                          double const& t ){
+	
+	    :ref:`cv::Vec\<DATATYPE,N> <doxid-db/d93/classcv_1_1_vec>` output;
+	    for( int i=0; i<N; i++ ){
+	        output[i] = (:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`)(((1-t)*minColor[i]) + (t * maxColor[i]));
+	    }
+	    return output;
+	}
+	
+	/*
+	 * Compute the dem color
+	*/
+	:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>` get_dem_color( const double& elevation ){
+	
+	    // if the elevation is below the minimum, return the minimum
+	    if( elevation < color_range[0].second ){
+	        return color_range[0].first;
+	    }
+	    // if the elevation is above the maximum, return the maximum
+	    if( elevation > color_range.back().second ){
+	        return color_range.back().first;
+	    }
+	
+	    // otherwise, find the proper starting index
+	    int idx=0;
+	    double t = 0;
+	    for( int x=0; x<(int)(color_range.size()-1); x++ ){
+	
+	        // if the current elevation is below the next item, then use the current
+	        // two colors as our range
+	        if( elevation < color_range[x+1].second ){
+	            idx=x;
+	            t = (color_range[x+1].second - elevation)/
+	                (color_range[x+1].second - color_range[x].second);
+	
+	            break;
+	        }
+	    }
+	
+	    // interpolate the color
+	    return lerp( color_range[idx].first, color_range[idx+1].first, t);
+	}
+	
+	/*
+	 * Given a pixel coordinate and the size of the input image, compute the pixel location
+	 * on the DEM image.
+	*/
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` world2dem( :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` const& coordinate, const :ref:`cv::Size <doxid-dd/da0/classcv_1_1_size__>`& dem_size   ){
+	
+	
+	    // relate this to the dem points
+	    // ASSUMING THAT DEM DATA IS ORTHORECTIFIED
+	    double demRatioX = ((dem_tr.x - coordinate.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>`)/(dem_tr.x - dem_bl.x));
+	    double demRatioY = 1-((dem_tr.y - coordinate.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>`)/(dem_tr.y - dem_bl.y));
+	
+	    :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` output;
+	    output.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = demRatioX * dem_size.:ref:`width <doxid-dd/da0/classcv_1_1_size___1abfe0367b32c407ddccf5ddf92667c73d>`;
+	    output.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = demRatioY * dem_size.:ref:`height <doxid-dd/da0/classcv_1_1_size___1a1d289dce6b5d8006a54f3ee0259fc545>`;
+	
+	    return output;
+	}
+	
+	/*
+	 * Convert a pixel coordinate to world coordinates
+	*/
+	:ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` pixel2world( const int& x, const int& y, const :ref:`cv::Size <doxid-dd/da0/classcv_1_1_size__>`& size ){
+	
+	    // compute the ratio of the pixel location to its dimension
+	    double rx = (double)x / size.:ref:`width <doxid-dd/da0/classcv_1_1_size___1abfe0367b32c407ddccf5ddf92667c73d>`;
+	    double ry = (double)y / size.:ref:`height <doxid-dd/da0/classcv_1_1_size___1a1d289dce6b5d8006a54f3ee0259fc545>`;
+	
+	    // compute LERP of each coordinate
+	    :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` rightSide = lerp(tr, br, ry);
+	    :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` leftSide  = lerp(tl, bl, ry);
+	
+	    // compute the actual Lat/Lon coordinate of the interpolated coordinate
+	    return lerp( leftSide, rightSide, rx );
+	}
+	
+	/*
+	 * Add color to a specific pixel color value
+	*/
+	void add_color( :ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`& pix, const :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& b, const :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& g, const :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& r ){
+	
+	    if( pix[0] + b < 255 && pix[0] + b >= 0 ){ pix[0] += b; }
+	    if( pix[1] + g < 255 && pix[1] + g >= 0 ){ pix[1] += g; }
+	    if( pix[2] + r < 255 && pix[2] + r >= 0 ){ pix[2] += r; }
+	}
+	
+	
+	/*
+	 * Main Function
+	*/
+	int main( int argc, char* argv[] ){
+	
+	    /*
+	     * Check input arguments
+	    */
+	    if( argc < 3 ){
+	        cout << "usage: " << argv[0] << " <image_name> <dem_model_name>" << endl;
+	        return -1;
+	    }
+	
+	    // load the image (note that we don't have the projection information.  You will
+	    // need to load that yourself or use the full GDAL driver.  The values are pre-defined
+	    // at the top of this file
+	    :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` image = :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1], :ref:`cv::IMREAD_LOAD_GDAL <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896>` | :ref:`cv::IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+	
+	    // load the dem model
+	    :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` dem = :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[2], :ref:`cv::IMREAD_LOAD_GDAL <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896>` | :ref:`cv::IMREAD_ANYDEPTH <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a0b486c93c25e8a0b0712681bb7254c18>` );
+	
+	    // create our output products
+	    :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` output_dem(   image.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+	    :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` output_dem_flood(   image.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+	
+	    // for sanity sake, make sure GDAL Loads it as a signed short
+	    if( dem.:ref:`type <doxid-db/de6/classcv_1_1_mat_1af2d2652e552d7de635988f18a84b53e5>`() != :ref:`CV_16SC1 <doxid-d1/d1b/group__core__hal__interface_1ga3515053e24377cf079fa1027d208ad52>` ){ throw std::runtime_error("DEM image type must be CV_16SC1"); }
+	
+	    // define the color range to create our output DEM heat map
+	    //  Pair format ( Color, elevation );  Push from low to high
+	    //  Note:  This would be perfect for a configuration file, but is here for a working demo.
+	    color_range.push_back( std::pair<cv::Vec3b,double>(:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`( 188, 154,  46),   -1));
+	    color_range.push_back( std::pair<cv::Vec3b,double>(:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`( 110, 220, 110), 0.25));
+	    color_range.push_back( std::pair<cv::Vec3b,double>(:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`( 150, 250, 230),   20));
+	    color_range.push_back( std::pair<cv::Vec3b,double>(:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`( 160, 220, 200),   75));
+	    color_range.push_back( std::pair<cv::Vec3b,double>(:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`( 220, 190, 170),  100));
+	    color_range.push_back( std::pair<cv::Vec3b,double>(:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`( 250, 180, 140),  200));
+	
+	    // define a minimum elevation
+	    double minElevation = -10;
+	
+	    // iterate over each pixel in the image, computing the dem point
+	    for( int y=0; y<image.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; y++ ){
+	    for( int x=0; x<image.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; x++ ){
+	
+	        // convert the pixel coordinate to lat/lon coordinates
+	        :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` coordinate = pixel2world( x, y, image.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`() );
+	
+	        // compute the dem image pixel coordinate from lat/lon
+	        :ref:`cv::Point2d <doxid-d9/d87/classcv_1_1_point__>` dem_coordinate = world2dem( coordinate, dem.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`() );
+	
+	        // extract the elevation
+	        double dz;
+	        if( dem_coordinate.x >=    0    && dem_coordinate.y >=    0     &&
+	            dem_coordinate.x < dem.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` && dem_coordinate.y < dem.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` ){
+	            dz = dem.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<short>(dem_coordinate);
+	        }else{
+	            dz = minElevation;
+	        }
+	
+	        // write the pixel value to the file
+	        output_dem_flood.at<:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`>(y,x) = image.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`>(y,x);
+	
+	        // compute the color for the heat map output
+	        :ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>` actualColor = get_dem_color(dz);
+	        output_dem.at<:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`>(y,x) = actualColor;
+	
+	        // show effect of a 10 meter increase in ocean levels
+	        if( dz < 10 ){
+	            add_color( output_dem_flood.at<:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`>(y,x), 90, 0, 0 );
+	        }
+	        // show effect of a 50 meter increase in ocean levels
+	        else if( dz < 50 ){
+	            add_color( output_dem_flood.at<:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`>(y,x), 0, 90, 0 );
+	        }
+	        // show effect of a 100 meter increase in ocean levels
+	        else if( dz < 100 ){
+	            add_color( output_dem_flood.at<:ref:`cv::Vec3b <doxid-db/d93/classcv_1_1_vec>`>(y,x), 0, 0, 90 );
+	        }
+	
+	    }}
+	
+	    // print our heat map
+	    :ref:`cv::imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`( "heat-map.jpg"   ,  output_dem );
+	
+	    // print the flooding effect image
+	    :ref:`cv::imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`( "flooded.jpg",  output_dem_flood);
+	
+	    return 0;
+	}
+
+.. rubric:: How to Read Raster Data using GDAL
+
+This demonstration uses the default OpenCV imread function. The primary difference is that in order to force GDAL to load the image, you must use the appropriate flag.
+
+.. ref-code-block:: cpp
+
+	:ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` image = :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[1], :ref:`cv::IMREAD_LOAD_GDAL <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896>` | :ref:`cv::IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+
+When loading digital elevation models, the actual numeric value of each pixel is essential and cannot be scaled or truncated. For example, with image data a pixel represented as a double with a value of 1 has an equal appearance to a pixel which is represented as an unsigned character with a value of 255. With terrain data, the pixel value represents the elevation in meters. In order to ensure that OpenCV preserves the native value, use the GDAL flag in imread with the ANYDEPTH flag.
+
+.. ref-code-block:: cpp
+
+	// load the dem model
+	:ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` dem = :ref:`cv::imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(argv[2], :ref:`cv::IMREAD_LOAD_GDAL <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a1b482916f4ffe34f0b90550f267fd896>` | :ref:`cv::IMREAD_ANYDEPTH <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80a0b486c93c25e8a0b0712681bb7254c18>` );
+
+If you know beforehand the type of DEM model you are loading, then it may be a safe bet to test the Mat::type() or Mat::depth() using an assert or other mechanism. NASA or DOD specification documents can provide the input types for various elevation models. The major types, SRTM and DTED, are both signed shorts.
+
+.. rubric:: Notes
+
+.. rubric:: Lat/Lon (Geographic) Coordinates should normally be avoided
+
+The Geographic Coordinate System is a spherical coordinate system, meaning that using them with Cartesian mathematics is technically incorrect. This demo uses them to increase the readability and is accurate enough to make the point. A better coordinate system would be Universal Transverse Mercator.
+
+.. rubric:: Finding the corner coordinates
+
+One easy method to find the corner coordinates of an image is to use the command-line tool gdalinfo. For imagery which is ortho-rectified and contains the projection information, you can use the `USGS EarthExplorer <http://http://earthexplorer.usgs.gov>`__.
+
+.. ref-code-block:: cpp
+
+	\f$> gdalinfo N37W123.hgt
+	
+	   Driver: SRTMHGT/SRTMHGT File Format
+	   Files: N37W123.hgt
+	   Size is 3601, 3601
+	   Coordinate System is:
+	   GEOGCS["WGS 84",
+	   DATUM["WGS_1984",
+	
+	   ... more output ...
+	
+	   Corner Coordinates:
+	   Upper Left  (-123.0001389,  38.0001389) (123d 0' 0.50"W, 38d 0' 0.50"N)
+	   Lower Left  (-123.0001389,  36.9998611) (123d 0' 0.50"W, 36d59'59.50"N)
+	   Upper Right (-121.9998611,  38.0001389) (121d59'59.50"W, 38d 0' 0.50"N)
+	   Lower Right (-121.9998611,  36.9998611) (121d59'59.50"W, 36d59'59.50"N)
+	   Center      (-122.5000000,  37.5000000) (122d30' 0.00"W, 37d30' 0.00"N)
+	
+	    ... more output ...
+
+
+
+.. rubric:: Results
+
+Below is the output of the program. Use the first image as the input. For the DEM model, download the SRTM file located at the USGS here. `http://dds.cr.usgs.gov/srtm/version2_1/SRTM1/Region_04/N37W123.hgt.zip <http://dds.cr.usgs.gov/srtm/version2_1/SRTM1/Region_04/N37W123.hgt.zip>`__
+
+.. image:: gdal_output.jpg
+	:alt: Input Image
+
+
+
+.. image:: gdal_heat-map.jpg
+	:alt: Heat Map
+
+
+
+.. image:: gdal_flood-zone.jpg
+	:alt: Heat Map Overlay
+

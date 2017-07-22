@@ -1,0 +1,232 @@
+.. index:: pair: group; Feature Detection
+.. _doxid-dc/d6d/group__cudaimgproc__feature:
+
+Feature Detection
+=================
+
+.. toctree::
+	:hidden:
+
+	class_cv_cuda_CornernessCriteria.rst
+	class_cv_cuda_CornersDetector.rst
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// classes
+
+	class :ref:`cv::cuda::CornernessCriteria<doxid-db/d3a/classcv_1_1cuda_1_1_cornerness_criteria>`;
+	class :ref:`cv::cuda::CornersDetector<doxid-da/d6e/classcv_1_1cuda_1_1_corners_detector>`;
+
+	// global functions
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CornersDetector<doxid-da/d6e/classcv_1_1cuda_1_1_corners_detector>`>
+	:ref:`cv::cuda::createGoodFeaturesToTrackDetector<doxid-dc/d6d/group__cudaimgproc__feature_1ga478b474a598ece101f7e706fee2c8e91>`(
+		int srcType,
+		int maxCorners = 1000,
+		double qualityLevel = 0.01,
+		double minDistance = 0.0,
+		int blockSize = 3,
+		bool useHarrisDetector = false,
+		double harrisK = 0.04
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CornernessCriteria<doxid-db/d3a/classcv_1_1cuda_1_1_cornerness_criteria>`>
+	:ref:`cv::cuda::createHarrisCorner<doxid-dc/d6d/group__cudaimgproc__feature_1ga3e5878a803e9bba51added0c10101979>`(
+		int srcType,
+		int blockSize,
+		int ksize,
+		double k,
+		int borderType = :ref:`BORDER_REFLECT101<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5a119fb22eda11675d2e00426d334a1a81>`
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CornernessCriteria<doxid-db/d3a/classcv_1_1cuda_1_1_cornerness_criteria>`>
+	:ref:`cv::cuda::createMinEigenValCorner<doxid-dc/d6d/group__cudaimgproc__feature_1ga7457fd4b53b025f990b1c1dd1b749915>`(
+		int srcType,
+		int blockSize,
+		int ksize,
+		int borderType = :ref:`BORDER_REFLECT101<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5a119fb22eda11675d2e00426d334a1a81>`
+		);
+
+.. _details-dc/d6d/group__cudaimgproc__feature:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; createGoodFeaturesToTrackDetector
+.. _doxid-dc/d6d/group__cudaimgproc__feature_1ga478b474a598ece101f7e706fee2c8e91:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CornersDetector<doxid-da/d6e/classcv_1_1cuda_1_1_corners_detector>`>
+	cv::cuda::createGoodFeaturesToTrackDetector(
+		int srcType,
+		int maxCorners = 1000,
+		double qualityLevel = 0.01,
+		double minDistance = 0.0,
+		int blockSize = 3,
+		bool useHarrisDetector = false,
+		double harrisK = 0.04
+		)
+
+Creates implementation for :ref:`cuda::CornersDetector <doxid-da/d6e/classcv_1_1cuda_1_1_corners_detector>`.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input source type. Only CV_8UC1 and CV_32FC1 are supported for now.
+
+	*
+		- maxCorners
+
+		- Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned.
+
+	*
+		- qualityLevel
+
+		- Parameter characterizing the minimal accepted quality of image corners. The parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue (see cornerMinEigenVal ) or the Harris function response (see cornerHarris ). The corners with the quality measure less than the product are rejected. For example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.
+
+	*
+		- minDistance
+
+		- Minimum possible Euclidean distance between the returned corners.
+
+	*
+		- blockSize
+
+		- Size of an average block for computing a derivative covariation matrix over each pixel neighborhood. See cornerEigenValsAndVecs .
+
+	*
+		- useHarrisDetector
+
+		- Parameter indicating whether to use a Harris detector (see cornerHarris) or cornerMinEigenVal.
+
+	*
+		- harrisK
+
+		- Free parameter of the Harris detector.
+
+.. index:: pair: function; createHarrisCorner
+.. _doxid-dc/d6d/group__cudaimgproc__feature_1ga3e5878a803e9bba51added0c10101979:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CornernessCriteria<doxid-db/d3a/classcv_1_1cuda_1_1_cornerness_criteria>`>
+	cv::cuda::createHarrisCorner(
+		int srcType,
+		int blockSize,
+		int ksize,
+		double k,
+		int borderType = :ref:`BORDER_REFLECT101<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5a119fb22eda11675d2e00426d334a1a81>`
+		)
+
+Creates implementation for Harris cornerness criteria.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input source type. Only CV_8UC1 and CV_32FC1 are supported for now.
+
+	*
+		- blockSize
+
+		- Neighborhood size.
+
+	*
+		- ksize
+
+		- Aperture parameter for the Sobel operator.
+
+	*
+		- k
+
+		- Harris detector free parameter.
+
+	*
+		- borderType
+
+		- Pixel extrapolation method. Only BORDER_REFLECT101 and BORDER_REPLICATE are supported for now.
+
+
+
+.. rubric:: See also:
+
+:ref:`cornerHarris <doxid-dd/d1a/group__imgproc__feature_1gac1fc3598018010880e370e2f709b4345>`
+
+.. index:: pair: function; createMinEigenValCorner
+.. _doxid-dc/d6d/group__cudaimgproc__feature_1ga7457fd4b53b025f990b1c1dd1b749915:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CornernessCriteria<doxid-db/d3a/classcv_1_1cuda_1_1_cornerness_criteria>`>
+	cv::cuda::createMinEigenValCorner(
+		int srcType,
+		int blockSize,
+		int ksize,
+		int borderType = :ref:`BORDER_REFLECT101<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5a119fb22eda11675d2e00426d334a1a81>`
+		)
+
+Creates implementation for the minimum eigen value of a 2x2 derivative covariation matrix (the cornerness criteria).
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input source type. Only CV_8UC1 and CV_32FC1 are supported for now.
+
+	*
+		- blockSize
+
+		- Neighborhood size.
+
+	*
+		- ksize
+
+		- Aperture parameter for the Sobel operator.
+
+	*
+		- borderType
+
+		- Pixel extrapolation method. Only BORDER_REFLECT101 and BORDER_REPLICATE are supported for now.
+
+
+
+.. rubric:: See also:
+
+:ref:`cornerMinEigenVal <doxid-dd/d1a/group__imgproc__feature_1ga3dbce297c1feb859ee36707e1003e0a8>`
+

@@ -1,0 +1,93 @@
+.. index:: pair: group; WinRT support
+.. _doxid-d6/d2f/group__highgui__winrt:
+
+WinRT support
+=============
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This figure explains new functionality implemented with WinRT GUI. :ref:`More...<details-d6/d2f/group__highgui__winrt>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// global functions
+
+	void
+	:ref:`cv::winrt_initContainer<doxid-d6/d2f/group__highgui__winrt_1ga1c1224490daecb1694f65cce6132d9c9>`(::Windows::UI::Xaml::Controls::Panel^ container);
+
+.. _details-d6/d2f/group__highgui__winrt:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This figure explains new functionality implemented with WinRT GUI. The new GUI provides an Image control, and a slider panel. Slider panel holds trackbars attached to it.
+
+Sliders are attached below the image control. Every new slider is added below the previous one.
+
+See below the example used to generate the figure:
+
+.. ref-code-block:: cpp
+
+	void sample_app::MainPage::ShowWindow()
+	{
+	    static cv::String windowName("sample");
+	    cv::winrt_initContainer(this->cvContainer);
+	    cv::namedWindow(windowName); // not required
+	
+	    cv::Mat image = cv::imread("Assets/sample.jpg");
+	    cv::Mat converted = cv::Mat(image.rows, image.cols, CV_8UC4);
+	    cv::cvtColor(image, converted, COLOR_BGR2BGRA);
+	    cv::imshow(windowName, converted); // this will create window if it hasn't been created before
+	
+	    int state = 42;
+	    cv::TrackbarCallback callback = [](int pos, void* userdata)
+	    {
+	        if (pos == 0) {
+	            cv::destroyWindow(windowName);
+	        }
+	    };
+	    cv::TrackbarCallback callbackTwin = [](int pos, void* userdata)
+	    {
+	        if (pos >= 70) {
+	            cv::destroyAllWindows();
+	        }
+	    };
+	    cv::createTrackbar("Sample trackbar", windowName, &state, 100, callback);
+	    cv::createTrackbar("Twin brother", windowName, &state, 100, callbackTwin);
+	}
+
+Global Functions
+----------------
+
+.. index:: pair: function; winrt_initContainer
+.. _doxid-d6/d2f/group__highgui__winrt_1ga1c1224490daecb1694f65cce6132d9c9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::winrt_initContainer(::Windows::UI::Xaml::Controls::Panel^ container)
+
+Initializes container component that will be used to hold generated window content.
+
+Must be called to assign WinRT container that will hold created windows content.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- container
+
+		- Container (Panel^) reference that will be used to hold generated window content: controls and image.
+

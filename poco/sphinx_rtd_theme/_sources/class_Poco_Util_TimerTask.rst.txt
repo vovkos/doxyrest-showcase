@@ -1,0 +1,130 @@
+.. index:: pair: class; Poco::Util::TimerTask
+.. _doxid-class_poco_1_1_util_1_1_timer_task:
+
+class Poco::Util::TimerTask
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A task that can be scheduled for one-time or repeated execution by a :ref:`Timer <doxid-class_poco_1_1_util_1_1_timer>`. :ref:`More...<details-class_poco_1_1_util_1_1_timer_task>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <TimerTask.h>
+	
+	class TimerTask:
+	    public :ref:`Poco::RefCountedObject<doxid-class_poco_1_1_ref_counted_object>`,
+	    public :ref:`Poco::Runnable<doxid-class_poco_1_1_runnable>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`Poco::AutoPtr<doxid-class_poco_1_1_auto_ptr>`<TimerTask> :target:`Ptr<doxid-class_poco_1_1_util_1_1_timer_task_1ab7798d264e2788719dfe35f1b2d08d81>`;
+
+		// methods
+	
+		void
+		:ref:`cancel<doxid-class_poco_1_1_util_1_1_timer_task_1ae220e000314e50797b1ecb5e64104661>`();
+	
+		bool
+		:ref:`isCancelled<doxid-class_poco_1_1_util_1_1_timer_task_1af5a320423a8ca4c4b2088400c6705084>`() const;
+	
+		:ref:`Poco::Timestamp<doxid-class_poco_1_1_timestamp>`
+		:ref:`lastExecution<doxid-class_poco_1_1_util_1_1_timer_task_1a1ff4775f06a9e07915598794f28ec89d>`() const;
+	};
+
+	// direct descendants
+
+	template <class C>
+	class :ref:`TimerTaskAdapter<doxid-class_poco_1_1_util_1_1_timer_task_adapter>`;
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		void
+		:ref:`duplicate<doxid-class_poco_1_1_ref_counted_object_1a13296da57127169ed0709b3dde86bf0d>`() const;
+	
+		void
+		:ref:`release<doxid-class_poco_1_1_ref_counted_object_1a14bf204923a6ba4b97df6f8fdb9deb72>`() const;
+	
+		int
+		:ref:`referenceCount<doxid-class_poco_1_1_ref_counted_object_1a45b62ccd833bcb06055399c2d889eb35>`() const;
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>`() = 0;
+
+.. _details-class_poco_1_1_util_1_1_timer_task:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A task that can be scheduled for one-time or repeated execution by a :ref:`Timer <doxid-class_poco_1_1_util_1_1_timer>`.
+
+This is an abstract class. Subclasses must override the :ref:`run() <doxid-class_poco_1_1_runnable_1ad89816e81207bf5f1e52d5df860d11d4>` member function to implement the actual task logic.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_util_1_1_timer_task_1a8373e98b8a6f3a3da7366f33d46ae8c9:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~TimerTask()
+
+Destroys the :ref:`TimerTask <doxid-class_poco_1_1_util_1_1_timer_task>`.
+
+Methods
+-------
+
+.. index:: pair: function; cancel
+.. _doxid-class_poco_1_1_util_1_1_timer_task_1ae220e000314e50797b1ecb5e64104661:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cancel()
+
+Cancels the execution of the timer.
+
+If the task has been scheduled for one-time execution and has not yet run, or has not yet been scheduled, it will never run. If the task has been scheduled for repeated execution, it will never run again. If the task is running when this call occurs, the task will run to completion, but will never run again.
+
+Warning: A :ref:`TimerTask <doxid-class_poco_1_1_util_1_1_timer_task>` that has been cancelled must not be scheduled again. An attempt to do so results in a Poco::Util::IllegalStateException being thrown.
+
+.. index:: pair: function; isCancelled
+.. _doxid-class_poco_1_1_util_1_1_timer_task_1af5a320423a8ca4c4b2088400c6705084:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	isCancelled() const
+
+Returns true iff the :ref:`TimerTask <doxid-class_poco_1_1_util_1_1_timer_task>` has been cancelled by a call to :ref:`cancel() <doxid-class_poco_1_1_util_1_1_timer_task_1ae220e000314e50797b1ecb5e64104661>`.
+
+.. index:: pair: function; lastExecution
+.. _doxid-class_poco_1_1_util_1_1_timer_task_1a1ff4775f06a9e07915598794f28ec89d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Poco::Timestamp<doxid-class_poco_1_1_timestamp>`
+	lastExecution() const
+
+Returns the time of the last execution of the timer task.
+
+Returns 0 if the timer has never been executed.
+

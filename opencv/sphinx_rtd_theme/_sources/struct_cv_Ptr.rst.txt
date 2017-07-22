@@ -1,0 +1,561 @@
+.. index:: pair: struct; cv::Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr:
+
+template struct cv::Ptr
+=======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Template class for smart pointers with shared ownership. :ref:`More...<details-d2/d56/structcv_1_1_ptr>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <cvstd.hpp>
+	
+	template <typename T>
+	struct Ptr
+	{
+		// typedefs
+	
+		typedef T :ref:`element_type<doxid-d2/d56/structcv_1_1_ptr_1a62fe84229cc13c10910507a0b5c5ed8b>`;
+
+		// construction
+	
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr_1a85cbac0b7613df0999cea5b6250e7851>`();
+	
+		template <typename Y>
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr_1aeb7df1b18cbb91c6ce000ab6ed223a28>`(Y* p);
+	
+		template <
+			typename Y,
+			typename D
+			>
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr_1a051a5da806454bc09695752bd428c4b8>`(
+			Y* p,
+			D d
+			);
+	
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr_1a7488a8da83aff1cd90ecd02065abe257>`(const Ptr& o);
+	
+		template <typename Y>
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr_1a8c4c6991a08635f89a787edb3d0b7364>`(const Ptr<Y>& o);
+	
+		template <typename Y>
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr_1ad9f6d4d471cd64a853e275d5bf30907c>`(
+			const Ptr<Y>& o,
+			T* p
+			);
+
+		// methods
+	
+		template <typename Y>
+		Ptr<Y>
+		:ref:`constCast<doxid-d2/d56/structcv_1_1_ptr_1a321bbb47e912dd3f6cf7733a286bb0f4>`() const;
+	
+		template <typename Y>
+		Ptr<Y>
+		:ref:`dynamicCast<doxid-d2/d56/structcv_1_1_ptr_1a141f3b16ca0fa11727d8daee52b6402e>`() const;
+	
+		bool
+		:ref:`empty<doxid-d2/d56/structcv_1_1_ptr_1a5f0d36c4d05ed9f4fb2a63c5ce9f2c9e>`() const;
+	
+		T*
+		:ref:`get<doxid-d2/d56/structcv_1_1_ptr_1ab77ede1f78274936050b4cfc018c5711>`() const;
+	
+		:ref:`operator T*<doxid-d2/d56/structcv_1_1_ptr_1a020943728a309b2daab5267b3f099c21>`() const;
+	
+		detail::RefOrVoid<T>::type
+		:ref:`operator*<doxid-d2/d56/structcv_1_1_ptr_1a44b9298493960e90c5ae6fc5b4e7e78b>`() const;
+	
+		T*
+		:ref:`operator-><doxid-d2/d56/structcv_1_1_ptr_1a9b39661830d8942ce5157b2afee04bba>`() const;
+	
+		Ptr&
+		:ref:`operator=<doxid-d2/d56/structcv_1_1_ptr_1a468377d212f11a2501dcb3fab37955cd>`(const Ptr& o);
+	
+		template <typename Y>
+		Ptr&
+		:ref:`operator=<doxid-d2/d56/structcv_1_1_ptr_1af57120cfa2424b2da090081ffaa2ab36>`(const Ptr<Y>& o);
+	
+		void
+		:ref:`release<doxid-d2/d56/structcv_1_1_ptr_1a6f39adf60242c644dd7434b0444bbb08>`();
+	
+		template <typename Y>
+		void
+		:ref:`reset<doxid-d2/d56/structcv_1_1_ptr_1a8100350b806a4e664cbec3445b8d30a0>`(Y* p);
+	
+		template <
+			typename Y,
+			typename D
+			>
+		void
+		:ref:`reset<doxid-d2/d56/structcv_1_1_ptr_1a38d19fbe9a12af272a82ea021d18d97e>`(
+			Y* p,
+			D d
+			);
+	
+		template <typename Y>
+		Ptr<Y>
+		:ref:`staticCast<doxid-d2/d56/structcv_1_1_ptr_1a2b31a5315638c99ab7ba69c2f86b3a8b>`() const;
+	
+		void
+		:ref:`swap<doxid-d2/d56/structcv_1_1_ptr_1a4ce9b80e2b7d25daac74fc528228a0f3>`(Ptr& o);
+	};
+.. _details-d2/d56/structcv_1_1_ptr:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Template class for smart pointers with shared ownership.
+
+A :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` <T> pretends to be a pointer to an object of type T. Unlike an ordinary pointer, however, the object will be automatically cleaned up once all :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` instances pointing to it are destroyed.
+
+:ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` is similar to boost::shared_ptr that is part of the Boost library (`http://www.boost.org/doc/libs/release/libs/smart_ptr/shared_ptr.htm <http://www.boost.org/doc/libs/release/libs/smart_ptr/shared_ptr.htm>`__) and std::shared_ptr from the `C++11 <http://en.wikipedia.org/wiki/C++11>`__ standard.
+
+This class provides the following advantages:
+
+* Default constructor, copy constructor, and assignment operator for an arbitrary C++ class or C structure. For some objects, like files, windows, mutexes, sockets, and others, a copy constructor or an assignment operator are difficult to define. For some other objects, like complex classifiers in OpenCV, copy constructors are absent and not easy to implement. Finally, some of complex OpenCV and your own data structures may be written in C. However, copy constructors and default constructors can simplify programming a lot. Besides, they are often required (for example, by STL containers). By using a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to such an object instead of the object itself, you automatically get all of the necessary constructors and the assignment operator.
+
+* *O(1)* complexity of the above-mentioned operations. While some structures, like std::vector, provide a copy constructor and an assignment operator, the operations may take a considerable amount of time if the data structures are large. But if the structures are put into a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>`, the overhead is small and independent of the data size.
+
+* Automatic and customizable cleanup, even for C structures. See the example below with FILE\*.
+
+* Heterogeneous collections of objects. The standard STL and most other C++ and OpenCV containers can store only objects of the same type and the same size. The classical solution to store objects of different types in the same container is to store pointers to the base class (Base\*) instead but then you lose the automatic memory management. Again, by using :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` <Base> instead of raw pointers, you can solve the problem.
+
+A :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` is said to *own* a pointer - that is, for each :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` there is a pointer that will be deleted once all :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` instances that own it are destroyed. The owned pointer may be null, in which case nothing is deleted. Each :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` also *stores* a pointer. The stored pointer is the pointer the :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` pretends to be; that is, the one you get when you use :ref:`Ptr::get <doxid-d2/d56/structcv_1_1_ptr_1ab77ede1f78274936050b4cfc018c5711>` or the conversion to T\*. It's usually the same as the owned pointer, but if you use casts or the general shared-ownership constructor, the two may diverge: the :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` will still own the original pointer, but will itself point to something else.
+
+The owned pointer is treated as a black box. The only thing :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` needs to know about it is how to delete it. This knowledge is encapsulated in the *deleter* - an auxiliary object that is associated with the owned pointer and shared between all :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` instances that own it. The default deleter is an instance of DefaultDeleter, which uses the standard C++ delete operator; as such it will work with any pointer allocated with the standard new operator.
+
+However, if the pointer must be deleted in a different way, you must specify a custom deleter upon :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` construction. A deleter is simply a callable object that accepts the pointer as its sole argument. For example, if you want to wrap FILE, you may do so as follows:
+
+.. ref-code-block:: cpp
+
+	Ptr<FILE> f(fopen("myfile.txt", "w"), fclose);
+	if(!f) throw ...;
+	fprintf(f, ....);
+	...
+	// the file will be closed automatically by f's destructor.
+
+Alternatively, if you want all pointers of a particular type to be deleted the same way, you can specialize DefaultDeleter<T>::operator() for that type, like this:
+
+.. ref-code-block:: cpp
+
+	namespace cv {
+	template<> void DefaultDeleter<FILE>::operator ()(FILE * obj) const
+	{
+	    fclose(obj);
+	}
+	}
+
+For convenience, the following types from the OpenCV C API already have such a specialization that calls the appropriate release function:
+
+* CvCapture
+
+* CvFileStorage
+
+* :ref:`CvHaarClassifierCascade <doxid-d9/dda/struct_cv_haar_classifier_cascade>`
+
+* :ref:`CvMat <doxid-d6/dda/struct_cv_mat>`
+
+* :ref:`CvMatND <doxid-d7/d5c/struct_cv_mat_n_d>`
+
+* :ref:`CvMemStorage <doxid-d7/d51/struct_cv_mem_storage>`
+
+* :ref:`CvSparseMat <doxid-d3/d6a/struct_cv_sparse_mat>`
+
+* CvVideoWriter
+
+* :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` The shared ownership mechanism is implemented with reference counting. As such, cyclic ownership (e.g. when object a contains a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to object b, which contains a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to object a) will lead to all involved objects never being cleaned up. Avoid such situations.
+  
+  It is safe to concurrently read (but not write) a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` instance from multiple threads and therefore it is normally safe to use it in multi-threaded applications. The same is true for :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` and other C++ OpenCV classes that use internal reference counts.
+
+Typedefs
+--------
+
+.. index:: pair: typedef; element_type
+.. _doxid-d2/d56/structcv_1_1_ptr_1a62fe84229cc13c10910507a0b5c5ed8b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	typedef T element_type
+
+Generic programming support.
+
+Construction
+------------
+
+.. index:: pair: function; Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr_1a85cbac0b7613df0999cea5b6250e7851:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Ptr()
+
+The default constructor creates a null :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` - one that owns and stores a null pointer.
+
+.. index:: pair: function; Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr_1aeb7df1b18cbb91c6ce000ab6ed223a28:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr(Y* p)
+
+If p is null, these are equivalent to the default constructor. Otherwise, these constructors assume ownership of p - that is, the created :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` owns and stores p and assumes it is the sole owner of it. Don't use them if p is already owned by another :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>`, or else p will get deleted twice. With the first constructor, DefaultDeleter<Y>() becomes the associated deleter (so p will eventually be deleted with the standard delete operator). Y must be a complete type at the point of invocation. With the second constructor, d becomes the associated deleter. Y\* must be convertible to T\*. It is often easier to use makePtr instead.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- p
+
+		- Pointer to own.
+
+.. index:: pair: function; Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr_1a051a5da806454bc09695752bd428c4b8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <
+		typename Y,
+		typename D
+		>
+	Ptr(
+		Y* p,
+		D d
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- d
+
+		- Deleter to use for the owned pointer.
+
+	*
+		- p
+
+		- Pointer to own.
+
+.. index:: pair: function; Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr_1a7488a8da83aff1cd90ecd02065abe257:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Ptr(const Ptr& o)
+
+These constructors create a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` that shares ownership with another :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` - that is, own the same pointer as o. With the first two, the same pointer is stored, as well; for the second, Y\* must be convertible to T\*. With the third, p is stored, and Y may be any type. This constructor allows to have completely unrelated owned and stored pointers, and should be used with care to avoid confusion. A relatively benign use is to create a non-owning :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>`, like this:
+
+.. ref-code-block:: cpp
+
+	ptr = Ptr<T>(Ptr<T>(), dont_delete_me); // owns nothing; will not delete the pointer.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- o
+
+		- :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to share ownership with.
+
+.. index:: pair: function; Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr_1a8c4c6991a08635f89a787edb3d0b7364:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr(const Ptr<Y>& o)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- o
+
+		- :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to share ownership with.
+
+.. index:: pair: function; Ptr
+.. _doxid-d2/d56/structcv_1_1_ptr_1ad9f6d4d471cd64a853e275d5bf30907c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr(
+		const Ptr<Y>& o,
+		T* p
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- o
+
+		- :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to share ownership with.
+
+	*
+		- p
+
+		- Pointer to store.
+
+Methods
+-------
+
+.. index:: pair: function; constCast
+.. _doxid-d2/d56/structcv_1_1_ptr_1a321bbb47e912dd3f6cf7733a286bb0f4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr<Y>
+	constCast() const
+
+Ditto for const_cast.
+
+.. index:: pair: function; dynamicCast
+.. _doxid-d2/d56/structcv_1_1_ptr_1a141f3b16ca0fa11727d8daee52b6402e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr<Y>
+	dynamicCast() const
+
+Ditto for dynamic_cast.
+
+.. index:: pair: function; empty
+.. _doxid-d2/d56/structcv_1_1_ptr_1a5f0d36c4d05ed9f4fb2a63c5ce9f2c9e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	empty() const
+
+ptr.empty() is equivalent to ``!ptr.:ref:`get() <doxid-d2/d56/structcv_1_1_ptr_1ab77ede1f78274936050b4cfc018c5711>```.
+
+.. index:: pair: function; get
+.. _doxid-d2/d56/structcv_1_1_ptr_1ab77ede1f78274936050b4cfc018c5711:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	T*
+	get() const
+
+Returns the stored pointer.
+
+.. index:: pair: function; operator T*
+.. _doxid-d2/d56/structcv_1_1_ptr_1a020943728a309b2daab5267b3f099c21:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	operator T*() const
+
+Equivalent to :ref:`get() <doxid-d2/d56/structcv_1_1_ptr_1ab77ede1f78274936050b4cfc018c5711>`.
+
+.. index:: pair: function; operator*
+.. _doxid-d2/d56/structcv_1_1_ptr_1a44b9298493960e90c5ae6fc5b4e7e78b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	detail::RefOrVoid<T>::type
+	operator*() const
+
+Ordinary pointer emulation.
+
+.. index:: pair: function; operator->
+.. _doxid-d2/d56/structcv_1_1_ptr_1a9b39661830d8942ce5157b2afee04bba:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	T*
+	operator->() const
+
+Ordinary pointer emulation.
+
+.. index:: pair: function; operator=
+.. _doxid-d2/d56/structcv_1_1_ptr_1a468377d212f11a2501dcb3fab37955cd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Ptr&
+	operator=(const Ptr& o)
+
+Assignment replaces the current :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` instance with one that owns and stores same pointers as o and then destroys the old instance.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- o
+
+		- :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to share ownership with.
+
+.. index:: pair: function; operator=
+.. _doxid-d2/d56/structcv_1_1_ptr_1af57120cfa2424b2da090081ffaa2ab36:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr&
+	operator=(const Ptr<Y>& o)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; release
+.. _doxid-d2/d56/structcv_1_1_ptr_1a6f39adf60242c644dd7434b0444bbb08:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	release()
+
+If no other :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` instance owns the owned pointer, deletes it with the associated deleter. Then sets both the owned and the stored pointers to NULL.
+
+.. index:: pair: function; reset
+.. _doxid-d2/d56/structcv_1_1_ptr_1a8100350b806a4e664cbec3445b8d30a0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	void
+	reset(Y* p)
+
+``ptr.reset(...)`` is equivalent to ``ptr = :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>`<T>(...)``.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- p
+
+		- Pointer to own.
+
+.. index:: pair: function; reset
+.. _doxid-d2/d56/structcv_1_1_ptr_1a38d19fbe9a12af272a82ea021d18d97e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <
+		typename Y,
+		typename D
+		>
+	void
+	reset(
+		Y* p,
+		D d
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- d
+
+		- Deleter to use for the owned pointer.
+
+	*
+		- p
+
+		- Pointer to own.
+
+.. index:: pair: function; staticCast
+.. _doxid-d2/d56/structcv_1_1_ptr_1a2b31a5315638c99ab7ba69c2f86b3a8b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename Y>
+	Ptr<Y>
+	staticCast() const
+
+Returns a :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` that owns the same pointer as this, and stores the same pointer as this, except converted via static_cast to Y\*.
+
+.. index:: pair: function; swap
+.. _doxid-d2/d56/structcv_1_1_ptr_1a4ce9b80e2b7d25daac74fc528228a0f3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	swap(Ptr& o)
+
+Swaps the owned and stored pointers (and deleters, if any) of this and o.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- o
+
+		- :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` to swap with.
+

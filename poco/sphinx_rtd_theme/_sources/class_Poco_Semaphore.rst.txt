@@ -1,0 +1,147 @@
+.. index:: pair: class; Poco::Semaphore
+.. _doxid-class_poco_1_1_semaphore:
+
+class Poco::Semaphore
+=====================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`Semaphore <doxid-class_poco_1_1_semaphore>` is a synchronization object with the following characteristics: A semaphore has a value that is constrained to be a non-negative integer and two atomic operations. :ref:`More...<details-class_poco_1_1_semaphore>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Semaphore.h>
+	
+	class Semaphore: private :ref:`Poco::SemaphoreImpl<doxid-class_poco_1_1_semaphore_impl>`
+	{
+	public:
+		// construction
+	
+		:target:`Semaphore<doxid-class_poco_1_1_semaphore_1a05267914875fa39f6046f16418b74f6b>`(int n);
+	
+		:ref:`Semaphore<doxid-class_poco_1_1_semaphore_1ac00649f36cda1ebd03eec3b62a31e1e6>`(
+			int n,
+			int max
+			);
+
+		// methods
+	
+		void
+		:ref:`set<doxid-class_poco_1_1_semaphore_1ac3dd7edc6c66f77abf524171ea47c9c7>`();
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_semaphore_1a26733c3a620f55953572d60692ba2b35>`();
+	
+		void
+		:ref:`wait<doxid-class_poco_1_1_semaphore_1ab8c097b77e05306218e09843538d9793>`(long milliseconds);
+	
+		bool
+		:ref:`tryWait<doxid-class_poco_1_1_semaphore_1a6ed380a9583118853f54e0f3a5aa32a4>`(long milliseconds);
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	protected:
+		// methods
+	
+		void
+		:ref:`setImpl<doxid-class_poco_1_1_semaphore_impl_1af03f9c9133607458b00b53871bda819d>`();
+	
+		void
+		:ref:`waitImpl<doxid-class_poco_1_1_semaphore_impl_1a52f642d64cca0c0495ce81b2a6d4ad38>`();
+	
+		bool
+		:ref:`waitImpl<doxid-class_poco_1_1_semaphore_impl_1a4818cffa2bffaef1f0fe4c85581aecf5>`(long milliseconds);
+
+.. _details-class_poco_1_1_semaphore:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`Semaphore <doxid-class_poco_1_1_semaphore>` is a synchronization object with the following characteristics: A semaphore has a value that is constrained to be a non-negative integer and two atomic operations.
+
+The allowable operations are V (here called :ref:`set() <doxid-class_poco_1_1_semaphore_1ac3dd7edc6c66f77abf524171ea47c9c7>`) and P (here called :ref:`wait() <doxid-class_poco_1_1_semaphore_1a26733c3a620f55953572d60692ba2b35>`). A V (:ref:`set() <doxid-class_poco_1_1_semaphore_1ac3dd7edc6c66f77abf524171ea47c9c7>`) operation increases the value of the semaphore by one. A P (:ref:`wait() <doxid-class_poco_1_1_semaphore_1a26733c3a620f55953572d60692ba2b35>`) operation decreases the value of the semaphore by one, provided that can be done without violating the constraint that the value be non-negative. A P (:ref:`wait() <doxid-class_poco_1_1_semaphore_1a26733c3a620f55953572d60692ba2b35>`) operation that is initiated when the value of the semaphore is 0 suspends the calling thread. The calling thread may continue when the value becomes positive again.
+
+Construction
+------------
+
+.. index:: pair: function; Semaphore
+.. _doxid-class_poco_1_1_semaphore_1ac00649f36cda1ebd03eec3b62a31e1e6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Semaphore(
+		int n,
+		int max
+		)
+
+Creates the semaphore.
+
+The current value of the semaphore is given in n. The maximum value of the semaphore is given in max. If only n is given, it must be greater than zero. If both n and max are given, max must be greater than zero, n must be greater than or equal to zero and less than or equal to max.
+
+Methods
+-------
+
+.. index:: pair: function; set
+.. _doxid-class_poco_1_1_semaphore_1ac3dd7edc6c66f77abf524171ea47c9c7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	set()
+
+Increments the semaphore's value by one and thus signals the semaphore.
+
+Another thread waiting for the semaphore will be able to continue.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_semaphore_1a26733c3a620f55953572d60692ba2b35:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait()
+
+Waits for the semaphore to become signalled.
+
+To become signalled, a semaphore's value must be greater than zero. Decrements the semaphore's value by one.
+
+.. index:: pair: function; wait
+.. _doxid-class_poco_1_1_semaphore_1ab8c097b77e05306218e09843538d9793:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	wait(long milliseconds)
+
+Waits for the semaphore to become signalled.
+
+To become signalled, a semaphore's value must be greater than zero. Throws a TimeoutException if the semaphore does not become signalled within the specified time interval. Decrements the semaphore's value by one if successful.
+
+.. index:: pair: function; tryWait
+.. _doxid-class_poco_1_1_semaphore_1a6ed380a9583118853f54e0f3a5aa32a4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryWait(long milliseconds)
+
+Waits for the semaphore to become signalled.
+
+To become signalled, a semaphore's value must be greater than zero. Returns true if the semaphore became signalled within the specified time interval, false otherwise. Decrements the semaphore's value by one if successful.
+

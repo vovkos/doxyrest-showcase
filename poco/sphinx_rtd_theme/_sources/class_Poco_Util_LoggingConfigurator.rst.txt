@@ -1,0 +1,114 @@
+.. index:: pair: class; Poco::Util::LoggingConfigurator
+.. _doxid-class_poco_1_1_util_1_1_logging_configurator:
+
+class Poco::Util::LoggingConfigurator
+=====================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This utility class uses a configuration object to configure the logging subsystem of an application. :ref:`More...<details-class_poco_1_1_util_1_1_logging_configurator>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <LoggingConfigurator.h>
+	
+	class LoggingConfigurator
+	{
+	public:
+		// methods
+	
+		void
+		:ref:`configure<doxid-class_poco_1_1_util_1_1_logging_configurator_1a060135dad4a04f4eb8acf480887a8537>`(:ref:`AbstractConfiguration<doxid-class_poco_1_1_util_1_1_abstract_configuration>`* pConfig);
+	};
+.. _details-class_poco_1_1_util_1_1_logging_configurator:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This utility class uses a configuration object to configure the logging subsystem of an application.
+
+The :ref:`LoggingConfigurator <doxid-class_poco_1_1_util_1_1_logging_configurator>` sets up and connects formatters, channels and loggers. To accomplish its work, the :ref:`LoggingConfigurator <doxid-class_poco_1_1_util_1_1_logging_configurator>` relies on the functionality provided by the :ref:`LoggingFactory <doxid-class_poco_1_1_logging_factory>` und :ref:`LoggingRegistry <doxid-class_poco_1_1_logging_registry>` classes.
+
+The :ref:`LoggingConfigurator <doxid-class_poco_1_1_util_1_1_logging_configurator>` expects all configuration data to be under a root property named "logging".
+
+Configuring Formatters
+
+A formatter is configured using the "logging.formatters" property. Every formatter has an internal name, which is only used for referring to it during configuration time. This name becomes part of the property name. Every formatter has a mandatory "class" property, which specifies the actual class implementing the formatter. :ref:`Any <doxid-class_poco_1_1_any>` other properties are passed on to the formatter by calling its setProperty() method.
+
+A typical formatter definition looks as follows:
+
+.. ref-code-block:: cpp
+
+	logging.formatters.f1.class = PatternFormatter
+	logging.formatters.f1.pattern = %s: [%p] %t
+	logging.formatters.f1.times = UTC
+
+Configuring Channels
+
+A channel is configured using the "logging.channels" property. Like with Formatters, every channel has an internal name, which is used during configuration only. The name becomes part of the property name. Every channel has a mandatory "class" property, which specifies the actual class implementing the channel. :ref:`Any <doxid-class_poco_1_1_any>` other properties are passed on to the formatter by calling its setProperty() method.
+
+For convenience, the "formatter" property of a channel is treated specifically. The "formatter" property can either be used to refer to an already defined formatter, or it can be used to specify an "inline" formatter definition. In either case, when a "formatter" property is present, the channel is automatically "wrapped" in a :ref:`FormattingChannel <doxid-class_poco_1_1_formatting_channel>` object.
+
+Similarly, a channel supports also a "pattern" property, which results in the automatic instantiation of a :ref:`FormattingChannel <doxid-class_poco_1_1_formatting_channel>` object with a connected :ref:`PatternFormatter <doxid-class_poco_1_1_pattern_formatter>`.
+
+Examples:
+
+.. ref-code-block:: cpp
+
+	logging.channels.c1.class = ConsoleChannel
+	logging.channels.c1.formatter = f1
+	logging.channels.c2.class = FileChannel
+	logging.channels.c2.path = ${system.tempDir}/sample.log
+	logging.channels.c2.formatter.class = PatternFormatter
+	logging.channels.c2.formatter.pattern = %s: [%p] %t
+	logging.channels.c3.class = ConsoleChannel
+	logging.channels.c3.pattern = %s: [%p] %t
+
+Configuring Loggers
+
+A logger is configured using the "logging.loggers" property. Like with channels and formatters, every logger has an internal name, which, however, is only used to ensure the uniqueness of the property names. Note that this name is different from the logger's full name, which is used to access the logger at runtime. Every logger except the root logger has a mandatory "name" property which is used to specify the logger's full name. Furthermore, a "channel" property is supported, which can either refer to a named channel, or which can contain an inline channel definition.
+
+Examples:
+
+.. ref-code-block:: cpp
+
+	logging.loggers.root.channel = c1
+	logging.loggers.root.level = warning
+	logging.loggers.l1.name = logger1
+	logging.loggers.l1.channel.class = ConsoleChannel
+	logging.loggers.l1.channel.pattern = %s: [%p] %t
+	logging.loggers.l1.level = information
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_util_1_1_logging_configurator_1a76fb9451dc6609404e5ff50f6e2f15f0:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~LoggingConfigurator()
+
+Destroys the :ref:`LoggingConfigurator <doxid-class_poco_1_1_util_1_1_logging_configurator>`.
+
+Methods
+-------
+
+.. index:: pair: function; configure
+.. _doxid-class_poco_1_1_util_1_1_logging_configurator_1a060135dad4a04f4eb8acf480887a8537:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	configure(:ref:`AbstractConfiguration<doxid-class_poco_1_1_util_1_1_abstract_configuration>`* pConfig)
+
+Configures the logging subsystem based on the given configuration.
+
+A :ref:`ConfigurationView <doxid-class_poco_1_1_util_1_1_configuration_view>` can be used to pass only a part of a larger configuration.
+

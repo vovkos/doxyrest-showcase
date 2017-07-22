@@ -1,0 +1,540 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Eroding and Dilating &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extract horizontal and vertical lines by using morphological operations" href="page_tutorial_moprh_lines_detection.html" />
+    <link rel="prev" title="Creating Bounding rotated boxes and ellipses for contours" href="page_tutorial_bounding_rotated_ellipses.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_copyMakeBorder.html">Adding borders to your images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_warp_affine.html">Affine Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_back_projection.html">Back Projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold.html">Basic Thresholding Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_canny_detector.html">Canny Edge Detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hull.html">Convex Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html">Creating Bounding boxes and circles for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html">Creating Bounding rotated boxes and ellipses for contours</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Eroding and Dilating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html">Extract horizontal and vertical lines by using morphological operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_find_contours.html">Finding contours in your image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_calculation.html">Histogram Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_comparison.html">Histogram Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_equalization.html">Histogram Equalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hitOrMiss.html">Hit-or-Miss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_circle.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_lines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moments.html">Image Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_distance_transform.html">Image Segmentation with Distance Transform and Watershed Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_laplace_operator.html">Laplace Operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_filter_2d.html">Making your own linear filters!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_opening_closing_hats.html">More Morphology Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_point_polygon_test.html">Point Polygon Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_remap.html">Remapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html">Smoothing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_sobel_derivatives.html">Sobel Derivatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_template_matching.html">Template Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold_inRange.html">Thresholding Operations using inRange</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a> &raquo;</li>
+        
+      <li>Eroding and Dilating</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="eroding-and-dilating">
+<span id="doxid-db-df6-tutorial-erosion-dilatation"></span><span id="index-0"></span><h1>Eroding and Dilating</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Apply two very common morphological operators: Erosion and Dilation. For this purpose, you will use the following OpenCV functions:<ul>
+<li><a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">cv::erode</span></a></li>
+<li><a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">cv::dilate</span></a></li>
+</ul>
+</li>
+</ul>
+<p class="rubric">Interesting fact</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler.</p>
+<p class="rubric">Morphological Operations</p>
+<ul>
+<li><p class="first">In short: A set of operations that process images based on shapes. Morphological operations apply a <em>structuring element</em> to an input image and generate an output image.</p>
+</li>
+<li><p class="first">The most basic morphological operations are: Erosion and Dilation. They have a wide array of uses, i.e. :</p>
+<ul class="simple">
+<li>Removing noise</li>
+<li>Isolation of individual elements and joining disparate elements in an image.</li>
+<li>Finding of intensity bumps or holes in an image</li>
+</ul>
+</li>
+<li><p class="first">We will explain dilation and erosion briefly, using the following image as an example:</p>
+<img alt="_images/Morphology_1_Tutorial_Theory_Original_Image.png" src="_images/Morphology_1_Tutorial_Theory_Original_Image.png" />
+</li>
+</ul>
+<p class="rubric">Dilation</p>
+<ul>
+<li><p class="first">This operations consists of convolving an image <span class="math notranslate nohighlight">\(A\)</span> with some kernel (<span class="math notranslate nohighlight">\(B\)</span>), which can have any shape or size, usually a square or circle.</p>
+</li>
+<li><p class="first">The kernel <span class="math notranslate nohighlight">\(B\)</span> has a defined <em>anchor point</em>, usually being the center of the kernel.</p>
+</li>
+<li><p class="first">As the kernel <span class="math notranslate nohighlight">\(B\)</span> is scanned over the image, we compute the maximal pixel value overlapped by <span class="math notranslate nohighlight">\(B\)</span> and replace the image pixel in the anchor point position with that maximal value. As you can deduce, this maximizing operation causes bright regions within an image to “grow” (therefore the name <em>dilation</em>). Take the above image as an example. Applying dilation we can get:</p>
+<img alt="_images/Morphology_1_Tutorial_Theory_Dilation.png" src="_images/Morphology_1_Tutorial_Theory_Dilation.png" />
+</li>
+</ul>
+<p>The background (bright) dilates around the black regions of the letter.</p>
+<p>To better grasp the idea and avoid possible confusion, in this other example we have inverted the original image such as the object in white is now the letter. We have performed two dilatations with a rectangular structuring element of size <code class="docutils literal notranslate"><span class="pre">3x3</span></code>.</p>
+<img alt="Left image: original image inverted, right image: resulting dilatation" src="_images/Morphology_1_Tutorial_Theory_Dilatation_2.png" />
+<p>The dilatation makes the object in white bigger.</p>
+<p class="rubric">Erosion</p>
+<ul>
+<li><p class="first">This operation is the sister of dilation. It computes a local minimum over the area of given kernel.</p>
+</li>
+<li><p class="first">As the kernel <span class="math notranslate nohighlight">\(B\)</span> is scanned over the image, we compute the minimal pixel value overlapped by <span class="math notranslate nohighlight">\(B\)</span> and replace the image pixel under the anchor point with that minimal value.</p>
+</li>
+<li><p class="first">Analagously to the example for dilation, we can apply the erosion operator to the original image (shown above). You can see in the result below that the bright areas of the image (the background, apparently), get thinner, whereas the dark zones (the “writing”) gets bigger.</p>
+<img alt="_images/Morphology_1_Tutorial_Theory_Erosion.png" src="_images/Morphology_1_Tutorial_Theory_Erosion.png" />
+</li>
+</ul>
+<p>In similar manner, the corresponding image results by applying erosion operation on the inverted original image (two erosions with a rectangular structuring element of size <code class="docutils literal notranslate"><span class="pre">3x3</span></code>):</p>
+<img alt="Left image: original image inverted, right image: resulting erosion" src="_images/Morphology_1_Tutorial_Theory_Erosion_2.png" />
+<p>The erosion makes the object in white smaller.</p>
+<p class="rubric">Code</p>
+<p>This tutorial’s code is shown below. You can also download it <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Morphology_1.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">erosion_dst</span><span class="p">,</span> <span class="n">dilation_dst</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">erosion_elem</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">erosion_size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">dilation_elem</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">dilation_size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_elem</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_kernel_size</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">Erosion</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="nf">Dilation</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Erosion Demo&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Dilation Demo&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga8d86b207f7211250dbe6e28f76307ffb"><span class="std std-ref">moveWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Dilation Demo&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Element:</span><span class="se">\n</span><span class="s"> 0: Rect </span><span class="se">\n</span><span class="s"> 1: Cross </span><span class="se">\n</span><span class="s"> 2: Ellipse&quot;</span><span class="p">,</span> <span class="s">&quot;Erosion Demo&quot;</span><span class="p">,</span>
+          <span class="o">&amp;</span><span class="n">erosion_elem</span><span class="p">,</span> <span class="n">max_elem</span><span class="p">,</span>
+          <span class="n">Erosion</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Kernel size:</span><span class="se">\n</span><span class="s"> 2n +1&quot;</span><span class="p">,</span> <span class="s">&quot;Erosion Demo&quot;</span><span class="p">,</span>
+          <span class="o">&amp;</span><span class="n">erosion_size</span><span class="p">,</span> <span class="n">max_kernel_size</span><span class="p">,</span>
+          <span class="n">Erosion</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Element:</span><span class="se">\n</span><span class="s"> 0: Rect </span><span class="se">\n</span><span class="s"> 1: Cross </span><span class="se">\n</span><span class="s"> 2: Ellipse&quot;</span><span class="p">,</span> <span class="s">&quot;Dilation Demo&quot;</span><span class="p">,</span>
+          <span class="o">&amp;</span><span class="n">dilation_elem</span><span class="p">,</span> <span class="n">max_elem</span><span class="p">,</span>
+          <span class="n">Dilation</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Kernel size:</span><span class="se">\n</span><span class="s"> 2n +1&quot;</span><span class="p">,</span> <span class="s">&quot;Dilation Demo&quot;</span><span class="p">,</span>
+          <span class="o">&amp;</span><span class="n">dilation_size</span><span class="p">,</span> <span class="n">max_kernel_size</span><span class="p">,</span>
+          <span class="n">Dilation</span> <span class="p">);</span>
+
+  <span class="n">Erosion</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+  <span class="n">Dilation</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">Erosion</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">erosion_type</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span> <span class="n">erosion_elem</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">erosion_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">erosion_elem</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">){</span> <span class="n">erosion_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada318435753d0b9f7faa241a658ec2e191"><span class="std std-ref">MORPH_CROSS</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">erosion_elem</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="n">erosion_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada33a3c67a61f349d21c507d05c53a755f"><span class="std std-ref">MORPH_ELLIPSE</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">erosion_type</span><span class="p">,</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">erosion_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">erosion_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">erosion_size</span><span class="p">,</span> <span class="n">erosion_size</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">erode</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">erosion_dst</span><span class="p">,</span> <span class="n">element</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Erosion Demo&quot;</span><span class="p">,</span> <span class="n">erosion_dst</span> <span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">Dilation</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">dilation_type</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span> <span class="n">dilation_elem</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">dilation_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">dilation_elem</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">){</span> <span class="n">dilation_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada318435753d0b9f7faa241a658ec2e191"><span class="std std-ref">MORPH_CROSS</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">dilation_elem</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="n">dilation_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada33a3c67a61f349d21c507d05c53a755f"><span class="std std-ref">MORPH_ELLIPSE</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">dilation_type</span><span class="p">,</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">dilation_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">dilation_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">dilation_size</span><span class="p">,</span> <span class="n">dilation_size</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dilation_dst</span><span class="p">,</span> <span class="n">element</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Dilation Demo&quot;</span><span class="p">,</span> <span class="n">dilation_dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Most of the material shown here is trivial (if you have any doubt, please refer to the tutorials in previous sections). Let’s check the general structure of the program:</p>
+<ul class="simple">
+<li>Load an image (can be BGR or grayscale)</li>
+<li>Create two windows (one for dilation output, the other for erosion)</li>
+<li>Create a set of two Trackbars for each operation:<ul>
+<li>The first trackbar “Element” returns either <strong>erosion_elem</strong> or <strong>dilation_elem</strong></li>
+<li>The second trackbar “Kernel size” return <strong>erosion_size</strong> or <strong>dilation_size</strong> for the corresponding operation.</li>
+</ul>
+</li>
+<li>Every time we move any slider, the user’s function <strong>Erosion</strong> or <strong>Dilation</strong> will be called and it will update the output image based on the current trackbar values.</li>
+</ul>
+<p>Let’s analyze these two functions:</p>
+</li>
+<li><p class="first"><strong>erosion:</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">Erosion</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">erosion_type</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span> <span class="n">erosion_elem</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">erosion_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">erosion_elem</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">){</span> <span class="n">erosion_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada318435753d0b9f7faa241a658ec2e191"><span class="std std-ref">MORPH_CROSS</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">erosion_elem</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="n">erosion_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada33a3c67a61f349d21c507d05c53a755f"><span class="std std-ref">MORPH_ELLIPSE</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">Mat</span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">erosion_type</span><span class="p">,</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">erosion_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">erosion_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">erosion_size</span><span class="p">,</span> <span class="n">erosion_size</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">erode</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">erosion_dst</span><span class="p">,</span> <span class="n">element</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Erosion Demo&quot;</span><span class="p">,</span> <span class="n">erosion_dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<ul>
+<li><p class="first">The function that performs the <em>erosion</em> operation is <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaeb1e0c1033e3f6b891a25d0511362aeb"><span class="std std-ref">cv::erode</span></a>. As we can see, it receives three arguments:</p>
+<ul>
+<li><p class="first"><em>src</em> : The source image</p>
+</li>
+<li><p class="first"><em>erosion_dst</em> : The output image</p>
+</li>
+<li><p class="first"><em>element</em> : This is the kernel we will use to perform the operation. If we do not specify, the default is a simple <code class="docutils literal notranslate"><span class="pre">3x3</span></code> matrix. Otherwise, we can specify its shape. For this, we need to use the function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">cv::getStructuringElement</span></a> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">erosion_type</span><span class="p">,</span>
+                     <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">erosion_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">erosion_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span>
+                     <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">erosion_size</span><span class="p">,</span> <span class="n">erosion_size</span> <span class="p">)</span> <span class="p">);</span>
+</pre>
+<p>We can choose any of three shapes for our kernel:</p>
+<ul class="simple">
+<li>Rectangular box: MORPH_RECT</li>
+<li>Cross: MORPH_CROSS</li>
+<li>Ellipse: MORPH_ELLIPSE</li>
+</ul>
+<p>Then, we just have to specify the size of our kernel and the <em>anchor point</em>. If not specified, it is assumed to be in the center.</p>
+</li>
+</ul>
+</li>
+<li><p class="first">That is all. We are ready to perform the erosion of our image. Additionally, there is another parameter that allows you to perform multiple erosions (iterations) at once. However, We haven’t used it in this simple tutorial. You can check out the reference for more details.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><strong>dilation:</strong></p>
+<p>The code is below. As you can see, it is completely similar to the snippet of code for <strong>erosion</strong>. Here we also have the option of defining our kernel, its anchor point and the size of the operator to be used.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">Dilation</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">dilation_type</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span> <span class="n">dilation_elem</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">){</span> <span class="n">dilation_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada260c4cbde19a749726763c01a074c60f"><span class="std std-ref">MORPH_RECT</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">dilation_elem</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">){</span> <span class="n">dilation_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada318435753d0b9f7faa241a658ec2e191"><span class="std std-ref">MORPH_CROSS</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">dilation_elem</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="n">dilation_type</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MorphShapes.html#doxid-d4-d86-group-imgproc-filter-1ggac2db39b56866583a95a5680313c314ada33a3c67a61f349d21c507d05c53a755f"><span class="std std-ref">MORPH_ELLIPSE</span></a><span></span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">Mat</span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">dilation_type</span><span class="p">,</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">dilation_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">dilation_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span>
+                       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">dilation_size</span><span class="p">,</span> <span class="n">dilation_size</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga4ff0f3318642c4f469d0e11f242f3b6c"><span class="std std-ref">dilate</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dilation_dst</span><span class="p">,</span> <span class="n">element</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Dilation Demo&quot;</span><span class="p">,</span> <span class="n">dilation_dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Results</p>
+</li>
+</ol>
+<p>Compile the code above and execute it with an image as argument. For instance, using this image:</p>
+<img alt="_images/Morphology_1_Tutorial_Original_Image.jpg" src="_images/Morphology_1_Tutorial_Original_Image.jpg" />
+<p>We get the results below. Varying the indices in the Trackbars give different output images, naturally. Try them out! You can even try to add a third Trackbar to control the number of iterations.</p>
+<img alt="_images/Morphology_1_Result.jpg" src="_images/Morphology_1_Result.jpg" />
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_moprh_lines_detection.html" class="btn btn-neutral float-right" title="Extract horizontal and vertical lines by using morphological operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_bounding_rotated_ellipses.html" class="btn btn-neutral float-left" title="Creating Bounding rotated boxes and ellipses for contours" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

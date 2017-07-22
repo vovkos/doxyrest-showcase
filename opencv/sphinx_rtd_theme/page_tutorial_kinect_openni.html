@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using Kinect and other OpenNI compatible depth sensors &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Video Input with OpenCV and similarity measurement" href="page_tutorial_video_input_psnr_ssim.html" />
+    <link rel="prev" title="Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors" href="page_tutorial_intelperc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_video_write.html">Creating a video with OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_intelperc.html">Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Using Kinect and other OpenNI compatible depth sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_video_input_psnr_ssim.html">Video Input with OpenCV and similarity measurement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a> &raquo;</li>
+        
+      <li>Using Kinect and other OpenNI compatible depth sensors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-kinect-and-other-openni-compatible-depth-sensors">
+<span id="doxid-d7-d6f-tutorial-kinect-openni"></span><span id="index-0"></span><h1>Using Kinect and other OpenNI compatible depth sensors</h1>
+<p>Depth sensors compatible with OpenNI (Kinect, XtionPRO, …) are supported through VideoCapture class. Depth map, BGR image and some other formats of output can be retrieved by using familiar interface of VideoCapture.</p>
+<p>In order to use depth sensor with OpenCV you should do the following preliminary steps:</p>
+<ol class="arabic">
+<li><p class="first">Install OpenNI library (from here <a class="reference external" href="http://www.openni.org/downloadfiles">http://www.openni.org/downloadfiles</a>) and PrimeSensor Module for OpenNI (from here <a class="reference external" href="https://github.com/avin2/SensorKinect">https://github.com/avin2/SensorKinect</a>). The installation should be done to default folders listed in the instructions of these products, e.g.:</p>
+<pre class="highlight literal-block">
+<span></span><span class="nl">OpenNI</span><span class="p">:</span>
+    <span class="n">Linux</span> <span class="o">&amp;</span> <span class="nl">MacOSX</span><span class="p">:</span>
+        <span class="n">Libs</span> <span class="nl">into</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span>
+        <span class="n">Includes</span> <span class="nl">into</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">ni</span>
+    <span class="nl">Windows</span><span class="p">:</span>
+        <span class="n">Libs</span> <span class="nl">into</span><span class="p">:</span> <span class="nl">c</span><span class="p">:</span><span class="o">/</span><span class="n">Program</span> <span class="n">Files</span><span class="o">/</span><span class="n">OpenNI</span><span class="o">/</span><span class="n">Lib</span>
+        <span class="n">Includes</span> <span class="nl">into</span><span class="p">:</span> <span class="nl">c</span><span class="p">:</span><span class="o">/</span><span class="n">Program</span> <span class="n">Files</span><span class="o">/</span><span class="n">OpenNI</span><span class="o">/</span><span class="n">Include</span>
+<span class="n">PrimeSensor</span> <span class="nl">Module</span><span class="p">:</span>
+    <span class="n">Linux</span> <span class="o">&amp;</span> <span class="nl">MacOSX</span><span class="p">:</span>
+        <span class="n">Bins</span> <span class="nl">into</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span>
+    <span class="nl">Windows</span><span class="p">:</span>
+        <span class="n">Bins</span> <span class="nl">into</span><span class="p">:</span> <span class="nl">c</span><span class="p">:</span><span class="o">/</span><span class="n">Program</span> <span class="n">Files</span><span class="o">/</span><span class="n">Prime</span> <span class="n">Sense</span><span class="o">/</span><span class="n">Sensor</span><span class="o">/</span><span class="n">Bin</span>
+</pre>
+<p>If one or both products were installed to the other folders, the user should change corresponding CMake variables OPENNI_LIB_DIR, OPENNI_INCLUDE_DIR or/and OPENNI_PRIME_SENSOR_MODULE_BIN_DIR.</p>
+</li>
+<li><p class="first">Configure OpenCV with OpenNI support by setting WITH_OPENNI flag in CMake. If OpenNI is found in install folders OpenCV will be built with OpenNI library (see a status OpenNI in CMake log) whereas PrimeSensor Modules can not be found (see a status OpenNI PrimeSensor Modules in CMake log). Without PrimeSensor module OpenCV will be successfully compiled with OpenNI library, but VideoCapture object will not grab data from Kinect sensor.</p>
+</li>
+<li><p class="first">Build OpenCV.</p>
+</li>
+</ol>
+<p>VideoCapture can retrieve the following data:</p>
+<ol class="arabic simple">
+<li>data given from depth generator:<ul>
+<li>CAP_OPENNI_DEPTH_MAP - depth values in mm (CV_16UC1)</li>
+<li>CAP_OPENNI_POINT_CLOUD_MAP - XYZ in meters (CV_32FC3)</li>
+<li>CAP_OPENNI_DISPARITY_MAP - disparity in pixels (CV_8UC1)</li>
+<li>CAP_OPENNI_DISPARITY_MAP_32F - disparity in pixels (CV_32FC1)</li>
+<li>CAP_OPENNI_VALID_DEPTH_MASK - mask of valid pixels (not ocluded, not shaded etc.) (CV_8UC1)</li>
+</ul>
+</li>
+<li>data given from BGR image generator:<ul>
+<li>CAP_OPENNI_BGR_IMAGE - color image (CV_8UC3)</li>
+<li>CAP_OPENNI_GRAY_IMAGE - gray image (CV_8UC1)</li>
+</ul>
+</li>
+</ol>
+<p>In order to get depth map from depth sensor use VideoCapture::operator &gt;&gt;, e. g. :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">VideoCapture</span> <span class="n">capture</span><span class="p">(</span> <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294daa073098573ce0968cb7a79de1a5ce0ee"><span class="std std-ref">CAP_OPENNI</span></a><span></span> <span class="p">);</span>
+<span class="k">for</span><span class="p">(;;)</span>
+<span class="p">{</span>
+    <span class="n">Mat</span> <span class="n">depthMap</span><span class="p">;</span>
+    <span class="n">capture</span> <span class="o">&gt;&gt;</span> <span class="n">depthMap</span><span class="p">;</span>
+
+    <span class="k">if</span><span class="p">(</span> <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span> <span class="mi">30</span> <span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+        <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>For getting several data maps use VideoCapture::grab and VideoCapture::retrieve, e.g. :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">VideoCapture</span> <span class="nf">capture</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// or CAP_OPENNI</span>
+<span class="k">for</span><span class="p">(;;)</span>
+<span class="p">{</span>
+    <span class="n">Mat</span> <span class="n">depthMap</span><span class="p">;</span>
+    <span class="n">Mat</span> <span class="n">bgrImage</span><span class="p">;</span>
+
+    <span class="n">capture</span><span class="p">.</span><span class="n">grab</span><span class="p">();</span>
+
+    <span class="n">capture</span><span class="p">.</span><span class="n">retrieve</span><span class="p">(</span> <span class="n">depthMap</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-dfc-group-videoio-flags-others-1ggaa7b94c52226125d4024580c3699ce4a3a2278fe906c8f7508e6e7a92f46888661"><span class="std std-ref">CAP_OPENNI_DEPTH_MAP</span></a><span></span> <span class="p">);</span>
+    <span class="n">capture</span><span class="p">.</span><span class="n">retrieve</span><span class="p">(</span> <span class="n">bgrImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-dfc-group-videoio-flags-others-1ggaa7b94c52226125d4024580c3699ce4a3a467bac9001f40dea888f47ac55886c23"><span class="std std-ref">CAP_OPENNI_BGR_IMAGE</span></a><span></span> <span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span> <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span> <span class="mi">30</span> <span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">)</span>
+        <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>For setting and getting some property of sensor` data generators use VideoCapture::set and VideoCapture::get methods respectively, e.g. :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">VideoCapture</span> <span class="n">capture</span><span class="p">(</span> <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294daa073098573ce0968cb7a79de1a5ce0ee"><span class="std std-ref">CAP_OPENNI</span></a><span></span> <span class="p">);</span>
+<span class="n">capture</span><span class="p">.</span><span class="n">set</span><span class="p">(</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-dfc-group-videoio-flags-others-1ggabbf106f6cb6a058c7ee194dc14fe39b1a241b67030848f3bcf223d18ebfe75adc"><span class="std std-ref">CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-dfc-group-videoio-flags-others-1ggada3c4e6ca936e43ff390e61b5629cfd8a08a35a2f66b2d645eb7817e852ff8ddc"><span class="std std-ref">CAP_OPENNI_VGA_30HZ</span></a><span></span> <span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;FPS    &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">capture</span><span class="p">.</span><span class="n">get</span><span class="p">(</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-dfc-group-videoio-flags-others-1gga1d479d51825779352b0225bba25278afa88571cf323ed746cfad77160272fe593"><span class="std std-ref">CAP_OPENNI_IMAGE_GENERATOR</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704daf01bc92359d2abc9e6eeb5cbe36d9af2"><span class="std std-ref">CAP_PROP_FPS</span></a><span></span> <span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre>
+<p>Since two types of sensor’s data generators are supported (image generator and depth generator), there are two flags that should be used to set/get property of the needed generator:</p>
+<ul class="simple">
+<li>CAP_OPENNI_IMAGE_GENERATOR A flag for access to the image generator properties.</li>
+<li>CAP_OPENNI_DEPTH_GENERATOR A flag for access to the depth generator properties. This flag value is assumed by default if neither of the two possible values of the property is not set.</li>
+</ul>
+<p>Some depth sensors (for example XtionPRO) do not have image generator. In order to check it you can get CAP_OPENNI_IMAGE_GENERATOR_PRESENT property.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">bool</span> <span class="n">isImageGeneratorPresent</span> <span class="o">=</span> <span class="n">capture</span><span class="p">.</span><span class="n">get</span><span class="p">(</span> <span class="n">CAP_PROP_OPENNI_IMAGE_GENERATOR_PRESENT</span> <span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// or == 1</span>
+</pre>
+<p>Flags specifing the needed generator type must be used in combination with particular generator property. The following properties of cameras available through OpenNI interfaces are supported:</p>
+<ul>
+<li><p class="first">For image generator:</p>
+<ul class="simple">
+<li>CAP_PROP_OPENNI_OUTPUT_MODE Three output modes are supported: CAP_OPENNI_VGA_30HZ used by default (image generator returns images in VGA resolution with 30 FPS), CAP_OPENNI_SXGA_15HZ (image generator returns images in SXGA resolution with 15 FPS) and CAP_OPENNI_SXGA_30HZ (image generator returns images in SXGA resolution with 30 FPS, the mode is supported by XtionPRO Live); depth generator’s maps are always in VGA resolution.</li>
+</ul>
+</li>
+<li><p class="first">For depth generator:</p>
+<ul>
+<li><p class="first">CAP_PROP_OPENNI_REGISTRATION Flag that registers the remapping depth map to image map by changing depth generator’s view point (if the flag is “on”) or sets this view point to its normal one (if the flag is “off”). The registration process’s resulting images are pixel-aligned,which means that every pixel in the image is aligned to a pixel in the depth image.</p>
+<p>Next properties are available for getting only:</p>
+</li>
+<li><p class="first">CAP_PROP_OPENNI_FRAME_MAX_DEPTH A maximum supported depth of Kinect in mm.</p>
+</li>
+<li><p class="first">CAP_PROP_OPENNI_BASELINE Baseline value in mm.</p>
+</li>
+<li><p class="first">CAP_PROP_OPENNI_FOCAL_LENGTH A focal length in pixels.</p>
+</li>
+<li><p class="first">CAP_PROP_FRAME_WIDTH Frame width in pixels.</p>
+</li>
+<li><p class="first">CAP_PROP_FRAME_HEIGHT Frame height in pixels.</p>
+</li>
+<li><p class="first">CAP_PROP_FPS Frame rate in FPS.</p>
+</li>
+</ul>
+</li>
+<li><p class="first">Some typical flags combinations “generator type + property” are defined as single flags:</p>
+<ul class="simple">
+<li>CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE = CAP_OPENNI_IMAGE_GENERATOR + CAP_PROP_OPENNI_OUTPUT_MODE</li>
+<li>CAP_OPENNI_DEPTH_GENERATOR_BASELINE = CAP_OPENNI_DEPTH_GENERATOR + CAP_PROP_OPENNI_BASELINE</li>
+<li>CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH = CAP_OPENNI_DEPTH_GENERATOR + CAP_PROP_OPENNI_FOCAL_LENGTH</li>
+<li>CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION = CAP_OPENNI_DEPTH_GENERATOR + CAP_PROP_OPENNI_REGISTRATION</li>
+</ul>
+</li>
+</ul>
+<p>For more information please refer to the example of usage <a class="reference external" href="https://github.com/opencv/tree/master/samples/cpp/openni_capture.cpp">openni_capture.cpp</a> in opencv/samples/cpp folder.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_video_input_psnr_ssim.html" class="btn btn-neutral float-right" title="Video Input with OpenCV and similarity measurement" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_intelperc.html" class="btn btn-neutral float-left" title="Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

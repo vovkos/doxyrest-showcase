@@ -1,0 +1,542 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Mask operations on matrices &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mat - The Basic Image Container" href="page_tutorial_mat_the_basic_image_container.html" />
+    <link rel="prev" title="Interoperability with OpenCV 1" href="page_tutorial_interoperability_with_OpenCV_1.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_adding_images.html">Adding (blending) two images using OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_basic_geometric_drawing.html">Basic Drawing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_basic_linear_transform.html">Changing the contrast and brightness of an image!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_discrete_fourier_transform.html">Discrete Fourier Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_file_input_output_with_xml_yml.html">File Input and Output using XML and YAML files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_how_to_scan_images.html">How to scan images, lookup tables and time measurement with OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_how_to_use_OpenCV_parallel_for_.html">How to use the OpenCV parallel_for_ to parallelize your code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_how_to_use_ippa_conversion.html">Intel® IPP Asynchronous C/C++ library in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_interoperability_with_OpenCV_1.html">Interoperability with OpenCV 1</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Mask operations on matrices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_mat_the_basic_image_container.html">Mat - The Basic Image Container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_mat_operations.html">Operations with images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_random_generator_and_text.html">Random generator and text with OpenCV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a> &raquo;</li>
+        
+      <li>Mask operations on matrices</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mask-operations-on-matrices">
+<span id="doxid-d7-d37-tutorial-mat-mask-operations"></span><span id="index-0"></span><h1>Mask operations on matrices</h1>
+<p><strong>Prev Tutorial:</strong> <a class="reference internal" href="page_tutorial_how_to_scan_images.html#doxid-db-da5-tutorial-how-to-scan-images"><span class="std std-ref">How to scan images, lookup tables and time measurement with OpenCV</span></a></p>
+<p><strong>Next Tutorial:</strong> <a class="reference internal" href="page_tutorial_mat_operations.html#doxid-d5-d98-tutorial-mat-operations"><span class="std std-ref">Operations with images</span></a></p>
+<p>Mask operations on matrices are quite simple. The idea is that we recalculate each pixels value in an image according to a mask matrix (also known as kernel). This mask holds values that will adjust how much influence neighboring pixels (and the current pixel) have on the new pixel value. From a mathematical point of view we make a weighted average, with our specified values.</p>
+<p class="rubric">Our test case</p>
+<p>Let us consider the issue of an image contrast enhancement method. Basically we want to apply for every pixel of the image the following formula:</p>
+<div class="math notranslate nohighlight">
+\[I(i,j) = 5*I(i,j) - [ I(i-1,j) + I(i+1,j) + I(i,j-1) + I(i,j+1)]\]</div>
+<div class="math notranslate nohighlight">
+\[\iff I(i,j)*M, \text{where } M = \bordermatrix{ _i\backslash ^j &amp; -1 &amp; 0 &amp; +1 \cr -1 &amp; 0 &amp; -1 &amp; 0 \cr 0 &amp; -1 &amp; 5 &amp; -1 \cr +1 &amp; 0 &amp; -1 &amp; 0 \cr }\]</div>
+<p>The first notation is by using a formula, while the second is a compacted version of the first by using a mask. You use the mask by putting the center of the mask matrix (in the upper case noted by the zero-zero index) on the pixel you want to calculate and sum up the pixel values multiplied with the overlapped matrix values. It’s the same thing, however in case of large matrices the latter notation is a lot easier to look over.</p>
+<p>Now let us see how we can make this happen by using the basic pixel access method or by using the <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga27c049795ce870216ddfb366086b5a04"><span class="std std-ref">cv::filter2D</span></a> function.</p>
+<p>Now let us see how we can make this happen by using the basic pixel access method or by using the <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga42c2468ab3a1238fbf48458c57169081"><span class="std std-ref">Imgproc.filter2D()</span></a> function.</p>
+<p>Now let us see how we can make this happen by using the basic pixel access method or by using the <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga42c2468ab3a1238fbf48458c57169081"><span class="std std-ref">cv2.filter2D()</span></a> function.</p>
+<p class="rubric">The Basic Method</p>
+<p>Here’s a function that will do this:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">Sharpen</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">myImage</span><span class="p">,</span><span class="n">Mat</span><span class="o">&amp;</span> <span class="n">Result</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">depth</span><span class="p">()</span> <span class="o">==</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>  <span class="c1">// accept only uchar images</span>
+
+    <span class="k">const</span> <span class="kt">int</span> <span class="n">nChannels</span> <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">channels</span><span class="p">();</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="n">myImage</span><span class="p">.</span><span class="n">type</span><span class="p">());</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">myImage</span><span class="p">.</span><span class="n">rows</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">previous</span> <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">current</span>  <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span>    <span class="p">);</span>
+        <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">next</span>     <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">output</span> <span class="o">=</span> <span class="n">Result</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span> <span class="n">nChannels</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">nChannels</span><span class="o">*</span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">cols</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="o">*</span><span class="n">output</span><span class="o">++</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gab93126370b85fda2c8bfaf8c811faeaf"><span class="std std-ref">saturate_cast</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                         <span class="o">-</span><span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">nChannels</span><span class="p">]</span> <span class="o">-</span> <span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">nChannels</span><span class="p">]</span> <span class="o">-</span> <span class="n">previous</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">next</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">rows</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">cols</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="p">}</span>
+</pre>
+<p>At first we make sure that the input images data is in unsigned char format. For this we use the <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">cv::CV_Assert</span></a> function that throws an error when the expression inside it is false.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">depth</span><span class="p">()</span> <span class="o">==</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>  <span class="c1">// accept only uchar images</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="k">public</span> <span class="k">static</span> <span class="kt">double</span> <span class="nf">saturateCastUchar</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mf">255.0</span> <span class="o">?</span> <span class="mf">255.0</span> <span class="o">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="o">?</span> <span class="mf">0.0</span> <span class="o">:</span> <span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="n">Mat</span> <span class="nf">sharpen</span><span class="p">(</span><span class="n">Mat</span> <span class="n">myImage</span><span class="p">,</span> <span class="n">Mat</span> <span class="n">Result</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">myImage</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">myImage</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_8U</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">nChannels</span> <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">channels</span><span class="p">();</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="n">myImage</span><span class="p">.</span><span class="n">type</span><span class="p">());</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">myImage</span><span class="p">.</span><span class="n">rows</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">myImage</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">double</span> <span class="n">sum</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">nChannels</span><span class="p">];</span>
+
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">nChannels</span><span class="p">;</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="kt">double</span> <span class="n">top</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+                <span class="kt">double</span> <span class="n">bottom</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+                <span class="kt">double</span> <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)[</span><span class="n">k</span><span class="p">]);</span>
+                <span class="kt">double</span> <span class="n">left</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+                <span class="kt">double</span> <span class="n">right</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+
+                <span class="n">sum</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">saturateCastUchar</span><span class="p">(</span><span class="n">top</span> <span class="o">+</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">center</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="n">Result</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">rows</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+
+    <span class="k">return</span> <span class="n">Result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>At first we make sure that the input images data in unsigned 8 bit format.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">myImage</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">myImage</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_8U</span><span class="p">);</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">def</span> <span class="nf">sharpen</span><span class="p">(</span><span class="n">my_image</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">my_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">my_image</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">CV_8U</span><span class="p">)</span>
+
+    <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">n_channels</span> <span class="o">=</span> <span class="n">my_image</span><span class="p">.</span><span class="n">shape</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">my_image</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">my_image</span><span class="p">.</span><span class="n">dtype</span><span class="p">)</span>
+
+
+    <span class="k">for</span> <span class="n">j</span> <span class="n">in</span> <span class="n">range</span>  <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">height</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span>  <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="n">in</span> <span class="n">range</span>  <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">)</span><span class="o">:</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>\
+                     <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">];</span>
+
+                <span class="k">if</span> <span class="n">sum</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="o">:</span>
+                    <span class="n">sum</span> <span class="o">=</span> <span class="mi">255</span>
+                <span class="k">if</span> <span class="n">sum</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">:</span>
+                    <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">result</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span>
+
+
+    <span class="k">return</span> <span class="n">result</span>
+</pre>
+<p>At first we make sure that the input images data in unsigned 8 bit format.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">my_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">my_image</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">CV_8U</span><span class="p">)</span>
+</pre>
+<p>We create an output image with the same size and the same type as our input. As you can see in the <a class="reference internal" href="page_tutorial_how_to_scan_images.html#doxid-db-da5-tutorial-how-to-scan-images-1tutorial-how-to-scan-images-storing"><span class="std std-ref">storing</span></a> section, depending on the number of channels we may have one or more subcolumns.</p>
+<p>We will iterate through them via pointers so the total number of elements depends on this number.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">const</span> <span class="kt">int</span> <span class="n">nChannels</span> <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">channels</span><span class="p">();</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="n">myImage</span><span class="p">.</span><span class="n">type</span><span class="p">());</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">nChannels</span> <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">channels</span><span class="p">();</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="n">myImage</span><span class="p">.</span><span class="n">type</span><span class="p">());</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">n_channels</span> <span class="o">=</span> <span class="n">my_image</span><span class="p">.</span><span class="n">shape</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">my_image</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">my_image</span><span class="p">.</span><span class="n">dtype</span><span class="p">)</span>
+</pre>
+<p>We’ll use the plain C [] operator to access pixels. Because we need to access multiple rows at the same time we’ll acquire the pointers for each of them (a previous, a current and a next line). We need another pointer to where we’re going to save the calculation. Then simply access the right items with the [] operator. For moving the output pointer ahead we simply increase this (with one byte) after each operation:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">myImage</span><span class="p">.</span><span class="n">rows</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">previous</span> <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">current</span>  <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span>    <span class="p">);</span>
+    <span class="k">const</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">next</span>     <span class="o">=</span> <span class="n">myImage</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">*</span> <span class="n">output</span> <span class="o">=</span> <span class="n">Result</span><span class="p">.</span><span class="n">ptr</span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span> <span class="n">nChannels</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">nChannels</span><span class="o">*</span><span class="p">(</span><span class="n">myImage</span><span class="p">.</span><span class="n">cols</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="o">*</span><span class="n">output</span><span class="o">++</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gab93126370b85fda2c8bfaf8c811faeaf"><span class="std std-ref">saturate_cast</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                     <span class="o">-</span><span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">nChannels</span><span class="p">]</span> <span class="o">-</span> <span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">nChannels</span><span class="p">]</span> <span class="o">-</span> <span class="n">previous</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">next</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>On the borders of the image the upper notation results inexistent pixel locations (like minus one - minus one). In these points our formula is undefined. A simple solution is to not apply the kernel in these points and, for example, set the pixels on the borders to zeros:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">rows</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">cols</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+</pre>
+<p>We need to access multiple rows and columns which can be done by adding or subtracting 1 to the current center (i,j). Then we apply the sum and put the new value in the Result matrix.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">myImage</span><span class="p">.</span><span class="n">rows</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">myImage</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">sum</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">nChannels</span><span class="p">];</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">nChannels</span><span class="p">;</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kt">double</span> <span class="n">top</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+            <span class="kt">double</span> <span class="n">bottom</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+            <span class="kt">double</span> <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)[</span><span class="n">k</span><span class="p">]);</span>
+            <span class="kt">double</span> <span class="n">left</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+            <span class="kt">double</span> <span class="n">right</span> <span class="o">=</span> <span class="o">-</span><span class="n">myImage</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span> <span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="n">k</span><span class="p">];</span>
+
+            <span class="n">sum</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">saturateCastUchar</span><span class="p">(</span><span class="n">top</span> <span class="o">+</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">center</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">Result</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>On the borders of the image the upper notation results in inexistent pixel locations (like (-1,-1)). In these points our formula is undefined. A simple solution is to not apply the kernel in these points and, for example, set the pixels on the borders to zeros:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">rows</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Result</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">Result</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="n">setTo</span><span class="p">(</span><span class="k">new</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+</pre>
+<p>We need to access multiple rows and columns which can be done by adding or subtracting 1 to the current center (i,j). Then we apply the sum and put the new value in the Result matrix.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span> <span class="n">j</span> <span class="n">in</span> <span class="nf">range</span>  <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">height</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span>  <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="n">in</span> <span class="n">range</span>  <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">)</span><span class="o">:</span>
+            <span class="n">sum</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>\
+                 <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">my_image</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="n">sum</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="o">:</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="mi">255</span>
+            <span class="k">if</span> <span class="n">sum</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">:</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">result</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span>
+</pre>
+<p class="rubric">The filter2D function</p>
+<p>Applying such filters are so common in image processing that in OpenCV there exist a function that will take care of applying the mask (also called a kernel in some places). For this you first need to define an object that holds the mask:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">Mat_</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="o">&lt;&lt;</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>
+                               <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">);</span>
+</pre>
+<p>Then call the <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga27c049795ce870216ddfb366086b5a04"><span class="std std-ref">cv::filter2D</span></a> function specifying the input, the output image and the kernel to use:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga42c2468ab3a1238fbf48458c57169081"><span class="std std-ref">filter2D</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst1</span><span class="p">,</span> <span class="n">src</span><span class="p">.</span><span class="n">depth</span><span class="p">(),</span> <span class="n">kernel</span> <span class="p">);</span>
+</pre>
+<p>The function even has a fifth optional argument to specify the center of the kernel, a sixth for adding an optional value to the filtered pixels before storing them in K and a seventh one for determining what to do in the regions where the operation is undefined (borders).</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">kern</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Mat</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_8S</span> <span class="p">);</span>
+<span class="kt">int</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">kern</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">row</span> <span class="p">,</span><span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+</pre>
+<p>Then call the <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga42c2468ab3a1238fbf48458c57169081"><span class="std std-ref">Imgproc.filter2D()</span></a> function specifying the input, the output image and the kernel to use:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Imgproc</span><span class="p">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">I</span><span class="p">.</span><span class="n">depth</span><span class="p">(),</span> <span class="n">kern</span> <span class="p">);</span>
+</pre>
+<p>The function even has a fifth optional argument to specify the center of the kernel, a sixth for adding an optional value to the filtered pixels before storing them in K and a seventh one for determining what to do in the regions where the operation is undefined (borders).</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">kernel</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="p">],</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span> <span class="err">#</span> <span class="n">kernel</span> <span class="n">should</span> <span class="n">be</span> <span class="n">floating</span> <span class="n">point</span> <span class="n">type</span>
+</pre>
+<p>Then call the <a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga42c2468ab3a1238fbf48458c57169081"><span class="std std-ref">cv2.filter2D()</span></a> function specifying the input, the output image and the kernell to use:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">K</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span> <span class="err">#</span> <span class="n">ddepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">means</span> <span class="n">destination</span> <span class="n">image</span> <span class="n">has</span> <span class="n">depth</span> <span class="n">same</span> <span class="n">as</span> <span class="n">input</span> <span class="n">image</span><span class="p">.</span>
+</pre>
+<p>This function is shorter, less verbose and, because there are some optimizations, it is usually faster than the <em>hand-coded method</em>. For example in my test while the second one took only 13 milliseconds the first took around 31 milliseconds. Quite some difference.</p>
+<p>For example:</p>
+<img alt="_images/resultMatMaskFilter2D.png" src="_images/resultMatMaskFilter2D.png" />
+<p>You can download this source code from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/mat_mask_operations/mat_mask_operations.cpp">here</a> or look in the OpenCV source code libraries sample directory at <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/core/mat_mask_operations/mat_mask_operations.cpp</span></code>.</p>
+<p>Check out an instance of running the program on our <a class="reference external" href="http://www.youtube.com/watch?v=7PF1tAU9se4">YouTube channel</a>.</p>
+<p>You can look in the OpenCV source code libraries sample directory at <code class="docutils literal notranslate"><span class="pre">samples/java/tutorial_code/core/mat_mask_operations/MatMaskOperations.java</span></code>.</p>
+<p>You can look in the OpenCV source code libraries sample directory at <code class="docutils literal notranslate"><span class="pre">samples/python/tutorial_code/core/mat_mask_operations/mat_mask_operations.py</span></code>.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_mat_the_basic_image_container.html" class="btn btn-neutral float-right" title="Mat - The Basic Image Container" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_interoperability_with_OpenCV_1.html" class="btn btn-neutral float-left" title="Interoperability with OpenCV 1" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,792 @@
+.. index:: pair: group; C API for video I/O
+.. _doxid-dd/d01/group__videoio__c:
+
+C API for video I/O
+===================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// typedefs
+
+	typedef struct :ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>` :ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`;
+	typedef struct :ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>` :ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`;
+
+	// enums
+
+	enum
+	{
+	    :target:`@106::CV_CAP_ANY<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a8c6c1159fb332c7979612de8bcb91a24>`           =0,
+	    :target:`@106::CV_CAP_MIL<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a4c0e2d7a879de72885d62b25e7d8dcd1>`           =100,
+	    :target:`@106::CV_CAP_VFW<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058aa0008d5518630f11edcc89932faa4ae7>`           =200,
+	    :target:`@106::CV_CAP_V4L<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a87450bb56b956f2827481136f12931db>`           =200,
+	    :target:`@106::CV_CAP_V4L2<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a7619979f22b83c3695514e53c70502ef>`          =200,
+	    :target:`@106::CV_CAP_FIREWARE<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ab3ace127777cb648cbbb69b7e6ee042a>`      =300,
+	    :target:`@106::CV_CAP_FIREWIRE<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058afb532e7f06faf0a8e4f82e212c9792ba>`      =300,
+	    :target:`@106::CV_CAP_IEEE1394<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a8a89020f8b2b3e3710df43a6f80f2132>`      =300,
+	    :target:`@106::CV_CAP_DC1394<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ab35d49ab388ec69c57df25a82e437cf5>`        =300,
+	    :target:`@106::CV_CAP_CMU1394<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a71b2b79b7aa058452f38e92f4b32bdfa>`       =300,
+	    :target:`@106::CV_CAP_STEREO<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058afe72d5428c2cdc6f6f60e85616a9afef>`        =400,
+	    :target:`@106::CV_CAP_TYZX<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a2e3f0b52e72ccccef55a28ac66abd709>`          =400,
+	    :target:`@106::CV_TYZX_LEFT<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a4367056fced60ee18b4fc1e936f2a774>`         =400,
+	    :target:`@106::CV_TYZX_RIGHT<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a8e17b8965049b75413f5f2ee012bce0d>`        =401,
+	    :target:`@106::CV_TYZX_COLOR<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a1d27b30ada023b6a3ac76d290ac089da>`        =402,
+	    :target:`@106::CV_TYZX_Z<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a85190efebe85617ddc73efa0d49d755d>`            =403,
+	    :target:`@106::CV_CAP_QT<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ae622ba873292d0d10b722a329f00afd1>`            =500,
+	    :target:`@106::CV_CAP_UNICAP<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a061243c2ad12fbd89518a4ca8c58f79f>`        =600,
+	    :target:`@106::CV_CAP_DSHOW<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058aea0bc33d3c5708e92d5d15797b5597ce>`         =700,
+	    :target:`@106::CV_CAP_MSMF<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ab4816c7459764d2fe2c61fe72c0e84e2>`          =1400,
+	    :target:`@106::CV_CAP_PVAPI<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a5b3b2cd8b6f9233c0d9b63bb8d121842>`         =800,
+	    :target:`@106::CV_CAP_OPENNI<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ac8916b3936e6f0833354de33f8097ffc>`        =900,
+	    :target:`@106::CV_CAP_OPENNI_ASUS<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058aa3a0a0afd1ee738119b10f694b7bb98b>`   =910,
+	    :target:`@106::CV_CAP_ANDROID<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a068234f0b10de926ed6e28528ae2ab2a>`       =1000,
+	    :target:`@106::CV_CAP_ANDROID_BACK<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ac7bd3e443cf79485269e352d1ff7a83a>`  =CV_CAP_ANDROID+99,
+	    :target:`@106::CV_CAP_ANDROID_FRONT<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a2bb3bd7c0baa42fcb1a8325481f695d8>` =CV_CAP_ANDROID+98,
+	    :target:`@106::CV_CAP_XIAPI<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ac3943d1caa66f5d89c4d5af1104ade35>`         =1100,
+	    :target:`@106::CV_CAP_AVFOUNDATION<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058afbef6cda792bf7cec891a983ca60be35>`  = 1200,
+	    :target:`@106::CV_CAP_GIGANETIX<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a27be50689f72be92e1c069c8e54efe00>`     = 1300,
+	    :target:`@106::CV_CAP_INTELPERC<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a04ab1bd77887a4e36c64801adda8f037>`     = 1500,
+	    :target:`@106::CV_CAP_OPENNI2<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058af8a16d3088be1d19075878562be17cf7>`       = 1600,
+	    :target:`@106::CV_CAP_GPHOTO2<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058aea4a373fd4080e33daf86cb8c4142a13>`       = 1700,
+	    :target:`@106::CV_CAP_GSTREAMER<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058ab2b7a41f4729e516a683811692d5b56d>`     = 1800,
+	    :target:`@106::CV_CAP_FFMPEG<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a9c91532b6f3cdc6776c29bd6b9d0d331>`        = 1900,
+	    :target:`@106::CV_CAP_IMAGES<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a37ec0b6c856439770aa9f2eb51983291>`        = 2000,
+	    :target:`@106::CV_CAP_ARAVIS<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a7fdf87a26a99f530f0866520c1d2e12b>`        = 2100,
+	    :target:`@106::CV_CAP_OCV_MJPEG<doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058aac12d82bd0c157a21444a7f4cd3c4a41>`     = 2200,
+	};
+
+	enum
+	{
+	    :target:`@107::CV_CAP_PROP_DC1394_OFF<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad4cc901632869d29a55b6f15139fcc98>`                           = -4,
+	    :target:`@107::CV_CAP_PROP_DC1394_MODE_MANUAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada16d1301cda3836e73e0f77e7e5abc203>`                   = -3,
+	    :target:`@107::CV_CAP_PROP_DC1394_MODE_AUTO<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada95dd8afbc220aca5d160e305cc90740e>`                     = -2,
+	    :target:`@107::CV_CAP_PROP_DC1394_MODE_ONE_PUSH_AUTO<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada071bd4db97a39e3a2d24bd068035c4a2>`            = -1,
+	    :target:`@107::CV_CAP_PROP_POS_MSEC<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5afcdcd3b5aca0148a22735f1a2dba1c>`                             =0,
+	    :target:`@107::CV_CAP_PROP_POS_FRAMES<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5352facf062934b88e7df97baa588991>`                           =1,
+	    :target:`@107::CV_CAP_PROP_POS_AVI_RATIO<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada119679c09a034db63346505d145532ba>`                        =2,
+	    :target:`@107::CV_CAP_PROP_FRAME_WIDTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada68627fd1d6c0a445299c63a296665509>`                          =3,
+	    :target:`@107::CV_CAP_PROP_FRAME_HEIGHT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4b04e148bea455483e666784e9594d3e>`                         =4,
+	    :target:`@107::CV_CAP_PROP_FPS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5f91733759094693912575b0e4e41f6b>`                                  =5,
+	    :target:`@107::CV_CAP_PROP_FOURCC<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafb31f512f21b566c39cf2b4432a0b791>`                               =6,
+	    :target:`@107::CV_CAP_PROP_FRAME_COUNT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5e829ce3564dcb6c11be64b0b4b7f7ea>`                          =7,
+	    :target:`@107::CV_CAP_PROP_FORMAT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad986c8dd7b0e40c86d8aa735f02137df>`                               =8,
+	    :target:`@107::CV_CAP_PROP_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada88a58f8b9198aaf51e25cbcc83ab7bac>`                                 =9,
+	    :target:`@107::CV_CAP_PROP_BRIGHTNESS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada547cd2e7a8cfb28140bd2d4277bd037a>`                           =10,
+	    :target:`@107::CV_CAP_PROP_CONTRAST<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada820549c08841c2ddbbf81ce28b6fb564>`                             =11,
+	    :target:`@107::CV_CAP_PROP_SATURATION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadadf404efa88027ebf2b681fb901fcf952>`                           =12,
+	    :target:`@107::CV_CAP_PROP_HUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad23d98b509ab62bc954891f3fba0acfc>`                                  =13,
+	    :target:`@107::CV_CAP_PROP_GAIN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaaf1ca1404cf3e86a0a88de1b4596a47e>`                                 =14,
+	    :target:`@107::CV_CAP_PROP_EXPOSURE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafc6727b5ad23ed0c7708453abca7ebc5>`                             =15,
+	    :target:`@107::CV_CAP_PROP_CONVERT_RGB<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabe32051a52bfed2581aec9409ac4a539>`                          =16,
+	    :target:`@107::CV_CAP_PROP_WHITE_BALANCE_BLUE_U<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0888b57abe529da18b6c8959c059d3a3>`                 =17,
+	    :target:`@107::CV_CAP_PROP_RECTIFICATION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada50b355b30a13f4893b02812a17bed2d8>`                        =18,
+	    :target:`@107::CV_CAP_PROP_MONOCHROME<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada688eaff5439da82b793671339a2eb17a>`                           =19,
+	    :target:`@107::CV_CAP_PROP_SHARPNESS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac2585a98332e62c1890ec1fad360cffe>`                            =20,
+	    :target:`@107::CV_CAP_PROP_AUTO_EXPOSURE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2ac314f597fb8f2d6ace20536ff87544>`                        =21,
+	    :target:`@107::CV_CAP_PROP_GAMMA<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad7ef2750f0ec2fa85ed901b44b4feec2>`                                =22,
+	    :target:`@107::CV_CAP_PROP_TEMPERATURE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada558b0a0e4298c8e96606702345123579>`                          =23,
+	    :target:`@107::CV_CAP_PROP_TRIGGER<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae940ce7c645ca967fea684cc229faa83>`                              =24,
+	    :target:`@107::CV_CAP_PROP_TRIGGER_DELAY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5357fcf931b923efa0f3ad1efc9baef8>`                        =25,
+	    :target:`@107::CV_CAP_PROP_WHITE_BALANCE_RED_V<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada925b5a1e6412893e681e82cc430a12b2>`                  =26,
+	    :target:`@107::CV_CAP_PROP_ZOOM<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada407051873b9a28d5f7daeba017b894bd>`                                 =27,
+	    :target:`@107::CV_CAP_PROP_FOCUS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada20d7366b54a8120ec887a85c17114b14>`                                =28,
+	    :target:`@107::CV_CAP_PROP_GUID<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacfba0f98d9117c313c3f9f0e783f3705>`                                 =29,
+	    :target:`@107::CV_CAP_PROP_ISO_SPEED<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada299011879cacebd922d96120d2ffb273>`                            =30,
+	    :target:`@107::CV_CAP_PROP_MAX_DC1394<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada11684025d542bffceba9a8afb753bbb0>`                           =31,
+	    :target:`@107::CV_CAP_PROP_BACKLIGHT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada400bae1c23c9779477236f8d344a1a24>`                            =32,
+	    :target:`@107::CV_CAP_PROP_PAN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada39480725847bc2ad6625f68f9a869475>`                                  =33,
+	    :target:`@107::CV_CAP_PROP_TILT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada8d1cae4d14561f33e384054378fa1e30>`                                 =34,
+	    :target:`@107::CV_CAP_PROP_ROLL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada58f0933c67dbaf277d318c860eed4941>`                                 =35,
+	    :target:`@107::CV_CAP_PROP_IRIS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada555bc11e96dc1e9932f0e0984f76bca0>`                                 =36,
+	    :target:`@107::CV_CAP_PROP_SETTINGS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada50d34d13d1246f5751849b452b816546>`                             =37,
+	    :target:`@107::CV_CAP_PROP_BUFFERSIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada02bbec3f18130dd0312b27f00696ad34>`                           =38,
+	    :target:`@107::CV_CAP_PROP_AUTOFOCUS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada280ec1b0125f758c3d67230092acb138>`                            =39,
+	    :target:`@107::CV_CAP_PROP_SAR_NUM<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada338a497b3db53d7b2da87a1571c8f913>`                              =40,
+	    :target:`@107::CV_CAP_PROP_SAR_DEN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada1cc5ed34febf32e7cc3eca84424951f8>`                              =41,
+	    :target:`@107::CV_CAP_PROP_AUTOGRAB<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada8f329c082f02cbe505bba72cbd179808>`                             =1024,
+	    :target:`@107::CV_CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafd561b51d6e96f47929018462a68d770>`       =1025,
+	    :target:`@107::CV_CAP_PROP_PREVIEW_FORMAT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada7be721b253ea488c0a04efb87f2cfe62>`                       =1026,
+	    :target:`@107::CV_CAP_OPENNI_DEPTH_GENERATOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada914ba943cd90106947e30048725a6121>`                    = 1 <<31,
+	    :target:`@107::CV_CAP_OPENNI_IMAGE_GENERATOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab5843c71e637836127110268d2d2e708>`                    = 1 <<30,
+	    :target:`@107::CV_CAP_OPENNI_IR_GENERATOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada256c1465670f0284d259c14e42459589>`                       = 1 <<29,
+	    :target:`@107::CV_CAP_OPENNI_GENERATORS_MASK<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3689aca456da4ee480c5fa5fdcaa2b91>`                    = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_OPENNI_IR_GENERATOR,
+	    :target:`@107::CV_CAP_PROP_OPENNI_OUTPUT_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafa8fbbd1767ef4ef316b43a72cf6ff77>`                   = 100,
+	    :target:`@107::CV_CAP_PROP_OPENNI_FRAME_MAX_DEPTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada80f10cff672c623e56c26a2139730ba0>`               = 101,
+	    :target:`@107::CV_CAP_PROP_OPENNI_BASELINE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadadd1d25547ea91597b3084699f67f8f94>`                      = 102,
+	    :target:`@107::CV_CAP_PROP_OPENNI_FOCAL_LENGTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad466b1800bf757a1cc3ddde6fa3c353b>`                  = 103,
+	    :target:`@107::CV_CAP_PROP_OPENNI_REGISTRATION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3707590005a8b3d3675d6a810afb1527>`                  = 104,
+	    :target:`@107::CV_CAP_PROP_OPENNI_REGISTRATION_ON<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6bb09683baca7f1f1488e95dcd7ff84e>`               = CV_CAP_PROP_OPENNI_REGISTRATION,
+	    :target:`@107::CV_CAP_PROP_OPENNI_APPROX_FRAME_SYNC<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad4a29004028cdf3115b3df92dca57bb8>`             = 105,
+	    :target:`@107::CV_CAP_PROP_OPENNI_MAX_BUFFER_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac5e97ed8d50b3e6d27e04023219e13b4>`               = 106,
+	    :target:`@107::CV_CAP_PROP_OPENNI_CIRCLE_BUFFER<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab00ccc6045d49907676a78abb554b299>`                 = 107,
+	    :target:`@107::CV_CAP_PROP_OPENNI_MAX_TIME_DURATION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafd49357f3e9903a42c02d433946ef678>`             = 108,
+	    :target:`@107::CV_CAP_PROP_OPENNI_GENERATOR_PRESENT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0d97998c669cddac38552dd8c519ac04>`             = 109,
+	    :target:`@107::CV_CAP_PROP_OPENNI2_SYNC<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae8e03aeda545fb8ea2b058e93e1ac798>`                         = 110,
+	    :target:`@107::CV_CAP_PROP_OPENNI2_MIRROR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6178198dba39919c6eb162e820e41565>`                       = 111,
+	    :target:`@107::CV_CAP_OPENNI_IMAGE_GENERATOR_PRESENT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4511f8afa4e80d5ce14211fd9672bf98>`            = CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_OPENNI_GENERATOR_PRESENT,
+	    :target:`@107::CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadadedd0dee71ac2bb80e62ae5386945ebe>`        = CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_OPENNI_OUTPUT_MODE,
+	    :target:`@107::CV_CAP_OPENNI_DEPTH_GENERATOR_PRESENT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab3000744bf962fecec52fd929f223ab3>`            = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_GENERATOR_PRESENT,
+	    :target:`@107::CV_CAP_OPENNI_DEPTH_GENERATOR_BASELINE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada387c7ab2b4bdf0be8275314a639def95>`           = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_BASELINE,
+	    :target:`@107::CV_CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacaf419b6ddbfaa0f7d9115d0d5cb957d>`       = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_FOCAL_LENGTH,
+	    :target:`@107::CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabad7508ff10c70ac422006dd3f64cc81>`       = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_REGISTRATION,
+	    :target:`@107::CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2208a3a4536229092f81022c1991265b>`    = CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION,
+	    :target:`@107::CV_CAP_OPENNI_IR_GENERATOR_PRESENT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada1d6fbe738b1f8a24e1f6982b72d65a56>`               = CV_CAP_OPENNI_IR_GENERATOR + CV_CAP_PROP_OPENNI_GENERATOR_PRESENT,
+	    :target:`@107::CV_CAP_GSTREAMER_QUEUE_LENGTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada664dbe61654399e43f84b13f8b127bc5>`                    = 200,
+	    :target:`@107::CV_CAP_PROP_PVAPI_MULTICASTIP<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad044a8132d0cb56c0ce0b776ad7beca6>`                    = 300,
+	    :target:`@107::CV_CAP_PROP_PVAPI_FRAMESTARTTRIGGERMODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada1481d5a9916344c92c10c0836f6bd430>`          = 301,
+	    :target:`@107::CV_CAP_PROP_PVAPI_DECIMATIONHORIZONTAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada1fd830340b8f07bd812e85ee14dc886e>`           = 302,
+	    :target:`@107::CV_CAP_PROP_PVAPI_DECIMATIONVERTICAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada18fdcc3b440ced590f36393ceff8d63e>`             = 303,
+	    :target:`@107::CV_CAP_PROP_PVAPI_BINNINGX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada078ab7b79b9d02daf05e880e955d504b>`                       = 304,
+	    :target:`@107::CV_CAP_PROP_PVAPI_BINNINGY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad4a59808bed730dc2d72a5ccb495a5f1>`                       = 305,
+	    :target:`@107::CV_CAP_PROP_PVAPI_PIXELFORMAT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada865df2b3345eca1073fac1322af5b788>`                    = 306,
+	    :target:`@107::CV_CAP_PROP_XI_DOWNSAMPLING<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada791a74cbfb84529ace9f9e8e175bdd4b>`                      = 400,
+	    :target:`@107::CV_CAP_PROP_XI_DATA_FORMAT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2ea34fbcb74452dbca3847560665bdbe>`                       = 401,
+	    :target:`@107::CV_CAP_PROP_XI_OFFSET_X<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada195b6d4f1872982783c80abeff0d3987>`                          = 402,
+	    :target:`@107::CV_CAP_PROP_XI_OFFSET_Y<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0fdb941f3cd5a67c18380d97d24828ad>`                          = 403,
+	    :target:`@107::CV_CAP_PROP_XI_TRG_SOURCE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada34377a93453b6a0ca6be81ef349fbe28>`                        = 404,
+	    :target:`@107::CV_CAP_PROP_XI_TRG_SOFTWARE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5ab3656bc66478dfce29b742c775161f>`                      = 405,
+	    :target:`@107::CV_CAP_PROP_XI_GPI_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada8139dbf7a5e97591efe55e931f7b8abf>`                      = 406,
+	    :target:`@107::CV_CAP_PROP_XI_GPI_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafe556a71585fa98b2eeb64ee365c05e5>`                          = 407,
+	    :target:`@107::CV_CAP_PROP_XI_GPI_LEVEL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada275710913fd5dd421ea9596fc9b80895>`                         = 408,
+	    :target:`@107::CV_CAP_PROP_XI_GPO_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada562c1a3bfe498ef88dd0b36e106cfdbd>`                      = 409,
+	    :target:`@107::CV_CAP_PROP_XI_GPO_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafd25c8bad572760339c8d96c637326f8>`                          = 410,
+	    :target:`@107::CV_CAP_PROP_XI_LED_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab6096bbbfb3ad6261ed6d2f622e566dc>`                      = 411,
+	    :target:`@107::CV_CAP_PROP_XI_LED_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada76e0c823e705fd857dd996ca031d91b2>`                          = 412,
+	    :target:`@107::CV_CAP_PROP_XI_MANUAL_WB<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab1b4efd06eb3ac7468dbf1a0d813cd93>`                         = 413,
+	    :target:`@107::CV_CAP_PROP_XI_AUTO_WB<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada120190d3d8a84ca736c647a17aca6412>`                           = 414,
+	    :target:`@107::CV_CAP_PROP_XI_AEAG<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaa574de021589ba1f62cc7229bcbd1440>`                              = 415,
+	    :target:`@107::CV_CAP_PROP_XI_EXP_PRIORITY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6f6a6b15507af9fa3c6addc1a441fd29>`                      = 416,
+	    :target:`@107::CV_CAP_PROP_XI_AE_MAX_LIMIT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad0fe9a0b4eb53afa280678147c5dd932>`                      = 417,
+	    :target:`@107::CV_CAP_PROP_XI_AG_MAX_LIMIT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6f74642c148b4268857d5d16df517b2d>`                      = 418,
+	    :target:`@107::CV_CAP_PROP_XI_AEAG_LEVEL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad53bb71effcaea98d43d4aae80ae84d9>`                        = 419,
+	    :target:`@107::CV_CAP_PROP_XI_TIMEOUT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac52208af24e4c0a8d6af2efb0b3dcf73>`                           = 420,
+	    :target:`@107::CV_CAP_PROP_XI_EXPOSURE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada80d66b32ba78bd45205629340197f35a>`                          = 421,
+	    :target:`@107::CV_CAP_PROP_XI_EXPOSURE_BURST_COUNT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5583bd9f47432848b88335bb2c78d391>`              = 422,
+	    :target:`@107::CV_CAP_PROP_XI_GAIN_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada19bc838ba94aec73a3d49dcf3a392f5b>`                     = 423,
+	    :target:`@107::CV_CAP_PROP_XI_GAIN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada21797ae42ac6c3eb1c6ccb796cf58abf>`                              = 424,
+	    :target:`@107::CV_CAP_PROP_XI_DOWNSAMPLING_TYPE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada57fa62ef431a8e156babf2e1f0f6394d>`                 = 426,
+	    :target:`@107::CV_CAP_PROP_XI_BINNING_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada66c9df9af9329dedd9590dda24c94ff4>`                  = 427,
+	    :target:`@107::CV_CAP_PROP_XI_BINNING_VERTICAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada17d6786c9c8c79c951bdfbcad8267b59>`                  = 428,
+	    :target:`@107::CV_CAP_PROP_XI_BINNING_HORIZONTAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3e0b559bc7f6845abcd09336c76ea666>`                = 429,
+	    :target:`@107::CV_CAP_PROP_XI_BINNING_PATTERN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6c1b8b7e3d5440e03d0ac0ec7a26fc31>`                   = 430,
+	    :target:`@107::CV_CAP_PROP_XI_DECIMATION_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada99dbb8ef7f4542f49e385ec786af9095>`               = 431,
+	    :target:`@107::CV_CAP_PROP_XI_DECIMATION_VERTICAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaedebc07113c2cb81743e5daa80085c53>`               = 432,
+	    :target:`@107::CV_CAP_PROP_XI_DECIMATION_HORIZONTAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada22f650fff4f252a1aa9f0bc224735599>`             = 433,
+	    :target:`@107::CV_CAP_PROP_XI_DECIMATION_PATTERN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabce315fbf92f85c3b614112acb5836ef>`                = 434,
+	    :target:`@107::CV_CAP_PROP_XI_TEST_PATTERN_GENERATOR_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada07d1467cf81259287c31e4321b121e60>`   = 587,
+	    :target:`@107::CV_CAP_PROP_XI_TEST_PATTERN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad5b751f78d4d9fb9e5db631b7287443f>`                      = 588,
+	    :target:`@107::CV_CAP_PROP_XI_IMAGE_DATA_FORMAT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad31acfdf2e8e5790ab19442dadddd58b>`                 = 435,
+	    :target:`@107::CV_CAP_PROP_XI_SHUTTER_TYPE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada44df080845080114158138cc2247b32f>`                      = 436,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_TAPS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaad9db7cc8e6bc4af83fd52309cfbc45b>`                       = 437,
+	    :target:`@107::CV_CAP_PROP_XI_AEAG_ROI_OFFSET_X<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada61d10b5e022635c2c8d415d0a136eab1>`                 = 439,
+	    :target:`@107::CV_CAP_PROP_XI_AEAG_ROI_OFFSET_Y<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada9bb14e18f70545aee3409c1acd071547>`                 = 440,
+	    :target:`@107::CV_CAP_PROP_XI_AEAG_ROI_WIDTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada43adda2196f858e00405d306c16a22a0>`                    = 441,
+	    :target:`@107::CV_CAP_PROP_XI_AEAG_ROI_HEIGHT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada75e7ffc723036ece321b88d84a90898f>`                   = 442,
+	    :target:`@107::CV_CAP_PROP_XI_BPC<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0e92bf27740e1794c5c30d58b0d12e58>`                               = 445,
+	    :target:`@107::CV_CAP_PROP_XI_WB_KR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada99f8cd9a1de3bc6d1703f4eff78b0958>`                             = 448,
+	    :target:`@107::CV_CAP_PROP_XI_WB_KG<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada96900ddebf87baf5a80306b53a9a433e>`                             = 449,
+	    :target:`@107::CV_CAP_PROP_XI_WB_KB<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada64cb374e6d4b79cc4818c0e62298df4c>`                             = 450,
+	    :target:`@107::CV_CAP_PROP_XI_WIDTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada9b98d84ec0fdaeae55045538ff6f173e>`                             = 451,
+	    :target:`@107::CV_CAP_PROP_XI_HEIGHT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac16a9772bf1743f632e0cf9e000e5357>`                            = 452,
+	    :target:`@107::CV_CAP_PROP_XI_REGION_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4f33c118200a47a1a40a21e9a369cca9>`                   = 589,
+	    :target:`@107::CV_CAP_PROP_XI_REGION_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada605ae9234febcc626adbe458b05367d1>`                       = 595,
+	    :target:`@107::CV_CAP_PROP_XI_LIMIT_BANDWIDTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada45216350c8b751e39b69a9e1cf53c708>`                   = 459,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_DATA_BIT_DEPTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabfe2a7637c531d4c1d4075ef7df46a98>`             = 460,
+	    :target:`@107::CV_CAP_PROP_XI_OUTPUT_DATA_BIT_DEPTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae58adee3f0df5652b0b0272e58ff6340>`             = 461,
+	    :target:`@107::CV_CAP_PROP_XI_IMAGE_DATA_BIT_DEPTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada7951d83ed7cb449e40d2a786f36be5e1>`              = 462,
+	    :target:`@107::CV_CAP_PROP_XI_OUTPUT_DATA_PACKING<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaeade827f66987577fe02b02cfb4cbba1>`               = 463,
+	    :target:`@107::CV_CAP_PROP_XI_OUTPUT_DATA_PACKING_TYPE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0aa5bdf222b6a530a7d03a8befd451bc>`          = 464,
+	    :target:`@107::CV_CAP_PROP_XI_IS_COOLED<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada7b0eb5242779dae2b6f5375a3aa50ba0>`                         = 465,
+	    :target:`@107::CV_CAP_PROP_XI_COOLING<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadafd695317a8db713dadca03c7957e40f0>`                           = 466,
+	    :target:`@107::CV_CAP_PROP_XI_TARGET_TEMP<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf5e80f9385e1421611d527ecdedfc99b>`                       = 467,
+	    :target:`@107::CV_CAP_PROP_XI_CHIP_TEMP<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabdbde48c5ba403c35fcc093117c1a59f>`                         = 468,
+	    :target:`@107::CV_CAP_PROP_XI_HOUS_TEMP<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada065069eb3af7baf427175f5a2b32d1fa>`                         = 469,
+	    :target:`@107::CV_CAP_PROP_XI_HOUS_BACK_SIDE_TEMP<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada015324230ad32ecd68c4494df52486af>`               = 590,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_BOARD_TEMP<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4beb40c41332c0bf16644c67b2e7f80f>`                 = 596,
+	    :target:`@107::CV_CAP_PROP_XI_CMS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacf8288f480d73a1766795e4502f235dc>`                               = 470,
+	    :target:`@107::CV_CAP_PROP_XI_APPLY_CMS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2e58d3802d0051f2f513b0b56ce7fe93>`                         = 471,
+	    :target:`@107::CV_CAP_PROP_XI_IMAGE_IS_COLOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3f4d908364b311d9883752bba0643591>`                    = 474,
+	    :target:`@107::CV_CAP_PROP_XI_COLOR_FILTER_ARRAY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5a006bd33960e399bc236b9a807ac721>`                = 475,
+	    :target:`@107::CV_CAP_PROP_XI_GAMMAY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada630a35a2098e446a5568a29f3b03c8bf>`                            = 476,
+	    :target:`@107::CV_CAP_PROP_XI_GAMMAC<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac90a2a970a875409b07876f8edca6c92>`                            = 477,
+	    :target:`@107::CV_CAP_PROP_XI_SHARPNESS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad1991bc133dff87aacc1da4e09d611f9>`                         = 478,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_00<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacb72af70eba6aebb1b42f6cdc847dd88>`                      = 479,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_01<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada006bf3b3cedf381dab2e319153c6c6d2>`                      = 480,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_02<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac2bc88e2c3932f13ba3bb962dee980fe>`                      = 481,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_03<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada984ced4cb83c5c97127df810d2263472>`                      = 482,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_10<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf6bc4dc18b2b378a59d698cc6a860f8e>`                      = 483,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_11<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada1ec0b5a7bbf278c67c74109c53db7f0e>`                      = 484,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_12<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf4e7d319fc5ad6f3b017a6804c6db291>`                      = 485,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_13<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf70ae8e21768962d4391c53c562604fb>`                      = 486,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_20<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada942f55316c54c4f90d5e6dc85346544d>`                      = 487,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_21<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada1ec81ed321c61d5b22ed3f5bcf1e38fc>`                      = 488,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_22<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad6d4127ca8c025442eb5d7f8cbe9790b>`                      = 489,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_23<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaa546757f4dace56a12125e59fdb2efa9>`                      = 490,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_30<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3fe7f6c4f16affd1682262d036d0d737>`                      = 491,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_31<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabe97002311fa89c8402490b540ce87b0>`                      = 492,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_32<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaba5b8eec255e8be79da505afefdd4f4d>`                      = 493,
+	    :target:`@107::CV_CAP_PROP_XI_CC_MATRIX_33<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaea062bf9fb53959a1b720bf3417aaec4>`                      = 494,
+	    :target:`@107::CV_CAP_PROP_XI_DEFAULT_CC_MATRIX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada309cefe213c7ba507e9fe39b90dbc082>`                 = 495,
+	    :target:`@107::CV_CAP_PROP_XI_TRG_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaee4c3d1901222e41db5868d13949b507>`                      = 498,
+	    :target:`@107::CV_CAP_PROP_XI_ACQ_FRAME_BURST_COUNT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabaa5d71c7c5bda2f65c824302e7be448>`             = 499,
+	    :target:`@107::CV_CAP_PROP_XI_DEBOUNCE_EN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf5d8ee0450c0f8798c54a8e01b1c01fd>`                       = 507,
+	    :target:`@107::CV_CAP_PROP_XI_DEBOUNCE_T0<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada325bbcfbaab936befbc622a000f0699a>`                       = 508,
+	    :target:`@107::CV_CAP_PROP_XI_DEBOUNCE_T1<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada81b767e30ad9cf78a892fccd5156b266>`                       = 509,
+	    :target:`@107::CV_CAP_PROP_XI_DEBOUNCE_POL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3a65a628032265c17fee32ceadab497b>`                      = 510,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaa1a699e8e7b226eba5a8ee2d91448e6b>`                         = 511,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_APERTURE_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada254898145bd6d44eb75129a21f7f5cdd>`               = 512,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_FOCUS_MOVEMENT_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf28c72de1c8ffa263a9b837dda320479>`         = 513,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_FOCUS_MOVE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad1aae178a510558d5f648b6bf77dc9fe>`                   = 514,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_FOCUS_DISTANCE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6fe596304a5da3c35198b39ae9eaec0c>`               = 515,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_FOCAL_LENGTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3f0c85a56764588e5b08840f1fee6c9e>`                 = 516,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_FEATURE_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada36e583436543557e9e8da7e77f3ba1af>`             = 517,
+	    :target:`@107::CV_CAP_PROP_XI_LENS_FEATURE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae0d717c87423a9f083b3b749a1da3c78>`                      = 518,
+	    :target:`@107::CV_CAP_PROP_XI_DEVICE_MODEL_ID<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaebedc6a15834d48f952e01c57da0827b>`                   = 521,
+	    :target:`@107::CV_CAP_PROP_XI_DEVICE_SN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2a4ffb84b8be5dac8edee2298ecc4444>`                         = 522,
+	    :target:`@107::CV_CAP_PROP_XI_IMAGE_DATA_FORMAT_RGB32_ALPHA<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada16ea1a5fa22026c0aba1d22ba66fc1ee>`     = 529,
+	    :target:`@107::CV_CAP_PROP_XI_IMAGE_PAYLOAD_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae6476c337fe3f3cd551697a0dfd997ef>`                = 530,
+	    :target:`@107::CV_CAP_PROP_XI_TRANSPORT_PIXEL_FORMAT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada973eebd25c2719f78e2ffeaa5115af19>`            = 531,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_CLOCK_FREQ_HZ<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf1da4afb6c39e50f81b5408ecb42c7c7>`              = 532,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_CLOCK_FREQ_INDEX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3184ef1269321d0932af17f256784c78>`           = 533,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_OUTPUT_CHANNEL_COUNT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada5fc535c89335acc945b8105ee58ab07c>`       = 534,
+	    :target:`@107::CV_CAP_PROP_XI_FRAMERATE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada947846c870a6f17d6effcab807537ee9>`                         = 535,
+	    :target:`@107::CV_CAP_PROP_XI_COUNTER_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab90dc1230836f708709452978006cf71>`                  = 536,
+	    :target:`@107::CV_CAP_PROP_XI_COUNTER_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4b07ca545ddbb9b5a378a458834a9095>`                     = 537,
+	    :target:`@107::CV_CAP_PROP_XI_ACQ_TIMING_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad089638da5cc2e4cab6cd9ba0e4ad753>`                   = 538,
+	    :target:`@107::CV_CAP_PROP_XI_AVAILABLE_BANDWIDTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad55821a1b518eff2cc791695cb4c9d99>`               = 539,
+	    :target:`@107::CV_CAP_PROP_XI_BUFFER_POLICY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaab10eb382f8c9af0f598063c069d6f60>`                     = 540,
+	    :target:`@107::CV_CAP_PROP_XI_LUT_EN<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4c6c060434fb6abd493e16a00a5be038>`                            = 541,
+	    :target:`@107::CV_CAP_PROP_XI_LUT_INDEX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6654a8c72997e72c82c0dd760e44382f>`                         = 542,
+	    :target:`@107::CV_CAP_PROP_XI_LUT_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2bd972d8b4cf32394dba5ac3973b00bc>`                         = 543,
+	    :target:`@107::CV_CAP_PROP_XI_TRG_DELAY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6fd8591cf0fc4056c515ed1bfecce489>`                         = 544,
+	    :target:`@107::CV_CAP_PROP_XI_TS_RST_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada793b60c28469ec2bdb4dd049c5ca02af>`                       = 545,
+	    :target:`@107::CV_CAP_PROP_XI_TS_RST_SOURCE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada664c215aa745fc07be69fa2c1ac811ea>`                     = 546,
+	    :target:`@107::CV_CAP_PROP_XI_IS_DEVICE_EXIST<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaa82fb9177afde9677072b27383593a2f>`                   = 547,
+	    :target:`@107::CV_CAP_PROP_XI_ACQ_BUFFER_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3078449c8e78766e503b36410bfae262>`                   = 548,
+	    :target:`@107::CV_CAP_PROP_XI_ACQ_BUFFER_SIZE_UNIT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadabca7cd4327e644121f1126aa10ee2721>`              = 549,
+	    :target:`@107::CV_CAP_PROP_XI_ACQ_TRANSPORT_BUFFER_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada80de11e6e3ca6effe7458733a8463da3>`         = 550,
+	    :target:`@107::CV_CAP_PROP_XI_BUFFERS_QUEUE_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0aa5255b4e0d1fd16167f29a3b317fef>`                = 551,
+	    :target:`@107::CV_CAP_PROP_XI_ACQ_TRANSPORT_BUFFER_COMMIT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada05c268592e0cecefa2b5fe98045a1c4b>`       = 552,
+	    :target:`@107::CV_CAP_PROP_XI_RECENT_FRAME<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab02e9da9dddfa7a0097265eccd17d858>`                      = 553,
+	    :target:`@107::CV_CAP_PROP_XI_DEVICE_RESET<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada6b5c1739ea39863d0fd71b859222179e>`                      = 554,
+	    :target:`@107::CV_CAP_PROP_XI_COLUMN_FPN_CORRECTION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada05d7f3d8dea68e7e7fc62cade0f836b5>`             = 555,
+	    :target:`@107::CV_CAP_PROP_XI_ROW_FPN_CORRECTION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf7f366932abb49a444803e6c9c4c2732>`                = 591,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadadec59b929c1f600c64fb9e9511786a9d>`                       = 558,
+	    :target:`@107::CV_CAP_PROP_XI_HDR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacd2ff23b1b66f73f3a19fcc6bbe09919>`                               = 559,
+	    :target:`@107::CV_CAP_PROP_XI_HDR_KNEEPOINT_COUNT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae5413c29f7663899999d8a7bfa2b4121>`               = 560,
+	    :target:`@107::CV_CAP_PROP_XI_HDR_T1<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad119c942b18b382e225c3ccb4519fe00>`                            = 561,
+	    :target:`@107::CV_CAP_PROP_XI_HDR_T2<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad6b15cdd5eebbb33d54d19da9ddfce37>`                            = 562,
+	    :target:`@107::CV_CAP_PROP_XI_KNEEPOINT1<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaa8726a3bb70dd2c30e8bb0836600f1f2>`                        = 563,
+	    :target:`@107::CV_CAP_PROP_XI_KNEEPOINT2<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4ee022491f94854df132b204292e8ff1>`                        = 564,
+	    :target:`@107::CV_CAP_PROP_XI_IMAGE_BLACK_LEVEL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadad97d7a5e864c7ffe84b4031c4af03393>`                 = 565,
+	    :target:`@107::CV_CAP_PROP_XI_HW_REVISION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae13e22e85241cd32fb794280212bae88>`                       = 571,
+	    :target:`@107::CV_CAP_PROP_XI_DEBUG_LEVEL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada60ec9e75f82a75247308684c0e6e7b18>`                       = 572,
+	    :target:`@107::CV_CAP_PROP_XI_AUTO_BANDWIDTH_CALCULATION<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2fc3565659bea84d82cc8f4ef14be542>`        = 573,
+	    :target:`@107::CV_CAP_PROP_XI_FFS_FILE_ID<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacaf412bf22fbd612d5d3ce1e24742d32>`                       = 594,
+	    :target:`@107::CV_CAP_PROP_XI_FFS_FILE_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadae2e839d246bbac24a83be1f7849c5d90>`                     = 580,
+	    :target:`@107::CV_CAP_PROP_XI_FREE_FFS_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3ca897b5f182aa50ebfc56adb72871df>`                     = 581,
+	    :target:`@107::CV_CAP_PROP_XI_USED_FFS_SIZE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab619c7c6073c660ee10e16e28402a9ea>`                     = 582,
+	    :target:`@107::CV_CAP_PROP_XI_FFS_ACCESS_KEY<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0f6e810cc91eba389f591f1e2a9329ff>`                    = 583,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_FEATURE_SELECTOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf2222fadacb28cc86ee8ee8bfb983e07>`           = 585,
+	    :target:`@107::CV_CAP_PROP_XI_SENSOR_FEATURE_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada201d084eb274959a2fc2b56c67a9df96>`              = 586,
+	    :target:`@107::CV_CAP_PROP_ANDROID_FLASH_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaac083921dda5bd79cea6fd5e631cce8c>`                   = 8001,
+	    :target:`@107::CV_CAP_PROP_ANDROID_FOCUS_MODE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada7af29343cc761e64f91b896e9e3b5dae>`                   = 8002,
+	    :target:`@107::CV_CAP_PROP_ANDROID_WHITE_BALANCE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2be36a13f266e3e59163503e78b34b57>`                = 8003,
+	    :target:`@107::CV_CAP_PROP_ANDROID_ANTIBANDING<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada2ddd9d43aaafe5622c6e523b3c8fe47e>`                  = 8004,
+	    :target:`@107::CV_CAP_PROP_ANDROID_FOCAL_LENGTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3ed7e14182b70468dc8a90ab0e23fb63>`                 = 8005,
+	    :target:`@107::CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_NEAR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada311bb4998c0cee4672a2bb250408a066>`          = 8006,
+	    :target:`@107::CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_OPTIMAL<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada387e5f985e20379d613607e09000e31f>`       = 8007,
+	    :target:`@107::CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_FAR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada32ff4b16f4886680b3846686c3588415>`           = 8008,
+	    :target:`@107::CV_CAP_PROP_ANDROID_EXPOSE_LOCK<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadab53dfc4ca8a45be2f35a9d01e8e8e509>`                  = 8009,
+	    :target:`@107::CV_CAP_PROP_ANDROID_WHITEBALANCE_LOCK<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada8e517ff1cb09b46e76a8addee9450db0>`            = 8010,
+	    :target:`@107::CV_CAP_PROP_IOS_DEVICE_FOCUS<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaeee47caf908c892c7b8ba6b755c282fe>`                     = 9001,
+	    :target:`@107::CV_CAP_PROP_IOS_DEVICE_EXPOSURE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada86a8c91ddccab3b202b187f68baf20b6>`                  = 9002,
+	    :target:`@107::CV_CAP_PROP_IOS_DEVICE_FLASH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaed47a68c193edcca08f8b9bbc0396f70>`                     = 9003,
+	    :target:`@107::CV_CAP_PROP_IOS_DEVICE_WHITEBALANCE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada4917ae01d2655423b674e9cf91a1e14f>`              = 9004,
+	    :target:`@107::CV_CAP_PROP_IOS_DEVICE_TORCH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada31347c9f178bc2687e9a16b7b0730c51>`                     = 9005,
+	    :target:`@107::CV_CAP_PROP_GIGA_FRAME_OFFSET_X<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada34b63e3ad227ac9327592736e28d62b7>`                  = 10001,
+	    :target:`@107::CV_CAP_PROP_GIGA_FRAME_OFFSET_Y<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaaa27ba11bfbdd39287c14fa1848f6667>`                  = 10002,
+	    :target:`@107::CV_CAP_PROP_GIGA_FRAME_WIDTH_MAX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada8e3b7ca0dcbffcdf4e9c4189660ffde1>`                 = 10003,
+	    :target:`@107::CV_CAP_PROP_GIGA_FRAME_HEIGH_MAX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada94af815bb4d340f11d089b6379d6a7a8>`                 = 10004,
+	    :target:`@107::CV_CAP_PROP_GIGA_FRAME_SENS_WIDTH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac1cebfb4eff88579e54f6a56b6ca2b8d>`                = 10005,
+	    :target:`@107::CV_CAP_PROP_GIGA_FRAME_SENS_HEIGH<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaf079f0aa3d48d96cfc5d05d7ae704af5>`                = 10006,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_PROFILE_COUNT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada807fac1977ad2d429640c14df350c901>`              = 11001,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_PROFILE_IDX<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada013544c5e08de8ca283d21e66626fcb0>`                = 11002,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadacce2aad0c5e098db3acdb317b15b69bf>` = 11003,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada7d5dbed71a61959a946bf407c04291bb>`     = 11004,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada0f5d848be18a60fc0b051f0c19270ade>` = 11005,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada71a3496c32e07afa65d6642721b8142a>`    = 11006,
+	    :target:`@107::CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadac81eaaf9d0705ff12264115b0e0b9d15>`    = 11007,
+	    :target:`@107::CV_CAP_INTELPERC_DEPTH_GENERATOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada3d7f5c19b2f8caefaa634ef0e4c36a56>`                 = 1 <<29,
+	    :target:`@107::CV_CAP_INTELPERC_IMAGE_GENERATOR<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dada05043c068a533ddb5074a1774be3332d>`                 = 1 <<28,
+	    :target:`@107::CV_CAP_INTELPERC_GENERATORS_MASK<doxid-dd/d01/group__videoio__c_1gga01aea4eb01aa6415eee118b5a5ee3dadaea1bb7d010495ae6165782145e889fdd>`                 = CV_CAP_INTELPERC_DEPTH_GENERATOR + CV_CAP_INTELPERC_IMAGE_GENERATOR,
+	};
+
+	enum
+	{
+	    :target:`@108::CV_CAP_MODE_BGR<doxid-dd/d01/group__videoio__c_1gga7646ae03981912f97626c39dfe9318daae7d22f626691b7cf050e26b1721d6abd>`  = 0,
+	    :target:`@108::CV_CAP_MODE_RGB<doxid-dd/d01/group__videoio__c_1gga7646ae03981912f97626c39dfe9318daa0aaa18b795ee63648f9a8ad133289707>`  = 1,
+	    :target:`@108::CV_CAP_MODE_GRAY<doxid-dd/d01/group__videoio__c_1gga7646ae03981912f97626c39dfe9318daa5dee769f85fdf237b4a3586d2b1a4cb8>` = 2,
+	    :target:`@108::CV_CAP_MODE_YUYV<doxid-dd/d01/group__videoio__c_1gga7646ae03981912f97626c39dfe9318daa9ae8fe9d7711e08f1d8a48b7a6d50c9a>` = 3,
+	};
+
+	enum
+	{
+	    :target:`@109::CV_CAP_OPENNI_DEPTH_MAP<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1ac60ae40a480a02a412ba18143c7a6f2d>`         = 0,
+	    :target:`@109::CV_CAP_OPENNI_POINT_CLOUD_MAP<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1aaada6f59b0ce8cd61dcc8298f5188f49>`   = 1,
+	    :target:`@109::CV_CAP_OPENNI_DISPARITY_MAP<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1ad62d5b0a6fdc04766b2acf7a4c8b33c3>`     = 2,
+	    :target:`@109::CV_CAP_OPENNI_DISPARITY_MAP_32F<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1a3ce2e8e940e6852f1c6bb793d0870344>` = 3,
+	    :target:`@109::CV_CAP_OPENNI_VALID_DEPTH_MASK<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1a73cddb5ef4904291d1307a8d77f4c983>`  = 4,
+	    :target:`@109::CV_CAP_OPENNI_BGR_IMAGE<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1ac8eae9b541211a160c3a52d26bd86b1f>`         = 5,
+	    :target:`@109::CV_CAP_OPENNI_GRAY_IMAGE<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1a6cd2d5b16283a2d5fd99a5a060ec431f>`        = 6,
+	    :target:`@109::CV_CAP_OPENNI_IR_IMAGE<doxid-dd/d01/group__videoio__c_1gga29d44341ce767c5dfc737d622fc97ba1a0e0bd938f4a79556318f58037dab50f8>`          = 7,
+	};
+
+	enum
+	{
+	    :target:`@110::CV_CAP_OPENNI_VGA_30HZ<doxid-dd/d01/group__videoio__c_1gga1b7b7893d940926615b39239ac05829dae425f2a83bf964026f33495dbc9ee1f2>`  = 0,
+	    :target:`@110::CV_CAP_OPENNI_SXGA_15HZ<doxid-dd/d01/group__videoio__c_1gga1b7b7893d940926615b39239ac05829daad9fb1e1994b9559afee61984defa4b1>` = 1,
+	    :target:`@110::CV_CAP_OPENNI_SXGA_30HZ<doxid-dd/d01/group__videoio__c_1gga1b7b7893d940926615b39239ac05829da7aa71153dd143eb9cc6fac252ef34269>` = 2,
+	    :target:`@110::CV_CAP_OPENNI_QVGA_30HZ<doxid-dd/d01/group__videoio__c_1gga1b7b7893d940926615b39239ac05829da6a0a4ea8cc069afa1a23fd9871847d30>` = 3,
+	    :target:`@110::CV_CAP_OPENNI_QVGA_60HZ<doxid-dd/d01/group__videoio__c_1gga1b7b7893d940926615b39239ac05829dacdf2f4abce60e6b1168e6337f73f1397>` = 4,
+	};
+
+	enum
+	{
+	    :target:`@111::CV_CAP_INTELPERC_DEPTH_MAP<doxid-dd/d01/group__videoio__c_1gga098384b0034af0daa7c9c5c82b563567a0a9c3dc00999060cf100c13a61bbc912>`   = 0,
+	    :target:`@111::CV_CAP_INTELPERC_UVDEPTH_MAP<doxid-dd/d01/group__videoio__c_1gga098384b0034af0daa7c9c5c82b563567a73c43c9cc677ae065052b48c01b1c113>` = 1,
+	    :target:`@111::CV_CAP_INTELPERC_IR_MAP<doxid-dd/d01/group__videoio__c_1gga098384b0034af0daa7c9c5c82b563567ab25f6ba231da9fc370017825cd9154be>`      = 2,
+	    :target:`@111::CV_CAP_INTELPERC_IMAGE<doxid-dd/d01/group__videoio__c_1gga098384b0034af0daa7c9c5c82b563567aa9b3c22a8505b987924c711ee2940a96>`       = 3,
+	};
+
+	enum
+	{
+	    :target:`@112::CV_CAP_PROP_GPHOTO2_PREVIEW<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80ca3e971513e466355b93a1f259213d1bee>`          = 17001,
+	    :target:`@112::CV_CAP_PROP_GPHOTO2_WIDGET_ENUMERATE<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80cac4d44a09571dbbfade7f2fbedb242d43>` = 17002,
+	    :target:`@112::CV_CAP_PROP_GPHOTO2_RELOAD_CONFIG<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80ca6038b97ca830d4a1fc0040b468fcb13c>`    = 17003,
+	    :target:`@112::CV_CAP_PROP_GPHOTO2_RELOAD_ON_CHANGE<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80caa1c6cd23a523208d8d8a3fcee4020cc7>` = 17004,
+	    :target:`@112::CV_CAP_PROP_GPHOTO2_COLLECT_MSGS<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80ca4e9dc00972f2c7498fd0cc09d9dcc31a>`     = 17005,
+	    :target:`@112::CV_CAP_PROP_GPHOTO2_FLUSH_MSGS<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80ca26ad5762c7a1d3cb18337067b8a3e953>`       = 17006,
+	    :target:`@112::CV_CAP_PROP_SPEED<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80ca361ae9816f36f3294c5ce02a2e864e57>`                    = 17007,
+	    :target:`@112::CV_CAP_PROP_APERTURE<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80cadb82dad27289c07c57bc3112c4101798>`                 = 17008,
+	    :target:`@112::CV_CAP_PROP_EXPOSUREPROGRAM<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80caf640a9e642c8a673c7cc011be01618f8>`          = 17009,
+	    :target:`@112::CV_CAP_PROP_VIEWFINDER<doxid-dd/d01/group__videoio__c_1gga92c4bd66c8074c3d126a069275a0a80ca9ce272880db119af36f4d35e81b6cf1d>`               = 17010,
+	};
+
+	// global functions
+
+	int
+	:ref:`CV_FOURCC<doxid-dd/d01/group__videoio__c_1gac005718f121379beffdbdbfb44f2646a>`(
+		char c1,
+		char c2,
+		char c3,
+		char c4
+		);
+
+	:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`*
+	:ref:`cvCreateCameraCapture<doxid-dd/d01/group__videoio__c_1gae38819ff8d6fa81e72c1ee032aa86284>`(int index);
+
+	:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`*
+	:ref:`cvCreateFileCapture<doxid-dd/d01/group__videoio__c_1ga45f6f3f0b93038bc3aa0d7abe5d2e17c>`(const char* filename);
+
+	:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`*
+	:ref:`cvCreateFileCaptureWithPreference<doxid-dd/d01/group__videoio__c_1gaba5ce8394b2063a34b1bbf6d22a1a6d7>`(
+		const char* filename,
+		int apiPreference
+		);
+
+	:ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`*
+	:ref:`cvCreateVideoWriter<doxid-dd/d01/group__videoio__c_1ga929bf5fd40a49addad1c2135b5a115cc>`(
+		const char* filename,
+		int fourcc,
+		double fps,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` frame_size,
+		int is_color = 1
+		);
+
+	int
+	:ref:`cvGetCaptureDomain<doxid-dd/d01/group__videoio__c_1ga7a52ee770a121165b00a12f08161c864>`(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture);
+
+	double
+	:ref:`cvGetCaptureProperty<doxid-dd/d01/group__videoio__c_1gac21d50914f013cc498af484212bc2cb7>`(
+		:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture,
+		int property_id
+		);
+
+	int
+	:ref:`cvGrabFrame<doxid-dd/d01/group__videoio__c_1ga6975894191cdeec167a57dd53461a906>`(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture);
+
+	:ref:`IplImage<doxid-dd/d51/struct_ipl_image>`*
+	:ref:`cvQueryFrame<doxid-dd/d01/group__videoio__c_1gab16767b4f5db3504b975ef22be2b126a>`(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture);
+
+	void
+	:ref:`cvReleaseCapture<doxid-dd/d01/group__videoio__c_1ga39dd48dcaee21c7a8df040d47cbc27ee>`(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`** capture);
+
+	void
+	:ref:`cvReleaseVideoWriter<doxid-dd/d01/group__videoio__c_1ga63166bf8a068a04b193f43b4883ccc91>`(:ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`** writer);
+
+	:ref:`IplImage<doxid-dd/d51/struct_ipl_image>`*
+	:ref:`cvRetrieveFrame<doxid-dd/d01/group__videoio__c_1ga15224db88623fc748c4c4fa56c5751db>`(
+		:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture,
+		int streamIdx = 0
+		);
+
+	int
+	:ref:`cvSetCaptureProperty<doxid-dd/d01/group__videoio__c_1ga292c4ab8463dfe04772a955bc7211e27>`(
+		:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture,
+		int property_id,
+		double value
+		);
+
+	int
+	:ref:`cvWriteFrame<doxid-dd/d01/group__videoio__c_1ga6df8276ed140e569484ccb9cb11bb0cb>`(
+		:ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`* writer,
+		const :ref:`IplImage<doxid-dd/d51/struct_ipl_image>`* image
+		);
+
+	// macros
+
+	#define :ref:`CV_FOURCC_DEFAULT<doxid-dd/d01/group__videoio__c_1gaf56b22cc0b0c1985359738735ed8a46a>`
+
+	#define :ref:`CV_FOURCC_MACRO<doxid-dd/d01/group__videoio__c_1gae50212337d3b05af7acb23d9efa611c3>`( \
+		c1, \
+		c2, \
+		c3, \
+		c4 \
+		)
+
+	#define :ref:`CV_FOURCC_PROMPT<doxid-dd/d01/group__videoio__c_1ga5964e4ca5f467fde5624c2d64db8105d>`
+	#define :ref:`cvCaptureFromAVI<doxid-dd/d01/group__videoio__c_1ga710135adb524858e34858a447d03f507>`
+	#define :ref:`cvCaptureFromCAM<doxid-dd/d01/group__videoio__c_1ga740fbcd0a6dc9a25e747ce3946491772>`
+	#define :ref:`cvCaptureFromFile<doxid-dd/d01/group__videoio__c_1ga709ac3b8d05afd27c1d86f6636cf55fb>`
+	#define :ref:`cvCreateAVIWriter<doxid-dd/d01/group__videoio__c_1gaea3f63afc666dc8e09293498c15128c2>`
+	#define :ref:`cvWriteToAVI<doxid-dd/d01/group__videoio__c_1gaa251b74b997bc2ad92c424f96ecf82de>`
+
+.. _details-dd/d01/group__videoio__c:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Typedefs
+--------
+
+.. index:: pair: typedef; CvCapture
+.. _doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	typedef struct :ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>` CvCapture
+
+"black box" capture structure
+
+In C++ use :ref:`cv::VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>`
+
+.. index:: pair: typedef; CvVideoWriter
+.. _doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	typedef struct :ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>` CvVideoWriter
+
+"black box" video file writer structure
+
+In C++ use :ref:`cv::VideoWriter <doxid-d6/d16/classcv_1_1_video_writer>`
+
+Global Functions
+----------------
+
+.. index:: pair: function; CV_FOURCC
+.. _doxid-dd/d01/group__videoio__c_1gac005718f121379beffdbdbfb44f2646a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	CV_FOURCC(
+		char c1,
+		char c2,
+		char c3,
+		char c4
+		)
+
+Constructs the fourcc code of the codec function.
+
+Simply call it with 4 chars fourcc code like `CV_FOURCC('I', 'Y', 'U', 'V')`
+
+List of codes can be obtained at `Video Codecs by FOURCC <http://www.fourcc.org/codecs.php>`__ page. FFMPEG backend with MP4 container natively uses other values as fourcc code: see `ObjectType <http://www.mp4ra.org/codecs.html>`__.
+
+.. index:: pair: function; cvCreateCameraCapture
+.. _doxid-dd/d01/group__videoio__c_1gae38819ff8d6fa81e72c1ee032aa86284:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`*
+	cvCreateCameraCapture(int index)
+
+start capturing frames from camera: index = camera_index + domain_offset (CV_CAP\_\*)
+
+.. index:: pair: function; cvCreateFileCapture
+.. _doxid-dd/d01/group__videoio__c_1ga45f6f3f0b93038bc3aa0d7abe5d2e17c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`*
+	cvCreateFileCapture(const char* filename)
+
+start capturing frames from video file
+
+.. index:: pair: function; cvCreateFileCaptureWithPreference
+.. _doxid-dd/d01/group__videoio__c_1gaba5ce8394b2063a34b1bbf6d22a1a6d7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`*
+	cvCreateFileCaptureWithPreference(
+		const char* filename,
+		int apiPreference
+		)
+
+start capturing frames from video file. allows specifying a preferred API to use
+
+.. index:: pair: function; cvCreateVideoWriter
+.. _doxid-dd/d01/group__videoio__c_1ga929bf5fd40a49addad1c2135b5a115cc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`*
+	cvCreateVideoWriter(
+		const char* filename,
+		int fourcc,
+		double fps,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` frame_size,
+		int is_color = 1
+		)
+
+initialize video file writer
+
+.. index:: pair: function; cvGetCaptureDomain
+.. _doxid-dd/d01/group__videoio__c_1ga7a52ee770a121165b00a12f08161c864:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvGetCaptureDomain(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture)
+
+Return the type of the capturer (eg, :ref:`CV_CAP_VFW <doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058aa0008d5518630f11edcc89932faa4ae7>`, :ref:`CV_CAP_UNICAP <doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a061243c2ad12fbd89518a4ca8c58f79f>`)
+
+It is unknown if created with :ref:`CV_CAP_ANY <doxid-dd/d01/group__videoio__c_1gga0ae1e3bf78c960c83e2d437efd802058a8c6c1159fb332c7979612de8bcb91a24>`
+
+.. index:: pair: function; cvGetCaptureProperty
+.. _doxid-dd/d01/group__videoio__c_1gac21d50914f013cc498af484212bc2cb7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvGetCaptureProperty(
+		:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture,
+		int property_id
+		)
+
+retrieve capture properties
+
+.. index:: pair: function; cvGrabFrame
+.. _doxid-dd/d01/group__videoio__c_1ga6975894191cdeec167a57dd53461a906:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvGrabFrame(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture)
+
+grab a frame, return 1 on success, 0 on fail.
+
+this function is thought to be fast
+
+.. index:: pair: function; cvQueryFrame
+.. _doxid-dd/d01/group__videoio__c_1gab16767b4f5db3504b975ef22be2b126a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`IplImage<doxid-dd/d51/struct_ipl_image>`*
+	cvQueryFrame(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture)
+
+Just a combination of cvGrabFrame and cvRetrieveFrame.
+
+!!!DO NOT RELEASE or MODIFY the retrieved frame!!!
+
+.. index:: pair: function; cvReleaseCapture
+.. _doxid-dd/d01/group__videoio__c_1ga39dd48dcaee21c7a8df040d47cbc27ee:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvReleaseCapture(:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`** capture)
+
+stop capturing/reading and free resources
+
+.. index:: pair: function; cvReleaseVideoWriter
+.. _doxid-dd/d01/group__videoio__c_1ga63166bf8a068a04b193f43b4883ccc91:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvReleaseVideoWriter(:ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`** writer)
+
+close video file writer
+
+.. index:: pair: function; cvRetrieveFrame
+.. _doxid-dd/d01/group__videoio__c_1ga15224db88623fc748c4c4fa56c5751db:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`IplImage<doxid-dd/d51/struct_ipl_image>`*
+	cvRetrieveFrame(
+		:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture,
+		int streamIdx = 0
+		)
+
+get the frame grabbed with cvGrabFrame(..)
+
+This function may apply some frame processing like frame decompression, flipping etc.!!!DO NOT RELEASE or MODIFY the retrieved frame!!!
+
+.. index:: pair: function; cvSetCaptureProperty
+.. _doxid-dd/d01/group__videoio__c_1ga292c4ab8463dfe04772a955bc7211e27:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvSetCaptureProperty(
+		:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`* capture,
+		int property_id,
+		double value
+		)
+
+set capture properties
+
+.. index:: pair: function; cvWriteFrame
+.. _doxid-dd/d01/group__videoio__c_1ga6df8276ed140e569484ccb9cb11bb0cb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvWriteFrame(
+		:ref:`CvVideoWriter<doxid-dd/d01/group__videoio__c_1ga888ba48aa022b60aecf98a462aa1b638>`* writer,
+		const :ref:`IplImage<doxid-dd/d51/struct_ipl_image>`* image
+		)
+
+write frame to video file
+
+Macros
+------
+
+.. index:: pair: define; CV_FOURCC_DEFAULT
+.. _doxid-dd/d01/group__videoio__c_1gaf56b22cc0b0c1985359738735ed8a46a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define CV_FOURCC_DEFAULT
+
+(Linux only) Use default codec for specified filename
+
+.. index:: pair: define; CV_FOURCC_MACRO
+.. _doxid-dd/d01/group__videoio__c_1gae50212337d3b05af7acb23d9efa611c3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define CV_FOURCC_MACRO( \
+		c1, \
+		c2, \
+		c3, \
+		c4 \
+		)
+
+Macro to construct the fourcc code of the codec. Same as :ref:`CV_FOURCC() <doxid-dd/d01/group__videoio__c_1gac005718f121379beffdbdbfb44f2646a>`
+
+.. index:: pair: define; CV_FOURCC_PROMPT
+.. _doxid-dd/d01/group__videoio__c_1ga5964e4ca5f467fde5624c2d64db8105d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define CV_FOURCC_PROMPT
+
+(Windows only) Open Codec Selection Dialog
+
+.. index:: pair: define; cvCaptureFromAVI
+.. _doxid-dd/d01/group__videoio__c_1ga710135adb524858e34858a447d03f507:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define cvCaptureFromAVI
+
+Deprecated use :ref:`cvCreateFileCapture() <doxid-dd/d01/group__videoio__c_1ga45f6f3f0b93038bc3aa0d7abe5d2e17c>` instead
+
+.. index:: pair: define; cvCaptureFromCAM
+.. _doxid-dd/d01/group__videoio__c_1ga740fbcd0a6dc9a25e747ce3946491772:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define cvCaptureFromCAM
+
+Deprecated use :ref:`cvCreateCameraCapture() <doxid-dd/d01/group__videoio__c_1gae38819ff8d6fa81e72c1ee032aa86284>` instead
+
+.. index:: pair: define; cvCaptureFromFile
+.. _doxid-dd/d01/group__videoio__c_1ga709ac3b8d05afd27c1d86f6636cf55fb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define cvCaptureFromFile
+
+Deprecated use :ref:`cvCreateFileCapture() <doxid-dd/d01/group__videoio__c_1ga45f6f3f0b93038bc3aa0d7abe5d2e17c>` instead
+
+.. index:: pair: define; cvCreateAVIWriter
+.. _doxid-dd/d01/group__videoio__c_1gaea3f63afc666dc8e09293498c15128c2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define cvCreateAVIWriter
+
+Deprecated use :ref:`cvCreateVideoWriter() <doxid-dd/d01/group__videoio__c_1ga929bf5fd40a49addad1c2135b5a115cc>` instead
+
+.. index:: pair: define; cvWriteToAVI
+.. _doxid-dd/d01/group__videoio__c_1gaa251b74b997bc2ad92c424f96ecf82de:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define cvWriteToAVI
+
+Deprecated use :ref:`cvWriteFrame() <doxid-dd/d01/group__videoio__c_1ga6df8276ed140e569484ccb9cb11bb0cb>` instead
+

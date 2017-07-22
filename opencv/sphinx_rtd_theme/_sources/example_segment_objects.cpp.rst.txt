@@ -1,0 +1,129 @@
+.. index:: pair: example; segment_objects.cpp
+.. _doxid-dd/d9d/segment_objects_8cpp-example:
+
+segment_objects.cpp
+===================
+
+An example using drawContours to clean up a background segmentation result
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/videoio.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/video/background_segm.hpp"
+	#include <stdio.h>
+	#include <string>
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	static void help()
+	{
+	    printf("\n"
+	            "This program demonstrated a simple method of connected components clean up of background subtraction\n"
+	            "When the program starts, it begins learning the background.\n"
+	            "You can toggle background learning on and off by hitting the space bar.\n"
+	            "Call\n"
+	            "./segment_objects [video file, else it reads camera 0]\n\n");
+	}
+	
+	static void refineSegments(const :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& img, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& mask, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`& dst)
+	{
+	    int niters = 3;
+	
+	    vector<vector<Point> > contours;
+	    vector<Vec4i> hierarchy;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` temp;
+	
+	    :ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(mask, temp, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1), niters);
+	    :ref:`erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`(temp, temp, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1), niters*2);
+	    :ref:`dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`(temp, temp, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(-1,-1), niters);
+	
+	    :ref:`findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>`( temp, contours, hierarchy, :ref:`RETR_CCOMP <doxid-d3/dc0/group__imgproc__shape_1gga819779b9857cc2f8601e6526a3a5bc71a7d1d4b509fb2a9a8dc2f960357748752>`, :ref:`CHAIN_APPROX_SIMPLE <doxid-d3/dc0/group__imgproc__shape_1gga4303f45752694956374734a03c54d5ffa5f2883048e654999209f88ba04c302f5>` );
+	
+	    dst = Mat::zeros(img.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	
+	    if( contours.size() == 0 )
+	        return;
+	
+	    // iterate through all the top-level contours,
+	    // draw each connected component with its own random color
+	    int idx = 0, largestComp = 0;
+	    double maxArea = 0;
+	
+	    for( ; idx >= 0; idx = hierarchy[idx][0] )
+	    {
+	        const vector<Point>& c = contours[idx];
+	        double area = fabs(:ref:`contourArea <doxid-d3/dc0/group__imgproc__shape_1ga2c759ed9f497d4a618048a2f56dc97f1>`(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(c)));
+	        if( area > maxArea )
+	        {
+	            maxArea = area;
+	            largestComp = idx;
+	        }
+	    }
+	    Scalar color( 0, 0, 255 );
+	    :ref:`drawContours <doxid-d6/d6e/group__imgproc__draw_1ga746c0625f1781f1ffc9056259103edbc>`( dst, contours, largestComp, color, :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`, :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>`, hierarchy );
+	}
+	
+	
+	int main(int argc, char** argv)
+	{
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` cap;
+	    bool update_bg_model = true;
+	
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{help h||}{@input||}");
+	    if (parser.has("help"))
+	    {
+	        help();
+	        return 0;
+	    }
+	    string input = parser.get<std::string>("@input");
+	    if (input.empty())
+	        cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(0);
+	    else
+	        cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(input);
+	
+	    if( !cap.:ref:`isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`() )
+	    {
+	        printf("\nCan not open camera or video file\n");
+	        return -1;
+	    }
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` tmp_frame, bgmask, out_frame;
+	
+	    cap >> tmp_frame;
+	    if(tmp_frame.empty())
+	    {
+	        printf("can not read data from the video source\n");
+	        return -1;
+	    }
+	
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("video", 1);
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("segmented", 1);
+	
+	    :ref:`Ptr\<BackgroundSubtractorMOG2> <doxid-d2/d56/structcv_1_1_ptr>` bgsubtractor=:ref:`createBackgroundSubtractorMOG2 <doxid-de/de1/group__video__motion_1ga2beb2dee7a073809ccec60f145b6b29c>`();
+	    bgsubtractor->:ref:`setVarThreshold <doxid-d6/d6d/classcv_1_1_background_subtractor_m_o_g2_1ab58c51659a49f9d8bfdf7062cf4859b5>`(10);
+	
+	    for(;;)
+	    {
+	        cap >> tmp_frame;
+	        if( tmp_frame.empty() )
+	            break;
+	        bgsubtractor->:ref:`apply <doxid-d6/d6d/classcv_1_1_background_subtractor_m_o_g2_1a3fb6b359c0c6753d20462dff0a48239f>`(tmp_frame, bgmask, update_bg_model ? -1 : 0);
+	        refineSegments(tmp_frame, bgmask, out_frame);
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("video", tmp_frame);
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("segmented", out_frame);
+	        char keycode = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(30);
+	        if( keycode == 27 )
+	            break;
+	        if( keycode == ' ' )
+	        {
+	            update_bg_model = !update_bg_model;
+	            printf("Learn background is in state = %d\n",update_bg_model);
+	        }
+	    }
+	
+	    return 0;
+	}

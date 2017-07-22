@@ -1,0 +1,111 @@
+.. index:: pair: class; Poco::XML::NodeFilter
+.. _doxid-class_poco_1_1_x_m_l_1_1_node_filter:
+
+class Poco::XML::NodeFilter
+===========================
+
+.. toctree::
+	:hidden:
+
+	enum_Poco_XML_NodeFilter_WhatToShow.rst
+
+Overview
+~~~~~~~~
+
+Filters are objects that know how to "filter out" nodes. :ref:`More...<details-class_poco_1_1_x_m_l_1_1_node_filter>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <NodeFilter.h>
+	
+	class NodeFilter
+	{
+	public:
+		// enums
+	
+		enum
+		{
+		    :ref:`FILTER_ACCEPT<doxid-class_poco_1_1_x_m_l_1_1_node_filter_1ab59ef6a5e0ee24ba5ecf5cf85a82a697a65dd85038bd175b92358456b0c57c3c1>` = 1,
+		    :ref:`FILTER_REJECT<doxid-class_poco_1_1_x_m_l_1_1_node_filter_1ab59ef6a5e0ee24ba5ecf5cf85a82a697a2aa6125404e4a6ee832416064cb8464e>` = 2,
+		    :ref:`FILTER_SKIP<doxid-class_poco_1_1_x_m_l_1_1_node_filter_1ab59ef6a5e0ee24ba5ecf5cf85a82a697aa7473b8b64c33e0444b0f7b8787d18a3>`   = 3,
+		};
+	
+		enum :ref:`WhatToShow<doxid-class_poco_1_1_x_m_l_1_1_node_filter_1a06180d6cef1a7065798df50ad3e9a47b>`;
+
+		// methods
+	
+		virtual
+		short
+		:ref:`acceptNode<doxid-class_poco_1_1_x_m_l_1_1_node_filter_1a64e0d8ab8c396942f8909cd9bcfc7550>`(:ref:`Node<doxid-class_poco_1_1_x_m_l_1_1_node>`* node) = 0;
+	};
+.. _details-class_poco_1_1_x_m_l_1_1_node_filter:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Filters are objects that know how to "filter out" nodes.
+
+If a :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>` or :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>` is given a :ref:`NodeFilter <doxid-class_poco_1_1_x_m_l_1_1_node_filter>`, it applies the filter before it returns the next node. If the filter says to accept the node, the traversal logic returns it; otherwise, traversal looks for the next node and pretends that the node that was rejected was not there.
+
+The DOM does not provide any filters. :ref:`NodeFilter <doxid-class_poco_1_1_x_m_l_1_1_node_filter>` is just an interface that users can implement to provide their own filters.
+
+NodeFilters do not need to know how to traverse from node to node, nor do they need to know anything about the data structure that is being traversed. This makes it very easy to write filters, since the only thing they have to know how to do is evaluate a single node. One filter may be used with a number of different kinds of traversals, encouraging code reuse.
+
+Enum Values
+-----------
+
+.. index:: pair: enumvalue; FILTER_ACCEPT
+.. _doxid-class_poco_1_1_x_m_l_1_1_node_filter_1ab59ef6a5e0ee24ba5ecf5cf85a82a697a65dd85038bd175b92358456b0c57c3c1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	FILTER_ACCEPT
+
+Accept the node. Navigation methods defined for :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>` or :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>` will return this node.
+
+.. index:: pair: enumvalue; FILTER_REJECT
+.. _doxid-class_poco_1_1_x_m_l_1_1_node_filter_1ab59ef6a5e0ee24ba5ecf5cf85a82a697a2aa6125404e4a6ee832416064cb8464e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	FILTER_REJECT
+
+Reject the node.
+
+Navigation methods defined for :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>` or :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>` will not return this node. For :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>`, the children of this node will also be rejected. NodeIterators treat this as a synonym for FILTER_SKIP.
+
+.. index:: pair: enumvalue; FILTER_SKIP
+.. _doxid-class_poco_1_1_x_m_l_1_1_node_filter_1ab59ef6a5e0ee24ba5ecf5cf85a82a697aa7473b8b64c33e0444b0f7b8787d18a3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	FILTER_SKIP
+
+Skip this single node.
+
+Navigation methods defined for :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>` or :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>` will not return this node. For both :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>` and :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>`, the children of this node will still be considered.
+
+Methods
+-------
+
+.. index:: pair: function; acceptNode
+.. _doxid-class_poco_1_1_x_m_l_1_1_node_filter_1a64e0d8ab8c396942f8909cd9bcfc7550:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	short
+	acceptNode(:ref:`Node<doxid-class_poco_1_1_x_m_l_1_1_node>`* node) = 0
+
+Test whether a specified node is visible in the logical view of a :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>` or :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>`.
+
+This function will be called by the implementation of :ref:`TreeWalker <doxid-class_poco_1_1_x_m_l_1_1_tree_walker>` and :ref:`NodeIterator <doxid-class_poco_1_1_x_m_l_1_1_node_iterator>`; it is not normally called directly from user code. (Though you could do so if you wanted to use the same filter to guide your own application logic.)
+
+Returns FILTER_ACCEPT, FILTER_REJECT or FILTER_SKIP.
+

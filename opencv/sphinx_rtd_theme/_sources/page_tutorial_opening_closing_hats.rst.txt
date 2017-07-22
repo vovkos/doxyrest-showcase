@@ -1,0 +1,254 @@
+.. index:: pair: page; More Morphology Transformations
+.. _doxid-d3/dbe/tutorial_opening_closing_hats:
+
+More Morphology Transformations
+===============================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>` to apply Morphological Transformation such as:
+  
+  * Opening
+  
+  * Closing
+  
+  * Morphological Gradient
+  
+  * Top Hat
+  
+  * Black Hat
+
+.. rubric:: Theory
+
+The explanation below belongs to the book **Learning OpenCV** by Bradski and Kaehler.
+
+In the previous tutorial we covered two basic Morphology operations:
+
+* Erosion
+
+* Dilation.
+
+Based on these two we can effectuate more sophisticated transformations to our images. Here we discuss briefly 5 operations offered by OpenCV:
+
+.. rubric:: Opening
+
+* It is obtained by the erosion of an image followed by a dilation.
+  
+  .. math::
+  
+  	dst = open( src, element) = dilate( erode( src, element ) )
+
+* Useful for removing small objects (it is assumed that the objects are bright on a dark foreground)
+
+* For instance, check out the example below. The image at the left is the original and the image at the right is the result after applying the opening transformation. We can observe that the small spaces in the corners of the letter tend to dissapear.
+  
+  .. image:: Morphology_2_Tutorial_Theory_Opening.png
+
+For the sake of clarity, we have performed the opening operation (``7x7`` rectangular structuring element) on the same original image but inverted such as the object in white is now the letter.
+
+.. image:: Morphology_2_Tutorial_Theory_Opening_2.png
+	:alt: Left image: original image inverted, right image: resulting opening
+
+
+
+.. rubric:: Closing
+
+* It is obtained by the dilation of an image followed by an erosion.
+  
+  .. math::
+  
+  	dst = close( src, element ) = erode( dilate( src, element ) )
+
+* Useful to remove small holes (dark regions).
+  
+  .. image:: Morphology_2_Tutorial_Theory_Closing.png
+
+On the inverted image, we have performed the closing operation (``7x7`` rectangular structuring element):
+
+.. image:: Morphology_2_Tutorial_Theory_Closing_2.png
+	:alt: Left image: original image inverted, right image: resulting closing
+
+
+
+.. rubric:: Morphological Gradient
+
+* It is the difference between the dilation and the erosion of an image.
+  
+  .. math::
+  
+  	dst = morph_{grad}( src, element ) = dilate( src, element ) - erode( src, element )
+
+* It is useful for finding the outline of an object as can be seen below:
+  
+  .. image:: Morphology_2_Tutorial_Theory_Gradient.png
+
+.. rubric:: Top Hat
+
+* It is the difference between an input image and its opening.
+  
+  .. math::
+  
+  	dst = tophat( src, element ) = src - open( src, element )
+  
+  .. image:: Morphology_2_Tutorial_Theory_TopHat.png
+
+.. rubric:: Black Hat
+
+* It is the difference between the closing and its input image
+  
+  .. math::
+  
+  	dst = blackhat( src, element ) = close( src, element ) - src
+  
+  .. image:: Morphology_2_Tutorial_Theory_BlackHat.png
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Morphology_2.cpp>`__
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, dst;
+	
+	int morph_elem = 0;
+	int morph_size = 0;
+	int morph_operator = 0;
+	int const max_operator = 4;
+	int const max_elem = 2;
+	int const max_kernel_size = 21;
+	
+	const char* window_name = "Morphology Transformations Demo";
+	
+	
+	void Morphology_Operations( int, void* );
+	
+	int main( int, char** argv )
+	{
+	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+	
+	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+	    { return -1; }
+	
+	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_name, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` ); // Create window
+	
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("Operator:\n 0: Opening - 1: Closing  \n 2: Gradient - 3: Top Hat \n 4: Black Hat", window_name, &morph_operator, max_operator, Morphology_Operations );
+	
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "Element:\n 0: Rect - 1: Cross - 2: Ellipse", window_name,
+	                  &morph_elem, max_elem,
+	                  Morphology_Operations );
+	
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "Kernel size:\n 2n +1", window_name,
+	                  &morph_size, max_kernel_size,
+	                  Morphology_Operations );
+	
+	  Morphology_Operations( 0, 0 );
+	
+	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	  return 0;
+	}
+	
+	
+	void Morphology_Operations( int, void* )
+	{
+	  // Since MORPH_X : 2,3,4,5 and 6
+	  int operation = morph_operator + 2;
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` element = :ref:`getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`( morph_elem, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( 2*morph_size + 1, 2*morph_size+1 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( morph_size, morph_size ) );
+	
+	  :ref:`morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`( src, dst, operation, element );
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+	}
+
+.. rubric:: Explanation
+
+#. Let's check the general structure of the program:
+   
+   * Load an image
+   
+   * Create a window to display results of the Morphological operations
+   
+   * Create three Trackbars for the user to enter parameters:
+     
+     * The first trackbar **Operator** returns the kind of morphology operation to use (**morph_operator**).
+       
+       .. ref-code-block:: cpp
+       
+       	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("Operator:\n 0: Opening - 1: Closing  \n 2: Gradient - 3: Top Hat \n 4: Black Hat", window_name, &morph_operator, max_operator, Morphology_Operations );
+     
+     * The second trackbar **Element** returns **morph_elem**, which indicates what kind of structure our kernel is:
+       
+       .. ref-code-block:: cpp
+       
+       	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "Element:\n 0: Rect - 1: Cross - 2: Ellipse", window_name,
+       	                &morph_elem, max_elem,
+       	                Morphology_Operations );
+     
+     * The final trackbar **Kernel Size** returns the size of the kernel to be used (**morph_size**)
+       
+       .. ref-code-block:: cpp
+       
+       	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "Kernel size:\n 2n +1", window_name,
+       	                &morph_size, max_kernel_size,
+       	                Morphology_Operations );
+   
+   * Every time we move any slider, the user's function **Morphology_Operations** will be called to effectuate a new morphology operation and it will update the output image based on the current trackbar values.
+     
+     .. ref-code-block:: cpp
+     
+     	
+     	void Morphology_Operations( int, void* )
+     	{
+     	  // Since MORPH_X : 2,3,4,5 and 6
+     	  int operation = morph_operator + 2;
+     	
+     	  Mat element = :ref:`getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`( morph_elem, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( 2*morph_size + 1, 2*morph_size+1 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( morph_size, morph_size ) );
+     	
+     	  :ref:`morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`( src, dst, operation, element );
+     	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+     	}
+     
+     We can observe that the key function to perform the morphology transformations is :ref:`cv::morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`. In this example we use four arguments (leaving the rest as defaults):
+     
+     * **src** : Source (input) image
+     
+     * **dst** : Output image
+     
+     * **operation** : The kind of morphology transformation to be performed. Note that we have 5 alternatives:
+       
+       * *Opening* : MORPH_OPEN : 2
+       
+       * *Closing* : MORPH_CLOSE: 3
+       
+       * *Gradient* : MORPH_GRADIENT: 4
+       
+       * *Top Hat* : MORPH_TOPHAT: 5
+       
+       * *Black Hat* : MORPH_BLACKHAT: 6
+       
+       As you can see the values range from <2-6>, that is why we add (+2) to the values entered by the Trackbar:
+       
+       .. ref-code-block:: cpp
+       
+       	int operation = morph_operator + 2;
+     
+     * **element** : The kernel to be used. We use the function :ref:`cv::getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>` to define our own structure.
+
+.. rubric:: Results
+
+* After compiling the code above we can execute it giving an image path as an argument. For this tutorial we use as input the image: **baboon.png** :
+  
+  .. image:: Morphology_2_Tutorial_Original_Image.jpg
+
+* And here are two snapshots of the display window. The first picture shows the output after using the operator **Opening** with a cross kernel. The second picture (right side, shows the result of using a **Blackhat** operator with an ellipse kernel.
+  
+  .. image:: Morphology_2_Tutorial_Result.jpg
+

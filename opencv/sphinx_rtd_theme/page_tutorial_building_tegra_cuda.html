@@ -1,0 +1,922 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Building OpenCV for Tegra with CUDA &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cross compilation for ARM based Linux systems" href="page_tutorial_arm_crosscompile_with_cmake.html" />
+    <link rel="prev" title="Android Development with OpenCV" href="page_tutorial_dev_with_OCV_on_Android.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_dev_with_OCV_on_Android.html">Android Development with OpenCV</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Building OpenCV for Tegra with CUDA</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#getting-the-source-code">Getting the Source Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preparation-and-prerequisites">Preparation and Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-opencv-for-building">Configuring OpenCV for Building</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-opencv">Building OpenCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing-opencv">Testing OpenCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installing-opencv">Installing OpenCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-opencv-2-4-x">Building OpenCV 2.4.X</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cmake-parameter-reference">CMake Parameter Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_arm_crosscompile_with_cmake.html">Cross compilation for ARM based Linux systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_windows_visual_studio_Opencv.html">How to build applications with OpenCV inside the “Microsoft Visual Studio”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_windows_visual_studio_image_watch.html">Image Watch: viewing in-memory images in the Visual Studio debugger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_linux_install.html">Installation in Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_windows_install.html">Installation in Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_ios_install.html">Installation in iOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_android_dev_intro.html">Introduction into Android Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_java_dev_intro.html">Introduction to Java Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_clojure_dev_intro.html">Introduction to OpenCV Development with Clojure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_display_image.html">Load and Display an Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_load_save_image.html">Load, Modify, and Save an Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_O4A_SDK.html">OpenCV4Android SDK</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_transition_guide.html">Transition guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_android_ocl_intro.html">Use OpenCL in Android camera preview based CV application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_java_eclipse.html">Using OpenCV Java with Eclipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_linux_eclipse.html">Using OpenCV with Eclipse (plugin CDT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_biicode.html">Using OpenCV with biicode dependency manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_linux_gcc_cmake.html">Using OpenCV with gcc and CMake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_documentation.html">Writing documentation for OpenCV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a> &raquo;</li>
+        
+      <li>Building OpenCV for Tegra with CUDA</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="building-opencv-for-tegra-with-cuda">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda"></span><span id="index-0"></span><h1>Building OpenCV for Tegra with CUDA</h1>
+<p class="rubric">OpenCV with CUDA for Tegra</p>
+<p>This document is a basic guide to building the OpenCV libraries with CUDA support for use in the Tegra environment. It covers the basic elements of building the version 3.1.0 libraries from source code for three (3) different types of platforms:</p>
+<ul class="simple">
+<li>NVIDIA DRIVE PX 2 (V4L)</li>
+<li>NVIDIA Tegra Linux Driver Package (L4T)</li>
+<li>Desktop Linux (Ubuntu 14.04 LTS and 16.04 LTS)</li>
+</ul>
+<p>This document is not an exhaustive guide to all of the options available when building OpenCV. Specifically, it covers the basic options used when building each platform but does not cover any options that are not needed (or are unchanged from their default values). Additionally, the installation of the CUDA toolkit is not covered here.</p>
+<p>This document is focused on building the 3.1.0 version of OpenCV, but the guidelines here may also work for building from the master branch of the git repository. There are differences in some of the CMake options for builds of the 2.4.13 version of OpenCV, which are summarized below in the <a class="reference internal" href="#doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-opencv-24x"><span class="std std-ref">Building OpenCV 2.4.X</span></a> section.</p>
+<p>Most of the configuration commands are based on the system having CUDA 8.0 installed. In the case of the Jetson TK1, an older CUDA is used because 8.0 is not supported for that platform. These instructions may also work with older versions of CUDA, but are only tested with 8.0.</p>
+<p class="rubric">A Note on Native Compilation vs. Cross-Compilation</p>
+<p>The OpenCV build system supports native compilation for all the supported platforms, as well as cross-compilation for platforms such as ARM and others. The native compilation process is simpler, whereas the cross-compilation is generally faster.</p>
+<p>At the present time, this document focuses only on native compilation.</p>
+<div class="section" id="getting-the-source-code">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-getting-the-code"></span><h2>Getting the Source Code</h2>
+<p>There are two (2) ways to get the OpenCV source code:</p>
+<ul class="simple">
+<li>Direct download from the <a class="reference external" href="http://opencv.org/releases.html">OpenCV downloads</a> page</li>
+<li>Cloning the git repositories hosted on <a class="reference external" href="https://github.com/opencv">GitHub</a></li>
+</ul>
+<p>For this guide, the focus is on using the git repositories. This is because the 3.1.0 version of OpenCV will not build with CUDA 8.0 without applying a few small upstream changes from the git repository.</p>
+<p class="rubric">OpenCV</p>
+<p>Start with the <code class="docutils literal notranslate"><span class="pre">opencv</span></code> repository:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp"># Clone the opencv repository locally:</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/opencv/opencv.git</span>
+</pre></div>
+</div>
+<p>To build the 3.1.0 version (as opposed to building the most-recent source), you must check out a branch based on the <code class="docutils literal notranslate"><span class="pre">3.1.0</span></code> tag:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cd</span> <span class="n">opencv</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">v3</span><span class="mf">.1.0</span> <span class="mf">3.1.0</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> This operation creates a new local branch in your clone’s repository.</p>
+<p>There are some upstream changes that must be applied via the <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">cherry-pick</span></code> command. The first of these is to apply a fix for building specifically with the 8.0 version of CUDA that was not part of the 3.1.0 release:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp"># While still in the opencv directory:</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">cherry</span><span class="o">-</span><span class="n">pick</span> <span class="mi">10896</span>
+</pre></div>
+</div>
+<p>You will see the following output from the command:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">v3</span><span class="mf">.1.0</span> <span class="n">d6d69a7</span><span class="p">]</span> <span class="n">GraphCut</span> <span class="n">deprecated</span> <span class="n">in</span> <span class="n">CUDA</span> <span class="mf">7.5</span> <span class="n">and</span> <span class="n">removed</span> <span class="n">in</span> <span class="mf">8.0</span>
+ <span class="nl">Author</span><span class="p">:</span> <span class="n">Vladislav</span> <span class="n">Vinogradov</span> <span class="o">&lt;</span><span class="n">vlad</span><span class="p">.</span><span class="n">vinogradov</span><span class="err">@</span><span class="n">itseez</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span>
+ <span class="mi">1</span> <span class="n">file</span> <span class="n">changed</span><span class="p">,</span> <span class="mi">2</span> <span class="n">insertions</span><span class="p">(</span><span class="o">+</span><span class="p">),</span> <span class="mi">1</span> <span class="n">deletion</span><span class="p">(</span><span class="o">-</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Secondly, there is a fix for a CMake macro call that is problematic on some systems:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">git</span> <span class="n">cherry</span> <span class="n">pick</span> <span class="n">cdb9c</span>
+</pre></div>
+</div>
+<p>You should see output similar to:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">v3</span><span class="mf">.1.0</span><span class="o">-</span><span class="mi">28613</span> <span class="n">e5ac2e4</span><span class="p">]</span> <span class="n">gpu</span> <span class="nl">samples</span><span class="p">:</span> <span class="n">fix</span> <span class="n">REMOVE_ITEM</span> <span class="n">error</span>
+ <span class="nl">Author</span><span class="p">:</span> <span class="n">Alexander</span> <span class="n">Alekhin</span> <span class="o">&lt;</span><span class="n">alexander</span><span class="p">.</span><span class="n">alekhin</span><span class="err">@</span><span class="n">itseez</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span>
+ <span class="mi">1</span> <span class="n">file</span> <span class="n">changed</span><span class="p">,</span> <span class="mi">1</span> <span class="n">insertion</span><span class="p">(</span><span class="o">+</span><span class="p">),</span> <span class="mi">1</span> <span class="n">deletion</span><span class="p">(</span><span class="o">-</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The last upstream fix that is needed deals with the <code class="docutils literal notranslate"><span class="pre">pkg-config</span></code> configuration file that is bundled with the developer package (<code class="docutils literal notranslate"><span class="pre">libopencv-dev</span></code>):</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">git</span> <span class="n">cherry</span><span class="o">-</span><span class="n">pick</span> <span class="mi">24</span><span class="n">dbb</span>
+</pre></div>
+</div>
+<p>You should see output similar to:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">v3</span><span class="mf">.1.0</span> <span class="mi">3</span><span class="n">a6d7ab</span><span class="p">]</span> <span class="n">pkg</span><span class="o">-</span><span class="nl">config</span><span class="p">:</span> <span class="n">modules</span> <span class="n">list</span> <span class="n">contains</span> <span class="n">only</span> <span class="n">OpenCV</span> <span class="n">modules</span> <span class="p">(</span><span class="n">fixes</span> <span class="err">#</span><span class="mi">5852</span><span class="p">)</span>
+ <span class="nl">Author</span><span class="p">:</span> <span class="n">Alexander</span> <span class="n">Alekhin</span> <span class="o">&lt;</span><span class="n">alexander</span><span class="p">.</span><span class="n">alekhin</span><span class="err">@</span><span class="n">itseez</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span>
+ <span class="mi">1</span> <span class="n">file</span> <span class="n">changed</span><span class="p">,</span> <span class="mi">7</span> <span class="n">insertions</span><span class="p">(</span><span class="o">+</span><span class="p">),</span> <span class="mi">4</span> <span class="n">deletions</span><span class="p">(</span><span class="o">-</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At this point, the <code class="docutils literal notranslate"><span class="pre">opencv</span></code> repository is ready for building.</p>
+<p class="rubric">OpenCV Extra</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">opencv_extra</span></code> repository contains extra data for the OpenCV library, including the data files used by the tests and demos. It must be cloned separately:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp"># In the same base directory from which you cloned OpenCV:</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/opencv/opencv_extra.git</span>
+</pre></div>
+</div>
+<p>As with the OpenCV source, you must use the same method as above to set the source tree to the 3.1.0 version. When you are building from a specific tag, both repositories must be checked out at that tag.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cd</span> <span class="n">opencv_extra</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">v3</span><span class="mf">.1.0</span> <span class="mf">3.1.0</span>
+</pre></div>
+</div>
+<p>You may opt to not fetch this repository if you do not plan on running the tests or installing the test-data along with the samples and example programs. If it is not referenced in the invocation of CMake, it will not be used.</p>
+<p><strong>Note:</strong> If you plan to run the tests, some tests expect the data to be present and will fail without it.</p>
+</div>
+<div class="section" id="preparation-and-prerequisites">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-preparation"></span><h2>Preparation and Prerequisites</h2>
+<p>To build OpenCV, you need a directory to create the configuration and build the libraries. You also need a number of 3rd-party libraries upon which OpenCV depends.</p>
+<p class="rubric">Prerequisites for Ubuntu Linux</p>
+<p>These are the basic requirements for building OpenCV for Tegra on Linux:</p>
+<ul class="simple">
+<li>CMake 2.8.10 or newer</li>
+<li>CUDA toolkit 8.0 (7.0 or 7.5 may also be used)</li>
+<li>Build tools (make, gcc, g++)</li>
+<li>Python 2.6 or greater</li>
+</ul>
+<p>These are the same regardless of the platform (DRIVE PX 2, Desktop, etc.).</p>
+<p>A number of development packages are required for building on Linux:</p>
+<ul class="simple">
+<li>libglew-dev</li>
+<li>libtiff5-dev</li>
+<li>zlib1g-dev</li>
+<li>libjpeg-dev</li>
+<li>libpng12-dev</li>
+<li>libjasper-dev</li>
+<li>libavcodec-dev</li>
+<li>libavformat-dev</li>
+<li>libavutil-dev</li>
+<li>libpostproc-dev</li>
+<li>libswscale-dev</li>
+<li>libeigen3-dev</li>
+<li>libtbb-dev</li>
+<li>libgtk2.0-dev</li>
+<li>pkg-config</li>
+</ul>
+<p>Some of the packages above are in the <code class="docutils literal notranslate"><span class="pre">universe</span></code> repository for Ubuntu Linux systems. If you have not already enabled that repository, you need to do the following before trying to install all of the packages listed above:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">add</span><span class="o">-</span><span class="n">repository</span> <span class="n">universe</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+</pre></div>
+</div>
+<p>The following command can be pasted into a shell in order to install the required packages:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> \
+    <span class="n">libglew</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libtiff5</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">zlib1g</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libjpeg</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libpng12</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libjasper</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libavcodec</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libavformat</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libavutil</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libpostproc</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libswscale</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libeigen3</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libtbb</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libgtk2</span><span class="mf">.0</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">pkg</span><span class="o">-</span><span class="n">config</span>
+</pre></div>
+</div>
+<p>(Line-breaks and continuation characters are added for readability.)</p>
+<p>If you want the Python bindings to be built, you will also need the appropriate packages for either or both of Python 2 and Python 3:</p>
+<ul class="simple">
+<li>python-dev / python3-dev</li>
+<li>python-numpy / python3-numpy</li>
+<li>python-py / python3-py</li>
+<li>python-pytest / python3-pytest</li>
+</ul>
+<p>The commands that will do this:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">dev</span> <span class="n">python</span><span class="o">-</span><span class="n">numpy</span> <span class="n">python</span><span class="o">-</span><span class="n">py</span> <span class="n">python</span><span class="o">-</span><span class="n">pytest</span>
+<span class="cp"># And, optionally:</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">numpy</span> <span class="n">python3</span><span class="o">-</span><span class="n">py</span> <span class="n">python3</span><span class="o">-</span><span class="n">pytest</span>
+</pre></div>
+</div>
+<p>Once all the necessary packages are installed, you can configure the build.</p>
+<p class="rubric">Preparing the Build Area</p>
+<p>Software projects that use the CMake system for configuring their builds expect the actual builds to be done outside of the source tree itself. For configuring and building OpenCV, create a directory called “build” in the same base directory into which you cloned the git repositories:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">mkdir</span> <span class="n">build</span>
+<span class="err">$</span> <span class="n">cd</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>You are now ready to configure and build OpenCV.</p>
+</div>
+<div class="section" id="configuring-opencv-for-building">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-configuring"></span><h2>Configuring OpenCV for Building</h2>
+<p>The CMake configuration options given below for the different platforms are targeted towards the functionality needed for Tegra. They are based on the original configuration options used for building OpenCV 2.4.13.</p>
+<p>The build of OpenCV is configured with CMake. If run with no parameters, it detects what it needs to know about your system. However, it may have difficulty finding the CUDA files if they are not in a standard location, and it may try to build some options that you might otherwise not want included, so the following invocations of CMake are recommended.</p>
+<p>In each <code class="docutils literal notranslate"><span class="pre">cmake</span></code> command listed in the following sub-sections, line-breaks and indentation are added for readability. Continuation characters are also added in examples for Linux-based platforms, allowing you to copy and paste the examples directly into a shell. When entering these commands by hand, enter the command and options as a single line. For a detailed explanation of the parameters passed to <code class="docutils literal notranslate"><span class="pre">cmake</span></code>, see the “CMake Parameter Reference” section.</p>
+<p>For the Linux-based platforms, the shown value for the <code class="docutils literal notranslate"><span class="pre">CMAKE_INSTALL_PREFIX</span></code> parameter is <code class="docutils literal notranslate"><span class="pre">/usr</span></code>. You can set this to whatever you want, based on the layout of your system.</p>
+<p>In each of the <code class="docutils literal notranslate"><span class="pre">cmake</span></code> invocations below, the last parameter, <code class="docutils literal notranslate"><span class="pre">OPENCV_TEST_DATA_PATH</span></code>, tells the build system where to find the test-data that is provided by the <code class="docutils literal notranslate"><span class="pre">opencv_extra</span></code> repository. When this is included, a <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> installs this test-data alongside the libraries and example code, and a <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> automatically provides this path to the tests that have to load data from it. If you did not clone the <code class="docutils literal notranslate"><span class="pre">opencv_extra</span></code> repository, do not include this parameter.</p>
+<p class="rubric">Vibrante V4L Configuration</p>
+<p>Supported platform: Drive PX 2</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python2</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python3</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DENABLE_NEON</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">8.0</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="mf">6.2</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p>The configuration provided above builds the Python bindings for Python 2 (but not Python 3) as part of the build process. If you want the Python 3 bindings (or do not want the Python 2 bindings), change the values of <code class="docutils literal notranslate"><span class="pre">BUILD_opencv_python2</span></code> and/or <code class="docutils literal notranslate"><span class="pre">BUILD_opencv_python3</span></code> as needed. To enable bindings, set the value to <code class="docutils literal notranslate"><span class="pre">ON</span></code>, to disable them set it to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DBUILD_opencv_python2</span><span class="o">=</span><span class="n">OFF</span>
+</pre></div>
+</div>
+<p class="rubric">Jetson L4T Configuration</p>
+<p>Supported platforms:</p>
+<ul class="simple">
+<li>Jetson TK1</li>
+<li>Jetson TX1</li>
+</ul>
+<p>Configuration is slightly different for the Jetson TK1 and the Jetson TX1 systems.</p>
+<p class="rubric">Jetson TK1</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DCMAKE_CXX_FLAGS</span><span class="o">=-</span><span class="n">Wa</span><span class="p">,</span><span class="o">-</span><span class="n">mimplicit</span><span class="o">-</span><span class="n">it</span><span class="o">=</span><span class="n">thumb</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python2</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python3</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DENABLE_NEON</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">6.5</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="mf">3.2</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> This uses CUDA 6.5, not 8.0.</p>
+<p class="rubric">Jetson TX1</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python2</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python3</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DENABLE_PRECOMPILED_HEADERS</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">8.0</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="mf">5.3</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> This configuration does not set the <code class="docutils literal notranslate"><span class="pre">ENABLE_NEON</span></code> parameter.</p>
+<p class="rubric">Ubuntu Desktop Linux Configuration</p>
+<p>Supported platforms:</p>
+<ul class="simple">
+<li>Ubuntu Desktop Linux 14.04 LTS</li>
+<li>Ubuntu Desktop Linux 16.04 LTS</li>
+</ul>
+<p>The configuration options given to <code class="docutils literal notranslate"><span class="pre">cmake</span></code> below are targeted towards the functionality needed for Tegra. For a desktop system, you may wish to adjust some options to enable (or disable) certain features. The features enabled below are based on the building of OpenCV 2.4.13.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python2</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python3</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">8.0</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="sc">&#39;3.0 3.5 5.0 6.0 6.2&#39;</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p>This configuration is nearly identical to that for V4L and L4T, except that the <code class="docutils literal notranslate"><span class="pre">CUDA_ARCH_BIN</span></code> parameter specifies multiple architectures so as to support a variety of GPU boards. For a desktop, you have the option of omitting this parameter, and CMake will instead run a small test program that probes for the supported architectures. However, the libraries produced might not work on Ubuntu systems with different cards.</p>
+<p>As with previous examples, the configuration given above builds the Python bindings for Python 2 (but not Python 3) as part of the build process.</p>
+</div>
+<div class="section" id="building-opencv">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-building"></span><h2>Building OpenCV</h2>
+<p>Once <code class="docutils literal notranslate"><span class="pre">cmake</span></code> finishes configuring OpenCV, building is done using the standard <code class="docutils literal notranslate"><span class="pre">make</span></code> utility.</p>
+<p class="rubric">Building with</p>
+<p>The only parameter that is needed for the invocation of <code class="docutils literal notranslate"><span class="pre">make</span></code> is the <code class="docutils literal notranslate"><span class="pre">-j</span></code> parameter for specifying how many parallel threads to use. This varies depending on the system and how much memory is available, other running processes, etc. The following table offers suggested values for this parameter:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="7%" />
+<col width="87%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Platform</td>
+<td>Suggested value</td>
+<td>Notes</td>
+</tr>
+</tbody>
+</table>
+<p>DRIVE PX 2      6
+Jetson TK1      3                If the build fails due to a compiler-related error, try again with a smaller number of threads. Also consider rebooting the system if it has been running for a long time since the last reboot.
+Jetson TX1      4
+Ubuntu Desktop  7                The actual value will vary with the number of cores you have and the amount of physical memory. Because of the resource requirements of compiling the CUDA code, it is not recommended to go above 7.
+==============  ===============  =====================================================================================================================================================================================================</p>
+<p>Based on the value you select, build (assuming you selected 6):</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">make</span> <span class="o">-</span><span class="n">j6</span>
+</pre></div>
+</div>
+<p>By default, CMake hides the details of the build steps. If you need to see more detail about each compilation unit, etc., you can enable verbose output:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">make</span> <span class="o">-</span><span class="n">j6</span> <span class="n">VERBOSE</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-opencv">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-testing"></span><h2>Testing OpenCV</h2>
+<p>Once the build completes successfully, you have the option of running the extensive set of tests that OpenCV provides. If you did not clone the <code class="docutils literal notranslate"><span class="pre">opencv_extra</span></code> repository and specify the path to <code class="docutils literal notranslate"><span class="pre">testdata</span></code> in the <code class="docutils literal notranslate"><span class="pre">cmake</span></code> invocation, then testing is not recommended.</p>
+<p class="rubric">Testing under Linux</p>
+<p>To run the basic tests under Linux, execute:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">make</span> <span class="n">test</span>
+</pre></div>
+</div>
+<p>This executes <code class="docutils literal notranslate"><span class="pre">ctest</span></code> to carry out the tests, as specified in CTest syntax within the OpenCV repository. The <code class="docutils literal notranslate"><span class="pre">ctest</span></code> harness takes many different parameters (too many to list here, see the manual page for CTest to see the full set), and if you wish to pass any of them, you can do so by specifying them in a <code class="docutils literal notranslate"><span class="pre">make</span></code> command-line parameter called <code class="docutils literal notranslate"><span class="pre">ARGS</span></code> :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">make</span> <span class="n">test</span> <span class="n">ARGS</span><span class="o">=</span><span class="s">&quot;--verbose --parallel 3&quot;</span>
+</pre></div>
+</div>
+<p>In this example, there are two (2) arguments passed to <code class="docutils literal notranslate"><span class="pre">ctest</span></code> : <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> and <code class="docutils literal notranslate"><span class="pre">--parallel</span> <span class="pre">3</span></code>. The first argument causes the output from <code class="docutils literal notranslate"><span class="pre">ctest</span></code> to be more detailed, and the second causes <code class="docutils literal notranslate"><span class="pre">ctest</span></code> to run as many as three (3) tests in parallel. As with choosing a thread count for building, base any choice for testing on the available number of processor cores, physical memory, etc. Some of the tests do attempt to allocate significant amounts of memory.</p>
+<p class="rubric">Known Issues with Tests</p>
+<p>At present, not all of the tests in the OpenCV test suite pass. There are tests that fail whether or not CUDA is compiled, and there are tests that are only specific to CUDA that also do not currently pass.</p>
+<p><strong>Note:</strong> There are no tests that pass without CUDA but fail only when CUDA is included.</p>
+<p>As the full lists of failing tests vary based on platform, it is impractical to list them here.</p>
+</div>
+<div class="section" id="installing-opencv">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-installing"></span><h2>Installing OpenCV</h2>
+<p>Installing OpenCV is very straightforward. For the Linux-based platforms, the command is:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>Depending on the chosen installation location, you may need root privilege to install.</p>
+</div>
+<div class="section" id="building-opencv-2-4-x">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-opencv-24x"></span><h2>Building OpenCV 2.4.X</h2>
+<p>If you wish to build your own version of the 2.4 version of OpenCV, there are only a few adjustments that must be made. At the time of this writing, the latest version on the 2.4 tree is 2.4.13. These instructions may work for later versions of 2.4, though they have not been tested for any earlier versions.</p>
+<p><strong>Note:</strong> The 2.4.X OpenCV source does not have the extra modules and code for Tegra that was upstreamed into the 3.X versions of OpenCV. This part of the guide is only for cases where you want to build a vanilla version of OpenCV 2.4.</p>
+<p class="rubric">Selecting the 2.4 Source</p>
+<p>First you must select the correct source branch or tag. If you want a specific version such as 2.4.13, you want to make a local branch based on the tag, as was done with the 3.1.0 tag above:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp"># Within the opencv directory:</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">v2</span><span class="mf">.4.13</span> <span class="mf">2.4.13</span>
+
+<span class="cp"># Within the opencv_extra directory:</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">v2</span><span class="mf">.4.13</span> <span class="mf">2.4.13</span>
+</pre></div>
+</div>
+<p>If you simply want the newest code from the 2.4 line of OpenCV, there is a <code class="docutils literal notranslate"><span class="pre">2.4</span></code> branch already in the repository. You can check that out instead of a specific tag:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="mf">2.4</span>
+</pre></div>
+</div>
+<p>There is no need for the <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">cherry-pick</span></code> commands used with 3.1.0 when building the 2.4.13 source.</p>
+<p class="rubric">Configuring</p>
+<p>Configuring is done with CMake as before. The primary difference is that OpenCV 2.4 only provides Python bindings for Python 2, and thus does not distinguish between Python 2 and Python 3 in the CMake parameters. There is only one parameter, <code class="docutils literal notranslate"><span class="pre">BUILD_opencv_python</span></code>. In addition, there is a build-related parameter that controls features in 2.4 that are not in 3.1.0. This parameter is <code class="docutils literal notranslate"><span class="pre">BUILD_opencv_nonfree</span></code>.</p>
+<p>Configuration still takes place in a separate directory that must be a sibling to the <code class="docutils literal notranslate"><span class="pre">opencv</span></code> and <code class="docutils literal notranslate"><span class="pre">opencv_extra</span></code> directories.</p>
+<p class="rubric">Configuring Vibrante V4L</p>
+<p>For DRIVE PX 2:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_nonfree</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DENABLE_NEON</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">8.0</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="mf">6.2</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p class="rubric">Configuring Jetson L4T</p>
+<p>For Jetson TK1:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_nonfree</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DENABLE_NEON</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">6.5</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="mf">3.2</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p>For Jetson TX1:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_nonfree</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DENABLE_PRECOMPILED_HEADERS</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">8.0</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="mf">5.3</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p class="rubric">Configuring Desktop Ubuntu Linux</p>
+<p>For both 14.04 LTS and 16.04 LTS:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">cmake</span> \
+    <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> \
+    <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span> \
+    <span class="o">-</span><span class="n">DBUILD_PNG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TIFF</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_TBB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JPEG</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_JASPER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_ZLIB</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_java</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_nonfree</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DBUILD_opencv_python</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENCL</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENMP</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_FFMPEG</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_GSTREAMER_0_10</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_CUDA</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_GTK</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_VTK</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_TBB</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DWITH_1394</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DWITH_OPENEXR</span><span class="o">=</span><span class="n">OFF</span> \
+    <span class="o">-</span><span class="n">DCUDA_TOOLKIT_ROOT_DIR</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">cuda</span><span class="o">-</span><span class="mf">8.0</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_BIN</span><span class="o">=</span><span class="sc">&#39;3.0 3.5 5.0 6.0 6.2&#39;</span> \
+    <span class="o">-</span><span class="n">DCUDA_ARCH_PTX</span><span class="o">=</span><span class="s">&quot;&quot;</span> \
+    <span class="o">-</span><span class="n">DINSTALL_C_EXAMPLES</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DINSTALL_TESTS</span><span class="o">=</span><span class="n">ON</span> \
+    <span class="o">-</span><span class="n">DOPENCV_TEST_DATA_PATH</span><span class="o">=</span><span class="p">..</span><span class="o">/</span><span class="n">opencv_extra</span><span class="o">/</span><span class="n">testdata</span> \
+    <span class="p">..</span><span class="o">/</span><span class="n">opencv</span>
+</pre></div>
+</div>
+<p class="rubric">Building, Testing and Installing</p>
+<p>Once configured, the steps of building, testing, and installing are the same as above for the 3.1.0 source.</p>
+</div>
+<div class="section" id="cmake-parameter-reference">
+<span id="doxid-d6-d15-tutorial-building-tegra-cuda-1tutorial-building-tegra-cuda-parameter-reference"></span><h2>CMake Parameter Reference</h2>
+<p>The following is a table of all the parameters passed to CMake in the recommended invocations above. Some of these are parameters from CMake itself, while most are specific to OpenCV.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="8%" />
+<col width="18%" />
+<col width="67%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Parameter</td>
+<td>Our Default Value</td>
+<td>What It Does</td>
+<td>Notes</td>
+</tr>
+</tbody>
+</table>
+<p>BUILD_EXAMPLES              ON                               Governs whether the C/C++ examples are built
+BUILD_JASPER                OFF                              Governs whether the Jasper library (
+BUILD_JPEG                  OFF                              As above, for
+BUILD_PNG                   OFF                              As above, for
+BUILD_TBB                   OFF                              As above, for
+BUILD_TIFF                  OFF                              As above, for
+BUILD_ZLIB                  OFF                              As above, for
+BUILD_opencv_java           OFF                              Controls the building of the Java bindings for OpenCV                     Building the Java bindings requires OpenCV libraries be built for static linking only
+BUILD_opencv_nonfree        OFF                              Controls the building of non-free (non-open-source) elements              Used only for building 2.4.X
+BUILD_opencv_python         ON                               Controls the building of the Python 2 bindings in OpenCV 2.4.X            Used only for building 2.4.X
+BUILD_opencv_python2        ON                               Controls the building of the Python 2 bindings in OpenCV 3.1.0            Not used in 2.4.X
+BUILD_opencv_python3        OFF                              Controls the building of the Python 3 bindings in OpenCV 3.1.0            Not used in 2.4.X
+CMAKE_BUILD_TYPE            Release                          Selects the type of build (release vs. development)                       Is generally either
+CMAKE_INSTALL_PREFIX        /usr                             Sets the root for installation of the libraries and header files
+CUDA_ARCH_BIN               varies                           Sets the CUDA architecture(s) for which code is compiled                  Usually only passed for platforms with known specific cards. OpenCV includes a small program that determines the architectures of the system’s installed card if you do not pass this parameter. Here, for Ubuntu desktop, the value is a list to maximize card support.
+CUDA_ARCH_PTX               “”                               Builds PTX intermediate code for the specified virtual PTX architectures
+CUDA_TOOLKIT_ROOT_DIR       /usr/local/cuda-8.0 (for Linux)  Specifies the location of the CUDA include files and libraries
+ENABLE_NEON                 ON                               Enables the use of NEON SIMD extensions for ARM chips                     Only passed for builds on ARM platforms
+ENABLE_PRECOMPILED_HEADERS  OFF                              Enables/disables support for pre-compiled headers                         Only specified on some of the ARM platforms
+INSTALL_C_EXAMPLES          ON                               Enables the installation of the C example files as part of
+INSTALL_TESTS               ON                               Enables the installation of the tests as part of
+OPENCV_TEST_DATA_PATH       ../opencv_extra/testdata         Path to the
+WITH_1394                   OFF                              Specifies whether to include IEEE-1394 support
+WITH_CUDA                   ON                               Specifies whether to include CUDA support
+WITH_FFMPEG                 ON                               Specifies whether to include FFMPEG support
+WITH_GSTREAMER              OFF                              Specifies whether to include GStreamer 1.0 support
+WITH_GSTREAMER_0_10         OFF                              Specifies whether to include GStreamer 0.10 support
+WITH_GTK                    ON                               Specifies whether to include GTK 2.0 support                              Only given on Linux platforms, not Microsoft Windows
+WITH_OPENCL                 OFF                              Specifies whether to include OpenCL runtime support
+WITH_OPENEXR                OFF                              Specifies whether to include ILM support via OpenEXR
+WITH_OPENMP                 OFF                              Specifies whether to include OpenMP runtime support
+WITH_TBB                    ON                               Specifies whether to include Intel TBB support
+WITH_VTK                    OFF                              Specifies whether to include VTK support
+==========================  ===============================  ========================================================================  ========================================================================================================================================================================================================================================================================</p>
+<p>Copyright 2016, NVIDIA CORPORATION. All rights reserved.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_arm_crosscompile_with_cmake.html" class="btn btn-neutral float-right" title="Cross compilation for ARM based Linux systems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_dev_with_OCV_on_Android.html" class="btn btn-neutral float-left" title="Android Development with OpenCV" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

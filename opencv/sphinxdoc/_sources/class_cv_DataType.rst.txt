@@ -1,0 +1,88 @@
+.. index:: pair: class; cv::DataType
+.. _doxid-da/da2/classcv_1_1_data_type:
+
+template class cv::DataType
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Template "trait" class for OpenCV primitive data types. :ref:`More...<details-da/da2/classcv_1_1_data_type>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <traits.hpp>
+	
+	template <typename _Tp>
+	class DataType
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`value_type<doxid-da/da2/classcv_1_1_data_type_1a1c5faad842c6e36ca8f8e9bc4c6585b5>` :target:`channel_type<doxid-da/da2/classcv_1_1_data_type_1aab1ae478f92e00f43f2805c1a37abe68>`;
+		typedef _Tp :target:`value_type<doxid-da/da2/classcv_1_1_data_type_1a1c5faad842c6e36ca8f8e9bc4c6585b5>`;
+		typedef :ref:`value_type<doxid-da/da2/classcv_1_1_data_type_1a1c5faad842c6e36ca8f8e9bc4c6585b5>` :target:`vec_type<doxid-da/da2/classcv_1_1_data_type_1a790f34e6935f55b832e901e8983f0af4>`;
+		typedef :ref:`value_type<doxid-da/da2/classcv_1_1_data_type_1a1c5faad842c6e36ca8f8e9bc4c6585b5>` :target:`work_type<doxid-da/da2/classcv_1_1_data_type_1a3b1766f70e728ead121a6600cd60c2eb>`;
+
+		// enums
+	
+		enum
+		{
+		    :target:`generic_type<doxid-da/da2/classcv_1_1_data_type_1a75c11182df1b37ccefe728f513811a2fa04a54f49f42f8a5ff001beeeef059982>` = 1,
+		    :target:`depth<doxid-da/da2/classcv_1_1_data_type_1a75c11182df1b37ccefe728f513811a2fa04ad15ecb9805fe29793af4bca8f707c>`        = -1,
+		    :target:`channels<doxid-da/da2/classcv_1_1_data_type_1a75c11182df1b37ccefe728f513811a2fa1bf9dab32ba883059e4aaee2736cc7e1>`     = 1,
+		    :target:`fmt<doxid-da/da2/classcv_1_1_data_type_1a75c11182df1b37ccefe728f513811a2fa0f2f4a9ddba78048104942ab4b6dd500>`          = 0,
+		    :target:`type<doxid-da/da2/classcv_1_1_data_type_1a75c11182df1b37ccefe728f513811a2fa33b31a814b0954c1185147a372a39390>`         = CV_MAKETYPE(depth, channels),
+		};
+	};
+.. _details-da/da2/classcv_1_1_data_type:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Template "trait" class for OpenCV primitive data types.
+
+A primitive OpenCV data type is one of unsigned char, bool, signed char, unsigned short, signed short, int, float, double, or a tuple of values of one of these types, where all the values in the tuple have the same type. Any primitive type from the list can be defined by an identifier in the form CV\_<bit-depth>{U\|S\|F}C(<number_of_channels>), for example: uchar CV_8UC1, 3-element floating-point tuple CV_32FC3, and so on. A universal OpenCV structure that is able to store a single instance of such a primitive data type is :ref:`Vec <doxid-db/d93/classcv_1_1_vec>`. Multiple instances of such a type can be stored in a std::vector, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`, :ref:`Mat\_ <doxid-d9/de0/classcv_1_1_mat__>`, :ref:`SparseMat <doxid-d5/d29/classcv_1_1_sparse_mat>`, :ref:`SparseMat\_ <doxid-df/d90/classcv_1_1_sparse_mat__>`, or any other container that is able to store :ref:`Vec <doxid-db/d93/classcv_1_1_vec>` instances.
+
+The :ref:`DataType <doxid-da/da2/classcv_1_1_data_type>` class is basically used to provide a description of such primitive data types without adding any fields or methods to the corresponding classes (and it is actually impossible to add anything to primitive C/C++ data types). This technique is known in C++ as class traits. It is not :ref:`DataType <doxid-da/da2/classcv_1_1_data_type>` itself that is used but its specialized versions, such as:
+
+.. ref-code-block:: cpp
+
+	template<> class DataType<uchar>
+	{
+	    typedef uchar value_type;
+	    typedef int work_type;
+	    typedef uchar channel_type;
+	    enum { channel_type = CV_8U, channels = 1, fmt='u', type = CV_8U };
+	};
+	...
+	template<typename _Tp> DataType<std::complex<_Tp> >
+	{
+	    typedef std::complex<_Tp> value_type;
+	    typedef std::complex<_Tp> work_type;
+	    typedef _Tp channel_type;
+	    // DataDepth is another helper trait class
+	    enum { depth = DataDepth<_Tp>::value, channels=2,
+	        fmt=(channels-1)*256+DataDepth<_Tp>::fmt,
+	        type=CV_MAKETYPE(depth, channels) };
+	};
+	...
+
+The main purpose of this class is to convert compilation-time type information to an OpenCV-compatible data type identifier, for example:
+
+.. ref-code-block:: cpp
+
+	// allocates a 30x40 floating-point matrix
+	Mat A(30, 40, DataType<float>::type);
+	
+	Mat B = Mat_<std::complex<double> >(3, 3);
+	// the statement below will print 6, 2 , that is depth == CV_64F, channels == 2
+	cout << B.depth() << ", " << B.channels() << endl;
+
+So, such traits are used to tell OpenCV which data type you are working with, even if such a type is not native to OpenCV. For example, the matrix B initialization above is compiled because OpenCV defines the proper specialized template class :ref:`DataType <doxid-da/da2/classcv_1_1_data_type>` <complex<_Tp> > . This mechanism is also useful (and used in OpenCV this way) for generic algorithms implementations.
+

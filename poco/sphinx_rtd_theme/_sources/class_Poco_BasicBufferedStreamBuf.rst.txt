@@ -1,0 +1,94 @@
+.. index:: pair: class; Poco::BasicBufferedStreamBuf
+.. _doxid-class_poco_1_1_basic_buffered_stream_buf:
+
+template class Poco::BasicBufferedStreamBuf
+===========================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This is an implementation of a buffered streambuf that greatly simplifies the implementation of custom streambufs of various kinds. :ref:`More...<details-class_poco_1_1_basic_buffered_stream_buf>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <BufferedStreamBuf.h>
+	
+	template <
+		typename ch,
+		typename tr,
+		typename ba = BufferAllocator<ch>
+		>
+	class BasicBufferedStreamBuf: public std::basic_streambuf< ch, tr >
+	{
+	public:
+		// construction
+	
+		:target:`BasicBufferedStreamBuf<doxid-class_poco_1_1_basic_buffered_stream_buf_1a618b2a4c426b3bd2eb7e51a2f12c6e3a>`(
+			std::streamsize bufferSize,
+			:ref:`openmode<doxid-class_poco_1_1_basic_buffered_stream_buf_1accf972e7f04ea1c832f488d99d342cdd>` mode
+			);
+
+		// methods
+	
+		virtual
+		:ref:`int_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a072f33e9ac6888c8a6b2d070eae5e5cf>`
+		:target:`overflow<doxid-class_poco_1_1_basic_buffered_stream_buf_1a9f5a4894c3ac9bc10dc59510b53dd0ba>`(:ref:`int_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a072f33e9ac6888c8a6b2d070eae5e5cf>` c);
+	
+		virtual
+		:ref:`int_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a072f33e9ac6888c8a6b2d070eae5e5cf>`
+		:target:`underflow<doxid-class_poco_1_1_basic_buffered_stream_buf_1a42e3db1d6f8e787e9b8c600a161bd6e5>`();
+	
+		virtual
+		int
+		:target:`sync<doxid-class_poco_1_1_basic_buffered_stream_buf_1a5b7ffded1b2b978a22e6fda28384d586>`();
+
+	protected:
+		// typedefs
+	
+		typedef std::basic_streambuf<ch, tr> :target:`Base<doxid-class_poco_1_1_basic_buffered_stream_buf_1aa9cc2e9468255cfb474b0419f03c921e>`;
+		typedef std::basic_ios<ch, tr> :target:`IOS<doxid-class_poco_1_1_basic_buffered_stream_buf_1a3ec782fb6e54d710b61552732c29c0ba>`;
+		typedef ch :target:`char_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a3ffc84f456738a0c3e782d25bd26300b>`;
+		typedef tr :target:`char_traits<doxid-class_poco_1_1_basic_buffered_stream_buf_1a41a097acbe8eb77b1242ce05d6df8c82>`;
+		typedef ba :target:`Allocator<doxid-class_poco_1_1_basic_buffered_stream_buf_1a77faf57bc04132587d933c079c86500a>`;
+		typedef Base::int_type :target:`int_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a072f33e9ac6888c8a6b2d070eae5e5cf>`;
+		typedef Base::pos_type :target:`pos_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a70dc41a1ea74ba986a72745ae67a060c>`;
+		typedef Base::off_type :target:`off_type<doxid-class_poco_1_1_basic_buffered_stream_buf_1a831be32e1663d6bd8c9a648995685171>`;
+		typedef IOS::openmode :target:`openmode<doxid-class_poco_1_1_basic_buffered_stream_buf_1accf972e7f04ea1c832f488d99d342cdd>`;
+
+		// methods
+	
+		void
+		:target:`setMode<doxid-class_poco_1_1_basic_buffered_stream_buf_1a4bbf0cb1ae9b966563dd08d19ab6b5b2>`(:ref:`openmode<doxid-class_poco_1_1_basic_buffered_stream_buf_1accf972e7f04ea1c832f488d99d342cdd>` mode);
+	
+		:ref:`openmode<doxid-class_poco_1_1_basic_buffered_stream_buf_1accf972e7f04ea1c832f488d99d342cdd>`
+		:target:`getMode<doxid-class_poco_1_1_basic_buffered_stream_buf_1a79db3d098616089edc9d64a0816dcfcf>`() const;
+	};
+
+	// direct descendants
+
+	class :ref:`DeflatingStreamBuf<doxid-class_poco_1_1_deflating_stream_buf>`;
+	class :ref:`DigestBuf<doxid-class_poco_1_1_digest_buf>`;
+	class :ref:`InflatingStreamBuf<doxid-class_poco_1_1_inflating_stream_buf>`;
+	class :ref:`HTTPChunkedStreamBuf<doxid-class_poco_1_1_net_1_1_h_t_t_p_chunked_stream_buf>`;
+	class :ref:`HTTPFixedLengthStreamBuf<doxid-class_poco_1_1_net_1_1_h_t_t_p_fixed_length_stream_buf>`;
+	class :ref:`HTTPHeaderStreamBuf<doxid-class_poco_1_1_net_1_1_h_t_t_p_header_stream_buf>`;
+	class :ref:`HTTPStreamBuf<doxid-class_poco_1_1_net_1_1_h_t_t_p_stream_buf>`;
+	class :ref:`MultipartStreamBuf<doxid-class_poco_1_1_net_1_1_multipart_stream_buf>`;
+	class :ref:`PipeStreamBuf<doxid-class_poco_1_1_pipe_stream_buf>`;
+	class :ref:`RandomBuf<doxid-class_poco_1_1_random_buf>`;
+.. _details-class_poco_1_1_basic_buffered_stream_buf:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This is an implementation of a buffered streambuf that greatly simplifies the implementation of custom streambufs of various kinds.
+
+Derived classes only have to override the methods readFromDevice() or writeToDevice().
+
+This streambuf only supports unidirectional streams. In other words, the :ref:`BasicBufferedStreamBuf <doxid-class_poco_1_1_basic_buffered_stream_buf>` can be used for the implementation of an istream or an ostream, but not for an iostream.
+

@@ -1,0 +1,147 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Video I/O with OpenCV Overview &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="contours2.cpp" href="example_contours2.cpp.html" />
+    <link rel="prev" title="Todo List" href="page_todo.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example_contours2.cpp.html" title="contours2.cpp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_todo.html" title="Todo List"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_todo.html"
+                        title="previous chapter">Todo List</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example_contours2.cpp.html"
+                        title="next chapter">contours2.cpp</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="video-i-o-with-opencv-overview">
+<span id="doxid-d0-da7-videoio-overview"></span><span id="index-0"></span><h1>Video I/O with OpenCV Overview</h1>
+<p class="rubric">See also:</p>
+<ul class="simple">
+<li><a class="reference internal" href="group_videoio.html#doxid-dd-de7-group-videoio"><span class="std std-ref">Video I/O Code Reference</span></a></li>
+<li>Tutorials: <a class="reference internal" href="page_tutorial_table_of_content_videoio.html#doxid-df-d2c-tutorial-table-of-content-videoio"><span class="std std-ref">Video Input and Output (videoio module)</span></a></li>
+</ul>
+<p class="rubric">General Information</p>
+<p>The OpenCV <a class="reference internal" href="group_videoio.html#doxid-dd-de7-group-videoio"><span class="std std-ref">Video I/O</span></a> module is a set of classes and functions to read and write video or images sequence.</p>
+<p>Basically, the module provides the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> and <a class="reference internal" href="class_cv_VideoWriter.html#doxid-d6-d16-classcv-1-1-video-writer"><span class="std std-ref">cv::VideoWriter</span></a> classes as 2-layer interface to many video I/O APIs used as backend.</p>
+<img alt="Video I/O with OpenCV" src="_images/videoio_overview.svg" /><p>Some backends such as (DSHOW) Direct Show, Video For Windows (VFW), Microsoft Media Foundation (MSMF), Video 4 Linux (V4L), etc… are interfaces to the video I/O library provided by the operating system.</p>
+<p>Some others backends like OpenNI2 for Kinect, Intel Perceptual Computing SDK, GStreamer, XIMEA Camera API, etc… are interfaces to proprietary drivers or to external library.</p>
+<p>See the list of supported backends here: <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1ga023786be1ee68a9105bf2e48c700294d"><span class="std std-ref">cv::VideoCaptureAPIs</span></a></p>
+<p>Some backends are experimental use them at your own risk</p>
+<p>Each backend supports devices properties (<a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1gaeb8dd9c89c10a5c63c139bf7c4f5704d"><span class="std std-ref">cv::VideoCaptureProperties</span></a>) in a different way or might not support any property at all.</p>
+<p class="rubric">Select the backend at runtime</p>
+<p>OpenCV automatically selects and uses first available backend (<code class="docutils literal notranslate"><span class="pre">apiPreference=</span><a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294da77ab1fe260fd182f8ec7655fab27a31d"><span class="std std-ref"><span class="pre">cv::CAP_ANY</span></span></a></code>).</p>
+<p>As advanced usage you can select the backend to use at runtime. Currently this option is available only with VideoCapture.</p>
+<p>For example to grab from default camera using Direct Show as backend</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//declare a capture object</span>
+<a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a><span></span> <span class="n">cap</span><span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294dab6ac3effa04f41ed5470375c85a23504"><span class="std std-ref">cv::CAP_DSHOW</span></a><span></span><span class="p">);</span>
+
+<span class="c1">//or specify the apiPreference with open</span>
+<span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294dab6ac3effa04f41ed5470375c85a23504"><span class="std std-ref">cv::CAP_DSHOW</span></a><span></span><span class="p">);</span>
+</pre>
+<p>If you want to grab from a file using the Direct Show as backend:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//declare a capture object</span>
+<a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a><span></span> <span class="n">cap</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294dab6ac3effa04f41ed5470375c85a23504"><span class="std std-ref">cv::CAP_DSHOW</span></a><span></span><span class="p">);</span>
+
+<span class="c1">//or specify the apiPreference with open</span>
+<span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <a class="reference internal" href="enum_cv_VideoCaptureAPIs.html#doxid-d4-d15-group-videoio-flags-base-1gga023786be1ee68a9105bf2e48c700294dab6ac3effa04f41ed5470375c85a23504"><span class="std std-ref">cv::CAP_DSHOW</span></a><span></span><span class="p">);</span>
+</pre>
+<p class="rubric">Enable backends</p>
+<p>Backends are available only if they have been built with your OpenCV binaries.</p>
+<p>Check in <code class="docutils literal notranslate"><span class="pre">opencv2/cvconfig.h</span></code> to know which APIs are currently available (e.g. <code class="docutils literal notranslate"><span class="pre">HAVE_MSMF,</span> <span class="pre">HAVE_VFW,</span> <span class="pre">HAVE_LIBV4L</span></code>, etc…).</p>
+<p>To enable/disable APIs, you have to:</p>
+<ol class="arabic simple">
+<li>re-configure OpenCV using appropriates CMake switches (e.g. <code class="docutils literal notranslate"><span class="pre">-DWITH_MSMF=ON</span> <span class="pre">-DWITH_VFW=ON</span> <span class="pre">...</span></code>) or checking related switch in cmake-gui</li>
+<li>rebuild OpenCV itself</li>
+</ol>
+<p class="rubric">Use 3rd party drivers or cameras</p>
+<p>Many industrial cameras or some video I/O devices don’t provide standard driver interfaces for the operating system. Thus you can’t use VideoCapture or VideoWriter with these devices.</p>
+<p>To get access to their devices, manufactures provide their own C++ API and library that you have to include and link with your OpenCV application.</p>
+<p>Is common case that this libraries read/write images from/to a memory buffer. If it so, it is possible to make a <code class="docutils literal notranslate"><span class="pre">Mat</span></code> header for memory buffer (user-allocated data) and process it in-place using OpenCV functions. See <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1af1d014cecd1510cdf580bf2ed7e5aafc"><span class="std std-ref">cv::Mat::Mat()</span></a> for more details.</p>
+<p class="rubric">The FFmpeg library</p>
+<p>OpenCV can use the FFmpeg library (<a class="reference external" href="http://ffmpeg.org/">http://ffmpeg.org/</a>) as backend to record, convert and stream audio and video. FFMpeg is a complete, cross-reference solution. If you enable FFmpeg while configuring OpenCV than CMake will download and install the binaries in <code class="docutils literal notranslate"><span class="pre">OPENCV_SOURCE_CODE/3rdparty/ffmpeg/</span></code>. To use FFMpeg at runtime, you must deploy the FFMepg binaries with your application.</p>
+<p>FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. See <code class="docutils literal notranslate"><span class="pre">OPENCV_SOURCE_CODE/3rdparty/ffmpeg/readme.txt</span></code> and <a class="reference external" href="http://ffmpeg.org/legal.html">http://ffmpeg.org/legal.html</a> for details and licensing information</p>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">cv::VideoCapture::open()</span></a>, <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a57c0e81e83e60f36c83027dc2a188e80"><span class="std std-ref">cv::VideoCapture::VideoCapture()</span></a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example_contours2.cpp.html" title="contours2.cpp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_todo.html" title="Todo List"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

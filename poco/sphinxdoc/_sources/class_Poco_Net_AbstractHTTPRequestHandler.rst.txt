@@ -1,0 +1,216 @@
+.. index:: pair: class; Poco::Net::AbstractHTTPRequestHandler
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler:
+
+class Poco::Net::AbstractHTTPRequestHandler
+===========================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+The abstract base class for AbstractHTTPRequestHandlers created by :ref:`HTTPServer <doxid-class_poco_1_1_net_1_1_h_t_t_p_server>`. :ref:`More...<details-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <AbstractHTTPRequestHandler.h>
+	
+	class AbstractHTTPRequestHandler: public :ref:`Poco::Net::HTTPRequestHandler<doxid-class_poco_1_1_net_1_1_h_t_t_p_request_handler>`
+	{
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`handleRequest<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a8a3820fe03a7a682625e4f317b3d08ab>`(
+			:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`& request,
+			:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`& response
+			);
+	
+		:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`&
+		:ref:`request<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1abdc7121d8d10646c4e6cfd004065afce>`();
+	
+		:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`&
+		:ref:`response<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1acc1a574b0d22852a3ee798b74c570622>`();
+	
+		:ref:`HTMLForm<doxid-class_poco_1_1_net_1_1_h_t_m_l_form>`&
+		:ref:`form<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1ad51c0ea081c298f620eb11ba5e28074a>`();
+	
+		void
+		:ref:`sendErrorResponse<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a625d52e382980b8e598bd10a51994c76>`(
+			:ref:`HTTPResponse::HTTPStatus<doxid-class_poco_1_1_net_1_1_h_t_t_p_response_1a150cc2b05826d90ccffd2c123c2b404d>` status,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& message
+			);
+
+	protected:
+		// methods
+	
+		virtual
+		void
+		:ref:`run<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a348ba4cbaf51bdedbdafcc31d6ce22c6>`() = 0;
+	
+		virtual
+		bool
+		:ref:`authenticate<doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1acd27ba593c677739ede96d3272685751>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`handleRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_request_handler_1aa766ec81d67103e079501fc102e9fd46>`(
+			:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`& request,
+			:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`& response
+			) = 0;
+
+.. _details-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+The abstract base class for AbstractHTTPRequestHandlers created by :ref:`HTTPServer <doxid-class_poco_1_1_net_1_1_h_t_t_p_server>`.
+
+Derived classes must override the :ref:`run() <doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a348ba4cbaf51bdedbdafcc31d6ce22c6>` method.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a93800f2ce8cfe621a398439cc3c4f5e7:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	~AbstractHTTPRequestHandler()
+
+Destroys the :ref:`AbstractHTTPRequestHandler <doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler>`.
+
+Methods
+-------
+
+.. index:: pair: function; handleRequest
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a8a3820fe03a7a682625e4f317b3d08ab:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	handleRequest(
+		:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`& request,
+		:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`& response
+		)
+
+This class implements some common behavior, before calling :ref:`run() <doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a348ba4cbaf51bdedbdafcc31d6ce22c6>` to actually handle the request:
+
+.. ref-code-block:: cpp
+
+	- save request and response objects;
+	- call authorize();
+	- if authorize() returns true call run(),
+	  else send 401 (Unauthorized) response.
+
+If :ref:`run() <doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a348ba4cbaf51bdedbdafcc31d6ce22c6>` throws an exception and the response has not been sent yet, sends a 500 (Internal Server :ref:`Error <doxid-class_poco_1_1_error>`) response with the exception's display text.
+
+.. index:: pair: function; request
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1abdc7121d8d10646c4e6cfd004065afce:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`&
+	request()
+
+Returns the request.
+
+.. index:: pair: function; response
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1acc1a574b0d22852a3ee798b74c570622:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`&
+	response()
+
+Returns the response.
+
+.. index:: pair: function; form
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1ad51c0ea081c298f620eb11ba5e28074a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`HTMLForm<doxid-class_poco_1_1_net_1_1_h_t_m_l_form>`&
+	form()
+
+Returns a :ref:`HTMLForm <doxid-class_poco_1_1_net_1_1_h_t_m_l_form>` for the given request.
+
+The :ref:`HTMLForm <doxid-class_poco_1_1_net_1_1_h_t_m_l_form>` object is created when this member function is executed the first time.
+
+.. index:: pair: function; sendErrorResponse
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a625d52e382980b8e598bd10a51994c76:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	sendErrorResponse(
+		:ref:`HTTPResponse::HTTPStatus<doxid-class_poco_1_1_net_1_1_h_t_t_p_response_1a150cc2b05826d90ccffd2c123c2b404d>` status,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& message
+		)
+
+Sends a HTML error page for the given status code.
+
+The given message is added to the page:
+
+.. ref-code-block:: cpp
+
+	<HTML>
+	    <HEAD>
+	        <TITLE>status - reason</TITLE>
+	    </HEAD>
+	    <BODY>
+	       <H1>status - reason</H1>
+	       <P>message</P>
+	    </BODY>
+	</HTML>
+
+.. index:: pair: function; run
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1a348ba4cbaf51bdedbdafcc31d6ce22c6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	run() = 0
+
+Must be overridden by subclasses.
+
+Handles the given request.
+
+.. index:: pair: function; authenticate
+.. _doxid-class_poco_1_1_net_1_1_abstract_h_t_t_p_request_handler_1acd27ba593c677739ede96d3272685751:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	authenticate()
+
+Check authentication; returns true if okay, false if failed to authenticate.
+
+The default implementation always returns true.
+
+Subclasses can override this member function to perform some form of client or request authentication before the request is actually handled.
+

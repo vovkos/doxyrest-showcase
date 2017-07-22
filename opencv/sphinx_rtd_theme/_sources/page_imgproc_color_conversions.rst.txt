@@ -1,0 +1,309 @@
+.. index:: pair: page; Color conversions
+.. _doxid-de/d25/imgproc_color_conversions:
+
+Color conversions
+=================
+
+See :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>` and :ref:`cv::ColorConversionCodes <doxid-d7/d1b/group__imgproc__misc_1ga4e0972be5de079fed4e3a10e24ef5ef0>` Todo document other conversion modes
+
+:target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_gray`
+
+.. rubric:: RGB  GRAY
+
+Transformations within RGB space like adding/removing the alpha channel, reversing the channel order, conversion to/from 16-bit RGB color (R5:G6:B5 or R5:G5:B5), as well as conversion to/from grayscale using:
+
+.. math::
+
+	\text{RGB[A] to Gray:} \quad Y \leftarrow 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B
+
+and
+
+.. math::
+
+	\text{Gray to RGB[A]:} \quad R \leftarrow Y, G \leftarrow Y, B \leftarrow Y, A \leftarrow \max (ChannelRange)
+
+The conversion from a RGB image to gray is done with:
+
+.. ref-code-block:: cpp
+
+	cvtColor(src, bwsrc, cv::COLOR_RGB2GRAY);
+
+More advanced channel reordering can also be done with :ref:`cv::mixChannels <doxid-d2/de8/group__core__array_1ga51d768c270a1cdd3497255017c4504be>`. :target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_xyz`
+
+.. rubric:: RGB  CIE XYZ.Rec 709 with D65 white point
+
+.. math::
+
+	\begin{bmatrix} X \\ Y \\ Z \end{bmatrix} \leftarrow \begin{bmatrix} 0.412453 & 0.357580 & 0.180423 \\ 0.212671 & 0.715160 & 0.072169 \\ 0.019334 & 0.119193 & 0.950227 \end{bmatrix} \cdot \begin{bmatrix} R \\ G \\ B \end{bmatrix}
+
+
+
+.. math::
+
+	\begin{bmatrix} R \\ G \\ B \end{bmatrix} \leftarrow \begin{bmatrix} 3.240479 & -1.53715 & -0.498535 \\ -0.969256 & 1.875991 & 0.041556 \\ 0.055648 & -0.204043 & 1.057311 \end{bmatrix} \cdot \begin{bmatrix} X \\ Y \\ Z \end{bmatrix}
+
+:math:`X`, :math:`Y` and :math:`Z` cover the whole value range (in case of floating-point images, :math:`Z` may exceed 1).
+
+:target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_ycrcb`
+
+.. rubric:: RGB  YCrCb JPEG (or YCC)
+
+.. math::
+
+	Y \leftarrow 0.299 \cdot R + 0.587 \cdot G + 0.114 \cdot B
+
+
+
+.. math::
+
+	Cr \leftarrow (R-Y) \cdot 0.713 + delta
+
+
+
+.. math::
+
+	Cb \leftarrow (B-Y) \cdot 0.564 + delta
+
+
+
+.. math::
+
+	R \leftarrow Y + 1.403 \cdot (Cr - delta)
+
+
+
+.. math::
+
+	G \leftarrow Y - 0.714 \cdot (Cr - delta) - 0.344 \cdot (Cb - delta)
+
+
+
+.. math::
+
+	B \leftarrow Y + 1.773 \cdot (Cb - delta)
+
+where
+
+.. math::
+
+	delta = \left \{ \begin{array}{l l} 128 & \mbox{for 8-bit images} \\ 32768 & \mbox{for 16-bit images} \\ 0.5 & \mbox{for floating-point images} \end{array} \right .
+
+Y, Cr, and Cb cover the whole value range. :target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_hsv`
+
+.. rubric:: RGB  HSV
+
+In case of 8-bit and 16-bit images, R, G, and B are converted to the floating-point format and scaled to fit the 0 to 1 range.
+
+.. math::
+
+	V \leftarrow max(R,G,B)
+
+
+
+.. math::
+
+	S \leftarrow \fork{\frac{V-min(R,G,B)}{V}}{if \(V \neq 0\)}{0}{otherwise}
+
+
+
+.. math::
+
+	H \leftarrow \forkthree{{60(G - B)}/{(V-min(R,G,B))}}{if \(V=R\)}{{120+60(B - R)}/{(V-min(R,G,B))}}{if \(V=G\)}{{240+60(R - G)}/{(V-min(R,G,B))}}{if \(V=B\)}
+
+If :math:`H<0` then :math:`H \leftarrow H+360`. On output :math:`0 \leq V \leq 1`, :math:`0 \leq S \leq 1`, :math:`0 \leq H \leq 360`.
+
+The values are then converted to the destination data type:
+
+* 8-bit images: :math:`V \leftarrow 255 V, S \leftarrow 255 S, H \leftarrow H/2 \text{(to fit to 0 to 255)}`
+
+* 16-bit images: (currently not supported) :math:`V <- 65535 V, S <- 65535 S, H <- H`
+
+* 32-bit images: H, S, and V are left as is
+
+:target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_hls`
+
+.. rubric:: RGB  HLS
+
+In case of 8-bit and 16-bit images, R, G, and B are converted to the floating-point format and scaled to fit the 0 to 1 range.
+
+.. math::
+
+	V_{max} \leftarrow {max}(R,G,B)
+
+
+
+.. math::
+
+	V_{min} \leftarrow {min}(R,G,B)
+
+
+
+.. math::
+
+	L \leftarrow \frac{V_{max} + V_{min}}{2}
+
+
+
+.. math::
+
+	S \leftarrow \fork { \frac{V_{max} - V_{min}}{V_{max} + V_{min}} }{if \(L < 0.5\) } { \frac{V_{max} - V_{min}}{2 - (V_{max} + V_{min})} }{if \(L \ge 0.5\) }
+
+
+
+.. math::
+
+	H \leftarrow \forkthree {{60(G - B)}/{(V_{max}-V_{min})}}{if \(V_{max}=R\) } {{120+60(B - R)}/{(V_{max}-V_{min})}}{if \(V_{max}=G\) } {{240+60(R - G)}/{(V_{max}-V_{min})}}{if \(V_{max}=B\) }
+
+If :math:`H<0` then :math:`H \leftarrow H+360`. On output :math:`0 \leq L \leq 1`, :math:`0 \leq S \leq 1`, :math:`0 \leq H \leq 360`.
+
+The values are then converted to the destination data type:
+
+* 8-bit images: :math:`V \leftarrow 255 \cdot V, S \leftarrow 255 \cdot S, H \leftarrow H/2 \; \text{(to fit to 0 to 255)}`
+
+* 16-bit images: (currently not supported) :math:`V <- 65535 \cdot V, S <- 65535 \cdot S, H <- H`
+
+* 32-bit images: H, S, V are left as is
+
+:target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_lab`
+
+.. rubric:: RGB  CIE L\*a\*b\*
+
+In case of 8-bit and 16-bit images, R, G, and B are converted to the floating-point format and scaled to fit the 0 to 1 range.
+
+.. math::
+
+	\vecthree{X}{Y}{Z} \leftarrow \vecthreethree{0.412453}{0.357580}{0.180423}{0.212671}{0.715160}{0.072169}{0.019334}{0.119193}{0.950227} \cdot \vecthree{R}{G}{B}
+
+
+
+.. math::
+
+	X \leftarrow X/X_n, \text{where} X_n = 0.950456
+
+
+
+.. math::
+
+	Z \leftarrow Z/Z_n, \text{where} Z_n = 1.088754
+
+
+
+.. math::
+
+	L \leftarrow \fork{116*Y^{1/3}-16}{for \(Y>0.008856\)}{903.3*Y}{for \(Y \le 0.008856\)}
+
+
+
+.. math::
+
+	a \leftarrow 500 (f(X)-f(Y)) + delta
+
+
+
+.. math::
+
+	b \leftarrow 200 (f(Y)-f(Z)) + delta
+
+where
+
+.. math::
+
+	f(t)= \fork{t^{1/3}}{for \(t>0.008856\)}{7.787 t+16/116}{for \(t\leq 0.008856\)}
+
+and
+
+.. math::
+
+	delta = \fork{128}{for 8-bit images}{0}{for floating-point images}
+
+This outputs :math:`0 \leq L \leq 100`, :math:`-127 \leq a \leq 127`, :math:`-127 \leq b \leq 127`. The values are then converted to the destination data type:
+
+* 8-bit images: :math:`L \leftarrow L*255/100, \; a \leftarrow a + 128, \; b \leftarrow b + 128`
+
+* 16-bit images: (currently not supported)
+
+* 32-bit images: L, a, and b are left as is
+
+:target:`doxid-de/d25/imgproc_color_conversions_1color_convert_rgb_luv`
+
+.. rubric:: RGB  CIE L\*u\*v\*
+
+In case of 8-bit and 16-bit images, R, G, and B are converted to the floating-point format and scaled to fit 0 to 1 range.
+
+.. math::
+
+	\vecthree{X}{Y}{Z} \leftarrow \vecthreethree{0.412453}{0.357580}{0.180423}{0.212671}{0.715160}{0.072169}{0.019334}{0.119193}{0.950227} \cdot \vecthree{R}{G}{B}
+
+
+
+.. math::
+
+	L \leftarrow \fork{116*Y^{1/3} - 16}{for \(Y>0.008856\)}{903.3 Y}{for \(Y\leq 0.008856\)}
+
+
+
+.. math::
+
+	u' \leftarrow 4*X/(X + 15*Y + 3 Z)
+
+
+
+.. math::
+
+	v' \leftarrow 9*Y/(X + 15*Y + 3 Z)
+
+
+
+.. math::
+
+	u \leftarrow 13*L*(u' - u_n) \quad \text{where} \quad u_n=0.19793943
+
+
+
+.. math::
+
+	v \leftarrow 13*L*(v' - v_n) \quad \text{where} \quad v_n=0.46831096
+
+This outputs :math:`0 \leq L \leq 100`, :math:`-134 \leq u \leq 220`, :math:`-140 \leq v \leq 122`.
+
+The values are then converted to the destination data type:
+
+* 8-bit images: :math:`L \leftarrow 255/100 L, \; u \leftarrow 255/354 (u + 134), \; v \leftarrow 255/262 (v + 140)`
+
+* 16-bit images: (currently not supported)
+
+* 32-bit images: L, u, and v are left as is
+
+The above formulae for converting RGB to/from various color spaces have been taken from multiple sources on the web, primarily from the Charles Poynton site `http://www.poynton.com/ColorFAQ.html <http://www.poynton.com/ColorFAQ.html>`__
+
+:target:`doxid-de/d25/imgproc_color_conversions_1color_convert_bayer`
+
+.. rubric:: Bayer  RGB
+
+The Bayer pattern is widely used in CCD and CMOS cameras. It enables you to get color pictures from a single plane where R,G, and B pixels (sensors of a particular component) are interleaved as follows:
+
+.. image:: bayer.png
+	:alt: Bayer pattern
+
+The output RGB components of a pixel are interpolated from 1, 2, or 4 neighbors of the pixel having the same color. There are several modifications of the above pattern that can be achieved by shifting the pattern one pixel left and/or one pixel up. The two letters :math:`C_1` and :math:`C_2` in the conversion constants CV_Bayer :math:`C_1 C_2` 2BGR and CV_Bayer :math:`C_1 C_2` 2RGB indicate the particular pattern type. These are components from the second row, second and third columns, respectively. For example, the above pattern has a very popular "BG" type.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`, :ref:`cv::COLOR_RGB2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0ae50d0c66ee53e974234ac84cf51d1d4e>`, :ref:`cv::COLOR_GRAY2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a869da65c045477f2f17d39395df65b2d>`, :ref:`cv::COLOR_GRAY2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a164663625b9c473f69dd47cdd7a31acc>`
+
+:ref:`cv::COLOR_BGR2XYZ <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0ab3b3aba03d2e2a92fbd7564efd47e38b>`, :ref:`cv::COLOR_RGB2XYZ <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0af3894ec8b239815e8a9075099805991a>`, :ref:`cv::COLOR_XYZ2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa4d7480cfca520a55ae13ff0c5268796>`, :ref:`cv::COLOR_XYZ2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a95815945a63cc47ce9237654857f231e>`
+
+:ref:`cv::COLOR_BGR2YCrCb <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a63f063ef276a066c4e122997cfd55d6e>`, :ref:`cv::COLOR_RGB2YCrCb <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a56022734d5961924a9e556879f6f05a2>`, :ref:`cv::COLOR_YCrCb2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa6d4108b0f3d5e21dc246a0c59592b38>`, :ref:`cv::COLOR_YCrCb2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a27b56972a73ad4f2660512ac1cca552d>`
+
+:ref:`cv::COLOR_BGR2HSV <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa4a7f0ecf2e94150699e48c79139ee12>`, :ref:`cv::COLOR_RGB2HSV <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa4f6bc658bc546e1660fcab6bf7858f4>`, :ref:`cv::COLOR_HSV2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a2a4b11ff7d29c342b66b85962a7969cd>`, :ref:`cv::COLOR_HSV2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a348965e2c1baf8e2c78c9afc17ac3de2>`
+
+:ref:`cv::COLOR_BGR2HLS <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a3070ca753ff41d655e87315bee03d8af>`, :ref:`cv::COLOR_RGB2HLS <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0ac3d926b985b034433c49fc84de84c85f>`, :ref:`cv::COLOR_HLS2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a1dc9f081ce5202ade309e319414c14cd>`, :ref:`cv::COLOR_HLS2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a501d0d119ebbf50ddbbf3743f2783aca>`
+
+:ref:`cv::COLOR_BGR2Lab <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a860b72b4741c431e81340fafef5eca24>`, :ref:`cv::COLOR_RGB2Lab <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0afc25858d4f1127d6051d881d5f4e2b6e>`, :ref:`cv::COLOR_Lab2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a966fd47d10ad71c4220b3ef9f1ac5774>`, :ref:`cv::COLOR_Lab2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a50988b0e1e8369628a55cc8860dfbf69>`
+
+:ref:`cv::COLOR_BGR2Luv <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a8199112edf021b1586c75ca20a46ecd1>`, :ref:`cv::COLOR_RGB2Luv <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a5e11d9e294ba89668c080662a8321e45>`, :ref:`cv::COLOR_Luv2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a514896aa2d19659f6a2eca67bb0748f1>`, :ref:`cv::COLOR_Luv2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a8d68e3f1814d0a649731c0f56835b8c3>`
+
+:ref:`cv::COLOR_BayerBG2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a8945844ab075687f4d4196abe1ce0db4>`, :ref:`cv::COLOR_BayerGB2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0acef801137d9696dcb622122a7ef266c6>`, :ref:`cv::COLOR_BayerRG2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a275d4d0ff99fdf45b2b6b421a14ec831>`, :ref:`cv::COLOR_BayerGR2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0afe3d71ad80f5f067d3d76b376cf8d951>`, :ref:`cv::COLOR_BayerBG2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0abb38ecd5317747c872d3775196abe142>`, :ref:`cv::COLOR_BayerGB2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a93f007ad1b8f904f6e8c54dd8ccd4049>`, :ref:`cv::COLOR_BayerRG2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0ade83fb9a89e974207e5fef472f28adf3>`, :ref:`cv::COLOR_BayerGR2RGB <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aac8c643ccf0c9d9407bd0cb9a18520d2>`
+

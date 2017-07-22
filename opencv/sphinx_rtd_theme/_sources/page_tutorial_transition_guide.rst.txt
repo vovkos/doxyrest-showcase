@@ -1,0 +1,420 @@
+.. index:: pair: page; Transition guide
+.. _doxid-db/dfa/tutorial_transition_guide:
+
+Transition guide
+================
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_overview:
+
+Changes overview 
+~~~~~~~~~~~~~~~~~
+
+This document is intended to software developers who want to migrate their code to OpenCV 3.0.
+
+OpenCV 3.0 introduced many new algorithms and features comparing to version 2.4. Some modules have been rewritten, some have been reorganized. Although most of the algorithms from 2.4 are still present, the interfaces can differ.
+
+This section describes most notable changes in general, all details and examples of transition actions are in the next part of the document.
+
+.. rubric:: Contrib repository
+
+`https://github.com/opencv/opencv_contrib <https://github.com/opencv/opencv_contrib>`__
+
+This is a place for all new, experimental and non-free algorithms. It does not receive so much attention from the support team comparing to main repository, but the community makes an effort to keep it in a good shape.
+
+To build OpenCV with *contrib* repository, add the following option to your cmake command:
+
+.. ref-code-block:: cpp
+
+	-DOPENCV_EXTRA_MODULES_PATH=<path-to-opencv_contrib>/modules
+
+.. rubric:: Headers layout
+
+In 2.4 all headers are located in corresponding module subfolder (*opencv2/<module>/<module>.hpp*), in 3.0 there are top-level module headers containing the most of the module functionality: *opencv2/<module>.hpp* and all C-style API definitions have been moved to separate headers (for example ``opencv2/core/core_c.h``).
+
+.. rubric:: Algorithm interfaces
+
+General algorithm usage pattern has changed: now it must be created on heap wrapped in smart pointer :ref:`cv::Ptr <doxid-d2/d56/structcv_1_1_ptr>`. Version 2.4 allowed both stack and heap allocations, directly or via smart pointer.
+
+*get* and *set* methods have been removed from the :ref:`cv::Algorithm <doxid-d1/d41/classcv_1_1_algorithm>` class along with *CV_INIT_ALGORITHM* macro. In 3.0 all properties have been converted to the pairs of *getProperty/setProperty* pure virtual methods. As a result it is **not** possible to create and use :ref:`cv::Algorithm <doxid-d1/d41/classcv_1_1_algorithm>` instance by name (using generic *Algorithm::create(String)* method), one should call corresponding factory method explicitly.
+
+.. rubric:: Changed modules
+
+* *ml* module has been rewritten
+
+* *highgui* module has been split into parts: *imgcodecs*, *videoio* and *highgui* itself
+
+* *features2d* module have been reorganized (some feature detectors has been moved to *opencv_contrib/xfeatures2d* module)
+
+* *legacy*, *nonfree* modules have been removed. Some algorithms have been moved to different locations and some have been completely rewritten or removed
+
+* CUDA API has been updated (*gpu* module -> several *cuda* modules, namespace *gpu* -> namespace *cuda*)
+
+* OpenCL API has changed (*ocl* module has been removed, separate *ocl::* implementations -> Transparent API)
+
+* Some other methods and classes have been relocated
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints:
+
+Transition hints 
+~~~~~~~~~~~~~~~~~
+
+This section describes concrete actions with examples.
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints_24:
+
+Prepare 2.4 
+------------
+
+Some changes made in the latest 2.4.11 OpenCV version allow you to prepare current codebase to migration:
+
+* :ref:`cv::makePtr <doxid-dc/d84/group__core__basic_1ga94b059075f41314c83dd2a2758c81acd>` function is now available
+
+* *opencv2/<module>.hpp* headers have been created
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints_headers:
+
+New headers layout 
+-------------------
+
+**Note:** Changes intended to ease the migration have been made in OpenCV 3.0, thus the following instructions are not necessary, but recommended.
+
+#. Replace inclusions of old module headers:
+   
+   .. ref-code-block:: cpp
+   
+   	// old header
+   	#include "opencv2/<module>/<module>.hpp"
+   	// new header
+   	#include "opencv2/<module>.hpp"
+
+#. If your code is using C API (``cv*`` functions, ``Cv*`` structures or ``CV_*`` enumerations), include corresponding ``*_c.h`` headers. Although it is recommended to use C++ API, most of C-functions are still accessible in separate header files (``opencv2/core/core_c.h``, ``opencv2/core/types_c.h``, ``opencv2/imgproc/imgproc_c.h``, etc.).
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_algorithm:
+
+Modern way to use algorithm 
+----------------------------
+
+#. Algorithm instances must be created with :ref:`cv::makePtr <doxid-dc/d84/group__core__basic_1ga94b059075f41314c83dd2a2758c81acd>` function or corresponding static factory method if available:
+   
+   .. ref-code-block:: cpp
+   
+   	// good ways
+   	Ptr<SomeAlgo> algo = makePtr<SomeAlgo>(...);
+   	Ptr<SomeAlgo> algo = SomeAlgo::create(...);
+   
+   Other ways are deprecated:
+   
+   .. ref-code-block:: cpp
+   
+   	// bad ways
+   	Ptr<SomeAlgo> algo = new SomeAlgo(...);
+   	SomeAlgo * algo = new SomeAlgo(...);
+   	SomeAlgo algo(...);
+   	Ptr<SomeAlgo> algo = Algorithm::create<SomeAlgo>("name");
+
+#. Algorithm properties should be accessed via corresponding virtual methods, *getSomeProperty/setSomeProperty*, generic *get/set* methods have been removed:
+   
+   .. ref-code-block:: cpp
+   
+   	// good way
+   	double clipLimit = clahe->getClipLimit();
+   	clahe->setClipLimit(clipLimit);
+   	// bad way
+   	double clipLimit = clahe->getDouble("clipLimit");
+   	clahe->set("clipLimit", clipLimit);
+   	clahe->setDouble("clipLimit", clipLimit);
+
+#. Remove ``initModule_<moduleName>()`` calls
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints_ml:
+
+Machine learning module 
+------------------------
+
+Since this module has been rewritten, it will take some effort to adapt your software to it. All algorithms are located in separate *ml* namespace along with their base class *StatModel*. Separate *SomeAlgoParams* classes have been replaced with a sets of corresponding *getProperty/setProperty* methods.
+
+The following table illustrates correspondence between 2.4 and 3.0 machine learning classes.
+
+=======================  ===  
+2.4                      3.0  
+=======================  ===  
+
+CvStatModel                   
+CvNormalBayesClassifier       
+CvKNearest                    
+CvSVM                         
+CvDTree                       
+CvBoost                       
+CvGBTrees                     
+CvRTrees                      
+CvERTrees                     
+EM                            
+CvANN_MLP                     
+                              
+CvMLData                      
+=======================  ===  
+
+Although rewritten *ml* algorithms in 3.0 allow you to load old trained models from *xml/yml* file, deviations in prediction process are possible.
+
+The following code snippets from the ``points_classifier.cpp`` example illustrate differences in model training process:
+
+.. ref-code-block:: cpp
+
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	// ======== version 2.4 ========
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` trainSamples, trainClasses;
+	prepare_train_data( trainSamples, trainClasses );
+	CvBoost  boost;
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` var_types( 1, trainSamples.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` + 1, :ref:`CV_8UC1 <doxid-d1/d1b/group__core__hal__interface_1ga81df635441b21f532fdace401e04f588>`, Scalar(CV_VAR_ORDERED) );
+	var_types.at<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>( trainSamples.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` ) = CV_VAR_CATEGORICAL;
+	CvBoostParams  params( CvBoost::DISCRETE, // boost_type
+	                       100, // weak_count
+	                       0.95, // weight_trim_rate
+	                       2, // max_depth
+	                       false, //use_surrogates
+	                       0 // priors
+	                     );
+	boost.train( trainSamples, CV_ROW_SAMPLE, trainClasses, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), var_types, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), params );
+	
+	// ======== version 3.0 ========
+	:ref:`Ptr\<Boost> <doxid-d2/d56/structcv_1_1_ptr>` boost = Boost::create();
+	boost->setBoostType(Boost::DISCRETE);
+	boost->setWeakCount(100);
+	boost->setWeightTrimRate(0.95);
+	boost->setMaxDepth(2);
+	boost->setUseSurrogates(false);
+	boost->setPriors(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`());
+	boost->train(prepare_train_data()); // 'prepare_train_data' returns an instance of ml::TrainData class
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints_features:
+
+Features detect 
+----------------
+
+Some algorithms (FREAK, BRIEF, SIFT, SURF) has been moved to *opencv_contrib* repository, to *xfeatures2d* module, *xfeatures2d* namespace. Their interface has been also changed (inherit from ``:ref:`cv::Feature2D <doxid-d9/d9f/classcv_1_1_feature2_d>``` base class).
+
+List of *xfeatures2d* module classes:
+
+* cv::xfeatures2d::BriefDescriptorExtractor - Class for computing BRIEF descriptors (2.4 location: *features2d*)
+
+* cv::xfeatures2d::FREAK - Class implementing the FREAK (Fast Retina Keypoint) keypoint descriptor (2.4 location: *features2d*)
+
+* cv::xfeatures2d::StarDetector - The class implements the CenSurE detector (2.4 location: *features2d*)
+
+* cv::xfeatures2d::SIFT - Class for extracting keypoints and computing descriptors using the Scale Invariant Feature Transform (SIFT) algorithm (2.4 location: *nonfree*)
+
+* cv::xfeatures2d::SURF - Class for extracting Speeded Up Robust Features from an image (2.4 location: *nonfree*)
+
+Following steps are needed:
+
+#. Add *opencv_contrib* to compilation process
+
+#. Include ``opencv2/xfeatures2d.h`` header
+
+#. Use namespace ``xfeatures2d``
+
+#. Replace ``operator()`` calls with ``detect``, ``compute`` or ``detectAndCompute`` if needed
+
+Some classes now use general methods ``detect``, ``compute`` or ``detectAndCompute`` provided by ``Feature2D`` base class instead of custom ``operator()``
+
+Following code snippets illustrate the difference (from ``video_homography.cpp`` example):
+
+.. ref-code-block:: cpp
+
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	// ====== 2.4 =======
+	#include "opencv2/features2d/features2d.hpp"
+	BriefDescriptorExtractor brief(32);
+	GridAdaptedFeatureDetector detector(new :ref:`FastFeatureDetector <doxid-d3/db7/classcv_1_1_fast_feature_detector>`(10, true), DESIRED_FTRS, 4, 4);
+	// ...
+	detector.detect(gray, query_kpts); //Find interest points
+	brief.compute(gray, query_kpts, query_desc); //Compute brief descriptors at each keypoint location
+	// ====== 3.0 =======
+	#include "opencv2/features2d.hpp"
+	#include "opencv2/xfeatures2d.hpp"
+	using namespace cv::xfeatures2d;
+	:ref:`Ptr\<BriefDescriptorExtractor> <doxid-d2/d56/structcv_1_1_ptr>` brief = BriefDescriptorExtractor::create(32);
+	:ref:`Ptr\<FastFeatureDetector> <doxid-d2/d56/structcv_1_1_ptr>` detector = :ref:`FastFeatureDetector::create <doxid-d3/db7/classcv_1_1_fast_feature_detector_1adf10eab3b23110c022183d098ae47023>`(10, true);
+	// ...
+	detector->:ref:`detect <doxid-d9/d9f/classcv_1_1_feature2_d_1aa4e9a7082ec61ebc108806704fbd7887>`(gray, query_kpts); //Find interest points
+	brief->compute(gray, query_kpts, query_desc); //Compute brief descriptors at each keypoint location
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints_opencl:
+
+OpenCL 
+-------
+
+All specialized ``ocl`` implemetations has been hidden behind general C++ algorithm interface. Now the function execution path can be selected dynamically at runtime: CPU or OpenCL; this mechanism is also called "Transparent API".
+
+New class :ref:`cv::UMat <doxid-d8/d82/classcv_1_1_u_mat>` is intended to hide data exchange with OpenCL device in a convinient way.
+
+Following example illustrate API modifications (from `OpenCV site <http://opencv.org/platforms/opencl.html>`__):
+
+* OpenCL-aware code OpenCV-2.x
+  
+  .. ref-code-block:: cpp
+  
+  	// initialization
+  	VideoCapture vcap(...);
+  	ocl::OclCascadeClassifier fd("haar_ff.xml");
+  	ocl::oclMat frame, frameGray;
+  	Mat frameCpu;
+  	vector<Rect> faces;
+  	for(;;){
+  	    // processing loop
+  	    vcap >> frameCpu;
+  	    frame = frameCpu;
+  	    :ref:`ocl::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(frame, frameGray, BGR2GRAY);
+  	    :ref:`ocl::equalizeHist <doxid-d6/dc7/group__imgproc__hist_1ga7e54091f0c937d49bf84152a16f76d6e>`(frameGray, frameGray);
+  	    fd.detectMultiScale(frameGray, faces, ...);
+  	    // draw rectangles …
+  	    // show image …
+  	}
+
+* OpenCL-aware code OpenCV-3.x
+  
+  .. ref-code-block:: cpp
+  
+  	// initialization
+  	VideoCapture vcap(...);
+  	CascadeClassifier fd("haar_ff.xml");
+  	UMat frame, frameGray; // the only change from plain CPU version
+  	vector<Rect> faces;
+  	for(;;){
+  	    // processing loop
+  	    vcap >> frame;
+  	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(frame, frameGray, BGR2GRAY);
+  	    :ref:`equalizeHist <doxid-d6/dc7/group__imgproc__hist_1ga7e54091f0c937d49bf84152a16f76d6e>`(frameGray, frameGray);
+  	    fd.detectMultiScale(frameGray, faces, ...);
+  	    // draw rectangles …
+  	    // show image …
+  	}
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_hints_cuda:
+
+CUDA 
+-----
+
+*cuda* module has been split into several smaller pieces:
+
+* *cuda* - :ref:`CUDA-accelerated Computer Vision <doxid-d1/d1e/group__cuda>`
+
+* *cudaarithm* - :ref:`Operations on Matrices <doxid-d5/d8e/group__cudaarithm>`
+
+* *cudabgsegm* - :ref:`Background Segmentation <doxid-d6/d17/group__cudabgsegm>`
+
+* *cudacodec* - :ref:`Video Encoding/Decoding <doxid-d0/d61/group__cudacodec>`
+
+* *cudafeatures2d* - :ref:`Feature Detection and Description <doxid-d6/d1d/group__cudafeatures2d>`
+
+* *cudafilters* - :ref:`Image Filtering <doxid-dc/d66/group__cudafilters>`
+
+* *cudaimgproc* - :ref:`Image Processing <doxid-d0/d05/group__cudaimgproc>`
+
+* *cudalegacy* - :ref:`Legacy support <doxid-d5/dc3/group__cudalegacy>`
+
+* *cudaoptflow* - :ref:`Optical Flow <doxid-d7/d3f/group__cudaoptflow>`
+
+* *cudastereo* - :ref:`Stereo Correspondence <doxid-dd/d47/group__cudastereo>`
+
+* *cudawarping* - :ref:`Image Warping <doxid-db/d29/group__cudawarping>`
+
+* *cudev* - :ref:`Device layer <doxid-df/dfc/group__cudev>`
+
+``gpu`` namespace has been removed, use :ref:`cv::cuda <doxid-d1/d1a/namespacecv_1_1cuda>` namespace instead. Many classes has also been renamed, for example:
+
+* ``gpu::FAST_GPU`` -> :ref:`cv::cuda::FastFeatureDetector <doxid-d3/da4/classcv_1_1cuda_1_1_fast_feature_detector>`
+
+* ``gpu::createBoxFilter_GPU`` -> :ref:`cv::cuda::createBoxFilter <doxid-dc/d66/group__cudafilters_1ga6ae218ea6d87e852021e448f9568c8bb>`
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_docs:
+
+Documentation format 
+---------------------
+
+Documentation has been converted to Doxygen format. You can find updated documentation writing guide in *Tutorials* section of *OpenCV* reference documentation (:ref:`Writing documentation for OpenCV <doxid-d4/db1/tutorial_documentation>`).
+
+
+
+
+
+.. _doxid-db/dfa/tutorial_transition_guide_1tutorial_transition_both:
+
+Support both versions 
+----------------------
+
+In some cases it is possible to support both versions of OpenCV.
+
+.. rubric:: Source code
+
+To check library major version in your application source code, the following method should be used:
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/core/version.hpp"
+	#if CV_MAJOR_VERSION == 2
+	// do opencv 2 code
+	#elif CV_MAJOR_VERSION == 3
+	// do opencv 3 code
+	#endif
+
+Do not use **CV_VERSION_MAJOR**, it has different meaning for 2.4 and 3.x branches!
+
+
+
+.. rubric:: Build system
+
+It is possible to link different modules or enable/disable some of the features in your application by checking library version in the build system. Standard cmake or pkg-config variables can be used for this:
+
+* ``OpenCV_VERSION`` for cmake will contain full version: "2.4.11" or "3.0.0" for example
+
+* ``OpenCV_VERSION_MAJOR`` for cmake will contain only major version number: 2 or 3
+
+* pkg-config file has standard field ``Version``
+
+Example:
+
+.. ref-code-block:: cpp
+
+	if(OpenCV_VERSION VERSION_LESS "3.0")
+	# use 2.4 modules
+	else()
+	# use 3.x modules
+	endif()
+

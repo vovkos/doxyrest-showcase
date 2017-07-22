@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>lsd_lines.cpp &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="minarea.cpp" href="example_minarea.cpp.html" />
+    <link rel="prev" title="laplace.cpp" href="example_laplace.cpp.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example_minarea.cpp.html" title="minarea.cpp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="example_laplace.cpp.html" title="laplace.cpp"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example_laplace.cpp.html"
+                        title="previous chapter">laplace.cpp</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example_minarea.cpp.html"
+                        title="next chapter">minarea.cpp</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lsd-lines-cpp">
+<span id="doxid-d8-dd4-lsd-lines-8cpp-example"></span><span id="index-0"></span><h1>lsd_lines.cpp</h1>
+<p>An example using the LineSegmentDetector</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">in</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">cv::CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="s">&quot;{@input|../data/building.jpg|input image}{help h||show help message}&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">parser</span><span class="p">.</span><span class="n">printMessage</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">in</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;@input&quot;</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">in</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125"><span class="std std-ref">IMREAD_GRAYSCALE</span></a><span></span><span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">image</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="cp">#if 0</span><span class="c"></span>
+<span class="err">    </span><a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">Canny</span></a><span></span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// Apply canny edge</span>
+<span class="cp">#endif</span>
+
+    <span class="c1">// Create and LSD detector with standard or no refinement.</span>
+<span class="cp">#if 1</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;LineSegmentDetector&gt;</span></a><span></span> <span class="n">ls</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga6b2ad2353c337c42551b521a73eeae7d"><span class="std std-ref">createLineSegmentDetector</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html#doxid-dd-d1a-group-imgproc-feature-1ggad092a7362b8afb8a905238a41898d98cade4b0da3a52bc9765f08255f041facb4"><span class="std std-ref">LSD_REFINE_STD</span></a><span></span><span class="p">);</span>
+<span class="cp">#else</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;LineSegmentDetector&gt;</span></a><span></span> <span class="n">ls</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga6b2ad2353c337c42551b521a73eeae7d"><span class="std std-ref">createLineSegmentDetector</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html#doxid-dd-d1a-group-imgproc-feature-1ggad092a7362b8afb8a905238a41898d98ca0114485ddcbb3d913b6d899a8697e30e"><span class="std std-ref">LSD_REFINE_NONE</span></a><span></span><span class="p">);</span>
+<span class="cp">#endif</span>
+
+    <span class="kt">double</span> <span class="n">start</span> <span class="o">=</span> <span class="kt">double</span><span class="p">(</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae73f58000611a1af25dd36d496bf4487"><span class="std std-ref">getTickCount</span></a><span></span><span class="p">());</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec4f</span><span class="o">&gt;</span> <span class="n">lines_std</span><span class="p">;</span>
+
+    <span class="c1">// Detect the lines</span>
+    <span class="n">ls</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector-1a1bbd8f90f6feb4d673d1a1bc614a667c"><span class="std std-ref">detect</span></a><span></span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">lines_std</span><span class="p">);</span>
+
+    <span class="kt">double</span> <span class="n">duration_ms</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">(</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae73f58000611a1af25dd36d496bf4487"><span class="std std-ref">getTickCount</span></a><span></span><span class="p">())</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">/</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga705441a9ef01f47acdc55d87fbe5090c"><span class="std std-ref">getTickFrequency</span></a><span></span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;It took &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">duration_ms</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; ms.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+    <span class="c1">// Show found lines</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">drawnLines</span><span class="p">(</span><span class="n">image</span><span class="p">);</span>
+    <span class="n">ls</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector-1a1816a3c27f7c9b8d8acffec14451d4c4"><span class="std std-ref">drawSegments</span></a><span></span><span class="p">(</span><span class="n">drawnLines</span><span class="p">,</span> <span class="n">lines_std</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Standard refinement&quot;</span><span class="p">,</span> <span class="n">drawnLines</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example_minarea.cpp.html" title="minarea.cpp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="example_laplace.cpp.html" title="laplace.cpp"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

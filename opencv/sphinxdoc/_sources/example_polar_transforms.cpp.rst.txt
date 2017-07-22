@@ -1,0 +1,86 @@
+.. index:: pair: example; polar_transforms.cpp
+.. _doxid-dc/d5e/polar_transforms_8cpp-example:
+
+polar_transforms.cpp
+====================
+
+An example using the :ref:`cv::linearPolar <doxid-da/d54/group__imgproc__transform_1gaa38a6884ac8b6e0b9bed47939b5362f3>` and :ref:`cv::logPolar <doxid-da/d54/group__imgproc__transform_1gaec3a0b126a85b5ca2c667b16e0ae022d>` operations
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/highgui.hpp"
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	static void help( void )
+	{
+	    printf("\nThis program illustrates Linear-Polar and Log-Polar image transforms\n"
+	            "Usage :\n"
+	            "./polar_transforms [[camera number -- Default 0],[path_to_filename]]\n\n");
+	}
+	
+	int main( int argc, char** argv )
+	{
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` capture;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` log_polar_img, lin_polar_img, recovered_log_polar, recovered_lin_polar_img;
+	
+	    help();
+	
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{@input|0|}");
+	    std::string arg = parser.get<std::string>("@input");
+	
+	    if( arg.size() == 1 && isdigit(arg[0]) )
+	        capture.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`( arg[0] - '0' );
+	    else
+	        capture.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`( arg.c_str() );
+	
+	    if( !capture.:ref:`isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`() )
+	    {
+	        const char* name = argv[0];
+	        fprintf(stderr,"Could not initialize capturing...\n");
+	        fprintf(stderr,"Usage: %s <CAMERA_NUMBER>    , or \n       %s <VIDEO_FILE>\n", name, name);
+	        return -1;
+	    }
+	
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Linear-Polar", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Log-Polar", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Recovered Linear-Polar", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( "Recovered Log-Polar", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);
+	
+	    :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`( "Linear-Polar", 20,20 );
+	    :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`( "Log-Polar", 700,20 );
+	    :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`( "Recovered Linear-Polar", 20, 350 );
+	    :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`( "Recovered Log-Polar", 700, 350 );
+	
+	    for(;;)
+	    {
+	        :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame;
+	        capture >> frame;
+	
+	        if( frame.empty() )
+	            break;
+	
+	        Point2f center( (float)frame.cols / 2, (float)frame.rows / 2 );
+	        double radius = (double)frame.cols / 4;
+	        double M = (double)frame.cols / :ref:`log <doxid-d2/d75/namespacecv_1ae5de78ee278fe88405c6dbc38502f7c1>`(radius);
+	
+	        :ref:`logPolar <doxid-da/d54/group__imgproc__transform_1gaec3a0b126a85b5ca2c667b16e0ae022d>`(frame,log_polar_img, center, M, :ref:`INTER_LINEAR <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121ac97d8e4880d8b5d509e96825c7522deb>` + :ref:`WARP_FILL_OUTLIERS <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121a94cc44aa86159abcff4683ec6841b097>`);
+	        :ref:`linearPolar <doxid-da/d54/group__imgproc__transform_1gaa38a6884ac8b6e0b9bed47939b5362f3>`(frame,lin_polar_img, center, radius, :ref:`INTER_LINEAR <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121ac97d8e4880d8b5d509e96825c7522deb>` + :ref:`WARP_FILL_OUTLIERS <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121a94cc44aa86159abcff4683ec6841b097>`);
+	
+	        :ref:`logPolar <doxid-da/d54/group__imgproc__transform_1gaec3a0b126a85b5ca2c667b16e0ae022d>`(log_polar_img, recovered_log_polar, center, M, :ref:`WARP_INVERSE_MAP <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121aa48be1c433186c4eae1ea86aa0ca75ba>` + :ref:`INTER_LINEAR <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121ac97d8e4880d8b5d509e96825c7522deb>`);
+	        :ref:`linearPolar <doxid-da/d54/group__imgproc__transform_1gaa38a6884ac8b6e0b9bed47939b5362f3>`(lin_polar_img, recovered_lin_polar_img, center, radius, :ref:`WARP_INVERSE_MAP <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121aa48be1c433186c4eae1ea86aa0ca75ba>` + :ref:`INTER_LINEAR <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121ac97d8e4880d8b5d509e96825c7522deb>` + :ref:`WARP_FILL_OUTLIERS <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121a94cc44aa86159abcff4683ec6841b097>`);
+	
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Log-Polar", log_polar_img );
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Linear-Polar", lin_polar_img );
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Recovered Linear-Polar", recovered_lin_polar_img );
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Recovered Log-Polar", recovered_log_polar );
+	
+	        if( :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(10) >= 0 )
+	            break;
+	    }
+	
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	    return 0;
+	}

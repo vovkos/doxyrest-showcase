@@ -1,0 +1,270 @@
+.. index:: pair: class; Poco::TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator:
+
+class Poco::TextBufferIterator
+==============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An unidirectional iterator for iterating over characters in a buffer. :ref:`More...<details-class_poco_1_1_text_buffer_iterator>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <TextBufferIterator.h>
+	
+	class TextBufferIterator
+	{
+	public:
+		// construction
+	
+		:ref:`TextBufferIterator<doxid-class_poco_1_1_text_buffer_iterator_1ad960f615314ea25d3c6f9a720736754b>`();
+	
+		:ref:`TextBufferIterator<doxid-class_poco_1_1_text_buffer_iterator_1a4d2a7c44e1a87ea9b0d522f679196247>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* begin,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`TextEncoding<doxid-class_poco_1_1_text_encoding>`& encoding
+			);
+	
+		:ref:`TextBufferIterator<doxid-class_poco_1_1_text_buffer_iterator_1afb32bb78ae5995de801844dc67254181>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* begin,
+			std::size_t size,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`TextEncoding<doxid-class_poco_1_1_text_encoding>`& encoding
+			);
+	
+		:ref:`TextBufferIterator<doxid-class_poco_1_1_text_buffer_iterator_1a4e80a4cb15401da4163ebf2f330d8e78>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* begin,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* end,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`TextEncoding<doxid-class_poco_1_1_text_encoding>`& encoding
+			);
+	
+		:ref:`TextBufferIterator<doxid-class_poco_1_1_text_buffer_iterator_1ab55e17d21a46fca66011ab3c208a7ad9>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* end);
+		:ref:`TextBufferIterator<doxid-class_poco_1_1_text_buffer_iterator_1a3ef454a8bdc86d6c9fa8f7a83fba5455>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it);
+
+		// methods
+	
+		TextBufferIterator&
+		:ref:`operator=<doxid-class_poco_1_1_text_buffer_iterator_1a041315eb2bb0715c8da2fc95a643a4a6>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it);
+	
+		void
+		:ref:`swap<doxid-class_poco_1_1_text_buffer_iterator_1a99a95a4271118bd7c6448d91bbe53736>`(TextBufferIterator& it);
+	
+		int
+		:ref:`operator*<doxid-class_poco_1_1_text_buffer_iterator_1a9de7a5eaa079b14a4663846261f0a2cc>`() const;
+	
+		TextBufferIterator&
+		:ref:`operator++<doxid-class_poco_1_1_text_buffer_iterator_1a0bcc11a315cd573168f744b1d1e97a34>`();
+	
+		TextBufferIterator
+		:ref:`operator++<doxid-class_poco_1_1_text_buffer_iterator_1a2a0366cb6a1b4aa28ccb2bd7a83d7a3f>`(int);
+	
+		bool
+		:ref:`operator==<doxid-class_poco_1_1_text_buffer_iterator_1a6c4bcd4549f7af46902fc5f8ab77aa18>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it) const;
+	
+		bool
+		:ref:`operator!=<doxid-class_poco_1_1_text_buffer_iterator_1ab0341fae2ddc31ad7df2c4b5f4853ff9>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it) const;
+	
+		TextBufferIterator
+		:ref:`end<doxid-class_poco_1_1_text_buffer_iterator_1ac97c35df8e397d5c8d88d45a63dadf9a>`() const;
+	};
+.. _details-class_poco_1_1_text_buffer_iterator:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An unidirectional iterator for iterating over characters in a buffer.
+
+The :ref:`TextBufferIterator <doxid-class_poco_1_1_text_buffer_iterator>` uses a :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` object to work with multi-byte character encodings like UTF-8. Characters are reported in :ref:`Unicode <doxid-class_poco_1_1_unicode>`.
+
+Example: Count the number of UTF-8 characters in a buffer.
+
+.. ref-code-block:: cpp
+
+	UTF8Encoding utf8Encoding;
+	char buffer[] = "...";
+	TextBufferIterator it(buffer, utf8Encoding);
+	TextBufferIterator end(it.end());
+	int n = 0;
+	while (it != end) { ++n; ++it; }
+
+NOTE: When an UTF-16 encoding is used, surrogate pairs will be reported as two separate characters, due to restrictions of the :ref:`TextEncoding <doxid-class_poco_1_1_text_encoding>` class.
+
+For iterating over the characters in a std::string, see the :ref:`TextIterator <doxid-class_poco_1_1_text_iterator>` class.
+
+Construction
+------------
+
+.. index:: pair: function; TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator_1ad960f615314ea25d3c6f9a720736754b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator()
+
+Creates an uninitialized :ref:`TextBufferIterator <doxid-class_poco_1_1_text_buffer_iterator>`.
+
+.. index:: pair: function; TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a4d2a7c44e1a87ea9b0d522f679196247:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* begin,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`TextEncoding<doxid-class_poco_1_1_text_encoding>`& encoding
+		)
+
+Creates a :ref:`TextBufferIterator <doxid-class_poco_1_1_text_buffer_iterator>` for the given buffer, which must be 0-terminated.
+
+The encoding object must not be deleted as long as the iterator is in use.
+
+.. index:: pair: function; TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator_1afb32bb78ae5995de801844dc67254181:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* begin,
+		std::size_t size,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`TextEncoding<doxid-class_poco_1_1_text_encoding>`& encoding
+		)
+
+Creates a :ref:`TextBufferIterator <doxid-class_poco_1_1_text_buffer_iterator>` for the given buffer with the given size.
+
+The encoding object must not be deleted as long as the iterator is in use.
+
+.. index:: pair: function; TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a4e80a4cb15401da4163ebf2f330d8e78:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* begin,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* end,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`TextEncoding<doxid-class_poco_1_1_text_encoding>`& encoding
+		)
+
+Creates a :ref:`TextBufferIterator <doxid-class_poco_1_1_text_buffer_iterator>` for the given range.
+
+The encoding object must not be deleted as long as the iterator is in use.
+
+.. index:: pair: function; TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator_1ab55e17d21a46fca66011ab3c208a7ad9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* end)
+
+Creates an end :ref:`TextBufferIterator <doxid-class_poco_1_1_text_buffer_iterator>` for the given buffer.
+
+.. index:: pair: function; TextBufferIterator
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a3ef454a8bdc86d6c9fa8f7a83fba5455:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it)
+
+Copy constructor.
+
+Methods
+-------
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a041315eb2bb0715c8da2fc95a643a4a6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it)
+
+Assignment operator.
+
+.. index:: pair: function; swap
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a99a95a4271118bd7c6448d91bbe53736:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	swap(TextBufferIterator& it)
+
+Swaps the iterator with another one.
+
+.. index:: pair: function; operator*
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a9de7a5eaa079b14a4663846261f0a2cc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	operator*() const
+
+Returns the :ref:`Unicode <doxid-class_poco_1_1_unicode>` value of the current character.
+
+If there is no valid character at the current position, -1 is returned.
+
+.. index:: pair: function; operator++
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a0bcc11a315cd573168f744b1d1e97a34:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator&
+	operator++()
+
+Prefix increment operator.
+
+.. index:: pair: function; operator++
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a2a0366cb6a1b4aa28ccb2bd7a83d7a3f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator
+	operator++(int)
+
+Postfix increment operator.
+
+.. index:: pair: function; operator==
+.. _doxid-class_poco_1_1_text_buffer_iterator_1a6c4bcd4549f7af46902fc5f8ab77aa18:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	operator==(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it) const
+
+Compares two iterators for equality.
+
+.. index:: pair: function; operator!=
+.. _doxid-class_poco_1_1_text_buffer_iterator_1ab0341fae2ddc31ad7df2c4b5f4853ff9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	operator!=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TextBufferIterator& it) const
+
+Compares two iterators for inequality.
+
+.. index:: pair: function; end
+.. _doxid-class_poco_1_1_text_buffer_iterator_1ac97c35df8e397d5c8d88d45a63dadf9a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TextBufferIterator
+	end() const
+
+Returns the end iterator for the range handled by the iterator.
+

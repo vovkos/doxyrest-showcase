@@ -1,0 +1,626 @@
+.. index:: pair: class; cv::VideoCapture
+.. _doxid-df/dcb/classcv_1_1_video_capture:
+
+class cv::VideoCapture
+======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Class for video capturing from video files, image sequences or cameras. :ref:`More...<details-df/dcb/classcv_1_1_video_capture>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <videoio.hpp>
+	
+	class VideoCapture
+	{
+	public:
+		// construction
+	
+		:ref:`VideoCapture<doxid-df/dcb/classcv_1_1_video_capture_1a57c0e81e83e60f36c83027dc2a188e80>`();
+		:ref:`VideoCapture<doxid-df/dcb/classcv_1_1_video_capture_1a949d90b766ba42a6a93fe23a67785951>`(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename);
+	
+		:ref:`VideoCapture<doxid-df/dcb/classcv_1_1_video_capture_1a85b55cf6a4a50451367ba96b65218ba1>`(
+			const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+			int apiPreference
+			);
+	
+		:ref:`VideoCapture<doxid-df/dcb/classcv_1_1_video_capture_1a5d5f5dacb77bbebdcbfb341e3d4355c1>`(int index);
+
+		// methods
+	
+		virtual
+		double
+		:ref:`get<doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>`(int propId) const;
+	
+		virtual
+		bool
+		:ref:`grab<doxid-df/dcb/classcv_1_1_video_capture_1ae38c2a053d39d6b20c9c649e08ff0146>`();
+	
+		virtual
+		bool
+		:ref:`isOpened<doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`() const;
+	
+		virtual
+		bool
+		:ref:`open<doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename);
+	
+		virtual
+		bool
+		:ref:`open<doxid-df/dcb/classcv_1_1_video_capture_1abd88ea03aad64f7f00f3767e8b8c2034>`(int index);
+	
+		bool
+		:ref:`open<doxid-df/dcb/classcv_1_1_video_capture_1a128a4457358fb7dccb9a9a686e56e344>`(
+			int cameraNum,
+			int apiPreference
+			);
+	
+		virtual
+		bool
+		:ref:`open<doxid-df/dcb/classcv_1_1_video_capture_1af3b71a7c0c459704ed75568a01290457>`(
+			const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+			int apiPreference
+			);
+	
+		virtual
+		VideoCapture&
+		:ref:`operator>><doxid-df/dcb/classcv_1_1_video_capture_1a199844fb74226a28b3ce3a39d1ff6765>`(:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& image);
+	
+		virtual
+		VideoCapture&
+		:ref:`operator>><doxid-df/dcb/classcv_1_1_video_capture_1a35eb427f16b4ea5c502922aba9da835c>`(:ref:`UMat<doxid-d8/d82/classcv_1_1_u_mat>`& image);
+	
+		virtual
+		bool
+		:ref:`read<doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1>`(:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` image);
+	
+		virtual
+		void
+		:ref:`release<doxid-df/dcb/classcv_1_1_video_capture_1afb4ab689e553ba2c8f0fec41b9344ae6>`();
+	
+		virtual
+		bool
+		:ref:`retrieve<doxid-df/dcb/classcv_1_1_video_capture_1a9ac7f4b1cdfe624663478568486e6712>`(
+			:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` image,
+			int flag = 0
+			);
+	
+		virtual
+		bool
+		:ref:`set<doxid-df/dcb/classcv_1_1_video_capture_1a8c6d8c2d37505b5ca61ffd4bb54e9a7c>`(
+			int propId,
+			double value
+			);
+
+	protected:
+		// fields
+	
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CvCapture<doxid-dd/d01/group__videoio__c_1ga394109074fab9bdca2ea45514b1946b7>`> :target:`cap<doxid-df/dcb/classcv_1_1_video_capture_1a8c6d7b52a28206072d540c9567874649>`;
+		:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<IVideoCapture> :target:`icap<doxid-df/dcb/classcv_1_1_video_capture_1ad20c1542d32a3dfef0a083bede8b956a>`;
+	};
+.. _details-df/dcb/classcv_1_1_video_capture:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Class for video capturing from video files, image sequences or cameras.
+
+The class provides C++ API for capturing video from cameras or for reading video files and image sequences.
+
+Here is how the class can be used:
+
+.. ref-code-block:: cpp
+
+	
+	#include <opencv2/opencv.hpp>
+	#include <iostream>
+	#include <stdio.h>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	int main(int, char**)
+	{
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` frame;
+	    //--- INITIALIZE VIDEOCAPTURE
+	    :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` :ref:`cap <doxid-df/dcb/classcv_1_1_video_capture_1a8c6d7b52a28206072d540c9567874649>`;
+	    // open the default camera using default API
+	    cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(0);
+	    // OR advance usage: select any API backend
+	    int deviceID = 0;             // 0 = open default camera
+	    int apiID = :ref:`cv::CAP_ANY <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294da77ab1fe260fd182f8ec7655fab27a31d>`;      // 0 = autodetect default API
+	    // open selected camera using selected API
+	    cap.:ref:`open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>`(deviceID + apiID);
+	    // check if we succeeded
+	    if (!cap.:ref:`isOpened <doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585>`()) {
+	        cerr << "ERROR! Unable to open camera\n";
+	        return -1;
+	    }
+	
+	    //--- GRAB AND WRITE LOOP
+	    cout << "Start grabbing" << endl
+	        << "Press any key to terminate" << endl;
+	    for (;;)
+	    {
+	        // wait for a new frame from camera and store it into 'frame'
+	        cap.:ref:`read <doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1>`(frame);
+	        // check if we succeeded
+	        if (frame.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`()) {
+	            cerr << "ERROR! blank frame grabbed\n";
+	            break;
+	        }
+	        // show live and wait for a key with timeout long enough to show images
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Live", frame);
+	        if (:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(5) >= 0)
+	            break;
+	    }
+	    // the camera will be deinitialized automatically in VideoCapture destructor
+	    return 0;
+	}
+
+In :ref:`C API <doxid-dd/d01/group__videoio__c>` the black-box structure ``CvCapture`` is used instead of VideoCapture.
+
+* (C++) A basic sample on using the VideoCapture interface can be found at ``OPENCV_SOURCE_CODE/samples/cpp/videocapture_starter.cpp``
+
+* (Python) A basic sample on using the VideoCapture interface can be found at ``OPENCV_SOURCE_CODE/samples/python/video.py``
+
+* (Python) A multi threaded video processing sample can be found at ``OPENCV_SOURCE_CODE/samples/python/video_threaded.py``
+
+* (Python) VideoCapture sample showcasing some features of the Video4Linux2 backend ``OPENCV_SOURCE_CODE/samples/python/video_v4l2.py``
+
+Construction
+------------
+
+.. index:: pair: function; VideoCapture
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a57c0e81e83e60f36c83027dc2a188e80:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	VideoCapture()
+
+Default constructor.
+
+In :ref:`C API <doxid-dd/d01/group__videoio__c>`, when you finished working with video, release CvCapture structure with :ref:`cvReleaseCapture() <doxid-dd/d01/group__videoio__c_1ga39dd48dcaee21c7a8df040d47cbc27ee>`, or use :ref:`Ptr <doxid-d2/d56/structcv_1_1_ptr>` <CvCapture> that calls :ref:`cvReleaseCapture() <doxid-dd/d01/group__videoio__c_1ga39dd48dcaee21c7a8df040d47cbc27ee>` automatically in the destructor.
+
+.. index:: pair: function; VideoCapture
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a949d90b766ba42a6a93fe23a67785951:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	VideoCapture(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename)
+
+Open video file or a capturing device or a IP video stream for video capturing.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. Same as :ref:`VideoCapture(const String& filename, int apiPreference) <doxid-df/dcb/classcv_1_1_video_capture_1a85b55cf6a4a50451367ba96b65218ba1>` but using default Capture API backends
+
+.. index:: pair: function; VideoCapture
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a85b55cf6a4a50451367ba96b65218ba1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	VideoCapture(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		int apiPreference
+		)
+
+Open video file or a capturing device or a IP video stream for video capturing with API Preference.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- filename
+
+		- 
+		  it can be:
+		  
+		  * name of video file (eg. ``video.avi``)
+		  
+		  * or image sequence (eg. ``img_%02d.jpg``, which will read samples like ``img_00.jpg, img_01.jpg, img_02.jpg, ...``)
+		  
+		  * or URL of video stream (eg. ``protocol://host:port/script_name?script_params|auth``). Note that each video stream or IP camera feed has its own URL scheme. Please refer to the documentation of source stream to know the right URL.
+
+	*
+		- apiPreference
+
+		- preferred Capture API backends to use. Can be used to enforce a specific reader implementation if multiple are available: e.g. :ref:`cv::CAP_FFMPEG <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294dacf10e9692c4166f74de62b7d00c377d0>` or :ref:`cv::CAP_IMAGES <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294dabe73da7a65e66cdd47c87733a4ea6ef0>` or :ref:`cv::CAP_DSHOW <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294dab6ac3effa04f41ed5470375c85a23504>`.
+
+
+
+.. rubric:: See also:
+
+The list of supported API backends :ref:`cv::VideoCaptureAPIs <doxid-d4/d15/group__videoio__flags__base_1ga023786be1ee68a9105bf2e48c700294d>`
+
+.. index:: pair: function; VideoCapture
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a5d5f5dacb77bbebdcbfb341e3d4355c1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	VideoCapture(int index)
+
+Open a camera for video capturing.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- index
+
+		- camera_id + domain_offset (CAP\_\*) id of the video capturing device to open. To open default camera using default backend just pass 0. Use a ``domain_offset`` to enforce a specific reader implementation if multiple are available like :ref:`cv::CAP_FFMPEG <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294dacf10e9692c4166f74de62b7d00c377d0>` or :ref:`cv::CAP_IMAGES <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294dabe73da7a65e66cdd47c87733a4ea6ef0>` or :ref:`cv::CAP_DSHOW <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294dab6ac3effa04f41ed5470375c85a23504>`. e.g. to open Camera 1 using the MS Media Foundation API use ``index = 1 + :ref:`cv::CAP_MSMF <doxid-d4/d15/group__videoio__flags__base_1gga023786be1ee68a9105bf2e48c700294da278d5ad4907c9c0fe6d1c6104b746019>```
+
+
+
+.. rubric:: See also:
+
+The list of supported API backends :ref:`cv::VideoCaptureAPIs <doxid-d4/d15/group__videoio__flags__base_1ga023786be1ee68a9105bf2e48c700294d>`
+
+Methods
+-------
+
+.. index:: pair: function; get
+.. _doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	double
+	get(int propId) const
+
+Returns the specified :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` property.
+
+Reading / writing properties involves many layers. Some unexpected result might happens along this chain.
+
+.. ref-code-block:: cpp
+
+	`:ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture_1a57c0e81e83e60f36c83027dc2a188e80>` -> API Backend -> Operating System -> Device Driver -> Device Hardware`
+
+The returned value might be different from what really used by the device or it could be encoded using device dependant rules (eg. steps or percentage). Effective behaviour depends from device driver and API Backend
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- propId
+
+		- Property identifier from :ref:`cv::VideoCaptureProperties <doxid-d4/d15/group__videoio__flags__base_1gaeb8dd9c89c10a5c63c139bf7c4f5704d>` (eg. :ref:`cv::CAP_PROP_POS_MSEC <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da7c2fa550ba270713fca1405397b90ae0>`, :ref:`cv::CAP_PROP_POS_FRAMES <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068>`, ...) or one from :ref:`Additional flags for video I/O API backends <doxid-dc/dfc/group__videoio__flags__others>`
+
+
+
+.. rubric:: Returns:
+
+Value for the specified property. Value 0 is returned when querying a property that is not supported by the backend used by the :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` instance.
+
+.. index:: pair: function; grab
+.. _doxid-df/dcb/classcv_1_1_video_capture_1ae38c2a053d39d6b20c9c649e08ff0146:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	grab()
+
+Grabs the next frame from video file or capturing device.
+
+The method/function grabs the next frame from video file or camera and returns true (non-zero) in the case of success.
+
+The primary use of the function is in multi-camera environments, especially when the cameras do not have hardware synchronization. That is, you call :ref:`VideoCapture::grab() <doxid-df/dcb/classcv_1_1_video_capture_1ae38c2a053d39d6b20c9c649e08ff0146>` for each camera and after that call the slower method :ref:`VideoCapture::retrieve() <doxid-df/dcb/classcv_1_1_video_capture_1a9ac7f4b1cdfe624663478568486e6712>` to decode and get frame from each camera. This way the overhead on demosaicing or motion jpeg decompression etc. is eliminated and the retrieved frames from different cameras will be closer in time.
+
+Also, when a connected camera is multi-head (for example, a stereo camera or a Kinect device), the correct way of retrieving data from it is to call :ref:`VideoCapture::grab() <doxid-df/dcb/classcv_1_1_video_capture_1ae38c2a053d39d6b20c9c649e08ff0146>` first and then call :ref:`VideoCapture::retrieve() <doxid-df/dcb/classcv_1_1_video_capture_1a9ac7f4b1cdfe624663478568486e6712>` one or more times with different values of the channel parameter.
+
+:ref:`Using Kinect and other OpenNI compatible depth sensors <doxid-d7/d6f/tutorial_kinect_openni>`
+
+
+
+.. rubric:: Returns:
+
+``true`` (non-zero) in the case of success.
+
+.. index:: pair: function; isOpened
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a9d2ca36789e7fcfe7a7be3b328038585:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	isOpened() const
+
+Returns true if video capturing has been initialized already.
+
+If the previous call to :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` constructor or :ref:`VideoCapture::open() <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>` succeeded, the method returns true.
+
+.. index:: pair: function; open
+.. _doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	open(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename)
+
+Open video file or a capturing device or a IP video stream for video capturing.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+Parameters are same as the constructor :ref:`VideoCapture(const String& filename) <doxid-df/dcb/classcv_1_1_video_capture_1a949d90b766ba42a6a93fe23a67785951>` The method first calls :ref:`VideoCapture::release <doxid-df/dcb/classcv_1_1_video_capture_1afb4ab689e553ba2c8f0fec41b9344ae6>` to close the already opened file or camera.
+
+
+
+.. rubric:: Returns:
+
+``true`` if the file has been successfully opened
+
+.. index:: pair: function; open
+.. _doxid-df/dcb/classcv_1_1_video_capture_1abd88ea03aad64f7f00f3767e8b8c2034:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	open(int index)
+
+Open a camera for video capturing.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+Parameters are same as the constructor :ref:`VideoCapture(int index) <doxid-df/dcb/classcv_1_1_video_capture_1a5d5f5dacb77bbebdcbfb341e3d4355c1>` The method first calls :ref:`VideoCapture::release <doxid-df/dcb/classcv_1_1_video_capture_1afb4ab689e553ba2c8f0fec41b9344ae6>` to close the already opened file or camera.
+
+
+
+.. rubric:: Returns:
+
+``true`` if the camera has been successfully opened.
+
+.. index:: pair: function; open
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a128a4457358fb7dccb9a9a686e56e344:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	open(
+		int cameraNum,
+		int apiPreference
+		)
+
+Open a camera for video capturing.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+Parameters are similar as the constructor :ref:`VideoCapture(int index) <doxid-df/dcb/classcv_1_1_video_capture_1a5d5f5dacb77bbebdcbfb341e3d4355c1>`,except it takes an additional argument apiPreference. Definitely, is same as :ref:`open(int index) <doxid-df/dcb/classcv_1_1_video_capture_1abd88ea03aad64f7f00f3767e8b8c2034>` where ``index=cameraNum + apiPreference``
+
+
+
+.. rubric:: Returns:
+
+``true`` if the camera has been successfully opened.
+
+.. index:: pair: function; open
+.. _doxid-df/dcb/classcv_1_1_video_capture_1af3b71a7c0c459704ed75568a01290457:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	open(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& filename,
+		int apiPreference
+		)
+
+Open video file or a capturing device or a IP video stream for video capturing with API Preference.
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+Parameters are same as the constructor :ref:`VideoCapture(const String& filename, int apiPreference) <doxid-df/dcb/classcv_1_1_video_capture_1a85b55cf6a4a50451367ba96b65218ba1>` The method first calls :ref:`VideoCapture::release <doxid-df/dcb/classcv_1_1_video_capture_1afb4ab689e553ba2c8f0fec41b9344ae6>` to close the already opened file or camera.
+
+
+
+.. rubric:: Returns:
+
+``true`` if the file has been successfully opened
+
+.. index:: pair: function; operator>>
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a199844fb74226a28b3ce3a39d1ff6765:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	VideoCapture&
+	operator>>(:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& image)
+
+Stream operator to read the next video frame.
+
+
+
+.. rubric:: See also:
+
+:ref:`read() <doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1>`
+
+.. index:: pair: function; operator>>
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a35eb427f16b4ea5c502922aba9da835c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	VideoCapture&
+	operator>>(:ref:`UMat<doxid-d8/d82/classcv_1_1_u_mat>`& image)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+
+
+.. rubric:: See also:
+
+:ref:`read() <doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1>`
+
+.. index:: pair: function; read
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	read(:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` image)
+
+Grabs, decodes and returns the next video frame.
+
+The method/function combines :ref:`VideoCapture::grab() <doxid-df/dcb/classcv_1_1_video_capture_1ae38c2a053d39d6b20c9c649e08ff0146>` and :ref:`VideoCapture::retrieve() <doxid-df/dcb/classcv_1_1_video_capture_1a9ac7f4b1cdfe624663478568486e6712>` in one call. This is the most convenient method for reading video files or capturing data from decode and returns the just grabbed frame. If no frames has been grabbed (camera has been disconnected, or there are no more frames in video file), the method returns false and the function returns empty image (with cv::Mat, test it with :ref:`Mat::empty() <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`).
+
+In :ref:`C API <doxid-dd/d01/group__videoio__c>`, functions :ref:`cvRetrieveFrame() <doxid-dd/d01/group__videoio__c_1ga15224db88623fc748c4c4fa56c5751db>` and cv.RetrieveFrame() return image stored inside the video capturing structure. It is not allowed to modify or release the image! You can copy the frame using :ocvcvCloneImage and then do whatever you want with the copy.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- image
+
+		- the video frame is returned here. If no frames has been grabbed the image will be empty.
+
+
+
+.. rubric:: Returns:
+
+``false`` if no frames has been grabbed
+
+.. index:: pair: function; release
+.. _doxid-df/dcb/classcv_1_1_video_capture_1afb4ab689e553ba2c8f0fec41b9344ae6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	release()
+
+Closes video file or capturing device.
+
+The method is automatically called by subsequent :ref:`VideoCapture::open <doxid-df/dcb/classcv_1_1_video_capture_1ab5b7391cd5ec50e7237e575a758f6f05>` and by :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` destructor.
+
+The C function also deallocates memory and clears \*capture pointer.
+
+.. index:: pair: function; retrieve
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a9ac7f4b1cdfe624663478568486e6712:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	retrieve(
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` image,
+		int flag = 0
+		)
+
+Decodes and returns the grabbed video frame.
+
+The method decodes and returns the just grabbed frame. If no frames has been grabbed (camera has been disconnected, or there are no more frames in video file), the method returns false and the function returns an empty image (with cv::Mat, test it with :ref:`Mat::empty() <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`).
+
+In :ref:`C API <doxid-dd/d01/group__videoio__c>`, functions :ref:`cvRetrieveFrame() <doxid-dd/d01/group__videoio__c_1ga15224db88623fc748c4c4fa56c5751db>` and cv.RetrieveFrame() return image stored inside the video capturing structure. It is not allowed to modify or release the image! You can copy the frame using :ocvcvCloneImage and then do whatever you want with the copy.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- image
+
+		- the video frame is returned here. If no frames has been grabbed the image will be empty.
+
+	*
+		- flag
+
+		- it could be a frame index or a driver specific flag
+
+
+
+.. rubric:: Returns:
+
+``false`` if no frames has been grabbed
+
+
+
+.. rubric:: See also:
+
+:ref:`read() <doxid-df/dcb/classcv_1_1_video_capture_1a473055e77dd7faa4d26d686226b292c1>`
+
+.. index:: pair: function; set
+.. _doxid-df/dcb/classcv_1_1_video_capture_1a8c6d8c2d37505b5ca61ffd4bb54e9a7c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	set(
+		int propId,
+		double value
+		)
+
+Sets a property in the :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>`.
+
+Even if it returns ``true`` this doesn't ensure that the property value has been accepted by the capture device. See note in :ref:`VideoCapture::get() <doxid-df/dcb/classcv_1_1_video_capture_1aa6480e6972ef4c00d74814ec841a2939>`
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- propId
+
+		- Property identifier from :ref:`cv::VideoCaptureProperties <doxid-d4/d15/group__videoio__flags__base_1gaeb8dd9c89c10a5c63c139bf7c4f5704d>` (eg. :ref:`cv::CAP_PROP_POS_MSEC <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da7c2fa550ba270713fca1405397b90ae0>`, :ref:`cv::CAP_PROP_POS_FRAMES <doxid-d4/d15/group__videoio__flags__base_1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068>`, ...) or one from :ref:`Additional flags for video I/O API backends <doxid-dc/dfc/group__videoio__flags__others>`
+
+	*
+		- value
+
+		- Value of the property.
+
+
+
+.. rubric:: Returns:
+
+``true`` if the property is supported by backend used by the :ref:`VideoCapture <doxid-df/dcb/classcv_1_1_video_capture>` instance.
+

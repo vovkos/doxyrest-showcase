@@ -1,0 +1,96 @@
+.. index:: pair: page; Using OpenCV with gcc and CMake
+.. _doxid-db/df5/tutorial_linux_gcc_cmake:
+
+Using OpenCV with gcc and CMake
+===============================
+
+We assume that you have successfully installed OpenCV in your workstation.
+
+
+
+* The easiest way of using OpenCV in your code is to use `CMake <http://www.cmake.org/>`__. A few advantages (taken from the Wiki):
+  
+  #. No need to change anything when porting between Linux and Windows
+  
+  #. Can easily be combined with other tools by CMake( i.e. Qt, ITK and VTK )
+
+* If you are not familiar with CMake, checkout the `tutorial <http://www.cmake.org/cmake/help/cmake_tutorial.html>`__ on its website.
+
+.. rubric:: Steps
+
+.. rubric:: Create a program using OpenCV
+
+Let's use a simple program such as DisplayImage.cpp shown below.
+
+.. ref-code-block:: cpp
+
+	#include <stdio.h>
+	#include <opencv2/opencv.hpp>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	int main(int argc, char** argv )
+	{
+	    if ( argc != 2 )
+	    {
+	        printf("usage: DisplayImage.out <Image_Path>\n");
+	        return -1;
+	    }
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image;
+	    image = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], 1 );
+	
+	    if ( !image.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` )
+	    {
+	        printf("No image data \n");
+	        return -1;
+	    }
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("Display Image", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Display Image", image);
+	
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	    return 0;
+	}
+
+
+
+.. rubric:: Create a CMake file
+
+Now you have to create your CMakeLists.txt file. It should look like this:
+
+.. ref-code-block:: cpp
+
+	cmake_minimum_required(VERSION 2.8)
+	project( DisplayImage )
+	find_package( OpenCV REQUIRED )
+	include_directories( ${OpenCV_INCLUDE_DIRS} )
+	add_executable( DisplayImage DisplayImage.cpp )
+	target_link_libraries( DisplayImage ${OpenCV_LIBS} )
+
+
+
+.. rubric:: Generate the executable
+
+This part is easy, just proceed as with any other project using CMake:
+
+.. ref-code-block:: cpp
+
+	cd <DisplayImage_directory>
+	cmake .
+	make
+
+
+
+.. rubric:: Result
+
+By now you should have an executable (called DisplayImage in this case). You just have to run it giving an image location as an argument, i.e.:
+
+.. ref-code-block:: cpp
+
+	./DisplayImage lena.jpg
+
+You should get a nice window as the one shown below:
+
+.. image:: GCC_CMake_Example_Tutorial.jpg
+

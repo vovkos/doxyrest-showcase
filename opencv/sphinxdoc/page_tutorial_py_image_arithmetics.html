@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Arithmetic Operations on Images &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic Operations on Images" href="page_tutorial_py_basic_ops.html" />
+    <link rel="prev" title="Core Operations" href="page_tutorial_py_table_of_contents_core.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_basic_ops.html" title="Basic Operations on Images"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_core.html" title="Core Operations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_core.html" accesskey="U">Core Operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_core.html"
+                        title="previous chapter">Core Operations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_basic_ops.html"
+                        title="next chapter">Basic Operations on Images</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="arithmetic-operations-on-images">
+<span id="doxid-d0-d86-tutorial-py-image-arithmetics"></span><span id="index-0"></span><h1>Arithmetic Operations on Images</h1>
+<p class="rubric">Goal</p>
+<ul class="simple">
+<li>Learn several arithmetic operations on images like addition, subtraction, bitwise operations etc.</li>
+<li>You will learn these functions : <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cv2.add()</span></a>, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cv2.addWeighted()</span></a> etc.</li>
+</ul>
+<p class="rubric">Image Addition</p>
+<p>You can add two images by OpenCV function, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cv2.add()</span></a> or simply by numpy operation, res = img1 + img2. Both images should be of same depth and type, or second image can just be a scalar value.</p>
+<p>There is a difference between OpenCV addition and Numpy addition. OpenCV addition is a saturated operation while Numpy addition is a modulo operation.</p>
+<p>For example, consider below sample:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">([</span><span class="mi">250</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">([</span><span class="mi">10</span><span class="p">])</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">cv2</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="p">)</span> <span class="err">#</span> <span class="mi">250</span><span class="o">+</span><span class="mi">10</span> <span class="o">=</span> <span class="mi">260</span> <span class="o">=&gt;</span> <span class="mi">255</span>
+<span class="p">[[</span><span class="mi">255</span><span class="p">]]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span> <span class="p">)</span>          <span class="err">#</span> <span class="mi">250</span><span class="o">+</span><span class="mi">10</span> <span class="o">=</span> <span class="mi">260</span> <span class="o">%</span> <span class="mi">256</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+</pre>
+<p>It will be more visible when you add two images. OpenCV function will provide a better result. So always better stick to OpenCV functions.</p>
+<p class="rubric">Image Blending</p>
+<p>This is also image addition, but different weights are given to images so that it gives a feeling of blending or transparency. Images are added as per the equation below:</p>
+<div class="math notranslate nohighlight">
+\[g(x) = (1 - \alpha)f_{0}(x) + \alpha f_{1}(x)\]</div>
+<p>By varying <span class="math notranslate nohighlight">\(\alpha\)</span> from <span class="math notranslate nohighlight">\(0 \rightarrow 1\)</span>, you can perform a cool transition between one image to another.</p>
+<p>Here I took two images to blend them together. First image is given a weight of 0.7 and second image is given 0.3. <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cv2.addWeighted()</span></a> applies following equation on the image.</p>
+<div class="math notranslate nohighlight">
+\[dst = \alpha \cdot img1 + \beta \cdot img2 + \gamma\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\gamma\)</span> is taken as zero.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;ml.png&#39;</span><span class="p">)</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;opencv-logo.png&#39;</span><span class="p">)</span>
+
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">addWeighted</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="n">img2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;dst&#39;</span><span class="p">,</span><span class="n">dst</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>Check the result below:</p>
+<img alt="image" src="_images/blending.jpg" />
+<p class="rubric">Bitwise Operations</p>
+<p>This includes bitwise AND, OR, NOT and XOR operations. They will be highly useful while extracting any part of the image (as we will see in coming chapters), defining and working with non-rectangular ROI etc. Below we will see an example on how to change a particular region of an image.</p>
+<p>I want to put OpenCV logo above an image. If I add two images, it will change color. If I blend it, I get an transparent effect. But I want it to be opaque. If it was a rectangular region, I could use ROI as we did in last chapter. But OpenCV logo is a not a rectangular shape. So you can do it with bitwise operations as below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp"># Load two images</span>
+<span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;messi5.jpg&#39;</span><span class="p">)</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;opencv-logo.png&#39;</span><span class="p">)</span>
+
+<span class="cp"># I want to put logo on top-left corner, So I create a ROI</span>
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">,</span><span class="n">channels</span> <span class="o">=</span> <span class="n">img2</span><span class="p">.</span><span class="n">shape</span>
+<span class="n">roi</span> <span class="o">=</span> <span class="n">img1</span><span class="p">[</span><span class="mi">0</span><span class="o">:</span><span class="n">rows</span><span class="p">,</span> <span class="mi">0</span><span class="o">:</span><span class="n">cols</span> <span class="p">]</span>
+
+<span class="cp"># Now create a mask of logo and create its inverse mask also</span>
+<span class="n">img2gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img2gray</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+<span class="n">mask_inv</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">bitwise_not</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+<span class="cp"># Now black-out the area of logo in ROI</span>
+<span class="n">img1_bg</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span><span class="n">roi</span><span class="p">,</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask_inv</span><span class="p">)</span>
+
+<span class="cp"># Take only region of logo from logo image.</span>
+<span class="n">img2_fg</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span><span class="n">img2</span><span class="p">,</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">)</span>
+
+<span class="cp"># Put logo in ROI and modify the main image</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">img1_bg</span><span class="p">,</span><span class="n">img2_fg</span><span class="p">)</span>
+<span class="n">img1</span><span class="p">[</span><span class="mi">0</span><span class="o">:</span><span class="n">rows</span><span class="p">,</span> <span class="mi">0</span><span class="o">:</span><span class="n">cols</span> <span class="p">]</span> <span class="o">=</span> <span class="n">dst</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;res&#39;</span><span class="p">,</span><span class="n">img1</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>See the result below. Left image shows the mask we created. Right image shows the final result. For more understanding, display all the intermediate images in the above code, especially img1_bg and img2_fg.</p>
+<img alt="image" src="_images/overlay.jpg" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+<ol class="arabic simple">
+<li>Create a slide show of images in a folder with smooth transition between images using cv2.addWeighted function</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_basic_ops.html" title="Basic Operations on Images"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_core.html" title="Core Operations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_core.html" >Core Operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

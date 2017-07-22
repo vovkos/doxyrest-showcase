@@ -1,0 +1,221 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Feature Matching with FLANN &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Features2D + Homography to find a known object" href="page_tutorial_feature_homography.html" />
+    <link rel="prev" title="Feature Detection" href="page_tutorial_feature_detection.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_feature_homography.html" title="Features2D + Homography to find a known object"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_feature_detection.html" title="Feature Detection"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_features2d.html" accesskey="U">2D Features framework (feature2d module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_feature_detection.html"
+                        title="previous chapter">Feature Detection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_feature_homography.html"
+                        title="next chapter">Features2D + Homography to find a known object</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="feature-matching-with-flann">
+<span id="doxid-d5-d6f-tutorial-feature-flann-matcher"></span><span id="index-0"></span><h1>Feature Matching with FLANN</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the <a class="reference internal" href="class_cv_FlannBasedMatcher.html#doxid-de-d48-classcv-1-1-flann-based-matcher"><span class="std std-ref">cv::FlannBasedMatcher</span></a> interface in order to perform a quick and efficient matching by using the <a class="reference internal" href="group_flann.html#doxid-dc-de5-group-flann"><span class="std std-ref">Clustering and Search in Multi-Dimensional Spaces</span></a> module</li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/*</span>
+<span class="cm"> * @file SURF_FlannMatcher</span>
+<span class="cm"> * @brief SURF detector + descriptor + FLANN Matcher</span>
+<span class="cm"> * @author A. Huaman</span>
+<span class="cm"> */</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/core.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/features2d.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/xfeatures2d.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">cv</span><span class="o">::</span><span class="n">xfeatures2d</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">readme</span><span class="p">();</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * @function main</span>
+<span class="cm"> * @brief Main function</span>
+<span class="cm"> */</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">readme</span><span class="p">();</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_1</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125"><span class="std std-ref">IMREAD_GRAYSCALE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_2</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125"><span class="std std-ref">IMREAD_GRAYSCALE</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">img_1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">data</span></a><span></span> <span class="o">||</span> <span class="o">!</span><span class="n">img_2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4d33bed1c850265370d2af0ff02e1564"><span class="std std-ref">data</span></a><span></span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span> <span class="s">&quot; --(!) Error reading images &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="c1">//-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors</span>
+  <span class="kt">int</span> <span class="n">minHessian</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+
+  <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;SURF&gt;</span></a><span></span> <span class="n">detector</span> <span class="o">=</span> <span class="n">SURF</span><span class="o">::</span><span class="n">create</span><span class="p">();</span>
+  <span class="n">detector</span><span class="o">-&gt;</span><span class="n">setHessianThreshold</span><span class="p">(</span><span class="n">minHessian</span><span class="p">);</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">keypoints_1</span><span class="p">,</span> <span class="n">keypoints_2</span><span class="p">;</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">descriptors_1</span><span class="p">,</span> <span class="n">descriptors_2</span><span class="p">;</span>
+
+  <span class="n">detector</span><span class="o">-&gt;</span><span class="n">detectAndCompute</span><span class="p">(</span> <span class="n">img_1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">(),</span> <span class="n">keypoints_1</span><span class="p">,</span> <span class="n">descriptors_1</span> <span class="p">);</span>
+  <span class="n">detector</span><span class="o">-&gt;</span><span class="n">detectAndCompute</span><span class="p">(</span> <span class="n">img_2</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">(),</span> <span class="n">keypoints_2</span><span class="p">,</span> <span class="n">descriptors_2</span> <span class="p">);</span>
+
+  <span class="c1">//-- Step 2: Matching descriptor vectors using FLANN matcher</span>
+  <a class="reference internal" href="class_cv_FlannBasedMatcher.html#doxid-de-d48-classcv-1-1-flann-based-matcher"><span class="std std-ref">FlannBasedMatcher</span></a><span></span> <span class="n">matcher</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="n">DMatch</span> <span class="o">&gt;</span> <span class="n">matches</span><span class="p">;</span>
+  <span class="n">matcher</span><span class="p">.</span><a class="reference internal" href="class_cv_DescriptorMatcher.html#doxid-d4-d64-classcv-1-1-descriptor-matcher-1a0f046f47b68ec7074391e1e85c750cba"><span class="std std-ref">match</span></a><span></span><span class="p">(</span> <span class="n">descriptors_1</span><span class="p">,</span> <span class="n">descriptors_2</span><span class="p">,</span> <span class="n">matches</span> <span class="p">);</span>
+
+  <span class="kt">double</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="kt">double</span> <span class="n">min_dist</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+  <span class="c1">//-- Quick calculation of max and min distances between keypoints</span>
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">descriptors_1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="kt">double</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">distance</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">min_dist</span> <span class="p">)</span> <span class="n">min_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="n">max_dist</span> <span class="p">)</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;-- Max dist : %f </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">max_dist</span> <span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;-- Min dist : %f </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">min_dist</span> <span class="p">);</span>
+
+  <span class="c1">//-- Draw only &quot;good&quot; matches (i.e. whose distance is less than 2*min_dist,</span>
+  <span class="c1">//-- or a small arbitary value ( 0.02 ) in the event that min_dist is very</span>
+  <span class="c1">//-- small)</span>
+  <span class="c1">//-- PS.- radiusMatch can also be used here.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="n">DMatch</span> <span class="o">&gt;</span> <span class="n">good_matches</span><span class="p">;</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">descriptors_1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="k">if</span><span class="p">(</span> <span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">distance</span> <span class="o">&lt;=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a78f988f6cfa6223610298cbd4f86ec66"><span class="std std-ref">max</span></a><span></span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">min_dist</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="n">good_matches</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span> <span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">//-- Draw only &quot;good&quot; matches</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img_matches</span><span class="p">;</span>
+  <a class="reference internal" href="group_features2d_draw.html#doxid-d4-d5d-group-features2d-draw-1ga7421b3941617d7267e3f2311582f49e1"><span class="std std-ref">drawMatches</span></a><span></span><span class="p">(</span> <span class="n">img_1</span><span class="p">,</span> <span class="n">keypoints_1</span><span class="p">,</span> <span class="n">img_2</span><span class="p">,</span> <span class="n">keypoints_2</span><span class="p">,</span>
+               <span class="n">good_matches</span><span class="p">,</span> <span class="n">img_matches</span><span class="p">,</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+               <span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(),</span> <span class="n">DrawMatchesFlags</span><span class="o">::</span><span class="n">NOT_DRAW_SINGLE_POINTS</span> <span class="p">);</span>
+
+  <span class="c1">//-- Show detected matches</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Good Matches&quot;</span><span class="p">,</span> <span class="n">img_matches</span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">good_matches</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="n">printf</span><span class="p">(</span> <span class="s">&quot;-- Good Match [%d] Keypoint 1: %d  -- Keypoint 2: %d  </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">good_matches</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">queryIdx</span><span class="p">,</span> <span class="n">good_matches</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">trainIdx</span> <span class="p">);</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * @function readme</span>
+<span class="cm"> */</span>
+<span class="kt">void</span> <span class="n">readme</span><span class="p">()</span>
+<span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; Usage: ./SURF_FlannMatcher &lt;img1&gt; &lt;img2&gt;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p class="rubric">Result</p>
+<ol class="arabic">
+<li><p class="first">Here is the result of the feature detection applied to the first image:</p>
+<img alt="_images/Featur_FlannMatcher_Result.jpg" src="_images/Featur_FlannMatcher_Result.jpg" />
+</li>
+<li><p class="first">Additionally, we get as console output the keypoints filtered:</p>
+<img alt="_images/Feature_FlannMatcher_Keypoints_Result.jpg" src="_images/Feature_FlannMatcher_Keypoints_Result.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_feature_homography.html" title="Features2D + Homography to find a known object"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_feature_detection.html" title="Feature Detection"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_features2d.html" >2D Features framework (feature2d module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

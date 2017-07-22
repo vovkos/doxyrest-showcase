@@ -1,0 +1,122 @@
+.. index:: pair: class; Poco::FileIOS
+.. _doxid-class_poco_1_1_file_i_o_s:
+
+class Poco::FileIOS
+===================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+The base class for :ref:`FileInputStream <doxid-class_poco_1_1_file_input_stream>` and :ref:`FileOutputStream <doxid-class_poco_1_1_file_output_stream>`. :ref:`More...<details-class_poco_1_1_file_i_o_s>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <FileStream.h>
+	
+	class FileIOS: public ios
+	{
+	public:
+		// construction
+	
+		:ref:`FileIOS<doxid-class_poco_1_1_file_i_o_s_1a1159a2ba0ccf78b1d05bf7b7d7c9b8f4>`(std::ios::openmode defaultMode);
+
+		// methods
+	
+		void
+		:ref:`open<doxid-class_poco_1_1_file_i_o_s_1aff3f6bd5894a12ac5fd7fd2c3d17cf5e>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& path,
+			std::ios::openmode mode
+			);
+	
+		void
+		:ref:`close<doxid-class_poco_1_1_file_i_o_s_1a2d01ddbf798cfab636399e6b0fb62b4c>`();
+	
+		:ref:`FileStreamBuf<doxid-class_poco_1_1_file_stream_buf>`*
+		:ref:`rdbuf<doxid-class_poco_1_1_file_i_o_s_1ad215a5876b2c686fbe0e4d0001b29be7>`();
+
+	protected:
+		// fields
+	
+		:ref:`FileStreamBuf<doxid-class_poco_1_1_file_stream_buf>` :target:`_buf<doxid-class_poco_1_1_file_i_o_s_1a586b46657a4d27f3d91a7d1c0425900a>`;
+		std::ios::openmode :target:`_defaultMode<doxid-class_poco_1_1_file_i_o_s_1a15515e030104074cae15b5712472dee5>`;
+	};
+
+	// direct descendants
+
+	class :ref:`FileInputStream<doxid-class_poco_1_1_file_input_stream>`;
+	class :ref:`FileOutputStream<doxid-class_poco_1_1_file_output_stream>`;
+	class :ref:`FileStream<doxid-class_poco_1_1_file_stream>`;
+.. _details-class_poco_1_1_file_i_o_s:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+The base class for :ref:`FileInputStream <doxid-class_poco_1_1_file_input_stream>` and :ref:`FileOutputStream <doxid-class_poco_1_1_file_output_stream>`.
+
+This class is needed to ensure the correct initialization order of the stream buffer and base classes.
+
+Files are always opened in binary mode, a text mode with CR-LF translation is not supported. Thus, the file is always opened as if the std::ios::binary flag was specified. Use an :ref:`InputLineEndingConverter <doxid-class_poco_1_1_input_line_ending_converter>` or :ref:`OutputLineEndingConverter <doxid-class_poco_1_1_output_line_ending_converter>` if you require CR-LF translation.
+
+On Windows platforms, if POCO_WIN32_UTF8 is #define'd, UTF-8 encoded :ref:`Unicode <doxid-class_poco_1_1_unicode>` paths are correctly handled.
+
+Construction
+------------
+
+.. index:: pair: function; FileIOS
+.. _doxid-class_poco_1_1_file_i_o_s_1a1159a2ba0ccf78b1d05bf7b7d7c9b8f4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	FileIOS(std::ios::openmode defaultMode)
+
+Creates the basic stream.
+
+Methods
+-------
+
+.. index:: pair: function; open
+.. _doxid-class_poco_1_1_file_i_o_s_1aff3f6bd5894a12ac5fd7fd2c3d17cf5e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	open(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& path,
+		std::ios::openmode mode
+		)
+
+Opens the file specified by path, using the given mode.
+
+Throws a FileException (or a similar exception) if the file does not exist or is not accessible for other reasons and a new file cannot be created.
+
+.. index:: pair: function; close
+.. _doxid-class_poco_1_1_file_i_o_s_1a2d01ddbf798cfab636399e6b0fb62b4c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	close()
+
+Closes the file stream.
+
+If, for an output stream, the close operation fails (because the contents of the stream buffer cannot synced back to the filesystem), the bad bit is set in the stream state.
+
+.. index:: pair: function; rdbuf
+.. _doxid-class_poco_1_1_file_i_o_s_1ad215a5876b2c686fbe0e4d0001b29be7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`FileStreamBuf<doxid-class_poco_1_1_file_stream_buf>`*
+	rdbuf()
+
+Returns a pointer to the underlying streambuf.
+

@@ -1,0 +1,146 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Using OpenCV Java with Eclipse &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using OpenCV with Eclipse (plugin CDT)" href="page_tutorial_linux_eclipse.html" />
+    <link rel="prev" title="Use OpenCL in Android camera preview based CV application" href="page_tutorial_android_ocl_intro.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_linux_eclipse.html" title="Using OpenCV with Eclipse (plugin CDT)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_android_ocl_intro.html" title="Use OpenCL in Android camera preview based CV application"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_introduction.html" accesskey="U">Introduction to OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_android_ocl_intro.html"
+                        title="previous chapter">Use OpenCL in Android camera preview based CV application</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_linux_eclipse.html"
+                        title="next chapter">Using OpenCV with Eclipse (plugin CDT)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-opencv-java-with-eclipse">
+<span id="doxid-d1-d0a-tutorial-java-eclipse"></span><span id="index-0"></span><h1>Using OpenCV Java with Eclipse</h1>
+<p>Since version 2.4.4 <a class="reference external" href="http://opencv.org/opencv-java-api.html">OpenCV supports Java</a>. In this tutorial I will explain how to setup development environment for using OpenCV Java with Eclipse in <strong>Windows</strong>, so you can enjoy the benefits of garbage collected, very refactorable (rename variable, extract method and whatnot) modern language that enables you to write code with less effort and make less mistakes. Here we go.</p>
+<p class="rubric">Configuring Eclipse</p>
+<p>First, obtain a fresh release of OpenCV <a class="reference external" href="http://opencv.org/releases.html">from download page</a> and extract it under a simple location like <code class="docutils literal notranslate"><span class="pre">C:\OpenCV-2.4.6\</span></code>. I am using version 2.4.6, but the steps are more or less the same for other versions.</p>
+<p>Now, we will define OpenCV as a user library in Eclipse, so we can reuse the configuration for any project. Launch Eclipse and select Window&gt; Preferences from the menu.</p>
+<img alt="_images/1-window-preferences.png" src="_images/1-window-preferences.png" />
+<p>Navigate under Java&gt; Build Path&gt; User Libraries and click New….</p>
+<img alt="_images/2-user-library-new.png" src="_images/2-user-library-new.png" />
+<p>Enter a name, e.g. OpenCV-2.4.6, for your new library.</p>
+<img alt="_images/3-library-name.png" src="_images/3-library-name.png" />
+<p>Now select your new user library and click Add External JARs….</p>
+<img alt="_images/4-add-external-jars.png" src="_images/4-add-external-jars.png" />
+<p>Browse through <code class="docutils literal notranslate"><span class="pre">C:\OpenCV-2.4.6\build\java\</span></code> and select opencv-246.jar. After adding the jar, extend the opencv-246.jar and select Native library location and press Edit….</p>
+<img alt="_images/5-native-library.png" src="_images/5-native-library.png" />
+<p>Select External Folder… and browse to select the folder <code class="docutils literal notranslate"><span class="pre">C:\OpenCV-2.4.6\build\java\x64</span></code>. If you have a 32-bit system you need to select the x86 folder instead of x64.</p>
+<img alt="_images/6-external-folder.png" src="_images/6-external-folder.png" />
+<p>Your user library configuration should look like this:</p>
+<img alt="_images/7-user-library-final.png" src="_images/7-user-library-final.png" />
+<p class="rubric">Testing the configuration on a new Java project</p>
+<p>Now start creating a new Java project.</p>
+<img alt="_images/7_5-new-java-project.png" src="_images/7_5-new-java-project.png" />
+<p>On the Java Settings step, under Libraries tab, select Add Library… and select OpenCV-2.4.6, then click Finish.</p>
+<img alt="_images/8-add-library.png" src="_images/8-add-library.png" />
+<img alt="_images/9-select-user-lib.png" src="_images/9-select-user-lib.png" />
+<p>Libraries should look like this:</p>
+<img alt="_images/10-new-project-created.png" src="_images/10-new-project-created.png" />
+<p>Now you have created and configured a new Java project it is time to test it. Create a new java file. Here is a starter code for your convenience:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">Core</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">CvType</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">opencv</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">Mat</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="n">Hello</span>
+<span class="p">{</span>
+   <span class="k">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span> <span class="n">String</span><span class="p">[]</span> <span class="n">args</span> <span class="p">)</span>
+   <span class="p">{</span>
+      <span class="n">System</span><span class="p">.</span><span class="n">loadLibrary</span><span class="p">(</span> <span class="n">Core</span><span class="p">.</span><span class="n">NATIVE_LIBRARY_NAME</span> <span class="p">);</span>
+      <span class="n">Mat</span> <span class="n">mat</span> <span class="o">=</span> <span class="n">Mat</span><span class="p">.</span><span class="n">eye</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="struct_CvType.html#doxid-d5-dea-struct-cv-type"><span class="std std-ref">CvType</span></a><span></span><span class="p">.</span><span class="n">CV_8UC1</span> <span class="p">);</span>
+      <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span> <span class="s">&quot;mat = &quot;</span> <span class="o">+</span> <span class="n">mat</span><span class="p">.</span><span class="n">dump</span><span class="p">()</span> <span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>When you run the code you should see 3x3 identity matrix as output.</p>
+<img alt="_images/11-the-code.png" src="_images/11-the-code.png" />
+<p>That is it, whenever you start a new project just add the OpenCV user library that you have defined to your project and you are good to go. Enjoy your powerful, less painful development environment :)</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_linux_eclipse.html" title="Using OpenCV with Eclipse (plugin CDT)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_android_ocl_intro.html" title="Use OpenCL in Android camera preview based CV application"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_introduction.html" >Introduction to OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

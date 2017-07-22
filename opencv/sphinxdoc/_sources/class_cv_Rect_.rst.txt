@@ -1,0 +1,220 @@
+.. index:: pair: class; cv::Rect_
+.. _doxid-d6/db0/classcv_1_1_rect__:
+
+template class cv::Rect\_
+=========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Template class for 2D rectangles. :ref:`More...<details-d6/db0/classcv_1_1_rect__>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <types.hpp>
+	
+	template <typename _Tp>
+	class Rect_
+	{
+	public:
+		// typedefs
+	
+		typedef _Tp :target:`value_type<doxid-d6/db0/classcv_1_1_rect___1a4cd2a47bea4cdc776e623625827a1601>`;
+
+		// fields
+	
+		_Tp :target:`height<doxid-d6/db0/classcv_1_1_rect___1a6fed06513cedd76652389e38c7b1222e>`;
+		_Tp :target:`width<doxid-d6/db0/classcv_1_1_rect___1a6c16a3bce912faa4fe5be42d7f1b53fe>`;
+		_Tp :target:`x<doxid-d6/db0/classcv_1_1_rect___1a2cadfdc3b4b7dbf8085622b27e044572>`;
+		_Tp :target:`y<doxid-d6/db0/classcv_1_1_rect___1a6a4860e984df1752623b6ce2a8bde73a>`;
+
+		// construction
+	
+		:ref:`Rect_<doxid-d6/db0/classcv_1_1_rect___1afb53dd5c7f9a57ecb3d50d62d2d6dd14>`();
+	
+		:target:`Rect_<doxid-d6/db0/classcv_1_1_rect___1a5a41149f4b012b9f323b5913454375a1>`(
+			_Tp _x,
+			_Tp _y,
+			_Tp _width,
+			_Tp _height
+			);
+	
+		:target:`Rect_<doxid-d6/db0/classcv_1_1_rect___1a65947237f63dd8349884e0230835cf13>`(const Rect_& r);
+	
+		:target:`Rect_<doxid-d6/db0/classcv_1_1_rect___1ad03e77a67595ae76f241ac0a92b11bd3>`(
+			const :ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>& org,
+			const :ref:`Size_<doxid-dd/da0/classcv_1_1_size__>`<_Tp>& sz
+			);
+	
+		:target:`Rect_<doxid-d6/db0/classcv_1_1_rect___1a388c33991cecd4942fe24a0cf32a4ad4>`(
+			const :ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>& pt1,
+			const :ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>& pt2
+			);
+
+		// methods
+	
+		_Tp
+		:ref:`area<doxid-d6/db0/classcv_1_1_rect___1a0dba3ba97160894da4b8c8b4d8712c8e>`() const;
+	
+		:ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>
+		:ref:`br<doxid-d6/db0/classcv_1_1_rect___1a722700903985ca4152e98478d0edb64e>`() const;
+	
+		bool
+		:ref:`contains<doxid-d6/db0/classcv_1_1_rect___1a367d5be1a40cc9d423f765ebf2721ee8>`(const :ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>& pt) const;
+	
+		template <typename _Tp2>
+		:ref:`operator Rect_< _Tp2 ><doxid-d6/db0/classcv_1_1_rect___1aede48baa3604b77b25b7cf05c070868f>`() const;
+	
+		Rect_&
+		:target:`operator=<doxid-d6/db0/classcv_1_1_rect___1ab9b239b3562b94f07e46551d05af97c6>`(const Rect_& r);
+	
+		:ref:`Size_<doxid-dd/da0/classcv_1_1_size__>`<_Tp>
+		:ref:`size<doxid-d6/db0/classcv_1_1_rect___1ab0c92d80e25e22be48c0110c5200da1e>`() const;
+	
+		:ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>
+		:ref:`tl<doxid-d6/db0/classcv_1_1_rect___1a20dadc5ad7d91a438a4418521760b287>`() const;
+	};
+.. _details-d6/db0/classcv_1_1_rect__:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Template class for 2D rectangles.
+
+described by the following parameters:
+
+* Coordinates of the top-left corner. This is a default interpretation of :ref:`Rect\_::x <doxid-d6/db0/classcv_1_1_rect___1a2cadfdc3b4b7dbf8085622b27e044572>` and :ref:`Rect\_::y <doxid-d6/db0/classcv_1_1_rect___1a6a4860e984df1752623b6ce2a8bde73a>` in OpenCV. Though, in your algorithms you may count x and y from the bottom-left corner.
+
+* Rectangle width and height.
+
+OpenCV typically assumes that the top and left boundary of the rectangle are inclusive, while the right and bottom boundaries are not. For example, the method :ref:`Rect\_::contains <doxid-d6/db0/classcv_1_1_rect___1a367d5be1a40cc9d423f765ebf2721ee8>` returns true if
+
+.. math::
+
+	x \leq pt.x < x+width, y \leq pt.y < y+height
+
+Virtually every loop over an image ROI in OpenCV (where ROI is specified by :ref:`Rect\_ <doxid-d6/db0/classcv_1_1_rect__>` <int> ) is implemented as:
+
+.. ref-code-block:: cpp
+
+	for(int y = roi.y; y < roi.y + roi.height; y++)
+	    for(int x = roi.x; x < roi.x + roi.width; x++)
+	    {
+	        // ...
+	    }
+
+In addition to the class members, the following operations on rectangles are implemented:
+
+* :math:`\texttt{rect} = \texttt{rect} \pm \texttt{point}` (shifting a rectangle by a certain offset)
+
+* :math:`\texttt{rect} = \texttt{rect} \pm \texttt{size}` (expanding or shrinking a rectangle by a certain amount)
+
+* rect += point, rect -= point, rect += size, rect -= size (augmenting operations)
+
+* rect = rect1 & rect2 (rectangle intersection)
+
+* rect = rect1 \| rect2 (minimum area rectangle containing rect1 and rect2 )
+
+* rect &= rect1, rect \|= rect1 (and the corresponding augmenting operations)
+
+* rect == rect1, rect != rect1 (rectangle comparison)
+
+This is an example how the partial ordering on rectangles can be established (rect1 :math:`\subseteq` rect2):
+
+.. ref-code-block:: cpp
+
+	template<typename _Tp> inline bool
+	operator <= (const Rect_<_Tp>& r1, const Rect_<_Tp>& r2)
+	{
+	    return (r1 & r2) == r1;
+	}
+
+For your convenience, the :ref:`Rect\_ <doxid-d6/db0/classcv_1_1_rect__>` <> alias is available: :ref:`cv::Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`
+
+Construction
+------------
+
+.. index:: pair: function; Rect_
+.. _doxid-d6/db0/classcv_1_1_rect___1afb53dd5c7f9a57ecb3d50d62d2d6dd14:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Rect_()
+
+various constructors
+
+Methods
+-------
+
+.. index:: pair: function; area
+.. _doxid-d6/db0/classcv_1_1_rect___1a0dba3ba97160894da4b8c8b4d8712c8e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	_Tp
+	area() const
+
+area (width\*height) of the rectangle
+
+.. index:: pair: function; br
+.. _doxid-d6/db0/classcv_1_1_rect___1a722700903985ca4152e98478d0edb64e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>
+	br() const
+
+the bottom-right corner
+
+.. index:: pair: function; contains
+.. _doxid-d6/db0/classcv_1_1_rect___1a367d5be1a40cc9d423f765ebf2721ee8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	contains(const :ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>& pt) const
+
+checks whether the rectangle contains the point
+
+.. index:: pair: function; operator Rect_< _Tp2 >
+.. _doxid-d6/db0/classcv_1_1_rect___1aede48baa3604b77b25b7cf05c070868f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename _Tp2>
+	operator Rect_< _Tp2 >() const
+
+conversion to another data type
+
+.. index:: pair: function; size
+.. _doxid-d6/db0/classcv_1_1_rect___1ab0c92d80e25e22be48c0110c5200da1e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Size_<doxid-dd/da0/classcv_1_1_size__>`<_Tp>
+	size() const
+
+size (width, height) of the rectangle
+
+.. index:: pair: function; tl
+.. _doxid-d6/db0/classcv_1_1_rect___1a20dadc5ad7d91a438a4418521760b287:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Point_<doxid-d9/d87/classcv_1_1_point__>`<_Tp>
+	tl() const
+
+the top-left corner
+

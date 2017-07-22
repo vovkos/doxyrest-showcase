@@ -1,0 +1,114 @@
+.. index:: pair: class; Poco::XML::DTDHandler
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_t_d_handler:
+
+class Poco::XML::DTDHandler
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+If a SAX application needs information about notations and unparsed entities, then the application implements this interface and registers an instance with the SAX parser using the parser's setDTDHandler method. :ref:`More...<details-class_poco_1_1_x_m_l_1_1_d_t_d_handler>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <DTDHandler.h>
+	
+	class DTDHandler
+	{
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`notationDecl<doxid-class_poco_1_1_x_m_l_1_1_d_t_d_handler_1a5b8eef9f1804c4e0c7ebeacde1dd2829>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& name,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`* publicId,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`* systemId
+			) = 0;
+	
+		virtual
+		void
+		:ref:`unparsedEntityDecl<doxid-class_poco_1_1_x_m_l_1_1_d_t_d_handler_1ad4fec1f7cf80209f6dc93386009aa171>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& name,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`* publicId,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& systemId,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& notationName
+			) = 0;
+	};
+
+	// direct descendants
+
+	class :ref:`DefaultHandler<doxid-class_poco_1_1_x_m_l_1_1_default_handler>`;
+	class :ref:`DOMBuilder<doxid-class_poco_1_1_x_m_l_1_1_d_o_m_builder>`;
+	class :ref:`XMLFilterImpl<doxid-class_poco_1_1_x_m_l_1_1_x_m_l_filter_impl>`;
+	class :ref:`XMLWriter<doxid-class_poco_1_1_x_m_l_1_1_x_m_l_writer>`;
+.. _details-class_poco_1_1_x_m_l_1_1_d_t_d_handler:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+If a SAX application needs information about notations and unparsed entities, then the application implements this interface and registers an instance with the SAX parser using the parser's setDTDHandler method.
+
+The parser uses the instance to report notation and unparsed entity declarations to the application.
+
+Note that this interface includes only those DTD events that the :ref:`XML <doxid-namespace_poco_1_1_x_m_l>` recommendation requires processors to report: notation and unparsed entity declarations.
+
+The SAX parser may report these events in any order, regardless of the order in which the notations and unparsed entities were declared; however, all DTD events must be reported after the document handler's startDocument event, and before the first startElement event. (If the :ref:`LexicalHandler <doxid-class_poco_1_1_x_m_l_1_1_lexical_handler>` is used, these events must also be reported before the endDTD event.)
+
+It is up to the application to store the information for future use (perhaps in a hash table or object tree). If the application encounters attributes of type "NOTATION", "ENTITY", or "ENTITIES", it can use the information that it obtained through this interface to find the entity and/or notation corresponding with the attribute value.
+
+Methods
+-------
+
+.. index:: pair: function; notationDecl
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_t_d_handler_1a5b8eef9f1804c4e0c7ebeacde1dd2829:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	notationDecl(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& name,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`* publicId,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`* systemId
+		) = 0
+
+Receive notification of a notation declaration event.
+
+It is up to the application to record the notation for later reference, if necessary; notations may appear as attribute values and in unparsed entity declarations, and are sometime used with processing instruction target names.
+
+At least one of publicId and systemId must be non-null. If a system identifier is present, and it is a URL, the SAX parser must resolve it fully before passing it to the application through this event.
+
+There is no guarantee that the notation declaration will be reported before any unparsed entities that use it.
+
+Note that publicId and systemId maybe null, therefore we pass a pointer rather than a reference.
+
+.. index:: pair: function; unparsedEntityDecl
+.. _doxid-class_poco_1_1_x_m_l_1_1_d_t_d_handler_1ad4fec1f7cf80209f6dc93386009aa171:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	unparsedEntityDecl(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& name,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`* publicId,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& systemId,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`XMLString<doxid-namespace_poco_1_1_x_m_l_1a288dd5005eea5f995c0169e0688593ae>`& notationName
+		) = 0
+
+Receive notification of an unparsed entity declaration event.
+
+Note that the notation name corresponds to a notation reported by the notationDecl event. It is up to the application to record the entity for later reference, if necessary; unparsed entities may appear as attribute values.
+
+If the system identifier is a URL, the parser must resolve it fully before passing it to the application.
+
+Note that publicId maybe null, therefore we pass a pointer rather than a reference.
+

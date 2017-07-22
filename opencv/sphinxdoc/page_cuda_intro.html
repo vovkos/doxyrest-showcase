@@ -1,0 +1,122 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CUDA Module Introduction &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Color conversions" href="page_imgproc_color_conversions.html" />
+    <link rel="prev" title="Bibliography" href="page_citelist.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_imgproc_color_conversions.html" title="Color conversions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_citelist.html" title="Bibliography"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_citelist.html"
+                        title="previous chapter">Bibliography</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_imgproc_color_conversions.html"
+                        title="next chapter">Color conversions</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cuda-module-introduction">
+<span id="doxid-d2-dbc-cuda-intro"></span><span id="index-0"></span><h1>CUDA Module Introduction</h1>
+<p class="rubric">General Information</p>
+<p>The OpenCV CUDA module is a set of classes and functions to utilize CUDA computational capabilities. It is implemented using NVIDIA* CUDA* Runtime API and supports only NVIDIA GPUs. The OpenCV CUDA module includes utility functions, low-level vision primitives, and high-level algorithms. The utility functions and low-level primitives provide a powerful infrastructure for developing fast vision algorithms taking advantage of CUDA whereas the high-level functionality includes some state-of-the-art algorithms (such as stereo correspondence, face and people detectors, and others) ready to be used by the application developers.</p>
+<p>The CUDA module is designed as a host-level API. This means that if you have pre-compiled OpenCV CUDA binaries, you are not required to have the CUDA Toolkit installed or write any extra code to make use of the CUDA.</p>
+<p>The OpenCV CUDA module is designed for ease of use and does not require any knowledge of CUDA. Though, such a knowledge will certainly be useful to handle non-trivial cases or achieve the highest performance. It is helpful to understand the cost of various operations, what the GPU does, what the preferred data formats are, and so on. The CUDA module is an effective instrument for quick implementation of CUDA-accelerated computer vision algorithms. However, if your algorithm involves many simple operations, then, for the best possible performance, you may still need to write your own kernels to avoid extra write and read operations on the intermediate results.</p>
+<p>To enable CUDA support, configure OpenCV using CMake with WITH_CUDA=ON . When the flag is set and if CUDA is installed, the full-featured OpenCV CUDA module is built. Otherwise, the module is still built but at runtime all functions from the module throw Exception with CV_GpuNotSupported error code, except for <a class="reference internal" href="group_cudacore_init.html#doxid-d8-d40-group-cudacore-init-1gaaa93892f9189163e5d53790b4b1e88db"><span class="std std-ref">cuda::getCudaEnabledDeviceCount()</span></a>. The latter function returns zero GPU count in this case. Building OpenCV without CUDA support does not perform device code compilation, so it does not require the CUDA Toolkit installed. Therefore, using the <a class="reference internal" href="group_cudacore_init.html#doxid-d8-d40-group-cudacore-init-1gaaa93892f9189163e5d53790b4b1e88db"><span class="std std-ref">cuda::getCudaEnabledDeviceCount()</span></a> function, you can implement a high-level algorithm that will detect GPU presence at runtime and choose an appropriate implementation (CPU or GPU) accordingly.</p>
+<p class="rubric">Compilation for Different NVIDIA* Platforms</p>
+<p>NVIDIA* compiler enables generating binary code (cubin and fatbin) and intermediate code (PTX). Binary code often implies a specific GPU architecture and generation, so the compatibility with other GPUs is not guaranteed. PTX is targeted for a virtual platform that is defined entirely by the set of capabilities or features. Depending on the selected virtual platform, some of the instructions are emulated or disabled, even if the real hardware supports all the features.</p>
+<p>At the first call, the PTX code is compiled to binary code for the particular GPU using a JIT compiler. When the target GPU has a compute capability (CC) lower than the PTX code, JIT fails. By default, the OpenCV CUDA module includes:</p>
+<ul class="simple">
+<li>Binaries for compute capabilities 1.3 and 2.0 (controlled by CUDA_ARCH_BIN in CMake)</li>
+<li>PTX code for compute capabilities 1.1 and 1.3 (controlled by CUDA_ARCH_PTX in CMake)</li>
+</ul>
+<p>This means that for devices with CC 1.3 and 2.0 binary images are ready to run. For all newer platforms, the PTX code for 1.3 is JIT’ed to a binary image. For devices with CC 1.1 and 1.2, the PTX for 1.1 is JIT’ed. For devices with CC 1.0, no code is available and the functions throw Exception. For platforms where JIT compilation is performed first, the run is slow.</p>
+<p>On a GPU with CC 1.0, you can still compile the CUDA module and most of the functions will run flawlessly. To achieve this, add “1.0” to the list of binaries, for example, CUDA_ARCH_BIN=”1.0 1.3 2.0” . The functions that cannot be run on CC 1.0 GPUs throw an exception.</p>
+<p>You can always determine at runtime whether the OpenCV GPU-built binaries (or PTX code) are compatible with your GPU. The function cuda::DeviceInfo::isCompatible returns the compatibility status (true/false).</p>
+<p class="rubric">Utilizing Multiple GPUs</p>
+<p>In the current version, each of the OpenCV CUDA algorithms can use only a single GPU. So, to utilize multiple GPUs, you have to manually distribute the work between GPUs. Switching active device can be done using <a class="reference internal" href="group_cudacore_init.html#doxid-d8-d40-group-cudacore-init-1gaefa34186b185de47851836dba537828b"><span class="std std-ref">cuda::setDevice()</span></a> function. For more details please read Cuda C Programming Guide.</p>
+<p>While developing algorithms for multiple GPUs, note a data passing overhead. For primitive functions and small images, it can be significant, which may eliminate all the advantages of having multiple GPUs. But for high-level algorithms, consider using multi-GPU acceleration. For example, the Stereo Block Matching algorithm has been successfully parallelized using the following algorithm:</p>
+<ol class="arabic simple">
+<li>Split each image of the stereo pair into two horizontal overlapping stripes.</li>
+<li>Process each pair of stripes (from the left and right images) on a separate Fermi* GPU.</li>
+<li>Merge the results into a single disparity map.</li>
+</ol>
+<p>With this algorithm, a dual GPU gave a 180% performance increase comparing to the single Fermi GPU. For a source code example, see <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/gpu/">https://github.com/opencv/opencv/tree/master/samples/gpu/</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_imgproc_color_conversions.html" title="Color conversions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_citelist.html" title="Bibliography"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,477 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>File Input and Output using XML and YAML files &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to scan images, lookup tables and time measurement with OpenCV" href="page_tutorial_how_to_scan_images.html" />
+    <link rel="prev" title="Discrete Fourier Transform" href="page_tutorial_discrete_fourier_transform.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_scan_images.html" title="How to scan images, lookup tables and time measurement with OpenCV"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_discrete_fourier_transform.html" title="Discrete Fourier Transform"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" accesskey="U">The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_discrete_fourier_transform.html"
+                        title="previous chapter">Discrete Fourier Transform</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_how_to_scan_images.html"
+                        title="next chapter">How to scan images, lookup tables and time measurement with OpenCV</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="file-input-and-output-using-xml-and-yaml-files">
+<span id="doxid-dd-d74-tutorial-file-input-output-with-xml-yml"></span><span id="index-0"></span><h1>File Input and Output using XML and YAML files</h1>
+<p class="rubric">Goal</p>
+<p>You’ll find answers for the following questions:</p>
+<ul class="simple">
+<li>How to print and read text entries to a file and OpenCV using YAML or XML files?</li>
+<li>How to do the same for OpenCV data structures?</li>
+<li>How to do this for your data structures?</li>
+<li>Usage of OpenCV data structures such as <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">cv::FileStorage</span></a>, <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">cv::FileNode</span></a> or <a class="reference internal" href="class_cv_FileNodeIterator.html#doxid-d8-d08-classcv-1-1-file-node-iterator"><span class="std std-ref">cv::FileNodeIterator</span></a>.</li>
+</ul>
+<p class="rubric">Source code</p>
+<p>You can <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/file_input_output/file_input_output.cpp">download this from here</a> or find it in the <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/core/file_input_output/file_input_output.cpp</span></code> of the OpenCV source code library.</p>
+<p>Here’s a sample code of how to achieve all the stuff enumerated at the goal list.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">(</span><span class="kt">char</span><span class="o">**</span> <span class="n">av</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="n">av</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; shows the usage of the OpenCV serialization functionality.&quot;</span>         <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;usage: &quot;</span>                                                                      <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span>  <span class="n">av</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; outputfile.yml.gz&quot;</span>                                                 <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;The output file may be either XML (xml) or YAML (yml/yaml). You can even compress it by &quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;specifying this in its extension like xml.gz yaml.gz etc... &quot;</span>                  <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;With FileStorage you can serialize objects in OpenCV by using the &lt;&lt; and &gt;&gt; operators&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;For example: - create a class and have it serialized&quot;</span>                         <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;             - use it to read and write matrices.&quot;</span>                            <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="n">MyData</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">MyData</span><span class="p">()</span> <span class="o">:</span> <span class="n">A</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">id</span><span class="p">()</span>
+    <span class="p">{}</span>
+    <span class="k">explicit</span> <span class="n">MyData</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="n">A</span><span class="p">(</span><span class="mi">97</span><span class="p">),</span> <span class="n">X</span><span class="p">(</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga677b89fae9308b340ddaebf0dba8455f"><span class="std std-ref">CV_PI</span></a><span></span><span class="p">),</span> <span class="n">id</span><span class="p">(</span><span class="s">&quot;mydata1234&quot;</span><span class="p">)</span> <span class="c1">// explicit to avoid implicit conversion</span>
+    <span class="p">{}</span>
+    <span class="kt">void</span> <span class="n">write</span><span class="p">(</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a><span></span><span class="o">&amp;</span> <span class="n">fs</span><span class="p">)</span> <span class="k">const</span>                        <span class="c1">//Write serialization for this class</span>
+    <span class="p">{</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;{&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;A&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">A</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;X&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">X</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;id&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">id</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;}&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">read</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">FileNode</span></a><span></span><span class="o">&amp;</span> <span class="n">node</span><span class="p">)</span>                          <span class="c1">//Read serialization for this class</span>
+    <span class="p">{</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">node</span><span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">];</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">node</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">];</span>
+        <span class="n">id</span> <span class="o">=</span> <span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="n">node</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="k">public</span><span class="o">:</span>   <span class="c1">// Data Members</span>
+    <span class="kt">int</span> <span class="n">A</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">X</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">id</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//These write and read functions must be defined for the serialization in FileStorage to work</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="n">write</span><span class="p">(</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a><span></span><span class="o">&amp;</span> <span class="n">fs</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">fs</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="n">read</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">FileNode</span></a><span></span><span class="o">&amp;</span> <span class="n">node</span><span class="p">,</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">default_value</span> <span class="o">=</span> <span class="n">MyData</span><span class="p">()){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node-1a82d59aab4765da6140c238c54aadfa92"><span class="std std-ref">empty</span></a><span></span><span class="p">())</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">default_value</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">x</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// This function will print our custom class to the console</span>
+<span class="k">static</span> <span class="n">ostream</span><span class="o">&amp;</span> <a class="reference internal" href="group_core_hal_intrin.html#doxid-df-d91-group-core-hal-intrin-1gacef821c50106276406bf4bc1cd7a059a"><span class="std std-ref">operator&lt;&lt;</span></a><span></span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">out</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;{ id = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;, &quot;</span><span class="p">;</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;X = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">.</span><span class="n">X</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;, &quot;</span><span class="p">;</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;A = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">.</span><span class="n">A</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;}&quot;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">ac</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">av</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ac</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">(</span><span class="n">av</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">av</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">{</span> <span class="c1">//write</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">R</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat-1a992daefd1a256fbd40423a2cf77f42a1"><span class="std std-ref">Mat_&lt;uchar&gt;::eye</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">T</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat-1ab68de1358f5aedd6028269f77a9e841b"><span class="std std-ref">Mat_&lt;double&gt;::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">MyData</span> <span class="nf">m</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a><span></span> <span class="n">fs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <a class="reference internal" href="enum_cv_FileStorage_Mode.html#doxid-d9-df9-classcv-1-1-file-storage-1a973e41cb75ef6230412a567723b7482da747a241cefee7b8af34c3d804c864ad6"><span class="std std-ref">FileStorage::WRITE</span></a><span></span><span class="p">);</span>
+
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;iterationNr&quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">100</span><span class="p">;</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;strings&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[&quot;</span><span class="p">;</span>                              <span class="c1">// text - string sequence</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;image1.jpg&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Awesomeness&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;../data/baboon.jpg&quot;</span><span class="p">;</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;]&quot;</span><span class="p">;</span>                                           <span class="c1">// close sequence</span>
+
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Mapping&quot;</span><span class="p">;</span>                              <span class="c1">// text - mapping</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;{&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;One&quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span>        <span class="s">&quot;Two&quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;}&quot;</span><span class="p">;</span>
+
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;R&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">R</span><span class="p">;</span>                                      <span class="c1">// cv::Mat</span>
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;T&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">T</span><span class="p">;</span>
+
+        <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;MyData&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">;</span>                                <span class="c1">// your own data structures</span>
+
+        <span class="n">fs</span><span class="p">.</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1ad23d5415a06fb4bc97bfa034589b376e"><span class="std std-ref">release</span></a><span></span><span class="p">();</span>                                       <span class="c1">// explicit close</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Write Done.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="p">{</span><span class="c1">//read</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Reading: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">FileStorage</span></a><span></span> <span class="n">fs</span><span class="p">;</span>
+        <span class="n">fs</span><span class="p">.</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1a14c2c18dc2e29999d03d52a0c24bd91c"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <a class="reference internal" href="enum_cv_FileStorage_Mode.html#doxid-d9-df9-classcv-1-1-file-storage-1a973e41cb75ef6230412a567723b7482daa0dcc459c4d100c35ccfa9a643827bed"><span class="std std-ref">FileStorage::READ</span></a><span></span><span class="p">);</span>
+
+        <span class="kt">int</span> <span class="n">itNr</span><span class="p">;</span>
+        <span class="c1">//fs[&quot;iterationNr&quot;] &gt;&gt; itNr;</span>
+        <span class="n">itNr</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">fs</span><span class="p">[</span><span class="s">&quot;iterationNr&quot;</span><span class="p">];</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">itNr</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fs</span><span class="p">.</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1aa952c31f4e632595cd5ac107913f4fd1"><span class="std std-ref">isOpened</span></a><span></span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Failed to open &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">help</span><span class="p">(</span><span class="n">av</span><span class="p">);</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">FileNode</span></a><span></span> <span class="n">n</span> <span class="o">=</span> <span class="n">fs</span><span class="p">[</span><span class="s">&quot;strings&quot;</span><span class="p">];</span>                         <span class="c1">// Read string sequence - Get node</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="p">.</span><a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node-1ad0fd448e25719a94320ebe574b87f997"><span class="std std-ref">type</span></a><span></span><span class="p">()</span> <span class="o">!=</span> <a class="reference internal" href="enum_cv_FileNode_Type.html#doxid-dc-d21-classcv-1-1-file-node-1a8fe1d2aa050e6909b978f4df3529066eaa359c2282183738d11a665035a1a67bb"><span class="std std-ref">FileNode::SEQ</span></a><span></span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;strings is not a sequence! FAIL&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <a class="reference internal" href="class_cv_FileNodeIterator.html#doxid-d8-d08-classcv-1-1-file-node-iterator"><span class="std std-ref">FileNodeIterator</span></a><span></span> <span class="n">it</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node-1a0f299820227506079f5b9013dd8c3558"><span class="std std-ref">begin</span></a><span></span><span class="p">(),</span> <span class="n">it_end</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node-1a58b033e34726eb73f0238a1bfbe0c8e9"><span class="std std-ref">end</span></a><span></span><span class="p">();</span> <span class="c1">// Go through the node</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">it_end</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">*</span><span class="n">it</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">fs</span><span class="p">[</span><span class="s">&quot;Mapping&quot;</span><span class="p">];</span>                                <span class="c1">// Read mappings from a sequence</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Two  &quot;</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">n</span><span class="p">[</span><span class="s">&quot;Two&quot;</span><span class="p">])</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;; &quot;</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;One  &quot;</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">n</span><span class="p">[</span><span class="s">&quot;One&quot;</span><span class="p">])</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+
+        <span class="n">MyData</span> <span class="n">m</span><span class="p">;</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">R</span><span class="p">,</span> <span class="n">T</span><span class="p">;</span>
+
+        <span class="n">fs</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">R</span><span class="p">;</span>                                      <span class="c1">// Read cv::Mat</span>
+        <span class="n">fs</span><span class="p">[</span><span class="s">&quot;T&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">T</span><span class="p">;</span>
+        <span class="n">fs</span><span class="p">[</span><span class="s">&quot;MyData&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>                                 <span class="c1">// Read your own structure_</span>
+
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+            <span class="o">&lt;&lt;</span> <span class="s">&quot;R = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">R</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;T = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">T</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;MyData = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">m</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+        <span class="c1">//Show default behavior for non existing nodes</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Attempt to read NonExisting (should initialize the data structure with its default).&quot;</span><span class="p">;</span>
+        <span class="n">fs</span><span class="p">[</span><span class="s">&quot;NonExisting&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;NonExisting = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">m</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;Tip: Open up &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; with a text editor to see the serialized data.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>Here we talk only about XML and YAML file inputs. Your output (and its respective input) file may have only one of these extensions and the structure coming from this. They are two kinds of data structures you may serialize: <em>mappings</em> (like the STL map) and <em>element sequence</em> (like the STL vector). The difference between these is that in a map every element has a unique name through what you may access it. For sequences you need to go through them to query a specific item.</p>
+<ol class="arabic">
+<li><p class="first"><strong>XML/YAML File Open and Close.</strong> Before you write any content to such file you need to open it and at the end to close it. The XML/YAML data structure in OpenCV is <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">cv::FileStorage</span></a>. To specify that this structure to which file binds on your hard drive you can use either its constructor or the <em>open()</em> function of this:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="s">&quot;I.xml&quot;</span><span class="p">;</span>
+<span class="n">FileStorage</span> <span class="nf">fs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">FileStorage</span><span class="o">::</span><span class="n">WRITE</span><span class="p">);</span>
+<span class="c1">//...</span>
+<span class="n">fs</span><span class="p">.</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1a14c2c18dc2e29999d03d52a0c24bd91c"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">FileStorage</span><span class="o">::</span><span class="n">READ</span><span class="p">);</span>
+</pre>
+<p>Either one of this you use the second argument is a constant specifying the type of operations you’ll be able to on them: WRITE, READ or APPEND. The extension specified in the file name also determinates the output format that will be used. The output may be even compressed if you specify an extension such as *.xml.gz*.</p>
+<p>The file automatically closes when the <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">cv::FileStorage</span></a> objects is destroyed. However, you may explicitly call for this by using the <em>release</em> function:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">fs</span><span class="p">.</span><a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1ad23d5415a06fb4bc97bfa034589b376e"><span class="std std-ref">release</span></a><span></span><span class="p">();</span>                                       <span class="c1">// explicit close</span>
+</pre>
+</li>
+<li><p class="first"><strong>Input and Output of text and numbers.</strong> The data structure uses the same &lt;&lt; output operator that the STL library. For outputting any type of data structure we need first to specify its name. We do this by just simply printing out the name of this. For basic types you may follow this with the print of the value :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;iterationNr&quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">100</span><span class="p">;</span>
+</pre>
+<p>Reading in is a simple addressing (via the [] operator) and casting operation or a read via the &gt;&gt; operator :</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">itNr</span><span class="p">;</span>
+<span class="n">fs</span><span class="p">[</span><span class="s">&quot;iterationNr&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">itNr</span><span class="p">;</span>
+<span class="n">itNr</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">fs</span><span class="p">[</span><span class="s">&quot;iterationNr&quot;</span><span class="p">];</span>
+</pre>
+</li>
+<li><p class="first"><strong>Input/Output of OpenCV Data structures.</strong> Well these behave exactly just as the basic C++ types:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">R</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat-1a992daefd1a256fbd40423a2cf77f42a1"><span class="std std-ref">Mat_&lt;uchar &gt;::eye</span></a><span></span>  <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">T</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat-1ab68de1358f5aedd6028269f77a9e841b"><span class="std std-ref">Mat_&lt;double&gt;::zeros</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;R&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">R</span><span class="p">;</span>                                      <span class="c1">// Write cv::Mat</span>
+<span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;T&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">T</span><span class="p">;</span>
+
+<span class="n">fs</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">R</span><span class="p">;</span>                                      <span class="c1">// Read cv::Mat</span>
+<span class="n">fs</span><span class="p">[</span><span class="s">&quot;T&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">T</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first"><strong>Input/Output of vectors (arrays) and associative maps.</strong> As I mentioned beforehand, we can output maps and sequences (array, vector) too. Again we first print the name of the variable and then we have to specify if our output is either a sequence or map.</p>
+<p>For sequence before the first element print the “[” character and after the last one the “]” character:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;strings&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[&quot;</span><span class="p">;</span>                              <span class="c1">// text - string sequence</span>
+<span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;image1.jpg&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Awesomeness&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;baboon.jpg&quot;</span><span class="p">;</span>
+<span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;]&quot;</span><span class="p">;</span>                                           <span class="c1">// close sequence</span>
+</pre>
+<p>For maps the drill is the same however now we use the “{” and “}” delimiter characters:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Mapping&quot;</span><span class="p">;</span>                              <span class="c1">// text - mapping</span>
+<span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;{&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;One&quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">fs</span> <span class="o">&lt;&lt;</span>        <span class="s">&quot;Two&quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;}&quot;</span><span class="p">;</span>
+</pre>
+<p>To read from these we use the <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">cv::FileNode</span></a> and the <a class="reference internal" href="class_cv_FileNodeIterator.html#doxid-d8-d08-classcv-1-1-file-node-iterator"><span class="std std-ref">cv::FileNodeIterator</span></a> data structures. The [] operator of the <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage"><span class="std std-ref">cv::FileStorage</span></a> class returns a <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node"><span class="std std-ref">cv::FileNode</span></a> data type. If the node is sequential we can use the <a class="reference internal" href="class_cv_FileNodeIterator.html#doxid-d8-d08-classcv-1-1-file-node-iterator"><span class="std std-ref">cv::FileNodeIterator</span></a> to iterate through the items:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">FileNode</span> <span class="n">n</span> <span class="o">=</span> <span class="n">fs</span><span class="p">[</span><span class="s">&quot;strings&quot;</span><span class="p">];</span>                         <span class="c1">// Read string sequence - Get node</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">FileNode</span><span class="o">::</span><span class="n">SEQ</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;strings is not a sequence! FAIL&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">FileNodeIterator</span> <span class="n">it</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">it_end</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="c1">// Go through the node</span>
+<span class="k">for</span> <span class="p">(;</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">it_end</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">*</span><span class="n">it</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre>
+<p>For maps you can use the [] operator again to acces the given item (or the &gt;&gt; operator too):</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">n</span> <span class="o">=</span> <span class="n">fs</span><span class="p">[</span><span class="s">&quot;Mapping&quot;</span><span class="p">];</span>                                <span class="c1">// Read mappings from a sequence</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Two  &quot;</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">n</span><span class="p">[</span><span class="s">&quot;Two&quot;</span><span class="p">])</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;; &quot;</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;One  &quot;</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">n</span><span class="p">[</span><span class="s">&quot;One&quot;</span><span class="p">])</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first"><strong>Read and write your own data structures.</strong> Suppose you have a data structure such as:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">class</span> <span class="n">MyData</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+      <span class="n">MyData</span><span class="p">()</span> <span class="o">:</span> <span class="n">A</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">id</span><span class="p">()</span> <span class="p">{}</span>
+<span class="k">public</span><span class="o">:</span>   <span class="c1">// Data Members</span>
+   <span class="kt">int</span> <span class="n">A</span><span class="p">;</span>
+   <span class="kt">double</span> <span class="n">X</span><span class="p">;</span>
+   <span class="n">string</span> <span class="n">id</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<p>It’s possible to serialize this through the OpenCV I/O XML/YAML interface (just as in case of the OpenCV data structures) by adding a read and a write function inside and outside of your class. For the inside part:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1a26447446dd3fa0644684a045e16399fe"><span class="std std-ref">write</span></a><span></span><span class="p">(</span><span class="n">FileStorage</span><span class="o">&amp;</span> <span class="n">fs</span><span class="p">)</span> <span class="k">const</span>                        <span class="c1">//Write serialization for this class</span>
+<span class="p">{</span>
+  <span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;{&quot;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;A&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">A</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;X&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">X</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;id&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">id</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;}&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node-1ab24433dde37f770766481a91983e5f44"><span class="std std-ref">read</span></a><span></span><span class="p">(</span><span class="k">const</span> <span class="n">FileNode</span><span class="o">&amp;</span> <span class="n">node</span><span class="p">)</span>                          <span class="c1">//Read serialization for this class</span>
+<span class="p">{</span>
+  <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">node</span><span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">];</span>
+  <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">node</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">];</span>
+  <span class="n">id</span> <span class="o">=</span> <span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="n">node</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">];</span>
+<span class="p">}</span>
+</pre>
+<p>Then you need to add the following functions definitions outside the class:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <a class="reference internal" href="class_cv_FileStorage.html#doxid-d9-df9-classcv-1-1-file-storage-1a26447446dd3fa0644684a045e16399fe"><span class="std std-ref">write</span></a><span></span><span class="p">(</span><span class="n">FileStorage</span><span class="o">&amp;</span> <span class="n">fs</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="n">x</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">fs</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <a class="reference internal" href="class_cv_FileNode.html#doxid-dc-d21-classcv-1-1-file-node-1ab24433dde37f770766481a91983e5f44"><span class="std std-ref">read</span></a><span></span><span class="p">(</span><span class="k">const</span> <span class="n">FileNode</span><span class="o">&amp;</span> <span class="n">node</span><span class="p">,</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyData</span><span class="o">&amp;</span> <span class="n">default_value</span> <span class="o">=</span> <span class="n">MyData</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">default_value</span><span class="p">;</span>
+<span class="k">else</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>Here you can observe that in the read section we defined what happens if the user tries to read a non-existing node. In this case we just return the default initialization value, however a more verbose solution would be to return for instance a minus one value for an object ID.</p>
+<p>Once you added these four functions use the &gt;&gt; operator for write and the &lt;&lt; operator for read:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">MyData</span> <span class="nf">m</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">fs</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;MyData&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">;</span>                                <span class="c1">// your own data structures</span>
+<span class="n">fs</span><span class="p">[</span><span class="s">&quot;MyData&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>                                 <span class="c1">// Read your own structure_</span>
+</pre>
+<p>Or to try out reading a non-existing read:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">fs</span><span class="p">[</span><span class="s">&quot;NonExisting&quot;</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>   <span class="c1">// Do not add a fs &lt;&lt; &quot;NonExisting&quot; &lt;&lt; m command for this to work</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;NonExisting = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">m</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Result</p>
+<p>Well mostly we just print out the defined numbers. On the screen of your console you could see:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Write</span> <span class="n">Done</span><span class="p">.</span>
+
+<span class="nl">Reading</span><span class="p">:</span>
+<span class="mi">100</span><span class="n">image1</span><span class="p">.</span><span class="n">jpg</span>
+<span class="n">Awesomeness</span>
+<span class="n">baboon</span><span class="p">.</span><span class="n">jpg</span>
+<span class="n">Two</span>  <span class="mi">2</span><span class="p">;</span> <span class="n">One</span>  <span class="mi">1</span>
+
+
+<span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">T</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">;</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">MyData</span> <span class="o">=</span>
+<span class="p">{</span> <span class="n">id</span> <span class="o">=</span> <span class="n">mydata1234</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="mf">3.14159</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="mi">97</span><span class="p">}</span>
+
+<span class="n">Attempt</span> <span class="n">to</span> <span class="n">read</span> <span class="n">NonExisting</span> <span class="p">(</span><span class="n">should</span> <span class="n">initialize</span> <span class="n">the</span> <span class="n">data</span> <span class="n">structure</span> <span class="n">with</span> <span class="n">its</span> <span class="k">default</span><span class="p">).</span>
+<span class="n">NonExisting</span> <span class="o">=</span>
+<span class="p">{</span> <span class="n">id</span> <span class="o">=</span> <span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">A</span> <span class="o">=</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="nl">Tip</span><span class="p">:</span> <span class="n">Open</span> <span class="n">up</span> <span class="n">output</span><span class="p">.</span><span class="n">xml</span> <span class="n">with</span> <span class="n">a</span> <span class="n">text</span> <span class="n">editor</span> <span class="n">to</span> <span class="n">see</span> <span class="n">the</span> <span class="n">serialized</span> <span class="n">data</span><span class="p">.</span>
+</pre>
+<p>Nevertheless, it’s much more interesting what you may see in the output xml file:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span><span class="o">?&gt;</span>
+<span class="o">&lt;</span><span class="n">opencv_storage</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">iterationNr</span><span class="o">&gt;</span><span class="mi">100</span><span class="o">&lt;/</span><span class="n">iterationNr</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">strings</span><span class="o">&gt;</span>
+  <span class="n">image1</span><span class="p">.</span><span class="n">jpg</span> <span class="n">Awesomeness</span> <span class="n">baboon</span><span class="p">.</span><span class="n">jpg</span><span class="o">&lt;/</span><span class="n">strings</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">Mapping</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">One</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">One</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">Two</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">&lt;/</span><span class="n">Two</span><span class="o">&gt;&lt;/</span><span class="n">Mapping</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">R</span> <span class="n">type_id</span><span class="o">=</span><span class="s">&quot;opencv-matrix&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">rows</span><span class="o">&gt;</span><span class="mi">3</span><span class="o">&lt;/</span><span class="n">rows</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="mi">3</span><span class="o">&lt;/</span><span class="n">cols</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">dt</span><span class="o">&gt;</span><span class="n">u</span><span class="o">&lt;/</span><span class="n">dt</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+    <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;&lt;/</span><span class="n">R</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">T</span> <span class="n">type_id</span><span class="o">=</span><span class="s">&quot;opencv-matrix&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">rows</span><span class="o">&gt;</span><span class="mi">3</span><span class="o">&lt;/</span><span class="n">rows</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">cols</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">cols</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">dt</span><span class="o">&gt;</span><span class="n">d</span><span class="o">&lt;/</span><span class="n">dt</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+    <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span><span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;&lt;/</span><span class="n">T</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">MyData</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="mi">97</span><span class="o">&lt;/</span><span class="n">A</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">X</span><span class="o">&gt;</span><span class="mf">3.1415926535897931e+000</span><span class="o">&lt;/</span><span class="n">X</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">id</span><span class="o">&gt;</span><span class="n">mydata1234</span><span class="o">&lt;/</span><span class="n">id</span><span class="o">&gt;&lt;/</span><span class="n">MyData</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">opencv_storage</span><span class="o">&gt;</span>
+</pre>
+<p>Or the YAML file:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">%</span><span class="nl">YAML</span><span class="p">:</span><span class="mf">1.0</span>
+<span class="nl">iterationNr</span><span class="p">:</span> <span class="mi">100</span>
+<span class="nl">strings</span><span class="p">:</span>
+   <span class="o">-</span> <span class="s">&quot;image1.jpg&quot;</span>
+   <span class="o">-</span> <span class="n">Awesomeness</span>
+   <span class="o">-</span> <span class="s">&quot;baboon.jpg&quot;</span>
+<span class="nl">Mapping</span><span class="p">:</span>
+   <span class="nl">One</span><span class="p">:</span> <span class="mi">1</span>
+   <span class="nl">Two</span><span class="p">:</span> <span class="mi">2</span>
+<span class="nl">R</span><span class="p">:</span> <span class="o">!!</span><span class="n">opencv</span><span class="o">-</span><span class="n">matrix</span>
+   <span class="nl">rows</span><span class="p">:</span> <span class="mi">3</span>
+   <span class="nl">cols</span><span class="p">:</span> <span class="mi">3</span>
+   <span class="nl">dt</span><span class="p">:</span> <span class="n">u</span>
+   <span class="nl">data</span><span class="p">:</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">]</span>
+<span class="nl">T</span><span class="p">:</span> <span class="o">!!</span><span class="n">opencv</span><span class="o">-</span><span class="n">matrix</span>
+   <span class="nl">rows</span><span class="p">:</span> <span class="mi">3</span>
+   <span class="nl">cols</span><span class="p">:</span> <span class="mi">1</span>
+   <span class="nl">dt</span><span class="p">:</span> <span class="n">d</span>
+   <span class="nl">data</span><span class="p">:</span> <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span> <span class="p">]</span>
+<span class="nl">MyData</span><span class="p">:</span>
+   <span class="nl">A</span><span class="p">:</span> <span class="mi">97</span>
+   <span class="nl">X</span><span class="p">:</span> <span class="mf">3.1415926535897931e+000</span>
+   <span class="nl">id</span><span class="p">:</span> <span class="n">mydata1234</span>
+</pre>
+<p>You may observe a runtime instance of this on the <a class="reference external" href="https://www.youtube.com/watch?v=A4yqVnByMMM">YouTube here</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_scan_images.html" title="How to scan images, lookup tables and time measurement with OpenCV"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_discrete_fourier_transform.html" title="Discrete Fourier Transform"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" >The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Adding (blending) two images using OpenCV &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic Drawing" href="page_tutorial_basic_geometric_drawing.html" />
+    <link rel="prev" title="The Core Functionality (core module)" href="page_tutorial_table_of_content_core.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_basic_geometric_drawing.html" title="Basic Drawing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_core.html" title="The Core Functionality (core module)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" accesskey="U">The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_core.html"
+                        title="previous chapter">The Core Functionality (core module)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_basic_geometric_drawing.html"
+                        title="next chapter">Basic Drawing</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="adding-blending-two-images-using-opencv">
+<span id="doxid-d5-dc4-tutorial-adding-images"></span><span id="index-0"></span><h1>Adding (blending) two images using OpenCV</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn:</p>
+<ul class="simple">
+<li>what is <em>linear blending</em> and why it is useful;</li>
+<li>how to add two images using <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cv::addWeighted</span></a></li>
+</ul>
+<p class="rubric">Theory</p>
+<p>The explanation below belongs to the book <a class="reference external" href="http://szeliski.org/Book/">Computer Vision: Algorithms and Applications</a> by Richard Szeliski</p>
+<p>From our previous tutorial, we know already a bit of <em>Pixel operators</em>. An interesting dyadic (two-input) operator is the <em>linear blend operator</em> :</p>
+<div class="math notranslate nohighlight">
+\[g(x) = (1 - \alpha)f_{0}(x) + \alpha f_{1}(x)\]</div>
+<p>By varying <span class="math notranslate nohighlight">\(\alpha\)</span> from <span class="math notranslate nohighlight">\(0 \rightarrow 1\)</span> this operator can be used to perform a temporal <em>cross-dissolve</em> between two images or videos, as seen in slide shows and film productions (cool, eh?)</p>
+<p class="rubric">Source Code</p>
+<p>Download the source code from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/AddingImages/AddingImages.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">void</span> <span class="p">)</span>
+<span class="p">{</span>
+   <span class="kt">double</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span> <span class="kt">double</span> <span class="n">beta</span><span class="p">;</span> <span class="kt">double</span> <span class="n">input</span><span class="p">;</span>
+
+   <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src1</span><span class="p">,</span> <span class="n">src2</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; Simple Linear Blender &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;-----------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;* Enter alpha [0-1]: &quot;</span><span class="p">;</span>
+   <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">input</span><span class="p">;</span>
+
+   <span class="c1">// We use the alpha provided by the user if it is between 0 and 1</span>
+   <span class="k">if</span><span class="p">(</span> <span class="n">input</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">input</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">)</span>
+     <span class="p">{</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">input</span><span class="p">;</span> <span class="p">}</span>
+
+   <span class="n">src1</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="s">&quot;../data/LinuxLogo.jpg&quot;</span> <span class="p">);</span>
+   <span class="n">src2</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="s">&quot;../data/WindowsLogo.jpg&quot;</span> <span class="p">);</span>
+
+   <span class="k">if</span><span class="p">(</span> <span class="n">src1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Error loading src1&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+   <span class="k">if</span><span class="p">(</span> <span class="n">src2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Error loading src2&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+   <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span> <span class="p">);</span>
+   <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">addWeighted</span></a><span></span><span class="p">(</span> <span class="n">src1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">src2</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">dst</span><span class="p">);</span>
+
+   <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Linear Blend&quot;</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+   <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Since we are going to perform:</p>
+<div class="math notranslate nohighlight">
+\[g(x) = (1 - \alpha)f_{0}(x) + \alpha f_{1}(x)\]</div>
+<p>We need two source images (<span class="math notranslate nohighlight">\(f_{0}(x)\)</span> and <span class="math notranslate nohighlight">\(f_{1}(x)\)</span>). So, we load them in the usual way:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src1</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="s">&quot;../data/LinuxLogo.jpg&quot;</span> <span class="p">);</span>
+<span class="n">src2</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="s">&quot;../data/WindowsLogo.jpg&quot;</span> <span class="p">);</span>
+</pre>
+<p><strong>warning</strong></p>
+<p>Since we are <em>adding</em> <em>src1</em> and <em>src2</em>, they both have to be of the same size (width and height) and type.</p>
+</li>
+<li><p class="first">Now we need to generate the <code class="docutils literal notranslate"><span class="pre">g(x)</span></code> image. For this, the function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cv::addWeighted</span></a> comes quite handy:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">beta</span> <span class="o">=</span> <span class="p">(</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span> <span class="p">);</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">addWeighted</span></a><span></span><span class="p">(</span> <span class="n">src1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">src2</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">dst</span><span class="p">);</span>
+</pre>
+<p>since <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cv::addWeighted</span></a> produces:</p>
+<div class="math notranslate nohighlight">
+\[dst = \alpha \cdot src1 + \beta \cdot src2 + \gamma\]</div>
+<p>In this case, <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is the argument <span class="math notranslate nohighlight">\(0.0\)</span> in the code above.</p>
+</li>
+<li><p class="first">Create windows, show the images and wait for the user to end the program.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Linear Blend&quot;</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre>
+<p class="rubric">Result</p>
+</li>
+</ol>
+<img alt="_images/Adding_Images_Tutorial_Result_Big.jpg" src="_images/Adding_Images_Tutorial_Result_Big.jpg" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_basic_geometric_drawing.html" title="Basic Drawing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_core.html" title="The Core Functionality (core module)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" >The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

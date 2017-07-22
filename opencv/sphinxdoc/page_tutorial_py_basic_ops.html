@@ -1,0 +1,241 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Basic Operations on Images &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Performance Measurement and Improvement Techniques" href="page_tutorial_py_optimization.html" />
+    <link rel="prev" title="Arithmetic Operations on Images" href="page_tutorial_py_image_arithmetics.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_optimization.html" title="Performance Measurement and Improvement Techniques"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_image_arithmetics.html" title="Arithmetic Operations on Images"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_core.html" accesskey="U">Core Operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_image_arithmetics.html"
+                        title="previous chapter">Arithmetic Operations on Images</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_optimization.html"
+                        title="next chapter">Performance Measurement and Improvement Techniques</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="basic-operations-on-images">
+<span id="doxid-d3-df2-tutorial-py-basic-ops"></span><span id="index-0"></span><h1>Basic Operations on Images</h1>
+<p class="rubric">Goal</p>
+<p>Learn to:</p>
+<ul class="simple">
+<li>Access pixel values and modify them</li>
+<li>Access image properties</li>
+<li>Setting Region of Interest (ROI)</li>
+<li>Splitting and Merging images</li>
+</ul>
+<p>Almost all the operations in this section is mainly related to Numpy rather than OpenCV. A good knowledge of Numpy is required to write better optimized code with OpenCV.</p>
+<p>*( Examples will be shown in Python terminal since most of them are just single line codes )*</p>
+<p class="rubric">Accessing and Modifying pixel values</p>
+<p>Let’s load a color image first:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">import</span> <span class="n">cv2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;messi5.jpg&#39;</span><span class="p">)</span>
+</pre>
+<p>You can access a pixel value by its row and column coordinates. For BGR image, it returns an array of Blue, Green, Red values. For grayscale image, just corresponding intensity is returned.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">px</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">px</span> <span class="p">)</span>
+<span class="p">[</span><span class="mi">157</span> <span class="mi">166</span> <span class="mi">200</span><span class="p">]</span>
+
+<span class="cp"># accessing only blue pixel</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">blue</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">blue</span> <span class="p">)</span>
+<span class="mi">157</span>
+</pre>
+<p>You can modify the pixel values the same way.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">img</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">img</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">]</span> <span class="p">)</span>
+<span class="p">[</span><span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span><span class="p">]</span>
+</pre>
+<p><strong>warning</strong></p>
+<p>Numpy is a optimized library for fast array calculations. So simply accessing each and every pixel values and modifying it will be very slow and it is discouraged.</p>
+<p>Above mentioned method is normally used for selecting a region of array, say first 5 rows and last 3 columns like that. For individual pixel access, Numpy array methods, array.item() and array.itemset() is considered to be better. But it always returns a scalar. So if you want to access all B,G,R values, you need to call array.item() separately for all.</p>
+<p>Better pixel accessing and editing method :</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp"># accessing RED value</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img</span><span class="p">.</span><span class="n">item</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="mi">59</span>
+
+<span class="cp"># modifying RED value</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img</span><span class="p">.</span><span class="n">itemset</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">100</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img</span><span class="p">.</span><span class="n">item</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="mi">100</span>
+</pre>
+<p class="rubric">Accessing Image Properties</p>
+<p>Image properties include number of rows, columns and channels, type of image data, number of pixels etc.</p>
+<p>Shape of image is accessed by img.shape. It returns a tuple of number of rows, columns and channels (if image is color):</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span> <span class="p">)</span>
+<span class="p">(</span><span class="mi">342</span><span class="p">,</span> <span class="mi">548</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre>
+<p>If image is grayscale, tuple returned contains only number of rows and columns. So it is a good method to check if loaded image is grayscale or color image.</p>
+<p>Total number of pixels is accessed by <code class="docutils literal notranslate"><span class="pre">img.size</span></code> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">img</span><span class="p">.</span><span class="n">size</span> <span class="p">)</span>
+<span class="mi">562248</span>
+</pre>
+<p>Image datatype is obtained by <cite>img.dtype</cite>:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">img</span><span class="p">.</span><span class="n">dtype</span> <span class="p">)</span>
+<span class="n">uint8</span>
+</pre>
+<p>img.dtype is very important while debugging because a large number of errors in OpenCV-Python code is caused by invalid datatype.</p>
+<p class="rubric">Image ROI</p>
+<p>Sometimes, you will have to play with certain region of images. For eye detection in images, first face detection is done all over the image and when face is obtained, we select the face region alone and search for eyes inside it instead of searching whole image. It improves accuracy (because eyes are always on faces :D ) and performance (because we search for a small area)</p>
+<p>ROI is again obtained using Numpy indexing. Here I am selecting the ball and copying it to another region in the image:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">ball</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">280</span><span class="o">:</span><span class="mi">340</span><span class="p">,</span> <span class="mi">330</span><span class="o">:</span><span class="mi">390</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img</span><span class="p">[</span><span class="mi">273</span><span class="o">:</span><span class="mi">333</span><span class="p">,</span> <span class="mi">100</span><span class="o">:</span><span class="mi">160</span><span class="p">]</span> <span class="o">=</span> <span class="n">ball</span>
+</pre>
+<p>Check the results below:</p>
+<img alt="image" src="_images/roi.jpg" />
+<p class="rubric">Splitting and Merging Image Channels</p>
+<p>Sometimes you will need to work separately on B,G,R channels of image. Then you need to split the BGR images to single planes. Or another time, you may need to join these individual channels to BGR image. You can do it simply by:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">merge</span><span class="p">((</span><span class="n">b</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">r</span><span class="p">))</span>
+</pre>
+<p>Or</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="o">:</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+</pre>
+<p>Suppose, you want to make all the red pixels to zero, you need not split like this and put it equal to zero. You can simply use Numpy indexing, and that is more faster.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">img</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</pre>
+<p><strong>warning</strong></p>
+<p><a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cv2.split()</span></a> is a costly operation (in terms of time). So do it only if you need it. Otherwise go for Numpy indexing.</p>
+<p class="rubric">Making Borders for Images (Padding)</p>
+<p>If you want to create a border around the image, something like a photo frame, you can use <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga2ac1049c2c3dd25c2b41bffe17658a36"><span class="std std-ref">cv2.copyMakeBorder()</span></a> function. But it has more applications for convolution operation, zero padding etc. This function takes following arguments:</p>
+<ul class="simple">
+<li><strong>src</strong> - input image</li>
+<li><strong>top</strong>, <strong>bottom</strong>, <strong>left</strong>, <strong>right</strong> - border width in number of pixels in corresponding directions</li>
+<li><strong>borderType</strong> - Flag defining what kind of border to be added. It can be following types:<ul>
+<li><strong>cv2.BORDER_CONSTANT</strong> - Adds a constant colored border. The value should be given as next argument.<ul>
+<li><strong>cv2.BORDER_REFLECT</strong> - Border will be mirror reflection of the border elements, like this : <em>fedcba|abcdefgh|hgfedcb</em></li>
+<li><strong>cv2.BORDER_REFLECT_101</strong> or <strong>cv2.BORDER_DEFAULT</strong> - Same as above, but with a slight change, like this : <em>gfedcb|abcdefgh|gfedcba</em></li>
+<li><strong>cv2.BORDER_REPLICATE</strong> - Last element is replicated throughout, like this: <em>aaaaaa|abcdefgh|hhhhhhh</em></li>
+<li><strong>cv2.BORDER_WRAP</strong> - Can’t explain, it will look like this : <em>cdefgh|abcdefgh|abcdefg</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>value</strong> - Color of border if border type is cv2.BORDER_CONSTANT</li>
+</ul>
+<p>Below is a sample code demonstrating all these border types for better understanding:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">BLUE</span> <span class="o">=</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">img1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;opencv-logo.png&#39;</span><span class="p">)</span>
+
+<span class="n">replicate</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">copyMakeBorder</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">BORDER_REPLICATE</span><span class="p">)</span>
+<span class="n">reflect</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">copyMakeBorder</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">BORDER_REFLECT</span><span class="p">)</span>
+<span class="n">reflect101</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">copyMakeBorder</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">BORDER_REFLECT_101</span><span class="p">)</span>
+<span class="n">wrap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">copyMakeBorder</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">BORDER_WRAP</span><span class="p">)</span>
+<span class="n">constant</span><span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">copyMakeBorder</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">BORDER_CONSTANT</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="n">BLUE</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">231</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img1</span><span class="p">,</span><span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;ORIGINAL&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">232</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">replicate</span><span class="p">,</span><span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;REPLICATE&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">233</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reflect</span><span class="p">,</span><span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;REFLECT&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">234</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reflect101</span><span class="p">,</span><span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;REFLECT_101&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">235</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">wrap</span><span class="p">,</span><span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;WRAP&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">236</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">constant</span><span class="p">,</span><span class="sc">&#39;gray&#39;</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;CONSTANT&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>See the result below. (Image is displayed with matplotlib. So RED and BLUE planes will be interchanged):</p>
+<img alt="image" src="_images/border.jpg" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_optimization.html" title="Performance Measurement and Improvement Techniques"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_image_arithmetics.html" title="Arithmetic Operations on Images"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_core.html" >Core Operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

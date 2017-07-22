@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Object Detection &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="C API" href="group_objdetect_c.html" />
+    <link rel="prev" title="class cv::ml::TrainData" href="class_cv_ml_TrainData.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Object Detection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="group_objdetect_c.html">C API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_cv_DetectionROI.html">struct cv::DetectionROI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="struct_cv_HOGDescriptor.html">struct cv::HOGDescriptor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_BaseCascadeClassifier.html">class cv::BaseCascadeClassifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_CascadeClassifier.html">class cv::CascadeClassifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_SimilarRects.html">class cv::SimilarRects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Object Detection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="object-detection">
+<span id="doxid-d5-d54-group-objdetect"></span><span id="index-0"></span><h1>Object Detection</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<div class="line-block">
+<div class="line"><a class="reference internal" href="group_objdetect_c.html#doxid-d9-d31-group-objdetect-c"><span class="std std-ref">C API</span></a></div>
+</div>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-d5-d54-group-objdetect-1ggaf9da076edb99cf8cb211c313b3f0fbe7a04a050084d81a4a05abe92b7fc9ef210">cv::&#64;163::CASCADE_DO_CANNY_PRUNING</span><span></span>    <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-d5-d54-group-objdetect-1ggaf9da076edb99cf8cb211c313b3f0fbe7a1d35c5234686c05c075d224efc91d673">cv::&#64;163::CASCADE_SCALE_IMAGE</span><span></span>         <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-d5-d54-group-objdetect-1ggaf9da076edb99cf8cb211c313b3f0fbe7a3ecc6a38e196bd80afb57ac7b116c7fc">cv::&#64;163::CASCADE_FIND_BIGGEST_OBJECT</span><span></span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-d5-d54-group-objdetect-1ggaf9da076edb99cf8cb211c313b3f0fbe7a54f9abc96125f942117c847bc8fa9b83">cv::&#64;163::CASCADE_DO_ROUGH_SEARCH</span><span></span>     <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// structs</span>
+
+<span class="k">struct</span> <a class="reference internal" href="struct_cv_DetectionROI.html#doxid-d0-d86-structcv-1-1-detection-r-o-i"><span class="std std-ref">cv::DetectionROI</span></a><span></span><span class="p">;</span>
+<span class="k">struct</span> <a class="reference internal" href="struct_cv_HOGDescriptor.html#doxid-db-d92-structcv-1-1-h-o-g-descriptor"><span class="std std-ref">cv::HOGDescriptor</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_BaseCascadeClassifier.html#doxid-dd-de9-classcv-1-1-base-cascade-classifier"><span class="std std-ref">cv::BaseCascadeClassifier</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier"><span class="std std-ref">cv::CascadeClassifier</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_SimilarRects.html#doxid-dc-d72-classcv-1-1-similar-rects"><span class="std std-ref">cv::SimilarRects</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_BaseCascadeClassifier_MaskGenerator.html#doxid-d8-dbc-classcv-1-1-base-cascade-classifier-1-1-mask-generator"><span class="std std-ref">BaseCascadeClassifier::MaskGenerator</span></a><span></span><span class="o">&gt;</span>
+<span class="doxyrest-code-target target" id="doxid-d5-d54-group-objdetect-1ga9767823749e5e5df561593c2c85939cc">cv::createFaceDetectionMaskGenerator</span><span></span><span class="p">();</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-d54-group-objdetect-1ga3dba897ade8aa8227edda66508e16ab9"><span class="std std-ref">cv::groupRectangles</span></a><span></span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-d54-group-objdetect-1ga1592d68e4c32a13aa50ed73dbecd6d22"><span class="std std-ref">cv::groupRectangles</span></a><span></span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">weights</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-d54-group-objdetect-1ga371b207eb2113f7816e5857fa0d2e50e"><span class="std std-ref">cv::groupRectangles</span></a><span></span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;*</span> <span class="n">weights</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;*</span> <span class="n">levelWeights</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-d54-group-objdetect-1gaca13a6339f9d8992d9ee278c6c8f53ae"><span class="std std-ref">cv::groupRectangles</span></a><span></span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">rejectLevels</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">levelWeights</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d5-d54-group-objdetect-1ga281baf622553e2eab17a8e96beab916d"><span class="std std-ref">cv::groupRectangles_meanshift</span></a><span></span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">foundWeights</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">foundScales</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">detectThreshold</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winDetSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d5-d54-group-objdetect"></span><h2>Detailed Documentation</h2>
+<p class="rubric">Haar Feature-based Cascade Classifier for Object Detection</p>
+<p>The object detector described below has been initially proposed by Paul Viola <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-viola01"><span class="std std-ref">[87]</span></a> and improved by Rainer Lienhart <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-lienhart02"><span class="std std-ref">[49]</span></a>.</p>
+<p>First, a classifier (namely a <em>cascade of boosted classifiers working with haar-like features</em>) is trained with a few hundred sample views of a particular object (i.e., a face or a car), called positive examples, that are scaled to the same size (say, 20x20), and negative examples - arbitrary images of the same size.</p>
+<p>After a classifier is trained, it can be applied to a region of interest (of the same size as used during the training) in an input image. The classifier outputs a “1” if the region is likely to show the object (i.e., face/car), and “0” otherwise. To search for the object in the whole image one can move the search window across the image and check every location using the classifier. The classifier is designed so that it can be easily “resized” in order to be able to find the objects of interest at different sizes, which is more efficient than resizing the image itself. So, to find an object of an unknown size in the image the scan procedure should be done several times at different scales.</p>
+<p>The word “cascade” in the classifier name means that the resultant classifier consists of several simpler classifiers (<em>stages</em>) that are applied subsequently to a region of interest until at some stage the candidate is rejected or all the stages are passed. The word “boosted” means that the classifiers at every stage of the cascade are complex themselves and they are built out of basic classifiers using one of four different boosting techniques (weighted voting). Currently Discrete Adaboost, Real Adaboost, Gentle Adaboost and Logitboost are supported. The basic classifiers are decision-tree classifiers with at least 2 leaves. Haar-like features are the input to the basic classifiers, and are calculated as described below. The current algorithm uses the following Haar-like features:</p>
+<img alt="image" src="_images/haarfeatures.png" />
+<p>The feature used in a particular classifier is specified by its shape (1a, 2b etc.), position within the region of interest and the scale (this scale is not the same as the scale used at the detection stage, though these two scales are multiplied). For example, in the case of the third line feature (2c) the response is calculated as the difference between the sum of image pixels under the rectangle covering the whole feature (including the two white stripes and the black stripe in the middle) and the sum of the image pixels under the black stripe multiplied by 3 in order to compensate for the differences in the size of areas. The sums of pixel values over a rectangular regions are calculated rapidly using integral images (see below and the integral description).</p>
+<p>To see the object detector at work, have a look at the facedetect demo: <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/dbt_face_detection.cpp">https://github.com/opencv/opencv/tree/master/samples/cpp/dbt_face_detection.cpp</a></p>
+<p>The following reference is for the detection part only. There is a separate application called opencv_traincascade that can train a cascade of boosted classifiers from a set of samples.</p>
+<p>In the new C++ interface it is also possible to use LBP (local binary pattern) features in addition to Haar-like features. .. [Viola01] Paul Viola and Michael J. Jones. Rapid Object Detection using a Boosted Cascade of Simple Features. IEEE CVPR, 2001. The paper is available online at <a class="reference external" href="http://research.microsoft.com/en-us/um/people/viola/Pubs/Detect/violaJones_CVPR2001.pdf">http://research.microsoft.com/en-us/um/people/viola/Pubs/Detect/violaJones_CVPR2001.pdf</a></p>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-d54-group-objdetect-1ga3dba897ade8aa8227edda66508e16ab9">
+<span id="index-1"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">groupRectangles</span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">)</span>
+</pre>
+<p>Groups the object candidate rectangles.</p>
+<p>The function is a wrapper for the generic function partition . It clusters all the input rectangles using the rectangle equivalence criteria that combines rectangles with similar sizes and similar locations. The similarity is defined by eps. When eps=0 , no clustering is done at all. If <span class="math notranslate nohighlight">\(\texttt{eps}\rightarrow +\inf\)</span>, all the rectangles are put in one cluster. Then, the small clusters containing less than or equal to groupThreshold rectangles are rejected. In each other cluster, the average rectangle is computed and put into the output rectangle list.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>rectList</td>
+<td>Input/output vector of rectangles. Output vector includes retained and grouped rectangles. (The Python list is not modified in place.)</td>
+</tr>
+<tr class="row-even"><td>groupThreshold</td>
+<td>Minimum possible number of rectangles minus 1. The threshold is used in a group of rectangles to retain it.</td>
+</tr>
+<tr class="row-odd"><td>eps</td>
+<td>Relative difference between sides of the rectangles to merge them into a group.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-d54-group-objdetect-1ga1592d68e4c32a13aa50ed73dbecd6d22">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">groupRectangles</span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">weights</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-d54-group-objdetect-1ga371b207eb2113f7816e5857fa0d2e50e">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">groupRectangles</span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;*</span> <span class="n">weights</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;*</span> <span class="n">levelWeights</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-d54-group-objdetect-1gaca13a6339f9d8992d9ee278c6c8f53ae">
+<span id="index-4"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">groupRectangles</span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">rejectLevels</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">levelWeights</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">groupThreshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d5-d54-group-objdetect-1ga281baf622553e2eab17a8e96beab916d">
+<span id="index-5"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">groupRectangles_meanshift</span><span class="p">(</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">rectList</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">foundWeights</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span> <span class="n">foundScales</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">detectThreshold</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winDetSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="group_objdetect_c.html" class="btn btn-neutral float-right" title="C API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="class_cv_ml_TrainData.html" class="btn btn-neutral float-left" title="class cv::ml::TrainData" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

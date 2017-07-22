@@ -1,0 +1,89 @@
+.. index:: pair: example; minarea.cpp
+.. _doxid-d4/d32/minarea_8cpp-example:
+
+minarea.cpp
+===========
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout << "This program demonstrates finding the minimum enclosing box, triangle or circle of a set\n"
+	         << "of points using functions: minAreaRect() minEnclosingTriangle() minEnclosingCircle().\n"
+	         << "Random points are generated and then enclosed.\n\n"
+	         << "Press ESC, 'q' or 'Q' to exit and any other key to regenerate the set of points.\n\n"
+	         << "Call:\n"
+	         << "./minarea\n"
+	         << "Using OpenCV v" << :ref:`CV_VERSION <doxid-d7/dad/version_8hpp_1a4f050efda432e041621b3af3df140adc>` << "\n" << endl;
+	}
+	
+	int main( int /*argc*/, char** /*argv*/ )
+	{
+	    help();
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img(500, 500, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	    :ref:`RNG <doxid-d3/df8/classcv_1_1_r_n_g>`& rng = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`();
+	
+	    for(;;)
+	    {
+	        int i, count = rng.:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(1, 101);
+	        vector<Point> points;
+	
+	        // Generate a random set of points
+	        for( i = 0; i < count; i++ )
+	        {
+	            Point pt;
+	            pt.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = rng.:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(img.cols/4, img.cols*3/4);
+	            pt.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = rng.:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(img.rows/4, img.rows*3/4);
+	
+	            points.push_back(pt);
+	        }
+	
+	        // Find the minimum area enclosing bounding box
+	        :ref:`RotatedRect <doxid-d5/d1f/classcv_1_1_rotated_rect>` box = :ref:`minAreaRect <doxid-d3/dc0/group__imgproc__shape_1ga3d476a3417130ae5154aea421ca7ead9>`(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(points));
+	
+	        // Find the minimum area enclosing triangle
+	        vector<Point2f> triangle;
+	
+	        :ref:`minEnclosingTriangle <doxid-d3/dc0/group__imgproc__shape_1ga1513e72f6bbdfc370563664f71e0542f>`(points, triangle);
+	
+	        // Find the minimum area enclosing circle
+	        Point2f center, vtx[4];
+	        float radius = 0;
+	        :ref:`minEnclosingCircle <doxid-d3/dc0/group__imgproc__shape_1ga8ce13c24081bbc7151e9326f412190f1>`(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(points), center, radius);
+	        box.:ref:`points <doxid-d5/d1f/classcv_1_1_rotated_rect_1a69d648b086f26dbce0029facae9bfb2d>`(vtx);
+	
+	        img = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	
+	        // Draw the points
+	        for( i = 0; i < count; i++ )
+	            :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( img, points[i], 3, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 0, 255), :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>` );
+	
+	        // Draw the bounding box
+	        for( i = 0; i < 4; i++ )
+	            :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, vtx[i], vtx[(i+1)%4], :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 255, 0), 1, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	
+	        // Draw the triangle
+	        for( i = 0; i < 3; i++ )
+	            :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, triangle[i], triangle[(i+1)%3], :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 255, 0), 1, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	
+	        // Draw the circle
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`(img, center, :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(radius), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 255, 255), 1, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Rectangle, triangle & circle", img );
+	
+	        char key = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	        if( key == 27 || key == 'q' || key == 'Q' ) // 'ESC'
+	            break;
+	    }
+	
+	    return 0;
+	}

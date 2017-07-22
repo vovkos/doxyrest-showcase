@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>OpenCL support &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="enum cv::ocl::OclVectorStrategy" href="enum_cv_ocl_OclVectorStrategy.html" />
+    <link rel="prev" title="namespace cv::va_intel::ocl" href="namespace_cv_va_intel_ocl.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_core.html">Core functionality</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_core_basic.html">Basic structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_c.html">C structures and operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_cluster.html">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_directx.html">DirectX interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_eigen.html">Eigen support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_ipp.html">Intel IPP Asynchronous C/C++ Converters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_va_intel.html">Intel VA-API/OpenCL (CL-VA) interoperability</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">OpenCL support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enum_cv_ocl_OclVectorStrategy.html">enum cv::ocl::OclVectorStrategy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Context.html">class cv::ocl::Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Device.html">class cv::ocl::Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Image2D.html">class cv::ocl::Image2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Kernel.html">class cv::ocl::Kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_KernelArg.html">class cv::ocl::KernelArg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Platform.html">class cv::ocl::Platform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_PlatformInfo.html">class cv::ocl::PlatformInfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Program.html">class cv::ocl::Program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_ProgramSource.html">class cv::ocl::ProgramSource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ocl_Queue.html">class cv::ocl::Queue</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opengl.html">OpenGL interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_array.html">Operations on arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_optim.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_utils.html">Utility and system functions and macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_xml.html">XML/YAML Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_CovarFlags.html">enum cv::CovarFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HersheyFonts.html">enum cv::HersheyFonts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_KmeansFlags.html">enum cv::KmeansFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_LineTypes.html">enum cv::LineTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ReduceTypes.html">enum cv::ReduceTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_Affine3.html">template class cv::Affine3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_BufferPoolController.html">class cv::BufferPoolController</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImage.html">template class cv::WImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBuffer.html">template class cv::WImageBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBufferC.html">template class cv::WImageBufferC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageC.html">template class cv::WImageC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageView.html">template class cv::WImageView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageViewC.html">template class cv::WImageViewC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_core.html">Core functionality</a> &raquo;</li>
+        
+      <li>OpenCL support</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="opencl-support">
+<span id="doxid-dc-d83-group-core-opencl"></span><span id="index-0"></span><h1>OpenCL support</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_ocl_OclVectorStrategy.html#doxid-dc-d83-group-core-opencl-1gae601ac868b72015b583ccbbdd0dec587"><span class="std std-ref">cv::ocl::OclVectorStrategy</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Context.html#doxid-d1-dbe-classcv-1-1ocl-1-1-context"><span class="std std-ref">cv::ocl::Context</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Device.html#doxid-d7-d5a-classcv-1-1ocl-1-1-device"><span class="std std-ref">cv::ocl::Device</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Image2D.html#doxid-dd-d69-classcv-1-1ocl-1-1-image2-d"><span class="std std-ref">cv::ocl::Image2D</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Kernel.html#doxid-d6-dfb-classcv-1-1ocl-1-1-kernel"><span class="std std-ref">cv::ocl::Kernel</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_KernelArg.html#doxid-d2-d12-classcv-1-1ocl-1-1-kernel-arg"><span class="std std-ref">cv::ocl::KernelArg</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Platform.html#doxid-d3-d4d-classcv-1-1ocl-1-1-platform"><span class="std std-ref">cv::ocl::Platform</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_PlatformInfo.html#doxid-dd-de3-classcv-1-1ocl-1-1-platform-info"><span class="std std-ref">cv::ocl::PlatformInfo</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Program.html#doxid-d5-db4-classcv-1-1ocl-1-1-program"><span class="std std-ref">cv::ocl::Program</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_ProgramSource.html#doxid-db-da1-classcv-1-1ocl-1-1-program-source"><span class="std std-ref">cv::ocl::ProgramSource</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_ocl_Queue.html#doxid-d2-de6-classcv-1-1ocl-1-1-queue"><span class="std std-ref">cv::ocl::Queue</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dc-d83-group-core-opencl-1gaf83af36be2097fd43e3eba5c8f3025b1"><span class="std std-ref">cv::ocl::attachContext</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">platformName</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">platformID</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">context</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">deviceID</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga95fc5d853c45a6b1db1d425d831f7d2f">cv::ocl::buildOptionsAddMatrixDescription</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">buildOptions</span><span class="p">,</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">name</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">_m</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga293c0b13a39f10465e3ea67a018d6779">cv::ocl::checkOptimalVectorWidth</span><span></span><span class="p">(</span>
+    <span class="k">const</span> <span class="kt">int</span><span class="o">*</span> <span class="n">vectorWidths</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src3</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src4</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src5</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src6</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src7</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src8</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src9</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="enum_cv_ocl_OclVectorStrategy.html#doxid-dc-d83-group-core-opencl-1gae601ac868b72015b583ccbbdd0dec587"><span class="std std-ref">OclVectorStrategy</span></a><span></span> <span class="n">strat</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_ocl_OclVectorStrategy.html#doxid-dc-d83-group-core-opencl-1ggae601ac868b72015b583ccbbdd0dec587a566f2a652ca8f26eabf5f6fc50faf59e"><span class="std std-ref">OCL_VECTOR_DEFAULT</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dc-d83-group-core-opencl-1gaf7698360b08aa452c2692296ce55bccd"><span class="std std-ref">cv::ocl::convertFromBuffer</span></a><span></span><span class="p">(</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">cl_mem_buffer</span><span class="p">,</span>
+    <a class="reference internal" href="global.html#doxid-da-d06-autogenerated-2opencl-core-8hpp-1a6ff403ead16f7faa1f7228274eb6b01d"><span class="std std-ref">size_t</span></a><span></span> <span class="n">step</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">rows</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cols</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">type</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a><span></span><span class="o">&amp;</span> <span class="n">dst</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dc-d83-group-core-opencl-1gada97cc08c31e416b957e23b480334b6c"><span class="std std-ref">cv::ocl::convertFromImage</span></a><span></span><span class="p">(</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">cl_mem_image</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a><span></span><span class="o">&amp;</span> <span class="n">dst</span>
+    <span class="p">);</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga6af5cc5165cd65ae41925d6d95f0f7ae">cv::ocl::convertTypeStr</span><span></span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">sdepth</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ddepth</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cn</span><span class="p">,</span>
+    <span class="kt">char</span><span class="o">*</span> <span class="n">buf</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gabfca32247f267c662b3bff6587d14b40">cv::ocl::finish</span><span></span><span class="p">();</span>
+
+<a class="reference internal" href="class_cv_MatAllocator.html#doxid-d4-dee-classcv-1-1-mat-allocator"><span class="std std-ref">MatAllocator</span></a><span></span><span class="o">*</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga2de08873daa452bb88f17d5054aa3aae">cv::ocl::getOpenCLAllocator</span><span></span><span class="p">();</span>
+
+<span class="kt">void</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gae98550085d4a41df7a1daff093fe775c">cv::ocl::getPlatfomsInfo</span><span></span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><a class="reference internal" href="class_cv_ocl_PlatformInfo.html#doxid-dd-de3-classcv-1-1ocl-1-1-platform-info"><span class="std std-ref">PlatformInfo</span></a><span></span><span class="o">&gt;&amp;</span> <span class="n">platform_info</span><span class="p">);</span>
+
+<span class="kt">bool</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gad2e486ab8104a3b197001e27d54e2a95">cv::ocl::haveAmdBlas</span><span></span><span class="p">();</span>
+
+<span class="kt">bool</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga593387b5285a57ea03350b363c74c6cf">cv::ocl::haveAmdFft</span><span></span><span class="p">();</span>
+
+<span class="kt">bool</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gaf8716694664cb127e7928c335b97d217">cv::ocl::haveOpenCL</span><span></span><span class="p">();</span>
+
+<span class="kt">bool</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga0744f1db6ed2ec8f8aa79a43449a4855">cv::ocl::haveSVM</span><span></span><span class="p">();</span>
+
+<span class="kt">void</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga497674e2f118f367b2fa4decbcdecb15">cv::ocl::initializeContextFromHandle</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="class_cv_ocl_Context.html#doxid-d1-dbe-classcv-1-1ocl-1-1-context"><span class="std std-ref">Context</span></a><span></span><span class="o">&amp;</span> <span class="n">ctx</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">platform</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">context</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">device</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gafb2b78806f036b57609e26b8237fa3d9">cv::ocl::kernelToStr</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">_kernel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ddepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">name</span> <span class="o">=</span> <span class="nb">NULL</span>
+    <span class="p">);</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga3a8b3c8a8991e15ac4e4aa2a007bb2ea">cv::ocl::memopTypeToStr</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">t</span><span class="p">);</span>
+
+<span class="kt">int</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga1b16507915166d63529ad8126e465c1a">cv::ocl::predictOptimalVectorWidth</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src3</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src4</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src5</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src6</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src7</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src8</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src9</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="enum_cv_ocl_OclVectorStrategy.html#doxid-dc-d83-group-core-opencl-1gae601ac868b72015b583ccbbdd0dec587"><span class="std std-ref">OclVectorStrategy</span></a><span></span> <span class="n">strat</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_ocl_OclVectorStrategy.html#doxid-dc-d83-group-core-opencl-1ggae601ac868b72015b583ccbbdd0dec587a566f2a652ca8f26eabf5f6fc50faf59e"><span class="std std-ref">OCL_VECTOR_DEFAULT</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga8b96cd547eac1e787cf50e22820bc4b9">cv::ocl::predictOptimalVectorWidthMax</span><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src3</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src4</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src5</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src6</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src7</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src8</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src9</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gab747fa4efd88d3188f4ebcbc8a639c1e">cv::ocl::setUseOpenCL</span><span></span><span class="p">(</span><span class="kt">bool</span> <span class="n">flag</span><span class="p">);</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga332498ad6301e733151ff4e61e0d755c">cv::ocl::typeToStr</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">t</span><span class="p">);</span>
+
+<span class="kt">bool</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1gadb3b41d4552e9db7887855e3a1b2af37">cv::ocl::useOpenCL</span><span></span><span class="p">();</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span>
+<span class="doxyrest-code-target target" id="doxid-dc-d83-group-core-opencl-1ga87fc1246a42a1f4c46eeea3ad5ce1790">cv::ocl::vecopTypeToStr</span><span></span><span class="p">(</span><span class="kt">int</span> <span class="n">t</span><span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-dc-d83-group-core-opencl"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d83-group-core-opencl-1gaf83af36be2097fd43e3eba5c8f3025b1">
+<span id="index-1"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">ocl</span><span class="o">::</span><span class="n">attachContext</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="o">&amp;</span> <span class="n">platformName</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">platformID</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">context</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">deviceID</span>
+    <span class="p">)</span>
+</pre>
+<p>Attaches OpenCL context to OpenCV.</p>
+<p>OpenCV will check if available OpenCL platform has platformName name, then assign context to OpenCV and call <code class="docutils literal notranslate"><span class="pre">clRetainContext</span></code> function. The deviceID device will be used as target device and new command queue will be created.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>platformName</td>
+<td>name of OpenCL platform to attach, this string is used to check if platform is available to OpenCV at runtime</td>
+</tr>
+<tr class="row-even"><td>platformID</td>
+<td>ID of platform attached context was created for</td>
+</tr>
+<tr class="row-odd"><td>context</td>
+<td>OpenCL context to be attached to OpenCV</td>
+</tr>
+<tr class="row-even"><td>deviceID</td>
+<td>ID of device, must be created from attached context</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d83-group-core-opencl-1gaf7698360b08aa452c2692296ce55bccd">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">ocl</span><span class="o">::</span><span class="n">convertFromBuffer</span><span class="p">(</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">cl_mem_buffer</span><span class="p">,</span>
+    <a class="reference internal" href="global.html#doxid-da-d06-autogenerated-2opencl-core-8hpp-1a6ff403ead16f7faa1f7228274eb6b01d"><span class="std std-ref">size_t</span></a><span></span> <span class="n">step</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">rows</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cols</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">type</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a><span></span><span class="o">&amp;</span> <span class="n">dst</span>
+    <span class="p">)</span>
+</pre>
+<p>Convert OpenCL buffer to <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a>.</p>
+<p>OpenCL buffer (cl_mem_buffer) should contain 2D image data, compatible with OpenCV. Memory content is not copied from <code class="docutils literal notranslate"><span class="pre">clBuffer</span></code> to <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a>. Instead, buffer handle assigned to <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a> and <code class="docutils literal notranslate"><span class="pre">clRetainMemObject</span></code> is called.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>cl_mem_buffer</td>
+<td>source clBuffer handle</td>
+</tr>
+<tr class="row-even"><td>step</td>
+<td>num of bytes in single row</td>
+</tr>
+<tr class="row-odd"><td>rows</td>
+<td>number of rows</td>
+</tr>
+<tr class="row-even"><td>cols</td>
+<td>number of cols</td>
+</tr>
+<tr class="row-odd"><td>type</td>
+<td>OpenCV type of image</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>destination <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a></td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d83-group-core-opencl-1gada97cc08c31e416b957e23b480334b6c">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">ocl</span><span class="o">::</span><span class="n">convertFromImage</span><span class="p">(</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">cl_mem_image</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a><span></span><span class="o">&amp;</span> <span class="n">dst</span>
+    <span class="p">)</span>
+</pre>
+<p>Convert OpenCL image2d_t to <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a>.</p>
+<p>OpenCL <code class="docutils literal notranslate"><span class="pre">image2d_t</span></code> (cl_mem_image), should be compatible with OpenCV <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a> formats. Memory content is copied from image to <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a> with <code class="docutils literal notranslate"><span class="pre">clEnqueueCopyImageToBuffer</span></code> function.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>cl_mem_image</td>
+<td>source image2d_t handle</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>destination <a class="reference internal" href="class_cv_UMat.html#doxid-d8-d82-classcv-1-1-u-mat"><span class="std std-ref">UMat</span></a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="enum_cv_ocl_OclVectorStrategy.html" class="btn btn-neutral float-right" title="enum cv::ocl::OclVectorStrategy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="namespace_cv_va_intel_ocl.html" class="btn btn-neutral float-left" title="namespace cv::va_intel::ocl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+.. index:: pair: class; Poco::AbstractCache
+.. _doxid-class_poco_1_1_abstract_cache:
+
+template class Poco::AbstractCache
+==================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An :ref:`AbstractCache <doxid-class_poco_1_1_abstract_cache>` is the interface of all caches. :ref:`More...<details-class_poco_1_1_abstract_cache>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <AbstractCache.h>
+	
+	template <
+		class TKey,
+		class TValue,
+		class TStrategy,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class AbstractCache
+	{
+	public:
+		// typedefs
+	
+		typedef std::map<TKey, :ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>> :target:`DataHolder<doxid-class_poco_1_1_abstract_cache_1ad4c2640e970cfd70318cba782115b5e5>`;
+		typedef DataHolder::iterator :target:`Iterator<doxid-class_poco_1_1_abstract_cache_1a45cebd8415fed1d9943e09c288177ae0>`;
+		typedef DataHolder::const_iterator :target:`ConstIterator<doxid-class_poco_1_1_abstract_cache_1a12c298250774e4b89d536d33bcb305de>`;
+		typedef std::set<TKey> :target:`KeySet<doxid-class_poco_1_1_abstract_cache_1a12affb93161834fb51509f901efbeb07>`;
+
+		// fields
+	
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`KeyValueArgs<doxid-class_poco_1_1_key_value_args>`<TKey, TValue>, TEventMutex> :target:`Add<doxid-class_poco_1_1_abstract_cache_1a9e6dacd1d0a5c6c9b928b122c5556b71>`;
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`KeyValueArgs<doxid-class_poco_1_1_key_value_args>`<TKey, TValue>, TEventMutex> :target:`Update<doxid-class_poco_1_1_abstract_cache_1abd71cf5c91de5ef92943d3606f0000f4>`;
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey, TEventMutex> :target:`Remove<doxid-class_poco_1_1_abstract_cache_1a80e5687984364d3fca7a4f8fc0f06090>`;
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey, TEventMutex> :target:`Get<doxid-class_poco_1_1_abstract_cache_1a84d972d581e866deeb23c33811970da1>`;
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`EventArgs<doxid-class_poco_1_1_event_args>`, TEventMutex> :target:`Clear<doxid-class_poco_1_1_abstract_cache_1aa2ef8f74e3437f93b67607e67d0683bf>`;
+
+		// construction
+	
+		:target:`AbstractCache<doxid-class_poco_1_1_abstract_cache_1a62858e5d47375aa82c0efd73966bd895>`();
+		:target:`AbstractCache<doxid-class_poco_1_1_abstract_cache_1a1e538cd94295d379f58e03401179c00d>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TStrategy& strat);
+
+		// methods
+	
+		void
+		:ref:`add<doxid-class_poco_1_1_abstract_cache_1aec30fe5fe6534f78a518e58b3db39f0d>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+			);
+	
+		void
+		:ref:`update<doxid-class_poco_1_1_abstract_cache_1af5da250a27adc5d6893dde7a4d058f78>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+			);
+	
+		void
+		:ref:`add<doxid-class_poco_1_1_abstract_cache_1a704a63b05c661fa33b99808e71e9faf9>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue> val
+			);
+	
+		void
+		:ref:`update<doxid-class_poco_1_1_abstract_cache_1add4e0066165634dc4eb7da6874703485>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue> val
+			);
+	
+		void
+		:ref:`remove<doxid-class_poco_1_1_abstract_cache_1a05d4fef6daeb548f72ba1eee68844e05>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key);
+	
+		bool
+		:ref:`has<doxid-class_poco_1_1_abstract_cache_1a01c6602942831da6368f4a7e43c54f45>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key) const;
+	
+		:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>
+		:ref:`get<doxid-class_poco_1_1_abstract_cache_1a7f812c1ea00ed55ed9364c28cd32cb33>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key);
+	
+		void
+		:ref:`clear<doxid-class_poco_1_1_abstract_cache_1a680ca7f1dae7c1a7d28e56e2741863fd>`();
+	
+		std::size_t
+		:ref:`size<doxid-class_poco_1_1_abstract_cache_1a8c680a8d18da5455bc26687a0ee42aed>`();
+	
+		void
+		:ref:`forceReplace<doxid-class_poco_1_1_abstract_cache_1a428e64599e2c4f1d90b5fc117a39f6f5>`();
+	
+		std::set<TKey>
+		:ref:`getAllKeys<doxid-class_poco_1_1_abstract_cache_1a1679e8f78520a9164e57410763df3a6b>`();
+
+	protected:
+		// fields
+	
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`ValidArgs<doxid-class_poco_1_1_valid_args>`<TKey>> :target:`IsValid<doxid-class_poco_1_1_abstract_cache_1a9dd0651d24a6a7852f54f957ab1fc217>`;
+		:ref:`FIFOEvent<doxid-class_poco_1_1_f_i_f_o_event>`<:ref:`KeySet<doxid-class_poco_1_1_abstract_cache_1a12affb93161834fb51509f901efbeb07>`> :target:`Replace<doxid-class_poco_1_1_abstract_cache_1aa05a557df2c4dbde6e3e157a5ff77b20>`;
+		TStrategy :target:`_strategy<doxid-class_poco_1_1_abstract_cache_1af1b79976e32909c8b7ad57b659a98e74>`;
+		:ref:`DataHolder<doxid-class_poco_1_1_abstract_cache_1ad4c2640e970cfd70318cba782115b5e5>` :target:`_data<doxid-class_poco_1_1_abstract_cache_1a67c2547d9b9c9a31cc2cde6209bbe240>`;
+		TMutex :target:`_mutex<doxid-class_poco_1_1_abstract_cache_1a35619365ac7e7c7ecffe261dc74dd358>`;
+
+		// methods
+	
+		void
+		:ref:`initialize<doxid-class_poco_1_1_abstract_cache_1aa0e5d6076f277d4b66a80709a4b61f6f>`();
+	
+		void
+		:ref:`uninitialize<doxid-class_poco_1_1_abstract_cache_1ac82eea981641fa3a3a752832c159145b>`();
+	
+		void
+		:ref:`doAdd<doxid-class_poco_1_1_abstract_cache_1af9a03842b3131fb513f3c52d2b124705>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+			);
+	
+		void
+		:ref:`doAdd<doxid-class_poco_1_1_abstract_cache_1a134a4e02bb5c558d0c7781619fa90d3b>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>& val
+			);
+	
+		void
+		:ref:`doUpdate<doxid-class_poco_1_1_abstract_cache_1a83a640c9a3be9709cadb7b0e45540ec4>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+			);
+	
+		void
+		:ref:`doUpdate<doxid-class_poco_1_1_abstract_cache_1a9eb42e862464346fa5851d6c3bd1ba20>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+			:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>& val
+			);
+	
+		void
+		:ref:`doRemove<doxid-class_poco_1_1_abstract_cache_1a9e1339dcd40b9d4014939901740bb884>`(:ref:`Iterator<doxid-class_poco_1_1_abstract_cache_1a45cebd8415fed1d9943e09c288177ae0>` it);
+	
+		bool
+		:ref:`doHas<doxid-class_poco_1_1_abstract_cache_1a0982ea3cc47f33658af8df0fb2f2782f>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key) const;
+	
+		:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>
+		:ref:`doGet<doxid-class_poco_1_1_abstract_cache_1a91c9f90cf85a0fe56b36481f7b5a27ee>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key);
+	
+		void
+		:target:`doClear<doxid-class_poco_1_1_abstract_cache_1af448360c5daf01d19275c46de21e0dfd>`();
+	
+		void
+		:target:`doReplace<doxid-class_poco_1_1_abstract_cache_1a2972a7235b638d35b290507dd873f254>`();
+	};
+
+	// direct descendants
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`AccessExpireCache<doxid-class_poco_1_1_access_expire_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`AccessExpireLRUCache<doxid-class_poco_1_1_access_expire_l_r_u_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`ExpireCache<doxid-class_poco_1_1_expire_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`ExpireLRUCache<doxid-class_poco_1_1_expire_l_r_u_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`LRUCache<doxid-class_poco_1_1_l_r_u_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`UniqueAccessExpireCache<doxid-class_poco_1_1_unique_access_expire_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`UniqueAccessExpireLRUCache<doxid-class_poco_1_1_unique_access_expire_l_r_u_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`UniqueExpireCache<doxid-class_poco_1_1_unique_expire_cache>`;
+
+	template <
+		class TKey,
+		class TValue,
+		class TMutex = FastMutex,
+		class TEventMutex = FastMutex
+		>
+	class :ref:`UniqueExpireLRUCache<doxid-class_poco_1_1_unique_expire_l_r_u_cache>`;
+.. _details-class_poco_1_1_abstract_cache:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An :ref:`AbstractCache <doxid-class_poco_1_1_abstract_cache>` is the interface of all caches.
+
+Methods
+-------
+
+.. index:: pair: function; add
+.. _doxid-class_poco_1_1_abstract_cache_1aec30fe5fe6534f78a518e58b3db39f0d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	add(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+		)
+
+Adds the key value pair to the cache.
+
+If for the key already an entry exists, it will be overwritten.
+
+.. index:: pair: function; update
+.. _doxid-class_poco_1_1_abstract_cache_1af5da250a27adc5d6893dde7a4d058f78:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	update(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+		)
+
+Adds the key value pair to the cache.
+
+Note that adding a NULL :ref:`SharedPtr <doxid-class_poco_1_1_shared_ptr>` will fail! If for the key already an entry exists, it will be overwritten. The difference to add is that no remove or add events are thrown in this case, just a simply silent update is performed If the key doesnot exist the behavior is equal to add, ie. an add event is thrown
+
+.. index:: pair: function; add
+.. _doxid-class_poco_1_1_abstract_cache_1a704a63b05c661fa33b99808e71e9faf9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	add(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue> val
+		)
+
+Adds the key value pair to the cache.
+
+Note that adding a NULL :ref:`SharedPtr <doxid-class_poco_1_1_shared_ptr>` will fail! If for the key already an entry exists, it will be overwritten, ie. first a remove event is thrown, then a add event
+
+.. index:: pair: function; update
+.. _doxid-class_poco_1_1_abstract_cache_1add4e0066165634dc4eb7da6874703485:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	update(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue> val
+		)
+
+Adds the key value pair to the cache.
+
+Note that adding a NULL :ref:`SharedPtr <doxid-class_poco_1_1_shared_ptr>` will fail! If for the key already an entry exists, it will be overwritten. The difference to add is that no remove or add events are thrown in this case, just an Update is thrown If the key doesnot exist the behavior is equal to add, ie. an add event is thrown
+
+.. index:: pair: function; remove
+.. _doxid-class_poco_1_1_abstract_cache_1a05d4fef6daeb548f72ba1eee68844e05:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	remove(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key)
+
+Removes an entry from the cache.
+
+If the entry is not found, the remove is ignored.
+
+.. index:: pair: function; has
+.. _doxid-class_poco_1_1_abstract_cache_1a01c6602942831da6368f4a7e43c54f45:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	has(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key) const
+
+Returns true if the cache contains a value for the key.
+
+.. index:: pair: function; get
+.. _doxid-class_poco_1_1_abstract_cache_1a7f812c1ea00ed55ed9364c28cd32cb33:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>
+	get(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key)
+
+Returns a :ref:`SharedPtr <doxid-class_poco_1_1_shared_ptr>` of the value.
+
+The SharedPointer will remain valid even when cache replacement removes the element. If for the key no value exists, an empty :ref:`SharedPtr <doxid-class_poco_1_1_shared_ptr>` is returned.
+
+.. index:: pair: function; clear
+.. _doxid-class_poco_1_1_abstract_cache_1a680ca7f1dae7c1a7d28e56e2741863fd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	clear()
+
+Removes all elements from the cache.
+
+.. index:: pair: function; size
+.. _doxid-class_poco_1_1_abstract_cache_1a8c680a8d18da5455bc26687a0ee42aed:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::size_t
+	size()
+
+Returns the number of cached elements.
+
+.. index:: pair: function; forceReplace
+.. _doxid-class_poco_1_1_abstract_cache_1a428e64599e2c4f1d90b5fc117a39f6f5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	forceReplace()
+
+Forces cache replacement.
+
+Note that :ref:`Poco <doxid-namespace_poco>` 's cache strategy use for efficiency reason no background thread which periodically triggers cache replacement. Cache Replacement is only started when the cache is modified from outside, i.e. add is called, or when a user tries to access an cache element via get. In some cases, i.e. expire based caching where for a long time no access to the cache happens, it might be desirable to be able to trigger cache replacement manually.
+
+.. index:: pair: function; getAllKeys
+.. _doxid-class_poco_1_1_abstract_cache_1a1679e8f78520a9164e57410763df3a6b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::set<TKey>
+	getAllKeys()
+
+Returns a copy of all keys stored in the cache.
+
+.. index:: pair: function; initialize
+.. _doxid-class_poco_1_1_abstract_cache_1aa0e5d6076f277d4b66a80709a4b61f6f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	initialize()
+
+Sets up event registration.
+
+.. index:: pair: function; uninitialize
+.. _doxid-class_poco_1_1_abstract_cache_1ac82eea981641fa3a3a752832c159145b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	uninitialize()
+
+Reverts event registration.
+
+.. index:: pair: function; doAdd
+.. _doxid-class_poco_1_1_abstract_cache_1af9a03842b3131fb513f3c52d2b124705:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	doAdd(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+		)
+
+Adds the key value pair to the cache.
+
+If for the key already an entry exists, it will be overwritten.
+
+.. index:: pair: function; doAdd
+.. _doxid-class_poco_1_1_abstract_cache_1a134a4e02bb5c558d0c7781619fa90d3b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	doAdd(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>& val
+		)
+
+Adds the key value pair to the cache.
+
+If for the key already an entry exists, it will be overwritten.
+
+.. index:: pair: function; doUpdate
+.. _doxid-class_poco_1_1_abstract_cache_1a83a640c9a3be9709cadb7b0e45540ec4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	doUpdate(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TValue& val
+		)
+
+Adds the key value pair to the cache.
+
+If for the key already an entry exists, it will be overwritten.
+
+.. index:: pair: function; doUpdate
+.. _doxid-class_poco_1_1_abstract_cache_1a9eb42e862464346fa5851d6c3bd1ba20:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	doUpdate(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key,
+		:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>& val
+		)
+
+Adds the key value pair to the cache.
+
+If for the key already an entry exists, it will be overwritten.
+
+.. index:: pair: function; doRemove
+.. _doxid-class_poco_1_1_abstract_cache_1a9e1339dcd40b9d4014939901740bb884:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	doRemove(:ref:`Iterator<doxid-class_poco_1_1_abstract_cache_1a45cebd8415fed1d9943e09c288177ae0>` it)
+
+Removes an entry from the cache.
+
+If the entry is not found the remove is ignored.
+
+.. index:: pair: function; doHas
+.. _doxid-class_poco_1_1_abstract_cache_1a0982ea3cc47f33658af8df0fb2f2782f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	doHas(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key) const
+
+Returns true if the cache contains a value for the key.
+
+.. index:: pair: function; doGet
+.. _doxid-class_poco_1_1_abstract_cache_1a91c9f90cf85a0fe56b36481f7b5a27ee:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<TValue>
+	doGet(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` TKey& key)
+
+Returns a :ref:`SharedPtr <doxid-class_poco_1_1_shared_ptr>` of the cache entry, returns 0 if for the key no value was found.
+

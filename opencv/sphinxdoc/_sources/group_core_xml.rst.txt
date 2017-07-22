@@ -1,0 +1,205 @@
+.. index:: pair: group; XML/YAML Persistence
+.. _doxid-d4/da4/group__core__xml:
+
+XML/YAML Persistence
+====================
+
+.. toctree::
+	:hidden:
+
+	class_cv_FileNode.rst
+	class_cv_FileNodeIterator.rst
+	class_cv_FileStorage.rst
+
+
+
+.. _doxid-d4/da4/group__core__xml_1xml_storage:
+
+XML/YAML/JSON file storages.     
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. rubric:: Writing to a file storage.
+
+You can store and then restore various OpenCV data structures to/from XML (`http://www.w3c.org/XML <http://www.w3c.org/XML>`__), YAML (`http://www.yaml.org <http://www.yaml.org>`__) or JSON (`http://www.json.org/ <http://www.json.org/>`__) formats. Also, it is possible store and load arbitrarily complex data structures, which include OpenCV data structures, as well as primitive data types (integer and floating-point numbers and text strings) as their elements.
+
+Use the following procedure to write something to XML, YAML or JSON:
+
+#. Create new :ref:`FileStorage <doxid-d9/df9/classcv_1_1_file_storage>` and open it for writing. It can be done with a single call to :ref:`FileStorage::FileStorage <doxid-d9/df9/classcv_1_1_file_storage_1a29bcb12ede10d87a0fcbf89a88b092af>` constructor that takes a filename, or you can use the default constructor and then call :ref:`FileStorage::open <doxid-d9/df9/classcv_1_1_file_storage_1a14c2c18dc2e29999d03d52a0c24bd91c>`. Format of the file (XML, YAML or JSON) is determined from the filename extension (".xml", ".yml"/".yaml" and ".json", respectively)
+
+#. Write all the data you want using the streaming operator ``<<``, just like in the case of STL streams.
+
+#. Close the file using :ref:`FileStorage::release <doxid-d9/df9/classcv_1_1_file_storage_1ad23d5415a06fb4bc97bfa034589b376e>`. :ref:`FileStorage <doxid-d9/df9/classcv_1_1_file_storage>` destructor also closes the file.
+
+Here is an example:
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/opencv.hpp"
+	#include <time.h>
+	
+	using namespace cv;
+	
+	int main(int, char** argv)
+	{
+	    FileStorage fs("test.yml", FileStorage::WRITE);
+	
+	    fs << "frameCount" << 5;
+	    time_t rawtime; time(&rawtime);
+	    fs << "calibrationDate" << asctime(localtime(&rawtime));
+	    Mat cameraMatrix = (Mat_<double>(3,3) << 1000, 0, 320, 0, 1000, 240, 0, 0, 1);
+	    Mat distCoeffs = (Mat_<double>(5,1) << 0.1, 0.01, -0.001, 0, 0);
+	    fs << "cameraMatrix" << cameraMatrix << "distCoeffs" << distCoeffs;
+	    fs << "features" << "[";
+	    for( int i = 0; i < 3; i++ )
+	    {
+	        int x = rand() % 640;
+	        int y = rand() % 480;
+	        uchar lbp = rand() % 256;
+	
+	        fs << "{:" << "x" << x << "y" << y << "lbp" << "[:";
+	        for( int j = 0; j < 8; j++ )
+	            fs << ((lbp >> j) & 1);
+	        fs << "]" << "}";
+	    }
+	    fs << "]";
+	    fs.release();
+	    return 0;
+	}
+
+The sample above stores to XML and integer, text string (calibration date), 2 matrices, and a custom structure "feature", which includes feature coordinates and LBP (local binary pattern) value. Here is output of the sample:
+
+.. ref-code-block:: cpp
+
+	%YAML:1.0
+	frameCount: 5
+	calibrationDate: "Fri Jun 17 14:09:29 2011\n"
+	cameraMatrix: !!opencv-matrix
+	   rows: 3
+	   cols: 3
+	   dt: d
+	   data: [ 1000., 0., 320., 0., 1000., 240., 0., 0., 1. ]
+	distCoeffs: !!opencv-matrix
+	   rows: 5
+	   cols: 1
+	   dt: d
+	   data: [ 1.0000000000000001e-01, 1.0000000000000000e-02,
+	       -1.0000000000000000e-03, 0., 0. ]
+	features:
+	   - { x:167, y:49, lbp:[ 1, 0, 0, 1, 1, 0, 1, 1 ] }
+	   - { x:298, y:130, lbp:[ 0, 0, 0, 1, 0, 0, 1, 1 ] }
+	   - { x:344, y:158, lbp:[ 1, 1, 0, 0, 0, 0, 1, 0 ] }
+
+As an exercise, you can replace ".yml" with ".xml" or ".json" in the sample above and see, how the corresponding XML file will look like.
+
+Several things can be noted by looking at the sample code and the output:
+
+* The produced YAML (and XML/JSON) consists of heterogeneous collections that can be nested. There are 2 types of collections: named collections (mappings) and unnamed collections (sequences). In mappings each element has a name and is accessed by name. This is similar to structures and std::map in C/C++ and dictionaries in Python. In sequences elements do not have names, they are accessed by indices. This is similar to arrays and std::vector in C/C++ and lists, tuples in Python. "Heterogeneous" means that elements of each single collection can have different types.
+  
+  Top-level collection in YAML/XML/JSON is a mapping. Each matrix is stored as a mapping, and the matrix elements are stored as a sequence. Then, there is a sequence of features, where each feature is represented a mapping, and lbp value in a nested sequence.
+
+* When you write to a mapping (a structure), you write element name followed by its value. When you write to a sequence, you simply write the elements one by one. OpenCV data structures (such as :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>`) are written in absolutely the same way as simple C data structures - using ``<<`` operator.
+
+* To write a mapping, you first write the special string ``{`` to the storage, then write the elements as pairs (``fs << <element_name> << <element_value>``) and then write the closing ``}``.
+
+* To write a sequence, you first write the special string ``[``, then write the elements, then write the closing ``]``.
+
+* In YAML/JSON (but not XML), mappings and sequences can be written in a compact Python-like inline form. In the sample above matrix elements, as well as each feature, including its lbp value, is stored in such inline form. To store a mapping/sequence in a compact form, put ``:`` after the opening character, e.g. use ``{:`` instead of ``{`` and ``[:`` instead of ``[``. When the data is written to XML, those extra ``:`` are ignored.
+
+.. rubric:: Reading data from a file storage.
+
+To read the previously written XML, YAML or JSON file, do the following:
+
+#. Open the file storage using :ref:`FileStorage::FileStorage <doxid-d9/df9/classcv_1_1_file_storage_1a29bcb12ede10d87a0fcbf89a88b092af>` constructor or :ref:`FileStorage::open <doxid-d9/df9/classcv_1_1_file_storage_1a14c2c18dc2e29999d03d52a0c24bd91c>` method. In the current implementation the whole file is parsed and the whole representation of file storage is built in memory as a hierarchy of file nodes (see :ref:`FileNode <doxid-dc/d21/classcv_1_1_file_node>`)
+
+#. Read the data you are interested in. Use :ref:`FileStorage::operator [] <doxid-d9/df9/classcv_1_1_file_storage_1adc7eff268ab95c664657a03e72ed85a5>`, :ref:`FileNode::operator [] <doxid-dc/d21/classcv_1_1_file_node_1a544bdab727d3b76828c915b0fe30a8e6>` and/or :ref:`FileNodeIterator <doxid-d8/d08/classcv_1_1_file_node_iterator>`.
+
+#. Close the storage using :ref:`FileStorage::release <doxid-d9/df9/classcv_1_1_file_storage_1ad23d5415a06fb4bc97bfa034589b376e>`.
+
+Here is how to read the file created by the code sample above:
+
+.. ref-code-block:: cpp
+
+	FileStorage fs2("test.yml", FileStorage::READ);
+	
+	// first method: use (type) operator on FileNode.
+	int frameCount = (int)fs2["frameCount"];
+	
+	String date;
+	// second method: use FileNode::operator >>
+	fs2["calibrationDate"] >> date;
+	
+	Mat cameraMatrix2, distCoeffs2;
+	fs2["cameraMatrix"] >> cameraMatrix2;
+	fs2["distCoeffs"] >> distCoeffs2;
+	
+	cout << "frameCount: " << frameCount << endl
+	     << "calibration date: " << date << endl
+	     << "camera matrix: " << cameraMatrix2 << endl
+	     << "distortion coeffs: " << distCoeffs2 << endl;
+	
+	FileNode features = fs2["features"];
+	FileNodeIterator it = features.begin(), it_end = features.end();
+	int idx = 0;
+	std::vector<uchar> lbpval;
+	
+	// iterate through a sequence using FileNodeIterator
+	for( ; it != it_end; ++it, idx++ )
+	{
+	    cout << "feature #" << idx << ": ";
+	    cout << "x=" << (int)(*it)["x"] << ", y=" << (int)(*it)["y"] << ", lbp: (";
+	    // you can also easily read numerical arrays using FileNode >> std::vector operator.
+	    (*it)["lbp"] >> lbpval;
+	    for( int i = 0; i < (int)lbpval.size(); i++ )
+	        cout << " " << (int)lbpval[i];
+	    cout << ")" << endl;
+	}
+	fs2.release();
+
+
+
+.. _doxid-d4/da4/group__core__xml_1format_spec:
+
+Format specification    
+------------------------
+
+``([count]{u|c|w|s|i|f|d})``... where the characters correspond to fundamental C++ types:
+
+* ``u`` 8-bit unsigned number
+
+* ``c`` 8-bit signed number
+
+* ``w`` 16-bit unsigned number
+
+* ``s`` 16-bit signed number
+
+* ``i`` 32-bit signed number
+
+* ``f`` single precision floating-point number
+
+* ``d`` double precision floating-point number
+
+* ``r`` pointer, 32 lower bits of which are written as a signed integer. The type can be used to store structures with links between the elements.
+
+``count`` is the optional counter of values of a given type. For example, ``2if`` means that each array element is a structure of 2 integers, followed by a single-precision floating-point number. The equivalent notations of the above specification are ``iif``, ``2i1f`` and so forth. Other examples: ``u`` means that the array consists of bytes, and ``2d`` means the array consists of pairs of doubles.
+
+
+
+
+
+
+
+.. rubric:: See also:
+
+:ref:`filestorage.cpp <doxid-d6/d03/filestorage_8cpp-example>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// classes
+
+	class :ref:`cv::FileNode<doxid-dc/d21/classcv_1_1_file_node>`;
+	class :ref:`cv::FileNodeIterator<doxid-d8/d08/classcv_1_1_file_node_iterator>`;
+	class :ref:`cv::FileStorage<doxid-d9/df9/classcv_1_1_file_storage>`;
+

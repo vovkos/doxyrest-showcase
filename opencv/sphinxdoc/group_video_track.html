@@ -1,0 +1,578 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Object Tracking &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="class cv::DenseOpticalFlow" href="class_cv_DenseOpticalFlow.html" />
+    <link rel="prev" title="class cv::BackgroundSubtractorMOG2" href="class_cv_BackgroundSubtractorMOG2.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="class_cv_DenseOpticalFlow.html" title="class cv::DenseOpticalFlow"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="class_cv_BackgroundSubtractorMOG2.html" title="class cv::BackgroundSubtractorMOG2"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="group_video.html" accesskey="U">Video Analysis</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Object Tracking</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="class_cv_BackgroundSubtractorMOG2.html"
+                        title="previous chapter">class cv::BackgroundSubtractorMOG2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="class_cv_DenseOpticalFlow.html"
+                        title="next chapter">class cv::DenseOpticalFlow</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="object-tracking">
+<span id="doxid-dc-d6b-group-video-track"></span><span id="index-0"></span><h1>Object Tracking</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1ggad3c7afd06d698dd0a307b61cff2211daa9d4430ac75199af0cf6fcdefba30eafe">cv::&#64;138::OPTFLOW_USE_INITIAL_FLOW</span><span></span>     <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1ggad3c7afd06d698dd0a307b61cff2211daadd75f0bd85d1bd739b39b8900bc12c58">cv::&#64;138::OPTFLOW_LK_GET_MIN_EIGENVALS</span><span></span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1ggad3c7afd06d698dd0a307b61cff2211daa4ffe37adbc548e44a61025a26a1914aa">cv::&#64;138::OPTFLOW_FARNEBACK_GAUSSIAN</span><span></span>   <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span>
+<span class="p">{</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1gga8d00a609cfb78d81b39ecd57f023fa6ca01106d6d20122b782ff25eaeffe9a5be">cv::&#64;139::MOTION_TRANSLATION</span><span></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1gga8d00a609cfb78d81b39ecd57f023fa6ca075fb2a93001cb4cc1ba1b22af1e8848">cv::&#64;139::MOTION_EUCLIDEAN</span><span></span>   <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1gga8d00a609cfb78d81b39ecd57f023fa6caa22eb135b6afe090a8a0d228fd62634a">cv::&#64;139::MOTION_AFFINE</span><span></span>      <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="doxyrest-code-target target" id="doxid-dc-d6b-group-video-track-1gga8d00a609cfb78d81b39ecd57f023fa6ca81a5e999a7fde5656ce1ca0458741b27">cv::&#64;139::MOTION_HOMOGRAPHY</span><span></span>  <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_DenseOpticalFlow.html#doxid-d9-d8c-classcv-1-1-dense-optical-flow"><span class="std std-ref">cv::DenseOpticalFlow</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_DualTVL1OpticalFlow.html#doxid-d0-d96-classcv-1-1-dual-t-v-l1-optical-flow"><span class="std std-ref">cv::DualTVL1OpticalFlow</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_FarnebackOpticalFlow.html#doxid-df-de5-classcv-1-1-farneback-optical-flow"><span class="std std-ref">cv::FarnebackOpticalFlow</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_KalmanFilter.html#doxid-d3-dfb-classcv-1-1-kalman-filter"><span class="std std-ref">cv::KalmanFilter</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_SparseOpticalFlow.html#doxid-d2-d91-classcv-1-1-sparse-optical-flow"><span class="std std-ref">cv::SparseOpticalFlow</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_SparsePyrLKOpticalFlow.html#doxid-d8-ddc-classcv-1-1-sparse-pyr-l-k-optical-flow"><span class="std std-ref">cv::SparsePyrLKOpticalFlow</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga86640c1c470f87b2660c096d2b22b2ce"><span class="std std-ref">cv::buildOpticalFlowPyramid</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">img</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga889a09549b98223016170d9b613715de"><span class="std std-ref">OutputArrayOfArrays</span></a><span></span> <span class="n">pyramid</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLevel</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">withDerivatives</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">pyrBorder</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5ab3c5a6143d8120b95005fa7105a10bb4"><span class="std std-ref">BORDER_REFLECT_101</span></a><span></span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">derivBorder</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838"><span class="std std-ref">BORDER_CONSTANT</span></a><span></span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">tryReuseInputImage</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga5d10ebbd59fe09c5f650289ec0ece5af"><span class="std std-ref">cv::calcOpticalFlowFarneback</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">prev</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">next</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">flow</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">pyr_scale</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">levels</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">winsize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">iterations</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">poly_n</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">poly_sigma</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga473e4b886d0bcc6b65831eb88ed93323"><span class="std std-ref">cv::calcOpticalFlowPyrLK</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">prevImg</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">nextImg</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">prevPts</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">nextPts</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">status</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">err</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
+    <span class="kt">int</span> <span class="n">maxLevel</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minEigThreshold</span> <span class="o">=</span> <span class="mf">1e-4</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_RotatedRect.html#doxid-d5-d1f-classcv-1-1-rotated-rect"><span class="std std-ref">RotatedRect</span></a><span></span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1gaef2bd39c8356f423124f1fe7c44d54a1"><span class="std std-ref">cv::CamShift</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">probImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&amp;</span> <span class="n">window</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_DualTVL1OpticalFlow.html#doxid-d0-d96-classcv-1-1-dual-t-v-l1-optical-flow"><span class="std std-ref">DualTVL1OpticalFlow</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga681821d13ff1851c370d0ba13dde7a14"><span class="std std-ref">cv::createOptFlow_DualTVL1</span></a><span></span><span class="p">();</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga762cbe5efd52cf078950196f3c616d48"><span class="std std-ref">cv::estimateRigidTransform</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">fullAffine</span>
+    <span class="p">);</span>
+
+<span class="kt">double</span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga7ded46f9a55c0364c92ccd2019d43e3a"><span class="std std-ref">cv::findTransformECC</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">templateImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">inputImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">warpMatrix</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">motionType</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d6b-group-video-track-1gga8d00a609cfb78d81b39ecd57f023fa6caa22eb135b6afe090a8a0d228fd62634a"><span class="std std-ref">MOTION_AFFINE</span></a><span></span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">inputMask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-dc-d6b-group-video-track-1ga432a563c94eaf179533ff1e83dbb65ea"><span class="std std-ref">cv::meanShift</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">probImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&amp;</span> <span class="n">window</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-dc-d6b-group-video-track"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga86640c1c470f87b2660c096d2b22b2ce">
+<span id="index-1"></span><span></span><span class="kt">int</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">buildOpticalFlowPyramid</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">img</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga889a09549b98223016170d9b613715de"><span class="std std-ref">OutputArrayOfArrays</span></a><span></span> <span class="n">pyramid</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLevel</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">withDerivatives</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">pyrBorder</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5ab3c5a6143d8120b95005fa7105a10bb4"><span class="std std-ref">BORDER_REFLECT_101</span></a><span></span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">derivBorder</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838"><span class="std std-ref">BORDER_CONSTANT</span></a><span></span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">tryReuseInputImage</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="p">)</span>
+</pre>
+<p>Constructs the image pyramid which can be passed to calcOpticalFlowPyrLK.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>img</td>
+<td>8-bit input image.</td>
+</tr>
+<tr class="row-even"><td>pyramid</td>
+<td>output pyramid.</td>
+</tr>
+<tr class="row-odd"><td>winSize</td>
+<td>window size of optical flow algorithm. Must be not less than winSize argument of calcOpticalFlowPyrLK. It is needed to calculate required padding for pyramid levels.</td>
+</tr>
+<tr class="row-even"><td>maxLevel</td>
+<td>0-based maximal pyramid level number.</td>
+</tr>
+<tr class="row-odd"><td>withDerivatives</td>
+<td>set to precompute gradients for the every pyramid level. If pyramid is constructed without the gradients then calcOpticalFlowPyrLK will calculate them internally.</td>
+</tr>
+<tr class="row-even"><td>pyrBorder</td>
+<td>the border mode for pyramid layers.</td>
+</tr>
+<tr class="row-odd"><td>derivBorder</td>
+<td>the border mode for gradients.</td>
+</tr>
+<tr class="row-even"><td>tryReuseInputImage</td>
+<td>put ROI of input image into the pyramid if possible. You can pass false to force data copying.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Returns:</p>
+<p>number of levels in constructed pyramid. Can be less than maxLevel.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga5d10ebbd59fe09c5f650289ec0ece5af">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">calcOpticalFlowFarneback</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">prev</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">next</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">flow</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">pyr_scale</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">levels</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">winsize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">iterations</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">poly_n</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">poly_sigma</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">flags</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes a dense optical flow using the Gunnar Farneback’s algorithm.</p>
+<p>The function finds an optical flow for each prev pixel using the <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-farneback2003"><span class="std std-ref">[22]</span></a> algorithm so that</p>
+<div class="math notranslate nohighlight">
+\[\texttt{prev} (y,x) \sim \texttt{next} ( y + \texttt{flow} (y,x)[1], x + \texttt{flow} (y,x)[0])\]</div>
+<ul class="simple">
+<li>An example using the optical flow algorithm described by Gunnar Farneback can be found at opencv_source_code/samples/cpp/fback.cpp</li>
+<li>(Python) An example using the optical flow algorithm described by Gunnar Farneback can be found at opencv_source_code/samples/python/opt_flow.py</li>
+</ul>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>prev</td>
+<td>first 8-bit single-channel input image.</td>
+</tr>
+<tr class="row-even"><td>next</td>
+<td>second input image of the same size and the same type as prev.</td>
+</tr>
+<tr class="row-odd"><td>flow</td>
+<td>computed flow image that has the same size as prev and type CV_32FC2.</td>
+</tr>
+<tr class="row-even"><td>pyr_scale</td>
+<td>parameter, specifying the image scale (&lt;1) to build pyramids for each image; pyr_scale=0.5 means a classical pyramid, where each next layer is twice smaller than the previous one.</td>
+</tr>
+<tr class="row-odd"><td>levels</td>
+<td>number of pyramid layers including the initial image; levels=1 means that no extra layers are created and only the original images are used.</td>
+</tr>
+<tr class="row-even"><td>winsize</td>
+<td>averaging window size; larger values increase the algorithm robustness to image noise and give more chances for fast motion detection, but yield more blurred motion field.</td>
+</tr>
+<tr class="row-odd"><td>iterations</td>
+<td>number of iterations the algorithm does at each pyramid level.</td>
+</tr>
+<tr class="row-even"><td>poly_n</td>
+<td>size of the pixel neighborhood used to find polynomial expansion in each pixel; larger values mean that the image will be approximated with smoother surfaces, yielding more robust algorithm and more blurred motion field, typically poly_n =5 or 7.</td>
+</tr>
+<tr class="row-odd"><td>poly_sigma</td>
+<td>standard deviation of the Gaussian that is used to smooth derivatives used as a basis for the polynomial expansion; for poly_n=5, you can set poly_sigma=1.1, for poly_n=7, a good value would be poly_sigma=1.5.</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td><p class="first">operation flags that can be a combination of the following:</p>
+<ul class="last simple">
+<li><strong>OPTFLOW_USE_INITIAL_FLOW</strong> uses the input flow as an initial flow approximation.</li>
+<li><strong>OPTFLOW_FARNEBACK_GAUSSIAN</strong> uses the Gaussian <span class="math notranslate nohighlight">\(\texttt{winsize}\times\texttt{winsize}\)</span> filter instead of a box filter of the same size for optical flow estimation; usually, this option gives z more accurate flow than with a box filter, at the cost of lower speed; normally, winsize for a Gaussian window should be set to a larger value to achieve the same level of robustness.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga473e4b886d0bcc6b65831eb88ed93323">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">calcOpticalFlowPyrLK</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">prevImg</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">nextImg</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">prevPts</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">nextPts</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">status</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">err</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
+    <span class="kt">int</span> <span class="n">maxLevel</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
+    <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minEigThreshold</span> <span class="o">=</span> <span class="mf">1e-4</span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates an optical flow for a sparse feature set using the iterative Lucas-Kanade method with pyramids.</p>
+<p>The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-bouguet00"><span class="std std-ref">[7]</span></a>. The function is parallelized with the TBB library.</p>
+<ul class="simple">
+<li>An example using the Lucas-Kanade optical flow algorithm can be found at opencv_source_code/samples/cpp/lkdemo.cpp</li>
+<li>(Python) An example using the Lucas-Kanade optical flow algorithm can be found at opencv_source_code/samples/python/lk_track.py</li>
+<li>(Python) An example using the Lucas-Kanade tracker for homography matching can be found at opencv_source_code/samples/python/lk_homography.py</li>
+</ul>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>prevImg</td>
+<td>first 8-bit input image or pyramid constructed by buildOpticalFlowPyramid.</td>
+</tr>
+<tr class="row-even"><td>nextImg</td>
+<td>second input image or pyramid of the same size and the same type as prevImg.</td>
+</tr>
+<tr class="row-odd"><td>prevPts</td>
+<td>vector of 2D points for which the flow needs to be found; point coordinates must be single-precision floating-point numbers.</td>
+</tr>
+<tr class="row-even"><td>nextPts</td>
+<td>output vector of 2D points (with single-precision floating-point coordinates) containing the calculated new positions of input features in the second image; when OPTFLOW_USE_INITIAL_FLOW flag is passed, the vector must have the same size as in the input.</td>
+</tr>
+<tr class="row-odd"><td>status</td>
+<td>output status vector (of unsigned chars); each element of the vector is set to 1 if the flow for the corresponding features has been found, otherwise, it is set to 0.</td>
+</tr>
+<tr class="row-even"><td>err</td>
+<td>output vector of errors; each element of the vector is set to an error for the corresponding feature, type of the error measure can be set in flags parameter; if the flow wasn’t found then the error is not defined (use the status parameter to find such cases).</td>
+</tr>
+<tr class="row-odd"><td>winSize</td>
+<td>size of the search window at each pyramid level.</td>
+</tr>
+<tr class="row-even"><td>maxLevel</td>
+<td>0-based maximal pyramid level number; if set to 0, pyramids are not used (single level), if set to 1, two levels are used, and so on; if pyramids are passed to input then algorithm will use as many levels as pyramids have but no more than maxLevel.</td>
+</tr>
+<tr class="row-odd"><td>criteria</td>
+<td>parameter, specifying the termination criteria of the iterative search algorithm (after the specified maximum number of iterations criteria.maxCount or when the search window moves by less than criteria.epsilon.</td>
+</tr>
+<tr class="row-even"><td>flags</td>
+<td><p class="first">operation flags:</p>
+<ul class="last simple">
+<li><strong>OPTFLOW_USE_INITIAL_FLOW</strong> uses initial estimations, stored in nextPts; if the flag is not set, then prevPts is copied to nextPts and is considered the initial estimate.</li>
+<li><strong>OPTFLOW_LK_GET_MIN_EIGENVALS</strong> use minimum eigen values as an error measure (see minEigThreshold description); if the flag is not set, then <a class="reference internal" href="struct_cv_L1.html#doxid-d0-de0-structcv-1-1-l1"><span class="std std-ref">L1</span></a> distance between patches around the original and a moved point, divided by number of pixels in a window, is used as a error measure.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>minEigThreshold</td>
+<td>the algorithm calculates the minimum eigen value of a 2x2 normal matrix of optical flow equations (this matrix is called a spatial gradient matrix in <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-bouguet00"><span class="std std-ref">[7]</span></a>), divided by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding feature is filtered out and its flow is not processed, so it allows to remove bad points and get a performance boost.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1gaef2bd39c8356f423124f1fe7c44d54a1">
+<span id="index-4"></span><a class="reference internal" href="class_cv_RotatedRect.html#doxid-d5-d1f-classcv-1-1-rotated-rect"><span class="std std-ref">RotatedRect</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">CamShift</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">probImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&amp;</span> <span class="n">window</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds an object center, size, and orientation.</p>
+<p>See the OpenCV sample camshiftdemo.c that tracks colored objects.</p>
+<ul class="simple">
+<li>(Python) A sample explaining the camshift tracking algorithm can be found at opencv_source_code/samples/python/camshift.py</li>
+</ul>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>probImage</td>
+<td>Back projection of the object histogram. See calcBackProject.</td>
+</tr>
+<tr class="row-even"><td>window</td>
+<td>Initial search window.</td>
+</tr>
+<tr class="row-odd"><td>criteria</td>
+<td>Stop criteria for the underlying meanShift. returns (in old interfaces) Number of iterations CAMSHIFT took to converge The function implements the CAMSHIFT object tracking algorithm <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-bradski98"><span class="std std-ref">[9]</span></a>. First, it finds an object center using meanShift and then adjusts the window size and finds the optimal rotation. The function returns the rotated rectangle structure that includes the object position, size, and orientation. The next position of the search window can be obtained with <a class="reference internal" href="class_cv_RotatedRect.html#doxid-d5-d1f-classcv-1-1-rotated-rect-1a055a5d35e50bce65e3b1dee318dd3044"><span class="std std-ref">RotatedRect::boundingRect()</span></a></td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga681821d13ff1851c370d0ba13dde7a14">
+<span id="index-5"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_DualTVL1OpticalFlow.html#doxid-d0-d96-classcv-1-1-dual-t-v-l1-optical-flow"><span class="std std-ref">DualTVL1OpticalFlow</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createOptFlow_DualTVL1</span><span class="p">()</span>
+</pre>
+<p>Creates instance of <a class="reference internal" href="class_cv_DenseOpticalFlow.html#doxid-d9-d8c-classcv-1-1-dense-optical-flow"><span class="std std-ref">cv::DenseOpticalFlow</span></a>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga762cbe5efd52cf078950196f3c616d48">
+<span id="index-6"></span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">estimateRigidTransform</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">fullAffine</span>
+    <span class="p">)</span>
+</pre>
+<p>Computes an optimal affine transformation between two 2D point sets.</p>
+<p>The function finds an optimal affine transform <em>[A|b]</em> (a 2 x 3 floating-point matrix) that approximates best the affine transformation between:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Two</span> <span class="n">point</span> <span class="n">sets</span>
+<span class="n">Two</span> <span class="n">raster</span> <span class="n">images</span><span class="p">.</span> <span class="n">In</span> <span class="k">this</span> <span class="k">case</span><span class="p">,</span> <span class="n">the</span> <span class="n">function</span> <span class="n">first</span> <span class="n">finds</span> <span class="n">some</span> <span class="n">features</span> <span class="n">in</span> <span class="n">the</span> <span class="n">src</span> <span class="n">image</span> <span class="n">and</span>
+<span class="n">finds</span> <span class="n">the</span> <span class="n">corresponding</span> <span class="n">features</span> <span class="n">in</span> <span class="n">dst</span> <span class="n">image</span><span class="p">.</span> <span class="n">After</span> <span class="n">that</span><span class="p">,</span> <span class="n">the</span> <span class="n">problem</span> <span class="n">is</span> <span class="n">reduced</span> <span class="n">to</span> <span class="n">the</span> <span class="n">first</span>
+<span class="k">case</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>In case of point sets, the problem is formulated as follows: you need to find a 2x2 matrix <em>A</em> and 2x1 vector <em>b</em> so that:</p>
+<div class="math notranslate nohighlight">
+\[[A^*|b^*] = arg \min _{[A|b]} \sum _i \| \texttt{dst}[i] - A { \texttt{src}[i]}^T - b \| ^2\]</div>
+<p>where src[i] and dst[i] are the i-th points in src and dst, respectively <span class="math notranslate nohighlight">\([A|b]\)</span> can be either arbitrary (when fullAffine=true ) or have a form of</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix} a_{11} &amp; a_{12} &amp; b_1 \\ -a_{12} &amp; a_{11} &amp; b_2 \end{bmatrix}\end{split}\]</div>
+<p>when fullAffine=false.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>First input 2D point set stored in std::vector or <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a>, or an image stored in <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a>.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Second input 2D point set of the same size and the same type as A, or another image.</td>
+</tr>
+<tr class="row-odd"><td>fullAffine</td>
+<td>If true, the function finds an optimal affine transformation with no additional restrictions (6 degrees of freedom). Otherwise, the class of transformations to choose from is limited to combinations of translation, rotation, and uniform scaling (4 degrees of freedom).</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga27865b1d26bac9ce91efaee83e94d4dd"><span class="std std-ref">estimateAffine2D</span></a>, <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1gad767faff73e9cbd8b9d92b955b50062d"><span class="std std-ref">estimateAffinePartial2D</span></a>, <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1ga8f6d378f9f8eebb5cb55cd3ae295a999"><span class="std std-ref">getAffineTransform</span></a>, <a class="reference internal" href="group_imgproc_transform.html#doxid-da-d54-group-imgproc-transform-1ga8c1ae0e3589a9d77fffc962c49b22043"><span class="std std-ref">getPerspectiveTransform</span></a>, <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga4abc2ece9fab9398f2e560d53c8c9780"><span class="std std-ref">findHomography</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga7ded46f9a55c0364c92ccd2019d43e3a">
+<span id="index-7"></span><span></span><span class="kt">double</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">findTransformECC</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">templateImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">inputImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">warpMatrix</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">motionType</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d6b-group-video-track-1gga8d00a609cfb78d81b39ecd57f023fa6caa22eb135b6afe090a8a0d228fd62634a"><span class="std std-ref">MOTION_AFFINE</span></a><span></span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span> <span class="o">=</span> <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d"><span class="std std-ref">TermCriteria::COUNT</span></a><span></span><span class="o">+</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5"><span class="std std-ref">TermCriteria::EPS</span></a><span></span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">),</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">inputMask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds the geometric transform (warp) between two images in terms of the ECC criterion <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-ep08"><span class="std std-ref">[21]</span></a>.</p>
+<p>The function estimates the optimum transformation (warpMatrix) with respect to ECC criterion (<a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-ep08"><span class="std std-ref">[21]</span></a>), that is</p>
+<div class="math notranslate nohighlight">
+\[\texttt{warpMatrix} = \texttt{warpMatrix} = \arg\max_{W} \texttt{ECC}(\texttt{templateImage}(x,y),\texttt{inputImage}(x',y'))\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix} x' \\ y' \end{bmatrix} = W \cdot \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}\end{split}\]</div>
+<p>(the equation holds with homogeneous coordinates for homography). It returns the final enhanced correlation coefficient, that is the correlation coefficient between the template image and the final warped input image. When a <span class="math notranslate nohighlight">\(3\times 3\)</span> matrix is given with motionType =0, 1 or 2, the third row is ignored.</p>
+<p>Unlike findHomography and estimateRigidTransform, the function findTransformECC implements an area-based alignment that builds on intensity similarities. In essence, the function updates the initial transformation that roughly aligns the images. If this information is missing, the identity warp (unity matrix) is used as an initialization. Note that if images undergo strong displacements/rotations, an initial transformation that roughly aligns the images is necessary (e.g., a simple euclidean/similarity transform that allows for the images showing the same image content approximately). Use inverse warping in the second image to take an image close to the first one, i.e. use the flag WARP_INVERSE_MAP with warpAffine or warpPerspective. See also the OpenCV sample image_alignment.cpp that demonstrates the use of the function. Note that the function throws an exception if algorithm does not converges.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>templateImage</td>
+<td>single-channel template image; CV_8U or CV_32F array.</td>
+</tr>
+<tr class="row-even"><td>inputImage</td>
+<td>single-channel input image which should be warped with the final warpMatrix in order to provide an image similar to templateImage, same type as temlateImage.</td>
+</tr>
+<tr class="row-odd"><td>warpMatrix</td>
+<td>floating-point <span class="math notranslate nohighlight">\(2\times 3\)</span> or <span class="math notranslate nohighlight">\(3\times 3\)</span> mapping matrix (warp).</td>
+</tr>
+<tr class="row-even"><td>motionType</td>
+<td><p class="first">parameter, specifying the type of motion:</p>
+<ul class="last simple">
+<li><strong>MOTION_TRANSLATION</strong> sets a translational motion model; warpMatrix is <span class="math notranslate nohighlight">\(2\times 3\)</span> with the first <span class="math notranslate nohighlight">\(2\times 2\)</span> part being the unity matrix and the rest two parameters being estimated.</li>
+<li><strong>MOTION_EUCLIDEAN</strong> sets a Euclidean (rigid) transformation as motion model; three parameters are estimated; warpMatrix is <span class="math notranslate nohighlight">\(2\times 3\)</span>.</li>
+<li><strong>MOTION_AFFINE</strong> sets an affine motion model (DEFAULT); six parameters are estimated; warpMatrix is <span class="math notranslate nohighlight">\(2\times 3\)</span>.</li>
+<li><strong>MOTION_HOMOGRAPHY</strong> sets a homography as a motion model; eight parameters are estimated;`warpMatrix` is <span class="math notranslate nohighlight">\(3\times 3\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>criteria</td>
+<td>parameter, specifying the termination criteria of the ECC algorithm; criteria.epsilon defines the threshold of the increment in the correlation coefficient between two iterations (a negative criteria.epsilon makes criteria.maxcount the only termination criterion). Default values are shown in the declaration above.</td>
+</tr>
+<tr class="row-even"><td>inputMask</td>
+<td>An optional mask to indicate valid values of inputImage.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga27865b1d26bac9ce91efaee83e94d4dd"><span class="std std-ref">estimateAffine2D</span></a>, <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1gad767faff73e9cbd8b9d92b955b50062d"><span class="std std-ref">estimateAffinePartial2D</span></a>, <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga4abc2ece9fab9398f2e560d53c8c9780"><span class="std std-ref">findHomography</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dc-d6b-group-video-track-1ga432a563c94eaf179533ff1e83dbb65ea">
+<span id="index-8"></span><span></span><span class="kt">int</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">meanShift</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">probImage</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="o">&amp;</span> <span class="n">window</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds an object on a back projection image.</p>
+<ul class="simple">
+<li>A mean-shift tracking sample can be found at opencv_source_code/samples/cpp/camshiftdemo.cpp</li>
+</ul>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>probImage</td>
+<td>Back projection of the object histogram. See calcBackProject for details.</td>
+</tr>
+<tr class="row-even"><td>window</td>
+<td>Initial search window.</td>
+</tr>
+<tr class="row-odd"><td>criteria</td>
+<td>Stop criteria for the iterative search algorithm. returns : Number of iterations CAMSHIFT took to converge. The function implements the iterative object search algorithm. It takes the input back projection of an object and the initial position. The mass center in window of the back projection image is computed and the search window center shifts to the mass center. The procedure is repeated until the specified number of iterations criteria.maxCount is done or until the window center shifts by less than criteria.epsilon. The algorithm is used inside CamShift and, unlike CamShift , the search window size or orientation do not change during the search. You can simply pass the output of calcBackProject to this function. But better results can be obtained if you pre-filter the back projection and remove the noise. For example, you can do this by retrieving connected components with findContours , throwing away contours with small area ( contourArea ), and rendering the remaining contours with drawContours.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="class_cv_DenseOpticalFlow.html" title="class cv::DenseOpticalFlow"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="class_cv_BackgroundSubtractorMOG2.html" title="class cv::BackgroundSubtractorMOG2"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="group_video.html" >Video Analysis</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

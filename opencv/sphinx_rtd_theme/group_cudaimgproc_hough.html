@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Hough Transform &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="class cv::cuda::HoughCirclesDetector" href="class_cv_cuda_HoughCirclesDetector.html" />
+    <link rel="prev" title="class cv::cuda::CLAHE" href="class_cv_cuda_CLAHE.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_core.html">Core functionality</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_core_basic.html">Basic structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_c.html">C structures and operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_cluster.html">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_directx.html">DirectX interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_eigen.html">Eigen support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_ipp.html">Intel IPP Asynchronous C/C++ Converters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_va_intel.html">Intel VA-API/OpenCL (CL-VA) interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opencl.html">OpenCL support</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="group_core_opengl.html">OpenGL interoperability</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="group_cuda.html">CUDA-accelerated Computer Vision</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="group_cudabgsegm.html">Background Segmentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudacore.html">Core part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudev.html">Device layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudafeatures2d.html">Feature Detection and Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudafilters.html">Image Filtering</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="group_cudaimgproc.html">Image Processing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudawarping.html">Image Warping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudalegacy.html">Legacy support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudaobjdetect.html">Object Detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudaarithm.html">Operations on Matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudaoptflow.html">Optical Flow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudastereo.html">Stereo Correspondence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="group_cudacodec.html">Video Encoding/Decoding</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_cv_cuda.html">namespace cv::cuda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="namespace_cv_ogl_ocl.html">namespace cv::ogl::ocl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enum_cv_ogl_RenderModes.html">enum cv::ogl::RenderModes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ogl_Arrays.html">class cv::ogl::Arrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ogl_Buffer.html">class cv::ogl::Buffer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_ogl_Texture2D.html">class cv::ogl::Texture2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_core_opengl.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_core_opengl.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_array.html">Operations on arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_optim.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_utils.html">Utility and system functions and macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_xml.html">XML/YAML Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_CovarFlags.html">enum cv::CovarFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HersheyFonts.html">enum cv::HersheyFonts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_KmeansFlags.html">enum cv::KmeansFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_LineTypes.html">enum cv::LineTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ReduceTypes.html">enum cv::ReduceTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_Affine3.html">template class cv::Affine3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_BufferPoolController.html">class cv::BufferPoolController</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImage.html">template class cv::WImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBuffer.html">template class cv::WImageBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBufferC.html">template class cv::WImageBufferC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageC.html">template class cv::WImageC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageView.html">template class cv::WImageView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageViewC.html">template class cv::WImageViewC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_core.html">Core functionality</a> &raquo;</li>
+        
+          <li><a href="group_core_opengl.html">OpenGL interoperability</a> &raquo;</li>
+        
+          <li><a href="group_cuda.html">CUDA-accelerated Computer Vision</a> &raquo;</li>
+        
+          <li><a href="group_cudaimgproc.html">Image Processing</a> &raquo;</li>
+        
+      <li>Hough Transform</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hough-transform">
+<span id="doxid-d2-d15-group-cudaimgproc-hough"></span><span id="index-0"></span><h1>Hough Transform</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_cuda_HoughCirclesDetector.html#doxid-d2-d2d-classcv-1-1cuda-1-1-hough-circles-detector"><span class="std std-ref">cv::cuda::HoughCirclesDetector</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_cuda_HoughLinesDetector.html#doxid-d7-d9d-classcv-1-1cuda-1-1-hough-lines-detector"><span class="std std-ref">cv::cuda::HoughLinesDetector</span></a><span></span><span class="p">;</span>
+<span class="k">class</span> <a class="reference internal" href="class_cv_cuda_HoughSegmentDetector.html#doxid-de-d0d-classcv-1-1cuda-1-1-hough-segment-detector"><span class="std std-ref">cv::cuda::HoughSegmentDetector</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_GeneralizedHoughBallard.html#doxid-d9-d97-classcv-1-1-generalized-hough-ballard"><span class="std std-ref">GeneralizedHoughBallard</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d2-d15-group-cudaimgproc-hough-1gab1ad5dc018f9b42d291aa4781d6ee620"><span class="std std-ref">cv::cuda::createGeneralizedHoughBallard</span></a><span></span><span class="p">();</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_GeneralizedHoughGuil.html#doxid-d2-d3a-classcv-1-1-generalized-hough-guil"><span class="std std-ref">GeneralizedHoughGuil</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d2-d15-group-cudaimgproc-hough-1ga4b0e2bd03af39ae97ab4f358aa5378ab"><span class="std std-ref">cv::cuda::createGeneralizedHoughGuil</span></a><span></span><span class="p">();</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_HoughCirclesDetector.html#doxid-d2-d2d-classcv-1-1cuda-1-1-hough-circles-detector"><span class="std std-ref">HoughCirclesDetector</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d2-d15-group-cudaimgproc-hough-1ga8e7921f114a5a4a3c85e86484c8f9597"><span class="std std-ref">cv::cuda::createHoughCirclesDetector</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">dp</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">minDist</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cannyThreshold</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">votesThreshold</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">minRadius</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxRadius</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxCircles</span> <span class="o">=</span> <span class="mi">4096</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_HoughLinesDetector.html#doxid-d7-d9d-classcv-1-1cuda-1-1-hough-lines-detector"><span class="std std-ref">HoughLinesDetector</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d2-d15-group-cudaimgproc-hough-1ga1ac6e82a77233239dc20e14d1c21ddf9"><span class="std std-ref">cv::cuda::createHoughLinesDetector</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">threshold</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">doSort</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLines</span> <span class="o">=</span> <span class="mi">4096</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_HoughSegmentDetector.html#doxid-de-d0d-classcv-1-1cuda-1-1-hough-segment-detector"><span class="std std-ref">HoughSegmentDetector</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-d2-d15-group-cudaimgproc-hough-1ga5a5959a24e8cb4da131bcffbf56b13cd"><span class="std std-ref">cv::cuda::createHoughSegmentDetector</span></a><span></span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">minLineLength</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLineGap</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLines</span> <span class="o">=</span> <span class="mi">4096</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d2-d15-group-cudaimgproc-hough"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d2-d15-group-cudaimgproc-hough-1gab1ad5dc018f9b42d291aa4781d6ee620">
+<span id="index-1"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_GeneralizedHoughBallard.html#doxid-d9-d97-classcv-1-1-generalized-hough-ballard"><span class="std std-ref">GeneralizedHoughBallard</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">createGeneralizedHoughBallard</span><span class="p">()</span>
+</pre>
+<p>Creates implementation for generalized hough transform from <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-ballard1981"><span class="std std-ref">[3]</span></a>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d2-d15-group-cudaimgproc-hough-1ga4b0e2bd03af39ae97ab4f358aa5378ab">
+<span id="index-2"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_GeneralizedHoughGuil.html#doxid-d2-d3a-classcv-1-1-generalized-hough-guil"><span class="std std-ref">GeneralizedHoughGuil</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">createGeneralizedHoughGuil</span><span class="p">()</span>
+</pre>
+<p>Creates implementation for generalized hough transform from <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-guil1999"><span class="std std-ref">[35]</span></a>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d2-d15-group-cudaimgproc-hough-1ga8e7921f114a5a4a3c85e86484c8f9597">
+<span id="index-3"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_HoughCirclesDetector.html#doxid-d2-d2d-classcv-1-1cuda-1-1-hough-circles-detector"><span class="std std-ref">HoughCirclesDetector</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">createHoughCirclesDetector</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">dp</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">minDist</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cannyThreshold</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">votesThreshold</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">minRadius</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxRadius</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxCircles</span> <span class="o">=</span> <span class="mi">4096</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates implementation for <a class="reference internal" href="class_cv_cuda_HoughCirclesDetector.html#doxid-d2-d2d-classcv-1-1cuda-1-1-hough-circles-detector"><span class="std std-ref">cuda::HoughCirclesDetector</span></a>.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>dp</td>
+<td>Inverse ratio of the accumulator resolution to the image resolution. For example, if dp=1 , the accumulator has the same resolution as the input image. If dp=2 , the accumulator has half as big width and height.</td>
+</tr>
+<tr class="row-even"><td>minDist</td>
+<td>Minimum distance between the centers of the detected circles. If the parameter is too small, multiple neighbor circles may be falsely detected in addition to a true one. If it is too large, some circles may be missed.</td>
+</tr>
+<tr class="row-odd"><td>cannyThreshold</td>
+<td>The higher threshold of the two passed to Canny edge detector (the lower one is twice smaller).</td>
+</tr>
+<tr class="row-even"><td>votesThreshold</td>
+<td>The accumulator threshold for the circle centers at the detection stage. The smaller it is, the more false circles may be detected.</td>
+</tr>
+<tr class="row-odd"><td>minRadius</td>
+<td>Minimum circle radius.</td>
+</tr>
+<tr class="row-even"><td>maxRadius</td>
+<td>Maximum circle radius.</td>
+</tr>
+<tr class="row-odd"><td>maxCircles</td>
+<td>Maximum number of output circles.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d2-d15-group-cudaimgproc-hough-1ga1ac6e82a77233239dc20e14d1c21ddf9">
+<span id="index-4"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_HoughLinesDetector.html#doxid-d7-d9d-classcv-1-1cuda-1-1-hough-lines-detector"><span class="std std-ref">HoughLinesDetector</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">createHoughLinesDetector</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">threshold</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">doSort</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLines</span> <span class="o">=</span> <span class="mi">4096</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates implementation for <a class="reference internal" href="class_cv_cuda_HoughLinesDetector.html#doxid-d7-d9d-classcv-1-1cuda-1-1-hough-lines-detector"><span class="std std-ref">cuda::HoughLinesDetector</span></a>.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>rho</td>
+<td>Distance resolution of the accumulator in pixels.</td>
+</tr>
+<tr class="row-even"><td>theta</td>
+<td>Angle resolution of the accumulator in radians.</td>
+</tr>
+<tr class="row-odd"><td>threshold</td>
+<td><a class="reference internal" href="struct_cv_Accumulator.html#doxid-de-dee-structcv-1-1-accumulator"><span class="std std-ref">Accumulator</span></a> threshold parameter. Only those lines are returned that get enough votes (<span class="math notranslate nohighlight">\(&gt;\texttt{threshold}\)</span>).</td>
+</tr>
+<tr class="row-even"><td>doSort</td>
+<td>Performs lines sort by votes.</td>
+</tr>
+<tr class="row-odd"><td>maxLines</td>
+<td>Maximum number of output lines.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d2-d15-group-cudaimgproc-hough-1ga5a5959a24e8cb4da131bcffbf56b13cd">
+<span id="index-5"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_cuda_HoughSegmentDetector.html#doxid-de-d0d-classcv-1-1cuda-1-1-hough-segment-detector"><span class="std std-ref">HoughSegmentDetector</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cuda</span><span class="o">::</span><span class="n">createHoughSegmentDetector</span><span class="p">(</span>
+    <span class="kt">float</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">float</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">minLineLength</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLineGap</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxLines</span> <span class="o">=</span> <span class="mi">4096</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates implementation for <a class="reference internal" href="class_cv_cuda_HoughSegmentDetector.html#doxid-de-d0d-classcv-1-1cuda-1-1-hough-segment-detector"><span class="std std-ref">cuda::HoughSegmentDetector</span></a>.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>rho</td>
+<td>Distance resolution of the accumulator in pixels.</td>
+</tr>
+<tr class="row-even"><td>theta</td>
+<td>Angle resolution of the accumulator in radians.</td>
+</tr>
+<tr class="row-odd"><td>minLineLength</td>
+<td>Minimum line length. Line segments shorter than that are rejected.</td>
+</tr>
+<tr class="row-even"><td>maxLineGap</td>
+<td>Maximum allowed gap between points on the same line to link them.</td>
+</tr>
+<tr class="row-odd"><td>maxLines</td>
+<td>Maximum number of output lines.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="class_cv_cuda_HoughCirclesDetector.html" class="btn btn-neutral float-right" title="class cv::cuda::HoughCirclesDetector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="class_cv_cuda_CLAHE.html" class="btn btn-neutral float-left" title="class cv::cuda::CLAHE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>edge.cpp &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ffilldemo.cpp" href="example_ffilldemo.cpp.html" />
+    <link rel="prev" title="distrans.cpp" href="example_distrans.cpp.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example_ffilldemo.cpp.html" title="ffilldemo.cpp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="example_distrans.cpp.html" title="distrans.cpp"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example_distrans.cpp.html"
+                        title="previous chapter">distrans.cpp</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example_ffilldemo.cpp.html"
+                        title="next chapter">ffilldemo.cpp</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="edge-cpp">
+<span id="doxid-d3-d63-edge-8cpp-example"></span><span id="index-0"></span><h1>edge.cpp</h1>
+<p>An example on using the canny edge detector</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/core/utility.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">edgeThresh</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">edgeThreshScharr</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">blurImage</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edge2</span><span class="p">,</span> <span class="n">cedge</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name1</span> <span class="o">=</span> <span class="s">&quot;Edge map : Canny default (Sobel gradient)&quot;</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name2</span> <span class="o">=</span> <span class="s">&quot;Edge map : Canny with custom gradient (Scharr)&quot;</span><span class="p">;</span>
+
+<span class="c1">// define a trackbar callback</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">onTrackbar</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga8c45db9afe636703801b0b2e440fce37"><span class="std std-ref">blur</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">blurImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">));</span>
+
+    <span class="c1">// Run the edge detector on grayscale</span>
+    <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">Canny</span></a><span></span><span class="p">(</span><span class="n">blurImage</span><span class="p">,</span> <span class="n">edge1</span><span class="p">,</span> <span class="n">edgeThresh</span><span class="p">,</span> <span class="n">edgeThresh</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+    <span class="n">cedge</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">Scalar::all</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span><span class="n">cedge</span><span class="p">,</span> <span class="n">edge1</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="n">window_name1</span><span class="p">,</span> <span class="n">cedge</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaa13106761eedf14798f37aa2d60404c9"><span class="std std-ref">Scharr</span></a><span></span><span class="p">(</span><span class="n">blurImage</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga9d2ee1a8334733dea7482a47a88e0f87"><span class="std std-ref">CV_16S</span></a><span></span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaa13106761eedf14798f37aa2d60404c9"><span class="std std-ref">Scharr</span></a><span></span><span class="p">(</span><span class="n">blurImage</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga9d2ee1a8334733dea7482a47a88e0f87"><span class="std std-ref">CV_16S</span></a><span></span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">Canny</span></a><span></span><span class="p">(</span> <span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span> <span class="n">edge2</span><span class="p">,</span> <span class="n">edgeThreshScharr</span><span class="p">,</span> <span class="n">edgeThreshScharr</span><span class="o">*</span><span class="mi">3</span> <span class="p">);</span>
+    <span class="n">cedge</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">Scalar::all</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span><span class="n">cedge</span><span class="p">,</span> <span class="n">edge2</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="n">window_name2</span><span class="p">,</span> <span class="n">cedge</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="n">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">This sample demonstrates Canny edge detection</span><span class="se">\n</span><span class="s">&quot;</span>
+           <span class="s">&quot;Call:</span><span class="se">\n</span><span class="s">&quot;</span>
+           <span class="s">&quot;    /.edge [image_name -- Default is ../data/fruits.jpg]</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">keys</span> <span class="o">=</span>
+<span class="p">{</span>
+    <span class="s">&quot;{help h||}{@image |../data/fruits.jpg|input image name}&quot;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">keys</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot read image file: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cedge</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a55ced2c8d844d683ea9a725c60037ad0"><span class="std std-ref">create</span></a><span></span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">image</span><span class="p">.</span><span class="n">type</span><span class="p">());</span>
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span><span class="p">);</span>
+
+    <span class="c1">// Create a window</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="n">window_name1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="n">window_name2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">// create a toolbar</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;Canny threshold default&quot;</span><span class="p">,</span> <span class="n">window_name1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">edgeThresh</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">onTrackbar</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;Canny threshold Scharr&quot;</span><span class="p">,</span> <span class="n">window_name2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">edgeThreshScharr</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="n">onTrackbar</span><span class="p">);</span>
+
+    <span class="c1">// Show the image</span>
+    <span class="n">onTrackbar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="c1">// Wait for a key stroke; the same function arranges events processing</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example_ffilldemo.cpp.html" title="ffilldemo.cpp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="example_distrans.cpp.html" title="distrans.cpp"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

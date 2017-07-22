@@ -1,0 +1,204 @@
+.. index:: pair: class; Poco::Net::SocketConnector
+.. _doxid-class_poco_1_1_net_1_1_socket_connector:
+
+template class Poco::Net::SocketConnector
+=========================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class implements the Connector part of the Acceptor-Connector design pattern. :ref:`More...<details-class_poco_1_1_net_1_1_socket_connector>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <SocketConnector.h>
+	
+	template <class ServiceHandler>
+	class SocketConnector
+	{
+	public:
+		// construction
+	
+		:target:`SocketConnector<doxid-class_poco_1_1_net_1_1_socket_connector_1ab5fe50730b3e798c3dd423a31eaf5add>`(:ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`& address);
+	
+		:ref:`SocketConnector<doxid-class_poco_1_1_net_1_1_socket_connector_1a9b7d6fe690168ab82daf0dc686154411>`(
+			:ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`& address,
+			:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor
+			);
+
+		// methods
+	
+		virtual
+		void
+		:ref:`registerConnector<doxid-class_poco_1_1_net_1_1_socket_connector_1a39c92ed2fce8bc2621bd7a6833b756f3>`(:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor);
+	
+		virtual
+		void
+		:ref:`unregisterConnector<doxid-class_poco_1_1_net_1_1_socket_connector_1a5b619fe915ad996bd58a269a22a9cd6f>`();
+	
+		void
+		:target:`onReadable<doxid-class_poco_1_1_net_1_1_socket_connector_1a12e00a6bcd972a757e65863a618a54a5>`(:ref:`ReadableNotification<doxid-class_poco_1_1_net_1_1_readable_notification>`* pNotification);
+	
+		void
+		:target:`onWritable<doxid-class_poco_1_1_net_1_1_socket_connector_1ab23670beee6258fadda3924cfc52e461>`(:ref:`WritableNotification<doxid-class_poco_1_1_net_1_1_writable_notification>`* pNotification);
+	
+		void
+		:target:`onConnect<doxid-class_poco_1_1_net_1_1_socket_connector_1a5143983ae4a55e8cc6a035b3974ea72c>`();
+	
+		void
+		:target:`onError<doxid-class_poco_1_1_net_1_1_socket_connector_1a47a147e5e311816f8d387cf3111a05a2>`(:ref:`ErrorNotification<doxid-class_poco_1_1_net_1_1_error_notification>`* pNotification);
+
+	protected:
+		// methods
+	
+		virtual
+		ServiceHandler*
+		:ref:`createServiceHandler<doxid-class_poco_1_1_net_1_1_socket_connector_1a5d73c2ca2b15c754a4672d2b5c107bf5>`();
+	
+		virtual
+		void
+		:ref:`onError<doxid-class_poco_1_1_net_1_1_socket_connector_1a4214bc6b6624991e92b9114144a511fc>`(int errorCode);
+	
+		:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`*
+		:ref:`reactor<doxid-class_poco_1_1_net_1_1_socket_connector_1a8ff94535206363744b2f930e6568d6e5>`();
+	
+		:ref:`StreamSocket<doxid-class_poco_1_1_net_1_1_stream_socket>`&
+		:ref:`socket<doxid-class_poco_1_1_net_1_1_socket_connector_1a4b9054c571abe04aa87ab8d475a09a43>`();
+	};
+.. _details-class_poco_1_1_net_1_1_socket_connector:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements the Connector part of the Acceptor-Connector design pattern.
+
+The Acceptor-Connector pattern has been described in the book "Pattern Languages of Program Design 3", edited by Robert Martin, Frank Buschmann and Dirk Riehle (Addison Wesley, 1997).
+
+The Acceptor-Connector design pattern decouples connection establishment and service initialization in a distributed system from the processing performed once a service is initialized. This decoupling is achieved with three components: Acceptors, Connectors and Service Handlers. The Connector actively establishes a connection with a remote server socket (usually managed by an Acceptor) and initializes a Service Handler to manage the connection.
+
+The :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` sets up a :ref:`StreamSocket <doxid-class_poco_1_1_net_1_1_stream_socket>`, initiates a non-blocking connect operation and registers itself for :ref:`ReadableNotification <doxid-class_poco_1_1_net_1_1_readable_notification>`, :ref:`WritableNotification <doxid-class_poco_1_1_net_1_1_writable_notification>` and :ref:`ErrorNotification <doxid-class_poco_1_1_net_1_1_error_notification>`. :ref:`ReadableNotification <doxid-class_poco_1_1_net_1_1_readable_notification>` or :ref:`WritableNotification <doxid-class_poco_1_1_net_1_1_writable_notification>` denote the successful establishment of the connection.
+
+When the :ref:`StreamSocket <doxid-class_poco_1_1_net_1_1_stream_socket>` becomes readable or writeable, the :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` creates a ServiceHandler to service the connection and unregisters itself.
+
+In case of an error (:ref:`ErrorNotification <doxid-class_poco_1_1_net_1_1_error_notification>`), the :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` unregisters itself and calls the :ref:`onError() <doxid-class_poco_1_1_net_1_1_socket_connector_1a47a147e5e311816f8d387cf3111a05a2>` method, which can be overridden by subclasses to perform custom error handling.
+
+The ServiceHandler class must provide a constructor that takes a :ref:`StreamSocket <doxid-class_poco_1_1_net_1_1_stream_socket>` and a :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>` as arguments, e.g.:
+
+.. ref-code-block:: cpp
+
+	MyServiceHandler(const StreamSocket& socket, ServiceReactor& reactor)
+
+When the ServiceHandler is done, it must destroy itself.
+
+Subclasses can override the :ref:`createServiceHandler() <doxid-class_poco_1_1_net_1_1_socket_connector_1a5d73c2ca2b15c754a4672d2b5c107bf5>` factory method if special steps are necessary to create a ServiceHandler object.
+
+Construction
+------------
+
+.. index:: pair: function; SocketConnector
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a9b7d6fe690168ab82daf0dc686154411:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	SocketConnector(
+		:ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`& address,
+		:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor
+		)
+
+Creates an acceptor, using the given :ref:`ServerSocket <doxid-class_poco_1_1_net_1_1_server_socket>`.
+
+The :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` registers itself with the given :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>`.
+
+Methods
+-------
+
+.. index:: pair: function; registerConnector
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a39c92ed2fce8bc2621bd7a6833b756f3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	registerConnector(:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`& reactor)
+
+Registers the :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` with a :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>`.
+
+A subclass can override this and, for example, also register an event handler for a timeout event.
+
+The overriding method must call the baseclass implementation first.
+
+.. index:: pair: function; unregisterConnector
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a5b619fe915ad996bd58a269a22a9cd6f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	unregisterConnector()
+
+Unregisters the :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>`.
+
+A subclass can override this and, for example, also unregister its event handler for a timeout event.
+
+The overriding method must call the baseclass implementation first.
+
+.. index:: pair: function; createServiceHandler
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a5d73c2ca2b15c754a4672d2b5c107bf5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	ServiceHandler*
+	createServiceHandler()
+
+Create and initialize a new ServiceHandler instance.
+
+Subclasses can override this method.
+
+.. index:: pair: function; onError
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a4214bc6b6624991e92b9114144a511fc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	onError(int errorCode)
+
+Called when the socket cannot be connected.
+
+Subclasses can override this method.
+
+.. index:: pair: function; reactor
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a8ff94535206363744b2f930e6568d6e5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`SocketReactor<doxid-class_poco_1_1_net_1_1_socket_reactor>`*
+	reactor()
+
+Returns a pointer to the :ref:`SocketReactor <doxid-class_poco_1_1_net_1_1_socket_reactor>` where this :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` is registered.
+
+The pointer may be null.
+
+.. index:: pair: function; socket
+.. _doxid-class_poco_1_1_net_1_1_socket_connector_1a4b9054c571abe04aa87ab8d475a09a43:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`StreamSocket<doxid-class_poco_1_1_net_1_1_stream_socket>`&
+	socket()
+
+Returns a reference to the :ref:`SocketConnector <doxid-class_poco_1_1_net_1_1_socket_connector>` 's socket.
+

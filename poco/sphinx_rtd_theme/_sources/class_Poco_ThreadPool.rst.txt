@@ -1,0 +1,341 @@
+.. index:: pair: class; Poco::ThreadPool
+.. _doxid-class_poco_1_1_thread_pool:
+
+class Poco::ThreadPool
+======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A thread pool always keeps a number of threads running, ready to accept work. :ref:`More...<details-class_poco_1_1_thread_pool>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ThreadPool.h>
+	
+	class ThreadPool
+	{
+	public:
+		// construction
+	
+		:target:`ThreadPool<doxid-class_poco_1_1_thread_pool_1a809228167575cbe90353db949d288b4b>`(
+			int minCapacity = 2,
+			int maxCapacity = 16,
+			int idleTime = 60,
+			int stackSize = :ref:`POCO_THREAD_STACK_SIZE<doxid-_config_8h_1a9f8968fba0ac89f55b2f81dbe015539b>`
+			);
+	
+		:target:`ThreadPool<doxid-class_poco_1_1_thread_pool_1a2888cf7362f8dd66f6dd88827366718c>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name,
+			int minCapacity = 2,
+			int maxCapacity = 16,
+			int idleTime = 60,
+			int stackSize = :ref:`POCO_THREAD_STACK_SIZE<doxid-_config_8h_1a9f8968fba0ac89f55b2f81dbe015539b>`
+			);
+
+		// methods
+	
+		void
+		:ref:`addCapacity<doxid-class_poco_1_1_thread_pool_1af579d9233b99b78f0b7c862fe466c16a>`(int n);
+	
+		int
+		:ref:`capacity<doxid-class_poco_1_1_thread_pool_1a774950e637432c2fd2d13d8179338298>`() const;
+	
+		void
+		:ref:`setStackSize<doxid-class_poco_1_1_thread_pool_1ae5c91546e64369078ddde2193fce3d12>`(int stackSize);
+	
+		int
+		:ref:`getStackSize<doxid-class_poco_1_1_thread_pool_1a058d63647e2e9c80a84b1c0a97c6d645>`() const;
+	
+		int
+		:ref:`used<doxid-class_poco_1_1_thread_pool_1a9d9f83a1d12d27cafbf6a5b89ed201de>`() const;
+	
+		int
+		:ref:`allocated<doxid-class_poco_1_1_thread_pool_1adcba6fcd113e10234ecb48320c403341>`() const;
+	
+		int
+		:ref:`available<doxid-class_poco_1_1_thread_pool_1aeb7253e943827208e04a02594741ecd8>`() const;
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_thread_pool_1a113858852409216e47e86eae14445a50>`(:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target);
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_thread_pool_1aced7fb6c23b2e4c87fffd81b7cb1311f>`(
+			:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name
+			);
+	
+		void
+		:ref:`startWithPriority<doxid-class_poco_1_1_thread_pool_1a08865fea4e6753bdc98acaf58ea5a79d>`(
+			:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority,
+			:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target
+			);
+	
+		void
+		:ref:`startWithPriority<doxid-class_poco_1_1_thread_pool_1ae96e8a5acbd5c7697b28cc2067a5035c>`(
+			:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority,
+			:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name
+			);
+	
+		void
+		:ref:`stopAll<doxid-class_poco_1_1_thread_pool_1a091a01cac24ffecfe44310bb8e396c48>`();
+	
+		void
+		:ref:`joinAll<doxid-class_poco_1_1_thread_pool_1a15eba4801bbeeefedabcea3ab29d25bf>`();
+	
+		void
+		:ref:`collect<doxid-class_poco_1_1_thread_pool_1aa362d3a207668d690f6251240ba2839f>`();
+	
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+		:ref:`name<doxid-class_poco_1_1_thread_pool_1a2431bfe8b90506b69d9f7b6fd2b53a50>`() const;
+	
+		static
+		ThreadPool&
+		:ref:`defaultPool<doxid-class_poco_1_1_thread_pool_1a75487180d219b02432fe01e2924633ce>`();
+
+	protected:
+		// methods
+	
+		PooledThread*
+		:target:`getThread<doxid-class_poco_1_1_thread_pool_1a97c3b949bca4e8be099e6a23fe767f43>`();
+	
+		PooledThread*
+		:target:`createThread<doxid-class_poco_1_1_thread_pool_1af246a206e207c74e06eabb1d662c020d>`();
+	
+		void
+		:target:`housekeep<doxid-class_poco_1_1_thread_pool_1a3689d49e65d0b78cfa9c7bb2067d17db>`();
+	};
+.. _details-class_poco_1_1_thread_pool:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A thread pool always keeps a number of threads running, ready to accept work.
+
+Creating and starting a threads can impose a significant runtime overhead to an application. A thread pool helps to improve the performance of an application by reducing the number of threads that have to be created (and destroyed again). Threads in a thread pool are re-used once they become available again. The thread pool always keeps a minimum number of threads running. If the demans for threads increases, additional threads are created. Once the demand for threads sinks again, no-longer used threads are stopped and removed from the pool.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_thread_pool_1a4096f8f78e4a6b2c46740a6eefbbf27e:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~ThreadPool()
+
+Currently running threads will remain active until they complete.
+
+Methods
+-------
+
+.. index:: pair: function; addCapacity
+.. _doxid-class_poco_1_1_thread_pool_1af579d9233b99b78f0b7c862fe466c16a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	addCapacity(int n)
+
+Increases (or decreases, if n is negative) the maximum number of threads.
+
+.. index:: pair: function; capacity
+.. _doxid-class_poco_1_1_thread_pool_1a774950e637432c2fd2d13d8179338298:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	capacity() const
+
+Returns the maximum capacity of threads.
+
+.. index:: pair: function; setStackSize
+.. _doxid-class_poco_1_1_thread_pool_1ae5c91546e64369078ddde2193fce3d12:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	setStackSize(int stackSize)
+
+Sets the stack size for threads.
+
+New stack size applies only for newly created threads.
+
+.. index:: pair: function; getStackSize
+.. _doxid-class_poco_1_1_thread_pool_1a058d63647e2e9c80a84b1c0a97c6d645:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	getStackSize() const
+
+Returns the stack size used to create new threads.
+
+.. index:: pair: function; used
+.. _doxid-class_poco_1_1_thread_pool_1a9d9f83a1d12d27cafbf6a5b89ed201de:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	used() const
+
+Returns the number of currently used threads.
+
+.. index:: pair: function; allocated
+.. _doxid-class_poco_1_1_thread_pool_1adcba6fcd113e10234ecb48320c403341:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	allocated() const
+
+Returns the number of currently allocated threads.
+
+.. index:: pair: function; available
+.. _doxid-class_poco_1_1_thread_pool_1aeb7253e943827208e04a02594741ecd8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	available() const
+
+Returns the number available threads.
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_thread_pool_1a113858852409216e47e86eae14445a50:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target)
+
+Obtains a thread and starts the target.
+
+Throws a NoThreadAvailableException if no more threads are available.
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_thread_pool_1aced7fb6c23b2e4c87fffd81b7cb1311f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(
+		:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name
+		)
+
+Obtains a thread and starts the target.
+
+Assigns the given name to the thread. Throws a NoThreadAvailableException if no more threads are available.
+
+.. index:: pair: function; startWithPriority
+.. _doxid-class_poco_1_1_thread_pool_1a08865fea4e6753bdc98acaf58ea5a79d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	startWithPriority(
+		:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority,
+		:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target
+		)
+
+Obtains a thread, adjusts the thread's priority, and starts the target.
+
+Throws a NoThreadAvailableException if no more threads are available.
+
+.. index:: pair: function; startWithPriority
+.. _doxid-class_poco_1_1_thread_pool_1ae96e8a5acbd5c7697b28cc2067a5035c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	startWithPriority(
+		:ref:`Thread::Priority<doxid-class_poco_1_1_thread_1a4c86ded71a250e740cb3a448f112f1e3>` priority,
+		:ref:`Runnable<doxid-class_poco_1_1_runnable>`& target,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name
+		)
+
+Obtains a thread, adjusts the thread's priority, and starts the target.
+
+Assigns the given name to the thread. Throws a NoThreadAvailableException if no more threads are available.
+
+.. index:: pair: function; stopAll
+.. _doxid-class_poco_1_1_thread_pool_1a091a01cac24ffecfe44310bb8e396c48:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	stopAll()
+
+Stops all running threads and waits for their completion.
+
+Will also delete all thread objects. If used, this method should be the last action before the thread pool is deleted.
+
+Note: If a thread fails to stop within 10 seconds (due to a programming error, for example), the underlying thread object will not be deleted and this method will return anyway. This allows for a more or less graceful shutdown in case of a misbehaving thread.
+
+.. index:: pair: function; joinAll
+.. _doxid-class_poco_1_1_thread_pool_1a15eba4801bbeeefedabcea3ab29d25bf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	joinAll()
+
+Waits for all threads to complete.
+
+Note that this will not actually join() the underlying thread, but rather wait for the thread's runnables to finish.
+
+.. index:: pair: function; collect
+.. _doxid-class_poco_1_1_thread_pool_1aa362d3a207668d690f6251240ba2839f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	collect()
+
+Stops and removes no longer used threads from the thread pool.
+
+Can be called at various times in an application's life time to help the thread pool manage its threads. Calling this method is optional, as the thread pool is also implicitly managed in calls to :ref:`start() <doxid-class_poco_1_1_thread_pool_1a113858852409216e47e86eae14445a50>`, :ref:`addCapacity() <doxid-class_poco_1_1_thread_pool_1af579d9233b99b78f0b7c862fe466c16a>` and :ref:`joinAll() <doxid-class_poco_1_1_thread_pool_1a15eba4801bbeeefedabcea3ab29d25bf>`.
+
+.. index:: pair: function; name
+.. _doxid-class_poco_1_1_thread_pool_1a2431bfe8b90506b69d9f7b6fd2b53a50:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string&
+	name() const
+
+Returns the name of the thread pool, or an empty string if no name has been specified in the constructor.
+
+.. index:: pair: function; defaultPool
+.. _doxid-class_poco_1_1_thread_pool_1a75487180d219b02432fe01e2924633ce:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	ThreadPool&
+	defaultPool()
+
+Returns a reference to the default thread pool.
+

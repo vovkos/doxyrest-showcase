@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Making your own linear filters! &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="More Morphology Transformations" href="page_tutorial_opening_closing_hats.html" />
+    <link rel="prev" title="Laplace Operator" href="page_tutorial_laplace_operator.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_opening_closing_hats.html" title="More Morphology Transformations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_laplace_operator.html" title="Laplace Operator"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_laplace_operator.html"
+                        title="previous chapter">Laplace Operator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_opening_closing_hats.html"
+                        title="next chapter">More Morphology Transformations</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="making-your-own-linear-filters">
+<span id="doxid-d4-dbd-tutorial-filter-2d"></span><span id="index-0"></span><h1>Making your own linear filters!</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga27c049795ce870216ddfb366086b5a04"><span class="std std-ref">cv::filter2D</span></a> to create your own linear filters.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler.</p>
+<p class="rubric">Convolution</p>
+<p>In a very general sense, convolution is an operation between every part of an image and an operator (kernel).</p>
+<p class="rubric">What is a kernel?</p>
+<p>A kernel is essentially a fixed size array of numerical coefficients along with an <em>anchor point</em> in that array, which is typically located at the center.</p>
+<img alt="_images/filter_2d_tutorial_kernel_theory.png" src="_images/filter_2d_tutorial_kernel_theory.png" />
+<p class="rubric">How does convolution with a kernel work?</p>
+<p>Assume you want to know the resulting value of a particular location in the image. The value of the convolution is calculated in the following way:</p>
+<ol class="arabic simple">
+<li>Place the kernel anchor on top of a determined pixel, with the rest of the kernel overlaying the corresponding local pixels in the image.</li>
+<li>Multiply the kernel coefficients by the corresponding image pixel values and sum the result.</li>
+<li>Place the result to the location of the <em>anchor</em> in the input image.</li>
+<li>Repeat the process for all pixels by scanning the kernel over the entire image.</li>
+</ol>
+<p>Expressing the procedure above in the form of an equation we would have:</p>
+<div class="math notranslate nohighlight">
+\[H(x,y) = \sum_{i=0}^{M_{i} - 1} \sum_{j=0}^{M_{j}-1} I(x+i - a_{i}, y + j - a_{j})K(i,j)\]</div>
+<p>Fortunately, OpenCV provides you with the function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga27c049795ce870216ddfb366086b5a04"><span class="std std-ref">cv::filter2D</span></a> so you do not have to code all these operations.</p>
+<p class="rubric">Code</p>
+<ol class="arabic">
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Loads an image</li>
+<li>Performs a <em>normalized box filter</em>. For instance, for a kernel of size <span class="math notranslate nohighlight">\(size = 3\)</span>, the kernel would be:</li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}K = \dfrac{1}{3 \cdot 3} \begin{bmatrix} 1 &amp; 1 &amp; 1 \\ 1 &amp; 1 &amp; 1 \\ 1 &amp; 1 &amp; 1 \end{bmatrix}\end{split}\]</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">program</span> <span class="n">will</span> <span class="n">perform</span> <span class="n">the</span> <span class="n">filter</span> <span class="n">operation</span> <span class="n">with</span> <span class="n">kernels</span> <span class="n">of</span> <span class="n">sizes</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span> <span class="n">and</span> <span class="mf">11.</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>The filter output (with each kernel) will be shown during 500 milliseconds</li>
+</ul>
+</li>
+<li><p class="first">The tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/filter2D_demo.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">kernel</span><span class="p">;</span>
+  <span class="n">Point</span> <span class="n">anchor</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">delta</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">ddepth</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">kernel_size</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;filter2D Demo&quot;</span><span class="p">;</span>
+
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">anchor</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+  <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">ddepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+  <span class="kt">int</span> <span class="n">ind</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(;;)</span>
+       <span class="p">{</span>
+         <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+         <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span>
+           <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+
+         <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span> <span class="n">ind</span><span class="o">%</span><span class="mi">5</span> <span class="p">);</span>
+         <span class="n">kernel</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a69ae0402d116fc9c71908d8508dc2f09"><span class="std std-ref">Mat::ones</span></a><span></span><span class="p">(</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span> <span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)(</span><span class="n">kernel_size</span><span class="o">*</span><span class="n">kernel_size</span><span class="p">);</span>
+
+         <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga27c049795ce870216ddfb366086b5a04"><span class="std std-ref">filter2D</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">ddepth</span> <span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">anchor</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+         <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+         <span class="n">ind</span><span class="o">++</span><span class="p">;</span>
+       <span class="p">}</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Load an image</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+<span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Initialize the arguments for the linear filter</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">anchor</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">ddepth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">Perform an infinite loop updating the kernel size and applying our linear filter to the input image. Let’s analyze that more in detail:</p>
+</li>
+<li><p class="first">First we define the kernel our filter is going to use. Here it is:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span> <span class="n">ind</span><span class="o">%</span><span class="mi">5</span> <span class="p">);</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">ones</span><span class="p">(</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span> <span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)(</span><span class="n">kernel_size</span><span class="o">*</span><span class="n">kernel_size</span><span class="p">);</span>
+</pre>
+<p>The first line is to update the <em>kernel_size</em> to odd values in the range: <span class="math notranslate nohighlight">\([3,11]\)</span>. The second line actually builds the kernel by setting its value to a matrix filled with <span class="math notranslate nohighlight">\(1's\)</span> and normalizing it by dividing it between the number of elements.</p>
+</li>
+<li><p class="first">After setting the kernel, we can generate the filter by using the function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga27c049795ce870216ddfb366086b5a04"><span class="std std-ref">cv::filter2D</span></a> :</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv_hal.html#doxid-d5-df1-group-imgproc-hal-functions-1ga42c2468ab3a1238fbf48458c57169081"><span class="std std-ref">filter2D</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">ddepth</span> <span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">anchor</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+</pre>
+<p>The arguments denote:</p>
+<ol class="arabic simple">
+<li><em>src</em> : Source image</li>
+<li><em>dst</em> : Destination image</li>
+<li><em>ddepth</em> : The depth of <em>dst</em>. A negative value (such as <span class="math notranslate nohighlight">\(-1\)</span>) indicates that the depth is the same as the source.</li>
+<li><em>kernel</em> : The kernel to be scanned through the image</li>
+<li><em>anchor</em> : The position of the anchor relative to its kernel. The location <em>Point(-1, -1)</em> indicates the center by default.</li>
+<li><em>delta</em> : A value to be added to each pixel during the convolution. By default it is <span class="math notranslate nohighlight">\(0\)</span></li>
+<li><em>BORDER_DEFAULT</em> : We let this value by default (more details in the following tutorial)</li>
+</ol>
+</li>
+<li><p class="first">Our program will effectuate a <em>while</em> loop, each 500 ms the kernel size of our filter will be updated in the range indicated.</p>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<ol class="arabic">
+<li><p class="first">After compiling the code above, you can execute it giving as argument the path of an image. The result should be a window that shows an image blurred by a normalized filter. Each 0.5 seconds the kernel size should change, as can be seen in the series of snapshots below:</p>
+<img alt="_images/filter_2d_tutorial_result.jpg" src="_images/filter_2d_tutorial_result.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_opening_closing_hats.html" title="More Morphology Transformations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_laplace_operator.html" title="Laplace Operator"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>More Morphology Transformations &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Point Polygon Test" href="page_tutorial_point_polygon_test.html" />
+    <link rel="prev" title="Making your own linear filters!" href="page_tutorial_filter_2d.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_point_polygon_test.html" title="Point Polygon Test"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_filter_2d.html" title="Making your own linear filters!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_filter_2d.html"
+                        title="previous chapter">Making your own linear filters!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_point_polygon_test.html"
+                        title="next chapter">Point Polygon Test</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="more-morphology-transformations">
+<span id="doxid-d3-dbe-tutorial-opening-closing-hats"></span><span id="index-0"></span><h1>More Morphology Transformations</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">cv::morphologyEx</span></a> to apply Morphological Transformation such as:<ul>
+<li>Opening</li>
+<li>Closing</li>
+<li>Morphological Gradient</li>
+<li>Top Hat</li>
+<li>Black Hat</li>
+</ul>
+</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler.</p>
+<p>In the previous tutorial we covered two basic Morphology operations:</p>
+<ul class="simple">
+<li>Erosion</li>
+<li>Dilation.</li>
+</ul>
+<p>Based on these two we can effectuate more sophisticated transformations to our images. Here we discuss briefly 5 operations offered by OpenCV:</p>
+<p class="rubric">Opening</p>
+<ul>
+<li><p class="first">It is obtained by the erosion of an image followed by a dilation.</p>
+<div class="math notranslate nohighlight">
+\[dst = open( src, element) = dilate( erode( src, element ) )\]</div>
+</li>
+<li><p class="first">Useful for removing small objects (it is assumed that the objects are bright on a dark foreground)</p>
+</li>
+<li><p class="first">For instance, check out the example below. The image at the left is the original and the image at the right is the result after applying the opening transformation. We can observe that the small spaces in the corners of the letter tend to dissapear.</p>
+<img alt="_images/Morphology_2_Tutorial_Theory_Opening.png" src="_images/Morphology_2_Tutorial_Theory_Opening.png" />
+</li>
+</ul>
+<p>For the sake of clarity, we have performed the opening operation (<code class="docutils literal notranslate"><span class="pre">7x7</span></code> rectangular structuring element) on the same original image but inverted such as the object in white is now the letter.</p>
+<img alt="Left image: original image inverted, right image: resulting opening" src="_images/Morphology_2_Tutorial_Theory_Opening_2.png" />
+<p class="rubric">Closing</p>
+<ul>
+<li><p class="first">It is obtained by the dilation of an image followed by an erosion.</p>
+<div class="math notranslate nohighlight">
+\[dst = close( src, element ) = erode( dilate( src, element ) )\]</div>
+</li>
+<li><p class="first">Useful to remove small holes (dark regions).</p>
+<img alt="_images/Morphology_2_Tutorial_Theory_Closing.png" src="_images/Morphology_2_Tutorial_Theory_Closing.png" />
+</li>
+</ul>
+<p>On the inverted image, we have performed the closing operation (<code class="docutils literal notranslate"><span class="pre">7x7</span></code> rectangular structuring element):</p>
+<img alt="Left image: original image inverted, right image: resulting closing" src="_images/Morphology_2_Tutorial_Theory_Closing_2.png" />
+<p class="rubric">Morphological Gradient</p>
+<ul>
+<li><p class="first">It is the difference between the dilation and the erosion of an image.</p>
+<div class="math notranslate nohighlight">
+\[dst = morph_{grad}( src, element ) = dilate( src, element ) - erode( src, element )\]</div>
+</li>
+<li><p class="first">It is useful for finding the outline of an object as can be seen below:</p>
+<img alt="_images/Morphology_2_Tutorial_Theory_Gradient.png" src="_images/Morphology_2_Tutorial_Theory_Gradient.png" />
+</li>
+</ul>
+<p class="rubric">Top Hat</p>
+<ul>
+<li><p class="first">It is the difference between an input image and its opening.</p>
+<div class="math notranslate nohighlight">
+\[dst = tophat( src, element ) = src - open( src, element )\]</div>
+<img alt="_images/Morphology_2_Tutorial_Theory_TopHat.png" src="_images/Morphology_2_Tutorial_Theory_TopHat.png" />
+</li>
+</ul>
+<p class="rubric">Black Hat</p>
+<ul>
+<li><p class="first">It is the difference between the closing and its input image</p>
+<div class="math notranslate nohighlight">
+\[dst = blackhat( src, element ) = close( src, element ) - src\]</div>
+<img alt="_images/Morphology_2_Tutorial_Theory_BlackHat.png" src="_images/Morphology_2_Tutorial_Theory_BlackHat.png" />
+</li>
+</ul>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Morphology_2.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">morph_elem</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">morph_size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">morph_operator</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_operator</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_elem</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_kernel_size</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;Morphology Transformations Demo&quot;</span><span class="p">;</span>
+
+
+<span class="kt">void</span> <span class="nf">Morphology_Operations</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span> <span class="c1">// Create window</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;Operator:</span><span class="se">\n</span><span class="s"> 0: Opening - 1: Closing  </span><span class="se">\n</span><span class="s"> 2: Gradient - 3: Top Hat </span><span class="se">\n</span><span class="s"> 4: Black Hat&quot;</span><span class="p">,</span> <span class="n">window_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">morph_operator</span><span class="p">,</span> <span class="n">max_operator</span><span class="p">,</span> <span class="n">Morphology_Operations</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Element:</span><span class="se">\n</span><span class="s"> 0: Rect - 1: Cross - 2: Ellipse&quot;</span><span class="p">,</span> <span class="n">window_name</span><span class="p">,</span>
+                  <span class="o">&amp;</span><span class="n">morph_elem</span><span class="p">,</span> <span class="n">max_elem</span><span class="p">,</span>
+                  <span class="n">Morphology_Operations</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Kernel size:</span><span class="se">\n</span><span class="s"> 2n +1&quot;</span><span class="p">,</span> <span class="n">window_name</span><span class="p">,</span>
+                  <span class="o">&amp;</span><span class="n">morph_size</span><span class="p">,</span> <span class="n">max_kernel_size</span><span class="p">,</span>
+                  <span class="n">Morphology_Operations</span> <span class="p">);</span>
+
+  <span class="n">Morphology_Operations</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">Morphology_Operations</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// Since MORPH_X : 2,3,4,5 and 6</span>
+  <span class="kt">int</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">morph_operator</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">morph_elem</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">morph_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">morph_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">morph_size</span><span class="p">,</span> <span class="n">morph_size</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">morphologyEx</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">element</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Let’s check the general structure of the program:</p>
+<ul>
+<li><p class="first">Load an image</p>
+</li>
+<li><p class="first">Create a window to display results of the Morphological operations</p>
+</li>
+<li><p class="first">Create three Trackbars for the user to enter parameters:</p>
+<ul>
+<li><p class="first">The first trackbar <strong>Operator</strong> returns the kind of morphology operation to use (<strong>morph_operator</strong>).</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;Operator:</span><span class="se">\n</span><span class="s"> 0: Opening - 1: Closing  </span><span class="se">\n</span><span class="s"> 2: Gradient - 3: Top Hat </span><span class="se">\n</span><span class="s"> 4: Black Hat&quot;</span><span class="p">,</span> <span class="n">window_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">morph_operator</span><span class="p">,</span> <span class="n">max_operator</span><span class="p">,</span> <span class="n">Morphology_Operations</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">The second trackbar <strong>Element</strong> returns <strong>morph_elem</strong>, which indicates what kind of structure our kernel is:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Element:</span><span class="se">\n</span><span class="s"> 0: Rect - 1: Cross - 2: Ellipse&quot;</span><span class="p">,</span> <span class="n">window_name</span><span class="p">,</span>
+                <span class="o">&amp;</span><span class="n">morph_elem</span><span class="p">,</span> <span class="n">max_elem</span><span class="p">,</span>
+                <span class="n">Morphology_Operations</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">The final trackbar <strong>Kernel Size</strong> returns the size of the kernel to be used (<strong>morph_size</strong>)</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="s">&quot;Kernel size:</span><span class="se">\n</span><span class="s"> 2n +1&quot;</span><span class="p">,</span> <span class="n">window_name</span><span class="p">,</span>
+                <span class="o">&amp;</span><span class="n">morph_size</span><span class="p">,</span> <span class="n">max_kernel_size</span><span class="p">,</span>
+                <span class="n">Morphology_Operations</span> <span class="p">);</span>
+</pre>
+</li>
+</ul>
+</li>
+<li><p class="first">Every time we move any slider, the user’s function <strong>Morphology_Operations</strong> will be called to effectuate a new morphology operation and it will update the output image based on the current trackbar values.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">Morphology_Operations</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// Since MORPH_X : 2,3,4,5 and 6</span>
+  <span class="kt">int</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">morph_operator</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+
+  <span class="n">Mat</span> <span class="n">element</span> <span class="o">=</span> <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">getStructuringElement</span></a><span></span><span class="p">(</span> <span class="n">morph_elem</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">morph_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">morph_size</span><span class="o">+</span><span class="mi">1</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">morph_size</span><span class="p">,</span> <span class="n">morph_size</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">morphologyEx</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">element</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>We can observe that the key function to perform the morphology transformations is <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga67493776e3ad1a3df63883829375201f"><span class="std std-ref">cv::morphologyEx</span></a>. In this example we use four arguments (leaving the rest as defaults):</p>
+<ul>
+<li><p class="first"><strong>src</strong> : Source (input) image</p>
+</li>
+<li><p class="first"><strong>dst</strong> : Output image</p>
+</li>
+<li><p class="first"><strong>operation</strong> : The kind of morphology transformation to be performed. Note that we have 5 alternatives:</p>
+<ul class="simple">
+<li><em>Opening</em> : MORPH_OPEN : 2</li>
+<li><em>Closing</em> : MORPH_CLOSE: 3</li>
+<li><em>Gradient</em> : MORPH_GRADIENT: 4</li>
+<li><em>Top Hat</em> : MORPH_TOPHAT: 5</li>
+<li><em>Black Hat</em> : MORPH_BLACKHAT: 6</li>
+</ul>
+<p>As you can see the values range from &lt;2-6&gt;, that is why we add (+2) to the values entered by the Trackbar:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">morph_operator</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first"><strong>element</strong> : The kernel to be used. We use the function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gac342a1bb6eabf6f55c803b09268e36dc"><span class="std std-ref">cv::getStructuringElement</span></a> to define our own structure.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<ul>
+<li><p class="first">After compiling the code above we can execute it giving an image path as an argument. For this tutorial we use as input the image: <strong>baboon.png</strong> :</p>
+<img alt="_images/Morphology_2_Tutorial_Original_Image.jpg" src="_images/Morphology_2_Tutorial_Original_Image.jpg" />
+</li>
+<li><p class="first">And here are two snapshots of the display window. The first picture shows the output after using the operator <strong>Opening</strong> with a cross kernel. The second picture (right side, shows the result of using a <strong>Blackhat</strong> operator with an ellipse kernel.</p>
+<img alt="_images/Morphology_2_Tutorial_Result.jpg" src="_images/Morphology_2_Tutorial_Result.jpg" />
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_point_polygon_test.html" title="Point Polygon Test"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_filter_2d.html" title="Making your own linear filters!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

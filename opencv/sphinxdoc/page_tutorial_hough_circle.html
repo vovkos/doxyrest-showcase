@@ -1,0 +1,262 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hough Circle Transform &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hough Line Transform" href="page_tutorial_hough_lines.html" />
+    <link rel="prev" title="Hit-or-Miss" href="page_tutorial_hitOrMiss.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_hough_lines.html" title="Hough Line Transform"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_hitOrMiss.html" title="Hit-or-Miss"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_hitOrMiss.html"
+                        title="previous chapter">Hit-or-Miss</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_hough_lines.html"
+                        title="next chapter">Hough Line Transform</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hough-circle-transform">
+<span id="doxid-d4-d70-tutorial-hough-circle"></span><span id="index-0"></span><h1>Hough Circle Transform</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga47849c3be0d0406ad3ca45db65a25d2d"><span class="std std-ref">cv::HoughCircles</span></a> to detect circles in an image.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">Hough Circle Transform</p>
+<ul>
+<li><p class="first">The Hough Circle Transform works in a <em>roughly</em> analogous way to the Hough Line Transform explained in the previous tutorial.</p>
+</li>
+<li><p class="first">In the line detection case, a line was defined by two parameters <span class="math notranslate nohighlight">\((r, \theta)\)</span>. In the circle case, we need three parameters to define a circle:</p>
+<div class="math notranslate nohighlight">
+\[C : ( x_{center}, y_{center}, r )\]</div>
+<p>where <span class="math notranslate nohighlight">\((x_{center}, y_{center})\)</span> define the center position (green point) and <span class="math notranslate nohighlight">\(r\)</span> is the radius, which allows us to completely define a circle, as it can be seen below:</p>
+<img alt="_images/Hough_Circle_Tutorial_Theory_0.jpg" src="_images/Hough_Circle_Tutorial_Theory_0.jpg" />
+</li>
+<li><p class="first">For sake of efficiency, OpenCV implements a detection method slightly trickier than the standard Hough Transform: <em>The Hough gradient method</em>, which is made up of two main stages. The first stage involves edge detection and finding the possible circle centers and the second stage finds the best radius for each candidate center. For more details, please check the book <em>Learning OpenCV</em> or your favorite Computer Vision bibliography</p>
+</li>
+</ul>
+<p class="rubric">Code</p>
+<ol class="arabic">
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Loads an image and blur it to reduce the noise</li>
+<li>Applies the <em>Hough Circle Transform</em> to the blurred image .</li>
+<li>Display the detected circle in a window.</li>
+</ul>
+</li>
+<li><p class="first">The sample code that we will explain can be downloaded from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/houghcircles.cpp">here</a>. A slightly fancier version (which shows trackbars for changing the threshold values) can be found <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/HoughCircle_Demo.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">This program demonstrates circle finding with the Hough transform.</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;Usage:</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;./houghcircles &lt;image_name&gt;, Default is ../data/board.jpg</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">cv::CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span>
+        <span class="s">&quot;{help h ||}{@image|../data/board.jpg|}&quot;</span>
+    <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;@image&quot;</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;can not open &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">gray</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span><span class="p">);</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga564869aa33e58769b4469101aac458f9"><span class="std std-ref">medianBlur</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec3f</span><span class="o">&gt;</span> <span class="n">circles</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga47849c3be0d0406ad3ca45db65a25d2d"><span class="std std-ref">HoughCircles</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">circles</span><span class="p">,</span> <a class="reference internal" href="enum_cv_HoughModes.html#doxid-d7-dbd-group-imgproc-1gga073687a5b96ac7a3ab5802eb5510fe65ab1bf00a90864db34b2f72fa76389931d"><span class="std std-ref">HOUGH_GRADIENT</span></a><span></span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">gray</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="o">/</span><span class="mi">16</span><span class="p">,</span> <span class="c1">// change this value to detect circles with different distances to each other</span>
+                 <span class="mi">100</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span> <span class="c1">// change the last two parameters</span>
+                                <span class="c1">// (min_radius &amp; max_radius) to detect larger circles</span>
+                 <span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">circles</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3i</span></a><span></span> <span class="n">c</span> <span class="o">=</span> <span class="n">circles</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;detected circles&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Load an image</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;@image&quot;</span><span class="p">);</span>
+<span class="n">Mat</span> <span class="n">img</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;can not open &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Convert it to grayscale:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">gray</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Apply a Median blur to reduce noise and avoid false circle detection:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1ga564869aa33e58769b4469101aac458f9"><span class="std std-ref">medianBlur</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Proceed to apply Hough Circle Transform:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec3f</span><span class="o">&gt;</span> <span class="n">circles</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga47849c3be0d0406ad3ca45db65a25d2d"><span class="std std-ref">HoughCircles</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">circles</span><span class="p">,</span> <a class="reference internal" href="enum_cv_HoughModes.html#doxid-d7-dbd-group-imgproc-1gga073687a5b96ac7a3ab5802eb5510fe65ab1bf00a90864db34b2f72fa76389931d"><span class="std std-ref">HOUGH_GRADIENT</span></a><span></span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="n">gray</span><span class="p">.</span><span class="n">rows</span><span class="o">/</span><span class="mi">16</span><span class="p">,</span> <span class="c1">// change this value to detect circles with different distances to each other</span>
+             <span class="mi">100</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span> <span class="c1">// change the last two parameters</span>
+                            <span class="c1">// (min_radius &amp; max_radius) to detect larger circles</span>
+             <span class="p">);</span>
+</pre>
+<p>with the arguments:</p>
+<ul class="simple">
+<li><em>gray</em> : Input image (grayscale).</li>
+<li><em>circles</em> : A vector that stores sets of 3 values: <span class="math notranslate nohighlight">\(x_{c}, y_{c}, r\)</span> for each detected circle.</li>
+<li><em>HOUGH_GRADIENT</em> : Define the detection method. Currently this is the only one available in OpenCV.</li>
+<li><em>dp = 1</em> : The inverse ratio of resolution.</li>
+<li><em>min_dist = gray.rows/16</em> : Minimum distance between detected centers.</li>
+<li><em>param_1 = 200</em> : Upper threshold for the internal Canny edge detector.</li>
+<li><em>param_2</em> = 100*: Threshold for center detection.</li>
+<li><em>min_radius = 0</em> : Minimum radius to be detected. If unknown, put zero as default.</li>
+<li><em>max_radius = 0</em> : Maximum radius to be detected. If unknown, put zero as default.</li>
+</ul>
+</li>
+<li><p class="first">Draw the detected circles:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">circles</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga55864bca2bbede9731df5baa0d1be763"><span class="std std-ref">Vec3i</span></a><span></span> <span class="n">c</span> <span class="o">=</span> <span class="n">circles</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>You can see that we will draw the circle(s) on red and the center(s) with a small green dot</p>
+</li>
+<li><p class="first">Display the detected circle(s) and wait for the user to exit the program:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;detected circles&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">();</span>
+</pre>
+<p class="rubric">Result</p>
+</li>
+</ol>
+<p>The result of running the code above with a test image is shown below:</p>
+<img alt="_images/Hough_Circle_Tutorial_Result.jpg" src="_images/Hough_Circle_Tutorial_Result.jpg" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_hough_lines.html" title="Hough Line Transform"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_hitOrMiss.html" title="Hit-or-Miss"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

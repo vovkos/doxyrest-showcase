@@ -1,0 +1,225 @@
+.. index:: pair: class; Poco::TimedNotificationQueue
+.. _doxid-class_poco_1_1_timed_notification_queue:
+
+class Poco::TimedNotificationQueue
+==================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A :ref:`TimedNotificationQueue <doxid-class_poco_1_1_timed_notification_queue>` object provides a way to implement timed, asynchronous notifications. :ref:`More...<details-class_poco_1_1_timed_notification_queue>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <TimedNotificationQueue.h>
+	
+	class TimedNotificationQueue
+	{
+	public:
+		// methods
+	
+		void
+		:ref:`enqueueNotification<doxid-class_poco_1_1_timed_notification_queue_1a06433823a788d5d774abe774c7f39368>`(
+			:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification,
+			:ref:`Timestamp<doxid-class_poco_1_1_timestamp>` timestamp
+			);
+	
+		void
+		:ref:`enqueueNotification<doxid-class_poco_1_1_timed_notification_queue_1a38d72aacc38b37a6f7c7130dde08b135>`(
+			:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification,
+			:ref:`Clock<doxid-class_poco_1_1_clock>` clock
+			);
+	
+		:ref:`Notification<doxid-class_poco_1_1_notification>`*
+		:ref:`dequeueNotification<doxid-class_poco_1_1_timed_notification_queue_1a0d76f7ef07bafb11287cdc333a138474>`();
+	
+		:ref:`Notification<doxid-class_poco_1_1_notification>`*
+		:ref:`waitDequeueNotification<doxid-class_poco_1_1_timed_notification_queue_1a5cb5c046e4ccdbf76b73160601864ea8>`();
+	
+		:ref:`Notification<doxid-class_poco_1_1_notification>`*
+		:ref:`waitDequeueNotification<doxid-class_poco_1_1_timed_notification_queue_1abdebfef1c823bfe805cb261bc4da7bf6>`(long milliseconds);
+	
+		bool
+		:ref:`empty<doxid-class_poco_1_1_timed_notification_queue_1a1ec4562f2b63af1786953adeb1e71653>`() const;
+	
+		int
+		:ref:`size<doxid-class_poco_1_1_timed_notification_queue_1aa35fecc583734886caa0c7bf1595b4ca>`() const;
+	
+		void
+		:ref:`clear<doxid-class_poco_1_1_timed_notification_queue_1a576605a46aea973071d3aa3c274b6726>`();
+
+	protected:
+		// typedefs
+	
+		typedef std::multimap<:ref:`Clock<doxid-class_poco_1_1_clock>`, :ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`> :target:`NfQueue<doxid-class_poco_1_1_timed_notification_queue_1a5fb33ac8848e824d06948bebb1f42fcd>`;
+
+		// methods
+	
+		:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`
+		:target:`dequeueOne<doxid-class_poco_1_1_timed_notification_queue_1a6dca6887f92d1016627ff7a6ccb0d0ab>`(NfQueue::iterator& it);
+	
+		bool
+		:target:`wait<doxid-class_poco_1_1_timed_notification_queue_1a8c64bb388a1a6e058ea6e48f6ae3f381>`(:ref:`Clock::ClockDiff<doxid-class_poco_1_1_clock_1aa6caf8526c63c2222fb24dbed8300627>` interval);
+	};
+.. _details-class_poco_1_1_timed_notification_queue:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A :ref:`TimedNotificationQueue <doxid-class_poco_1_1_timed_notification_queue>` object provides a way to implement timed, asynchronous notifications.
+
+This is especially useful for sending notifications from one thread to another, for example from a background thread to the main (user interface) thread.
+
+The :ref:`TimedNotificationQueue <doxid-class_poco_1_1_timed_notification_queue>` is quite similar to the :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>` class. The only difference to :ref:`NotificationQueue <doxid-class_poco_1_1_notification_queue>` is that each :ref:`Notification <doxid-class_poco_1_1_notification>` is tagged with a :ref:`Timestamp <doxid-class_poco_1_1_timestamp>`. When inserting a :ref:`Notification <doxid-class_poco_1_1_notification>` into the queue, the :ref:`Notification <doxid-class_poco_1_1_notification>` is inserted according to the given :ref:`Timestamp <doxid-class_poco_1_1_timestamp>`, with lower :ref:`Timestamp <doxid-class_poco_1_1_timestamp>` values being inserted before higher ones.
+
+Notifications are dequeued in order of their timestamps.
+
+:ref:`TimedNotificationQueue <doxid-class_poco_1_1_timed_notification_queue>` has some restrictions regarding multithreaded use. While multiple threads may enqueue notifications, only one thread at a time may dequeue notifications from the queue.
+
+If two threads try to dequeue a notification simultaneously, the results are undefined.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_timed_notification_queue_1ac79e9cc83fba7edee98409b6017e9b35:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~TimedNotificationQueue()
+
+Destroys the :ref:`TimedNotificationQueue <doxid-class_poco_1_1_timed_notification_queue>`.
+
+Methods
+-------
+
+.. index:: pair: function; enqueueNotification
+.. _doxid-class_poco_1_1_timed_notification_queue_1a06433823a788d5d774abe774c7f39368:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	enqueueNotification(
+		:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification,
+		:ref:`Timestamp<doxid-class_poco_1_1_timestamp>` timestamp
+		)
+
+Enqueues the given notification by adding it to the queue according to the given timestamp.
+
+Lower timestamp values are inserted before higher ones. The queue takes ownership of the notification, thus a call like
+
+.. ref-code-block:: cpp
+
+	notificationQueue.enqueueNotification(new MyNotification, someTime);
+
+does not result in a memory leak.
+
+The :ref:`Timestamp <doxid-class_poco_1_1_timestamp>` is converted to an equivalent :ref:`Clock <doxid-class_poco_1_1_clock>` value.
+
+.. index:: pair: function; enqueueNotification
+.. _doxid-class_poco_1_1_timed_notification_queue_1a38d72aacc38b37a6f7c7130dde08b135:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	enqueueNotification(
+		:ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>` pNotification,
+		:ref:`Clock<doxid-class_poco_1_1_clock>` clock
+		)
+
+Enqueues the given notification by adding it to the queue according to the given clock value.
+
+Lower clock values are inserted before higher ones. The queue takes ownership of the notification, thus a call like
+
+.. ref-code-block:: cpp
+
+	notificationQueue.enqueueNotification(new MyNotification, someTime);
+
+does not result in a memory leak.
+
+.. index:: pair: function; dequeueNotification
+.. _doxid-class_poco_1_1_timed_notification_queue_1a0d76f7ef07bafb11287cdc333a138474:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Notification<doxid-class_poco_1_1_notification>`*
+	dequeueNotification()
+
+Dequeues the next pending notification with a timestamp less than or equal to the current time.
+
+Returns 0 (null) if no notification is available. The caller gains ownership of the notification and is expected to release it when done with it.
+
+It is highly recommended that the result is immediately assigned to a :ref:`Notification::Ptr <doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`, to avoid potential memory management issues.
+
+.. index:: pair: function; waitDequeueNotification
+.. _doxid-class_poco_1_1_timed_notification_queue_1a5cb5c046e4ccdbf76b73160601864ea8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Notification<doxid-class_poco_1_1_notification>`*
+	waitDequeueNotification()
+
+Dequeues the next pending notification.
+
+If no notification is available, waits for a notification to be enqueued. The caller gains ownership of the notification and is expected to release it when done with it.
+
+It is highly recommended that the result is immediately assigned to a :ref:`Notification::Ptr <doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`, to avoid potential memory management issues.
+
+.. index:: pair: function; waitDequeueNotification
+.. _doxid-class_poco_1_1_timed_notification_queue_1abdebfef1c823bfe805cb261bc4da7bf6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Notification<doxid-class_poco_1_1_notification>`*
+	waitDequeueNotification(long milliseconds)
+
+Dequeues the next pending notification.
+
+If no notification is available, waits for a notification to be enqueued up to the specified time. Returns 0 (null) if no notification is available. The caller gains ownership of the notification and is expected to release it when done with it.
+
+It is highly recommended that the result is immediately assigned to a :ref:`Notification::Ptr <doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`, to avoid potential memory management issues.
+
+.. index:: pair: function; empty
+.. _doxid-class_poco_1_1_timed_notification_queue_1a1ec4562f2b63af1786953adeb1e71653:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	empty() const
+
+Returns true iff the queue is empty.
+
+.. index:: pair: function; size
+.. _doxid-class_poco_1_1_timed_notification_queue_1aa35fecc583734886caa0c7bf1595b4ca:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	size() const
+
+Returns the number of notifications in the queue.
+
+.. index:: pair: function; clear
+.. _doxid-class_poco_1_1_timed_notification_queue_1a576605a46aea973071d3aa3c274b6726:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	clear()
+
+Removes all notifications from the queue.
+
+Calling :ref:`clear() <doxid-class_poco_1_1_timed_notification_queue_1a576605a46aea973071d3aa3c274b6726>` while another thread executes one of the dequeue member functions will result in undefined behavior.
+

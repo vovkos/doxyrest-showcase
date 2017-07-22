@@ -1,0 +1,159 @@
+.. index:: pair: class; Poco::ObjectPool
+.. _doxid-class_poco_1_1_object_pool:
+
+template class Poco::ObjectPool
+===============================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>` manages a pool of objects of a certain class. :ref:`More...<details-class_poco_1_1_object_pool>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ObjectPool.h>
+	
+	template <
+		class C,
+		class P = C*,
+		class F = PoolableObjectFactory<C, P>
+		>
+	class ObjectPool
+	{
+	public:
+		// construction
+	
+		:ref:`ObjectPool<doxid-class_poco_1_1_object_pool_1aa97244cf69957a8faea1f442705e769d>`(
+			std::size_t capacity,
+			std::size_t peakCapacity
+			);
+	
+		:ref:`ObjectPool<doxid-class_poco_1_1_object_pool_1a6062fcc736fe616eb9675b6ca6e6254f>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` F& factory,
+			std::size_t capacity,
+			std::size_t peakCapacity
+			);
+
+		// methods
+	
+		P
+		:ref:`borrowObject<doxid-class_poco_1_1_object_pool_1a106732baea23b1e681475a50f147daa2>`();
+	
+		void
+		:ref:`returnObject<doxid-class_poco_1_1_object_pool_1a9e184168182b3ad47de348f56dc8a83b>`(P pObject);
+	
+		std::size_t
+		:target:`capacity<doxid-class_poco_1_1_object_pool_1a872cb7d3a0b3ee61788b1c04c0acdf3d>`() const;
+	
+		std::size_t
+		:target:`peakCapacity<doxid-class_poco_1_1_object_pool_1a2019737956b269ddd090ffb5f772a056>`() const;
+	
+		std::size_t
+		:target:`size<doxid-class_poco_1_1_object_pool_1a8120db8a32da704d3b644abf2ebf726f>`() const;
+	
+		std::size_t
+		:target:`available<doxid-class_poco_1_1_object_pool_1adc5d182fe290847337a7f95bc041b6c1>`() const;
+
+	protected:
+		// methods
+	
+		P
+		:target:`activateObject<doxid-class_poco_1_1_object_pool_1af47cf1ea6c96079bbe04c42ec4d5b1e2>`(P pObject);
+	};
+.. _details-class_poco_1_1_object_pool:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>` manages a pool of objects of a certain class.
+
+The number of objects managed by the pool can be restricted.
+
+When an object is requested from the pool:
+
+.. ref-code-block:: cpp
+
+	- If an object is available from the pool, an object from the pool is
+	  removed from the pool, activated (using the factory) and returned. 
+	- Otherwise, if the peak capacity of the pool has not yet been reached, 
+	  a new object is created and activated, using the object factory, and returned. 
+	- If the peak capacity has already been reached, null is returned.
+
+When an object is returned to the pool:
+
+.. ref-code-block:: cpp
+
+	- If the object is valid (checked by calling validateObject()
+	  from the object factory), the object is deactivated. If the 
+	  number of objects in the pool is below the capacity,
+	  the object is added to the pool. Otherwise it is destroyed.
+	- If the object is not valid, it is destroyed immediately.
+
+Construction
+------------
+
+.. index:: pair: function; ObjectPool
+.. _doxid-class_poco_1_1_object_pool_1aa97244cf69957a8faea1f442705e769d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ObjectPool(
+		std::size_t capacity,
+		std::size_t peakCapacity
+		)
+
+Creates a new :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>` with the given capacity and peak capacity.
+
+The :ref:`PoolableObjectFactory <doxid-class_poco_1_1_poolable_object_factory>` must have a public default constructor.
+
+.. index:: pair: function; ObjectPool
+.. _doxid-class_poco_1_1_object_pool_1a6062fcc736fe616eb9675b6ca6e6254f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	ObjectPool(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` F& factory,
+		std::size_t capacity,
+		std::size_t peakCapacity
+		)
+
+Creates a new :ref:`ObjectPool <doxid-class_poco_1_1_object_pool>` with the given :ref:`PoolableObjectFactory <doxid-class_poco_1_1_poolable_object_factory>`, capacity and peak capacity.
+
+The :ref:`PoolableObjectFactory <doxid-class_poco_1_1_poolable_object_factory>` must have a public copy constructor.
+
+Methods
+-------
+
+.. index:: pair: function; borrowObject
+.. _doxid-class_poco_1_1_object_pool_1a106732baea23b1e681475a50f147daa2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	P
+	borrowObject()
+
+Obtains an object from the pool, or creates a new object if possible.
+
+Returns null if no object is available.
+
+If activating the object fails, the object is destroyed and the exception is passed on to the caller.
+
+.. index:: pair: function; returnObject
+.. _doxid-class_poco_1_1_object_pool_1a9e184168182b3ad47de348f56dc8a83b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	returnObject(P pObject)
+
+Returns an object to the pool.
+

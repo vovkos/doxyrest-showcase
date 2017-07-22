@@ -1,0 +1,241 @@
+.. index:: pair: class; Poco::NestedDiagnosticContext
+.. _doxid-class_poco_1_1_nested_diagnostic_context:
+
+class Poco::NestedDiagnosticContext
+===================================
+
+.. toctree::
+	:hidden:
+
+	struct_Poco_NestedDiagnosticContext_Context.rst
+
+Overview
+~~~~~~~~
+
+This class implements a Nested Diagnostic Context (NDC), as described in Neil Harrison's article "Patterns for Logging 
+Diagnostic Messages" in "Pattern Languages of Program Design 3" (Addison-Wesley). :ref:`More...<details-class_poco_1_1_nested_diagnostic_context>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <NestedDiagnosticContext.h>
+	
+	class NestedDiagnosticContext
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`NDCScope<doxid-class_poco_1_1_n_d_c_scope>` :target:`Scope<doxid-class_poco_1_1_nested_diagnostic_context_1a449bd8481908e7a72ba259fb9970bdea>`;
+
+		// structs
+	
+		struct :ref:`Context<doxid-struct_poco_1_1_nested_diagnostic_context_1_1_context>`;
+
+		// construction
+	
+		:ref:`NestedDiagnosticContext<doxid-class_poco_1_1_nested_diagnostic_context_1a5a8c6db46b1058bc13689764b62276c4>`();
+		:ref:`NestedDiagnosticContext<doxid-class_poco_1_1_nested_diagnostic_context_1aed4d93f72505d5092c3d19e3ed83a5c9>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` NestedDiagnosticContext& ctx);
+
+		// methods
+	
+		NestedDiagnosticContext&
+		:ref:`operator=<doxid-class_poco_1_1_nested_diagnostic_context_1a9b6ac4f02f281ced961f3185854ae870>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` NestedDiagnosticContext& ctx);
+	
+		void
+		:ref:`push<doxid-class_poco_1_1_nested_diagnostic_context_1a9ee33beaba4b554b56333a126b64be09>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& info);
+	
+		void
+		:ref:`push<doxid-class_poco_1_1_nested_diagnostic_context_1a5069d00da24cde94f4a50aea8a249d2b>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& info,
+			int line,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* filename
+			);
+	
+		void
+		:ref:`pop<doxid-class_poco_1_1_nested_diagnostic_context_1ac4ebf7cf3f7fc1da4aa4d8bb841d73ad>`();
+	
+		int
+		:ref:`depth<doxid-class_poco_1_1_nested_diagnostic_context_1a306db020ea14d3a953bb90fe0effaf63>`() const;
+	
+		std::string
+		:ref:`toString<doxid-class_poco_1_1_nested_diagnostic_context_1a1547d1712b8aa4e4b5fe0bf1c5f3519c>`() const;
+	
+		void
+		:ref:`dump<doxid-class_poco_1_1_nested_diagnostic_context_1a60a6a2144e9919d5c54e2d4ff4fefe12>`(std::ostream& ostr) const;
+	
+		void
+		:ref:`dump<doxid-class_poco_1_1_nested_diagnostic_context_1af317bb4f710ba468b57f126046513fab>`(
+			std::ostream& ostr,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& delimiter
+			) const;
+	
+		void
+		:ref:`clear<doxid-class_poco_1_1_nested_diagnostic_context_1a7a54892b08e7e37c96972554423b2fa7>`();
+	
+		static
+		NestedDiagnosticContext&
+		:ref:`current<doxid-class_poco_1_1_nested_diagnostic_context_1ae003c6c09cdf2d8625ace2f4bef2a9e2>`();
+	};
+.. _details-class_poco_1_1_nested_diagnostic_context:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements a Nested Diagnostic Context (NDC), as described in Neil Harrison's article "Patterns for Logging 
+Diagnostic Messages" in "Pattern Languages of Program Design 3" (Addison-Wesley).
+
+A NDC maintains a stack of context information, consisting of an informational string (e.g., a method name), as well as an optional source code line number and file name. NDCs are especially useful for tagging log messages with context information which is very helpful in a multithreaded server scenario. Every thread has its own private NDC, which is automatically created when needed and destroyed when the thread terminates.
+
+The :ref:`NDCScope <doxid-class_poco_1_1_n_d_c_scope>` (or :ref:`NDC::Scope <doxid-class_poco_1_1_nested_diagnostic_context_1a449bd8481908e7a72ba259fb9970bdea>`) class can be used to automatically push information at the beginning of a scope, and to pop it at the end. The :ref:`poco_ndc(info) <doxid-_nested_diagnostic_context_8h_1a93e209c8d31ca16b50da3bd859cc286a>` macro augments the information with a source code line number and file name.
+
+Construction
+------------
+
+.. index:: pair: function; NestedDiagnosticContext
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a5a8c6db46b1058bc13689764b62276c4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	NestedDiagnosticContext()
+
+Creates the :ref:`NestedDiagnosticContext <doxid-class_poco_1_1_nested_diagnostic_context>`.
+
+.. index:: pair: function; NestedDiagnosticContext
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1aed4d93f72505d5092c3d19e3ed83a5c9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	NestedDiagnosticContext(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` NestedDiagnosticContext& ctx)
+
+Copy constructor.
+
+Methods
+-------
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a9b6ac4f02f281ced961f3185854ae870:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	NestedDiagnosticContext&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` NestedDiagnosticContext& ctx)
+
+Assignment operator.
+
+.. index:: pair: function; push
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a9ee33beaba4b554b56333a126b64be09:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	push(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& info)
+
+Pushes a context (without line number and filename) onto the stack.
+
+.. index:: pair: function; push
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a5069d00da24cde94f4a50aea8a249d2b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	push(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& info,
+		int line,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` char* filename
+		)
+
+Pushes a context (including line number and filename) onto the stack.
+
+Filename must be a static string, such as the one produced by the **FILE** preprocessor macro.
+
+.. index:: pair: function; pop
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1ac4ebf7cf3f7fc1da4aa4d8bb841d73ad:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	pop()
+
+Pops the top-most context off the stack.
+
+.. index:: pair: function; depth
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a306db020ea14d3a953bb90fe0effaf63:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	depth() const
+
+Returns the depth (number of contexts) of the stack.
+
+.. index:: pair: function; toString
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a1547d1712b8aa4e4b5fe0bf1c5f3519c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	std::string
+	toString() const
+
+Returns the stack as a string with entries delimited by colons.
+
+The string does not contain line numbers and filenames.
+
+.. index:: pair: function; dump
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a60a6a2144e9919d5c54e2d4ff4fefe12:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	dump(std::ostream& ostr) const
+
+Dumps the stack (including line number and filenames) to the given stream.
+
+The entries are delimited by a newline.
+
+.. index:: pair: function; dump
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1af317bb4f710ba468b57f126046513fab:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	dump(
+		std::ostream& ostr,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& delimiter
+		) const
+
+Dumps the stack (including line number and filenames) to the given stream.
+
+.. index:: pair: function; clear
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1a7a54892b08e7e37c96972554423b2fa7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	clear()
+
+Clears the NDC stack.
+
+.. index:: pair: function; current
+.. _doxid-class_poco_1_1_nested_diagnostic_context_1ae003c6c09cdf2d8625ace2f4bef2a9e2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	NestedDiagnosticContext&
+	current()
+
+Returns the current thread's NDC.
+

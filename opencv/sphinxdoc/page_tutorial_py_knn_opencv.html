@@ -1,0 +1,190 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>OCR of Hand-written Data using kNN &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Understanding k-Nearest Neighbour" href="page_tutorial_py_knn_understanding.html" />
+    <link rel="prev" title="K-Nearest Neighbour" href="page_tutorial_py_knn_index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_knn_understanding.html" title="Understanding k-Nearest Neighbour"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_knn_index.html" title="K-Nearest Neighbour"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_ml.html" >Machine Learning</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_knn_index.html" accesskey="U">K-Nearest Neighbour</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_knn_index.html"
+                        title="previous chapter">K-Nearest Neighbour</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_knn_understanding.html"
+                        title="next chapter">Understanding k-Nearest Neighbour</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ocr-of-hand-written-data-using-knn">
+<span id="doxid-d8-d4b-tutorial-py-knn-opencv"></span><span id="index-0"></span><h1>OCR of Hand-written Data using kNN</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter</p>
+<ul class="simple">
+<li>We will use our knowledge on kNN to build a basic OCR application.</li>
+<li>We will try with Digits and Alphabets data available that comes with OpenCV.</li>
+</ul>
+<p class="rubric">OCR of Hand-written Digits</p>
+<p>Our goal is to build an application which can read the handwritten digits. For this we need some train_data and test_data. OpenCV comes with an image digits.png (in the folder opencv/samples/data/) which has 5000 handwritten digits (500 for each digit). Each digit is a 20x20 image. So our first step is to split this image into 5000 different digits. For each digit, we flatten it into a single row with 400 pixels. That is our feature set, ie intensity values of all pixels. It is the simplest feature set we can create. We use first 250 samples of each digit as train_data, and next 250 samples as test_data. So let’s prepare them first.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;digits.png&#39;</span><span class="p">)</span>
+<span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+<span class="cp"># Now we split the image to 5000 cells, each 20x20 size</span>
+<span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="n">hsplit</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="n">in</span> <span class="n">np</span><span class="p">.</span><span class="n">vsplit</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="mi">50</span><span class="p">)]</span>
+
+<span class="cp"># Make it into a Numpy array. It size will be (50,100,20,20)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+
+<span class="cp"># Now we prepare train_data and test_data.</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="o">:</span><span class="mi">50</span><span class="p">].</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">400</span><span class="p">).</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span> <span class="err">#</span> <span class="n">Size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2500</span><span class="p">,</span><span class="mi">400</span><span class="p">)</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">50</span><span class="o">:</span><span class="mi">100</span><span class="p">].</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">400</span><span class="p">).</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span> <span class="err">#</span> <span class="n">Size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2500</span><span class="p">,</span><span class="mi">400</span><span class="p">)</span>
+
+<span class="cp"># Create labels for train and test data</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">train_labels</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">250</span><span class="p">)[</span><span class="o">:</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">newaxis</span><span class="p">]</span>
+<span class="n">test_labels</span> <span class="o">=</span> <span class="n">train_labels</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="cp"># Initiate kNN, train the data, then test it with test data for k=1</span>
+<span class="n">knn</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">ml</span><span class="p">.</span><span class="n">KNearest_create</span><span class="p">()</span>
+<span class="n">knn</span><span class="p">.</span><span class="n">train</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">ml</span><span class="p">.</span><span class="n">ROW_SAMPLE</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span><span class="n">result</span><span class="p">,</span><span class="n">neighbours</span><span class="p">,</span><span class="n">dist</span> <span class="o">=</span> <span class="n">knn</span><span class="p">.</span><span class="n">findNearest</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="cp"># Now we check the accuracy of classification</span>
+<span class="cp"># For that, compare the result with test_labels and check which are wrong</span>
+<span class="n">matches</span> <span class="o">=</span> <span class="n">result</span><span class="o">==</span><span class="n">test_labels</span>
+<span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span><span class="o">*</span><span class="mf">100.0</span><span class="o">/</span><span class="n">result</span><span class="p">.</span><span class="n">size</span>
+<span class="n">print</span><span class="p">(</span> <span class="n">accuracy</span> <span class="p">)</span>
+</pre>
+<p>So our basic OCR app is ready. This particular example gave me an accuracy of 91%. One option improve accuracy is to add more data for training, especially the wrong ones. So instead of finding this training data everytime I start application, I better save it, so that next time, I directly read this data from a file and start classification. You can do it with the help of some Numpy functions like np.savetxt, np.savez, np.load etc. Please check their docs for more details.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp"># save the data</span>
+<span class="n">np</span><span class="p">.</span><span class="n">savez</span><span class="p">(</span><span class="sc">&#39;knn_data.npz&#39;</span><span class="p">,</span><span class="n">train</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">=</span><span class="n">train_labels</span><span class="p">)</span>
+
+<span class="cp"># Now load the data</span>
+<span class="n">with</span> <span class="n">np</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="sc">&#39;knn_data.npz&#39;</span><span class="p">)</span> <span class="n">as</span> <span class="nl">data</span><span class="p">:</span>
+    <span class="n">print</span><span class="p">(</span> <span class="n">data</span><span class="p">.</span><span class="n">files</span> <span class="p">)</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="sc">&#39;train&#39;</span><span class="p">]</span>
+    <span class="n">train_labels</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="sc">&#39;train_labels&#39;</span><span class="p">]</span>
+</pre>
+<p>In my system, it takes around 4.4 MB of memory. Since we are using intensity values (uint8 data) as features, it would be better to convert the data to np.uint8 first and then save it. It takes only 1.1 MB in this case. Then while loading, you can convert back into float32.</p>
+<p class="rubric">OCR of English Alphabets</p>
+<p>Next we will do the same for English alphabets, but there is a slight change in data and feature set. Here, instead of images, OpenCV comes with a data file, letter-recognition.data in opencv/samples/cpp/ folder. If you open it, you will see 20000 lines which may, on first sight, look like garbage. Actually, in each row, first column is an alphabet which is our label. Next 16 numbers following it are its different features. These features are obtained from <a class="reference external" href="http://archive.ics.uci.edu/ml/">UCI Machine Learning Repository</a>. You can find the details of these features in <a class="reference external" href="http://archive.ics.uci.edu/ml/datasets/Letter+Recognition">this page</a>.</p>
+<p>There are 20000 samples available, so we take first 10000 data as training samples and remaining 10000 as test samples. We should change the alphabets to ascii characters because we can’t work with alphabets directly.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">matplotlib</span><span class="p">.</span><span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="cp"># Load the data, converters convert the letter to a number</span>
+<span class="n">data</span><span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="sc">&#39;letter-recognition.data&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span> <span class="sc">&#39;float32&#39;</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="sc">&#39;,&#39;</span><span class="p">,</span>
+                    <span class="n">converters</span><span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="o">:</span> <span class="n">lambda</span> <span class="nl">ch</span><span class="p">:</span> <span class="n">ord</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span><span class="o">-</span><span class="n">ord</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">)})</span>
+
+<span class="cp"># split the data to two, 10000 each for train and test</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">vsplit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="cp"># split trainData and testData to features and responses</span>
+<span class="n">responses</span><span class="p">,</span> <span class="n">trainData</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hsplit</span><span class="p">(</span><span class="n">train</span><span class="p">,[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">labels</span><span class="p">,</span> <span class="n">testData</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hsplit</span><span class="p">(</span><span class="n">test</span><span class="p">,[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="cp"># Initiate the kNN, classify, measure accuracy.</span>
+<span class="n">knn</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">ml</span><span class="p">.</span><span class="n">KNearest_create</span><span class="p">()</span>
+<span class="n">knn</span><span class="p">.</span><span class="n">train</span><span class="p">(</span><span class="n">trainData</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">ml</span><span class="p">.</span><span class="n">ROW_SAMPLE</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
+<span class="n">ret</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">knn</span><span class="p">.</span><span class="n">findNearest</span><span class="p">(</span><span class="n">testData</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="n">labels</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span><span class="o">*</span><span class="mf">100.0</span><span class="o">/</span><span class="mi">10000</span>
+<span class="n">print</span><span class="p">(</span> <span class="n">accuracy</span> <span class="p">)</span>
+</pre>
+<p>It gives me an accuracy of 93.22%. Again, if you want to increase accuracy, you can iteratively add error data in each level.</p>
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_knn_understanding.html" title="Understanding k-Nearest Neighbour"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_knn_index.html" title="K-Nearest Neighbour"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_ml.html" >Machine Learning</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="page_tutorial_py_knn_index.html" >K-Nearest Neighbour</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

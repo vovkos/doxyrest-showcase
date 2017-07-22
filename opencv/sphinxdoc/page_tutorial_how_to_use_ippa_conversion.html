@@ -1,0 +1,393 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Intel® IPP Asynchronous C/C++ library in OpenCV &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interoperability with OpenCV 1" href="page_tutorial_interoperability_with_OpenCV_1.html" />
+    <link rel="prev" title="How to use the OpenCV parallel_for_ to parallelize your code" href="page_tutorial_how_to_use_OpenCV_parallel_for_.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_interoperability_with_OpenCV_1.html" title="Interoperability with OpenCV 1"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_use_OpenCV_parallel_for_.html" title="How to use the OpenCV parallel_for_ to parallelize your code"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" accesskey="U">The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_how_to_use_OpenCV_parallel_for_.html"
+                        title="previous chapter">How to use the OpenCV parallel_for_ to parallelize your code</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_interoperability_with_OpenCV_1.html"
+                        title="next chapter">Interoperability with OpenCV 1</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="intel-ipp-asynchronous-c-c-library-in-opencv">
+<span id="doxid-dc-d0e-tutorial-how-to-use-ippa-conversion"></span><span id="index-0"></span><h1>Intel® IPP Asynchronous C/C++ library in OpenCV</h1>
+<p class="rubric">Goal</p>
+<p>The tutorial demonstrates the <a class="reference external" href="http://software.intel.com/en-us/intel-ipp-preview">Intel® IPP Asynchronous C/C++</a> library usage with OpenCV. The code example below illustrates implementation of the Sobel operation, accelerated with Intel® IPP Asynchronous C/C++ functions. In this code example, <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1ga6b6a7a9c44efd50c8aaf9fb0866a363a"><span class="std std-ref">cv::hpp::getMat</span></a> and <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">cv::hpp::getHpp</span></a> functions are used for data conversion between <a class="reference external" href="http://software.intel.com/en-us/node/501660">hppiMatrix</a> and Mat matrices.</p>
+<p class="rubric">Code</p>
+<p>You may also find the source code in the <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/core/ippasync/ippasync_sample.cpp</span></code> file of the OpenCV source library or download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/ippasync/ippasync_sample.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/core/utility.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;cvconfig.h&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="cp">#ifdef HAVE_IPP_A</span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/core/ippasync.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#define CHECK_STATUS(STATUS, NAME)\</span>
+<span class="cp">    if(STATUS!=HPP_STATUS_NO_ERROR){ printf(&quot;%s error %d\n&quot;, NAME, STATUS);\</span>
+<span class="cp">    if (virtMatrix) {hppStatus delSts = hppiDeleteVirtualMatrices(accel, virtMatrix); CHECK_DEL_STATUS(delSts,&quot;hppiDeleteVirtualMatrices&quot;);}\</span>
+<span class="cp">    if (accel)      {hppStatus delSts = hppDeleteInstance(accel); CHECK_DEL_STATUS(delSts, &quot;hppDeleteInstance&quot;);}\</span>
+<span class="cp">    return -1;}</span>
+
+<span class="cp">#define CHECK_DEL_STATUS(STATUS, NAME)\</span>
+<span class="cp">    if(STATUS!=HPP_STATUS_NO_ERROR){ printf(&quot;%s error %d\n&quot;, NAME, STATUS); return -1;}</span>
+
+<span class="cp">#endif</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+ <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">This program shows how to use the conversion for IPP Async.</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="s">&quot;This example uses the Sobel filter.</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="s">&quot;You can use cv::Sobel or hppiSobel.</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="s">&quot;Usage: </span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="s">&quot;./ipp_async_sobel [--camera]=&lt;use camera,if this key is present&gt;, </span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="s">&quot;                  [--file_name]=&lt;path to movie or image file&gt;</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="s">&quot;                  [--accel]=&lt;accelerator type: auto (default), cpu, gpu&gt;</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">keys</span> <span class="o">=</span>
+<span class="p">{</span>
+    <span class="s">&quot;{c  camera   |           | use camera or not}&quot;</span>
+    <span class="s">&quot;{fn file_name|../data/baboon.jpg | image file       }&quot;</span>
+    <span class="s">&quot;{a accel     |auto       | accelerator type: auto (default), cpu, gpu}&quot;</span>
+<span class="p">};</span>
+
+<span class="c1">//this is a sample for hppiSobel functions</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">cap</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">keys</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">result</span><span class="p">;</span>
+
+<span class="cp">#ifdef HAVE_IPP_A</span>
+
+    <span class="n">hppiMatrix</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span><span class="o">*</span> <span class="n">dst</span><span class="p">;</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">hppAccelType</span> <span class="n">accelType</span><span class="p">;</span>
+    <span class="n">hppStatus</span> <span class="n">sts</span><span class="p">;</span>
+    <span class="n">hppiVirtualMatrix</span> <span class="o">*</span> <span class="n">virtMatrix</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="n">useCamera</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;camera&quot;</span><span class="p">);</span>
+    <span class="n">string</span> <span class="n">file</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;file_name&quot;</span><span class="p">);</span>
+    <span class="n">string</span> <span class="n">sAccel</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;accel&quot;</span><span class="p">);</span>
+
+    <span class="n">parser</span><span class="p">.</span><span class="n">printMessage</span><span class="p">();</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">useCamera</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;used camera</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;used image %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+        <span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">cap</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9d2ca36789e7fcfe7a7be3b328038585"><span class="std std-ref">isOpened</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;can not open camera or video file</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">accelType</span> <span class="o">=</span> <span class="n">sAccel</span> <span class="o">==</span> <span class="s">&quot;cpu&quot;</span> <span class="o">?</span> <span class="nl">HPP_ACCEL_TYPE_CPU</span><span class="p">:</span>
+                <span class="n">sAccel</span> <span class="o">==</span> <span class="s">&quot;gpu&quot;</span> <span class="o">?</span> <span class="nl">HPP_ACCEL_TYPE_GPU</span><span class="p">:</span>
+                                  <span class="n">HPP_ACCEL_TYPE_ANY</span><span class="p">;</span>
+
+    <span class="c1">//Create accelerator instance</span>
+    <span class="n">sts</span> <span class="o">=</span> <span class="n">hppCreateInstance</span><span class="p">(</span><span class="n">accelType</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">accel</span><span class="p">);</span>
+    <span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span> <span class="s">&quot;hppCreateInstance&quot;</span><span class="p">);</span>
+
+    <span class="n">accelType</span> <span class="o">=</span> <span class="n">hppQueryAccelType</span><span class="p">(</span><span class="n">accel</span><span class="p">);</span>
+
+    <span class="n">sAccel</span> <span class="o">=</span> <span class="n">accelType</span> <span class="o">==</span> <span class="n">HPP_ACCEL_TYPE_CPU</span> <span class="o">?</span> <span class="s">&quot;cpu&quot;</span><span class="o">:</span>
+             <span class="n">accelType</span> <span class="o">==</span> <span class="n">HPP_ACCEL_TYPE_GPU</span> <span class="o">?</span> <span class="s">&quot;gpu&quot;</span><span class="o">:</span>
+             <span class="n">accelType</span> <span class="o">==</span> <span class="n">HPP_ACCEL_TYPE_GPU_VIA_DX9</span> <span class="o">?</span> <span class="s">&quot;gpu dx9&quot;</span><span class="o">:</span> <span class="s">&quot;?&quot;</span><span class="p">;</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;accelType %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sAccel</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+
+    <span class="n">virtMatrix</span> <span class="o">=</span> <span class="n">hppiCreateVirtualMatrices</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(;;)</span>
+    <span class="p">{</span>
+        <span class="n">cap</span> <span class="o">&gt;&gt;</span> <span class="n">image</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+            <span class="k">break</span><span class="p">;</span>
+
+        <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span>
+
+        <span class="n">result</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a55ced2c8d844d683ea9a725c60037ad0"><span class="std std-ref">create</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">cols</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>
+
+        <span class="kt">double</span> <span class="n">execTime</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae73f58000611a1af25dd36d496bf4487"><span class="std std-ref">getTickCount</span></a><span></span><span class="p">();</span>
+
+        <span class="c1">//convert Mat to hppiMatrix</span>
+        <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">hpp::getHpp</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span><span class="n">accel</span><span class="p">);</span>
+        <span class="n">dst</span> <span class="o">=</span> <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">hpp::getHpp</span></a><span></span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">accel</span><span class="p">);</span>
+
+        <span class="n">sts</span> <span class="o">=</span> <span class="n">hppiSobel</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span><span class="n">src</span><span class="p">,</span> <span class="n">HPP_MASK_SIZE_3X3</span><span class="p">,</span><span class="n">HPP_NORM_L1</span><span class="p">,</span><span class="n">virtMatrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+        <span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiSobel&quot;</span><span class="p">);</span>
+
+        <span class="n">sts</span> <span class="o">=</span> <span class="n">hppiConvert</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">virtMatrix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">HPP_RND_MODE_NEAR</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">HPP_DATA_TYPE_8U</span><span class="p">);</span>
+        <span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiConvert&quot;</span><span class="p">);</span>
+
+        <span class="c1">// Wait for tasks to complete</span>
+        <span class="n">sts</span> <span class="o">=</span> <span class="n">hppWait</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">HPP_TIME_OUT_INFINITE</span><span class="p">);</span>
+        <span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span> <span class="s">&quot;hppWait&quot;</span><span class="p">);</span>
+
+        <span class="n">execTime</span> <span class="o">=</span> <span class="p">((</span><span class="kt">double</span><span class="p">)</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gae73f58000611a1af25dd36d496bf4487"><span class="std std-ref">getTickCount</span></a><span></span><span class="p">()</span> <span class="o">-</span> <span class="n">execTime</span><span class="p">)</span><span class="o">*</span><span class="mf">1000.</span><span class="o">/</span><a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga705441a9ef01f47acdc55d87fbe5090c"><span class="std std-ref">getTickFrequency</span></a><span></span><span class="p">();</span>
+
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Time : %0.3fms</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">execTime</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;image&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">);</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;rez&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+
+        <span class="n">sts</span> <span class="o">=</span>  <span class="n">hppiFreeMatrix</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+        <span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiFreeMatrix&quot;</span><span class="p">);</span>
+
+        <span class="n">sts</span> <span class="o">=</span>  <span class="n">hppiFreeMatrix</span><span class="p">(</span><span class="n">dst</span><span class="p">);</span>
+        <span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiFreeMatrix&quot;</span><span class="p">);</span>
+
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">useCamera</span><span class="p">)</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">virtMatrix</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">sts</span> <span class="o">=</span> <span class="n">hppiDeleteVirtualMatrices</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">virtMatrix</span><span class="p">);</span>
+        <span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiDeleteVirtualMatrices&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">accel</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">sts</span> <span class="o">=</span> <span class="n">hppDeleteInstance</span><span class="p">(</span><span class="n">accel</span><span class="p">);</span>
+        <span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span> <span class="s">&quot;hppDeleteInstance&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;SUCCESS</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+<span class="cp">#else</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;IPP Async not supported</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+<span class="cp">#endif</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Create parameters for OpenCV:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">VideoCapture</span> <span class="n">cap</span><span class="p">;</span>
+<span class="n">Mat</span> <span class="n">image</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">result</span><span class="p">;</span>
+</pre>
+<p>and IPP Async:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">hppiMatrix</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span><span class="o">*</span> <span class="n">dst</span><span class="p">;</span>
+<span class="n">hppAccel</span> <span class="n">accel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">hppAccelType</span> <span class="n">accelType</span><span class="p">;</span>
+<span class="n">hppStatus</span> <span class="n">sts</span><span class="p">;</span>
+<span class="n">hppiVirtualMatrix</span> <span class="o">*</span> <span class="n">virtMatrix</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">Load input image or video. How to open and read video stream you can see in the <a class="reference internal" href="page_tutorial_video_input_psnr_ssim.html#doxid-d5-dc4-tutorial-video-input-psnr-ssim"><span class="std std-ref">Video Input with OpenCV and similarity measurement</span></a> tutorial.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span><span class="p">(</span> <span class="n">useCamera</span> <span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">printf</span><span class="p">(</span><span class="s">&quot;used camera</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+   <span class="n">cap</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+   <span class="n">printf</span><span class="p">(</span><span class="s">&quot;used image %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+   <span class="n">cap</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">cap</span><span class="p">.</span><span class="n">isOpened</span><span class="p">()</span> <span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">printf</span><span class="p">(</span><span class="s">&quot;can not open camera or video file</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+   <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Create accelerator instance using <a class="reference external" href="http://software.intel.com/en-us/node/501686">hppCreateInstance</a> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">accelType</span> <span class="o">=</span> <span class="n">sAccel</span> <span class="o">==</span> <span class="s">&quot;cpu&quot;</span> <span class="o">?</span> <span class="nl">HPP_ACCEL_TYPE_CPU</span><span class="p">:</span>
+            <span class="n">sAccel</span> <span class="o">==</span> <span class="s">&quot;gpu&quot;</span> <span class="o">?</span> <span class="nl">HPP_ACCEL_TYPE_GPU</span><span class="p">:</span>
+                              <span class="n">HPP_ACCEL_TYPE_ANY</span><span class="p">;</span>
+
+<span class="c1">//Create accelerator instance</span>
+<span class="n">sts</span> <span class="o">=</span> <span class="n">hppCreateInstance</span><span class="p">(</span><span class="n">accelType</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">accel</span><span class="p">);</span>
+<span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span> <span class="s">&quot;hppCreateInstance&quot;</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Create an array of virtual matrices using <a class="reference external" href="http://software.intel.com/en-us/node/501700">hppiCreateVirtualMatrices</a> function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">virtMatrix</span> <span class="o">=</span> <span class="n">hppiCreateVirtualMatrices</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Prepare a matrix for input and output data:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cap</span> <span class="o">&gt;&gt;</span> <span class="n">image</span><span class="p">;</span>
+<span class="k">if</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+   <span class="k">break</span><span class="p">;</span>
+
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span>
+
+<span class="n">result</span><span class="p">.</span><span class="n">create</span><span class="p">(</span> <span class="n">image</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">cols</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32b18d904ee2b1731a9416a8eef67d06"><span class="std std-ref">CV_8U</span></a><span></span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Convert Mat to <a class="reference external" href="http://software.intel.com/en-us/node/501660">hppiMatrix</a> using <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">cv::hpp::getHpp</span></a> and call <a class="reference external" href="http://software.intel.com/en-us/node/474701">hppiSobel</a> function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//convert Mat to hppiMatrix</span>
+<span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">getHpp</span></a><span></span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">accel</span><span class="p">);</span>
+<span class="n">dst</span> <span class="o">=</span> <a class="reference internal" href="group_core_ipp.html#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">getHpp</span></a><span></span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">accel</span><span class="p">);</span>
+
+<span class="n">sts</span> <span class="o">=</span> <span class="n">hppiSobel</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span><span class="n">src</span><span class="p">,</span> <span class="n">HPP_MASK_SIZE_3X3</span><span class="p">,</span><span class="n">HPP_NORM_L1</span><span class="p">,</span><span class="n">virtMatrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiSobel&quot;</span><span class="p">);</span>
+
+<span class="n">sts</span> <span class="o">=</span> <span class="n">hppiConvert</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">virtMatrix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">HPP_RND_MODE_NEAR</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">HPP_DATA_TYPE_8U</span><span class="p">);</span>
+<span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiConvert&quot;</span><span class="p">);</span>
+
+<span class="c1">// Wait for tasks to complete</span>
+<span class="n">sts</span> <span class="o">=</span> <span class="n">hppWait</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">HPP_TIME_OUT_INFINITE</span><span class="p">);</span>
+<span class="n">CHECK_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span> <span class="s">&quot;hppWait&quot;</span><span class="p">);</span>
+</pre>
+<p>We use <a class="reference external" href="http://software.intel.com/en-us/node/501746">hppiConvert</a> because <a class="reference external" href="http://software.intel.com/en-us/node/474701">hppiSobel</a> returns destination matrix with HPP_DATA_TYPE_16S data type for source matrix with HPP_DATA_TYPE_8U type. You should check hppStatus after each call IPP Async function.</p>
+</li>
+<li><p class="first">Create windows and show the images, the usual way.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;image&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;rez&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Delete hpp matrices.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">sts</span> <span class="o">=</span>  <span class="n">hppiFreeMatrix</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+<span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiFreeMatrix&quot;</span><span class="p">);</span>
+
+<span class="n">sts</span> <span class="o">=</span>  <span class="n">hppiFreeMatrix</span><span class="p">(</span><span class="n">dst</span><span class="p">);</span>
+<span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiFreeMatrix&quot;</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Delete virtual matrices and accelerator instance.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span> <span class="p">(</span><span class="n">virtMatrix</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">sts</span> <span class="o">=</span> <span class="n">hppiDeleteVirtualMatrices</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">virtMatrix</span><span class="p">);</span>
+   <span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span><span class="s">&quot;hppiDeleteVirtualMatrices&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">accel</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="n">sts</span> <span class="o">=</span> <span class="n">hppDeleteInstance</span><span class="p">(</span><span class="n">accel</span><span class="p">);</span>
+   <span class="n">CHECK_DEL_STATUS</span><span class="p">(</span><span class="n">sts</span><span class="p">,</span> <span class="s">&quot;hppDeleteInstance&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Result</p>
+<p>After compiling the code above we can execute it giving an image or video path and accelerator type as an argument. For this tutorial we use baboon.png image as input. The result is below.</p>
+<img alt="_images/How_To_Use_IPPA_Result.jpg" src="_images/How_To_Use_IPPA_Result.jpg" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_interoperability_with_OpenCV_1.html" title="Interoperability with OpenCV 1"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_how_to_use_OpenCV_parallel_for_.html" title="How to use the OpenCV parallel_for_ to parallelize your code"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_core.html" >The Core Functionality (core module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+.. index:: pair: class; Poco::JSON::Template
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template:
+
+class Poco::JSON::Template
+==========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+:ref:`Template <doxid-class_poco_1_1_j_s_o_n_1_1_template>` is a template engine which uses :ref:`JSON <doxid-namespace_poco_1_1_j_s_o_n>` as input for generating output. :ref:`More...<details-class_poco_1_1_j_s_o_n_1_1_template>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <Template.h>
+	
+	class Template
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`SharedPtr<doxid-class_poco_1_1_shared_ptr>`<Template> :target:`Ptr<doxid-class_poco_1_1_j_s_o_n_1_1_template_1a39033c1aff96be7d06887b81133d112e>`;
+
+		// construction
+	
+		:ref:`Template<doxid-class_poco_1_1_j_s_o_n_1_1_template_1a27cceba6d3d2449b3403f94c598c1441>`();
+		:ref:`Template<doxid-class_poco_1_1_j_s_o_n_1_1_template_1ab1c944f89841fdc96d0230d2baa4c75c>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Path<doxid-class_poco_1_1_path>`& templatePath);
+
+		// methods
+	
+		void
+		:ref:`parse<doxid-class_poco_1_1_j_s_o_n_1_1_template_1a9205d85cc12494acb0fcc3d2994e8ee2>`();
+	
+		void
+		:ref:`parse<doxid-class_poco_1_1_j_s_o_n_1_1_template_1a4c2edc1cbda54ac78d0e49b4934e4d81>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& source);
+	
+		void
+		:ref:`parse<doxid-class_poco_1_1_j_s_o_n_1_1_template_1ada38f0a04b21573dc19a554f9a15ec99>`(std::istream& in);
+	
+		:ref:`Timestamp<doxid-class_poco_1_1_timestamp>`
+		:ref:`parseTime<doxid-class_poco_1_1_j_s_o_n_1_1_template_1a2a2eb87c7b821cbbee90a1274e4c2651>`() const;
+	
+		void
+		:ref:`render<doxid-class_poco_1_1_j_s_o_n_1_1_template_1ac72d679feb033f47b1cb0984635b37ce>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Dynamic::Var<doxid-class_poco_1_1_dynamic_1_1_var>`& data,
+			std::ostream& out
+			) const;
+	};
+.. _details-class_poco_1_1_j_s_o_n_1_1_template:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+:ref:`Template <doxid-class_poco_1_1_j_s_o_n_1_1_template>` is a template engine which uses :ref:`JSON <doxid-namespace_poco_1_1_j_s_o_n>` as input for generating output.
+
+There are commands for looping over :ref:`JSON <doxid-namespace_poco_1_1_j_s_o_n>` arrays, include other templates, conditional output, etc.
+
+All text is send to the outputstream. A command is placed between
+
+.. ref-code-block:: cpp
+
+	<?
+
+and
+
+.. ref-code-block:: cpp
+
+	?>
+
+These are the available commands:
+
+.. ref-code-block:: cpp
+
+	<? echo query ?>
+
+The result of the query is send to the output stream This command can also be written as <?= query ?>
+
+.. ref-code-block:: cpp
+
+	<? if query ?> <? else ?> <? endif ?>
+
+When the result of query is true, all the text between if and else (or endif when there is no else) is send to the output stream. When the result of query is false, all the text between else and endif is send to the output stream. An empty object, an empty array or a null value is considered as a false value. For numbers a zero is false. An empty String is also false.
+
+.. ref-code-block:: cpp
+
+	<? ifexist query ?> <? else ?> <? endif ?>
+
+This can be used to check the existence of the value. Use this for example when a zero value is ok (which returns false for <? if ?>.
+
+.. ref-code-block:: cpp
+
+	<? for variable query ?> <? endfor ?>
+
+The result of the query must be an array. For each element in the array the text between for and endfor is send to the output stream. The active element is stored in the variable.
+
+.. ref-code-block:: cpp
+
+	<? include "filename" ?>
+
+Includes a template. When the filename is relative it will try to resolve the filename against the active template. When this file doesn't exist, it can still be found when the JSONTemplateCache is used.
+
+A query is passed to :ref:`Poco::JSON::Query <doxid-class_poco_1_1_j_s_o_n_1_1_query>` to get the value.
+
+Construction
+------------
+
+.. index:: pair: function; Template
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1a27cceba6d3d2449b3403f94c598c1441:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Template()
+
+Creates a :ref:`Template <doxid-class_poco_1_1_j_s_o_n_1_1_template>`.
+
+.. index:: pair: function; Template
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1ab1c944f89841fdc96d0230d2baa4c75c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Template(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Path<doxid-class_poco_1_1_path>`& templatePath)
+
+Creates a :ref:`Template <doxid-class_poco_1_1_j_s_o_n_1_1_template>` from the file with the given templatePath.
+
+Methods
+-------
+
+.. index:: pair: function; parse
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1a9205d85cc12494acb0fcc3d2994e8ee2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	parse()
+
+Parse a template from a file.
+
+.. index:: pair: function; parse
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1a4c2edc1cbda54ac78d0e49b4934e4d81:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	parse(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& source)
+
+Parse a template from a string.
+
+.. index:: pair: function; parse
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1ada38f0a04b21573dc19a554f9a15ec99:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	parse(std::istream& in)
+
+Parse a template from an input stream.
+
+.. index:: pair: function; parseTime
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1a2a2eb87c7b821cbbee90a1274e4c2651:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Timestamp<doxid-class_poco_1_1_timestamp>`
+	parseTime() const
+
+Returns the time when the template was parsed.
+
+.. index:: pair: function; render
+.. _doxid-class_poco_1_1_j_s_o_n_1_1_template_1ac72d679feb033f47b1cb0984635b37ce:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	render(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Dynamic::Var<doxid-class_poco_1_1_dynamic_1_1_var>`& data,
+		std::ostream& out
+		) const
+
+Renders the template and send the output to the stream.
+

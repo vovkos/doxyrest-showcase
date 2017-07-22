@@ -1,0 +1,602 @@
+.. index:: pair: class; Poco::Net::WebSocket
+.. _doxid-class_poco_1_1_net_1_1_web_socket:
+
+class Poco::Net::WebSocket
+==========================
+
+.. toctree::
+	:hidden:
+
+	enum_Poco_Net_WebSocket_ErrorCodes.rst
+	enum_Poco_Net_WebSocket_FrameFlags.rst
+	enum_Poco_Net_WebSocket_FrameOpcodes.rst
+	enum_Poco_Net_WebSocket_Mode.rst
+	enum_Poco_Net_WebSocket_SendFlags.rst
+	enum_Poco_Net_WebSocket_StatusCodes.rst
+
+Overview
+~~~~~~~~
+
+This class implements a :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` according to the :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` protocol specification in RFC 6455. :ref:`More...<details-class_poco_1_1_net_1_1_web_socket>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <WebSocket.h>
+	
+	class WebSocket: public :ref:`Poco::Net::StreamSocket<doxid-class_poco_1_1_net_1_1_stream_socket>`
+	{
+	public:
+		// enums
+	
+		enum :ref:`ErrorCodes<doxid-class_poco_1_1_net_1_1_web_socket_1ab3bbf7bdfe759e1a9826c5ded4f46979>`;
+		enum :ref:`FrameFlags<doxid-class_poco_1_1_net_1_1_web_socket_1a4ffc2c2be87e29659530ce0b154d305e>`;
+		enum :ref:`FrameOpcodes<doxid-class_poco_1_1_net_1_1_web_socket_1a9d1f10fb7cd4936712923fd3cd018d81>`;
+		enum :ref:`Mode<doxid-class_poco_1_1_net_1_1_web_socket_1ae9f3fc5f36304f5d09450249ef26f62c>`;
+		enum :ref:`SendFlags<doxid-class_poco_1_1_net_1_1_web_socket_1a2ef049908b08a72149460a41c507a3a9>`;
+		enum :ref:`StatusCodes<doxid-class_poco_1_1_net_1_1_web_socket_1a6771ade32432ff922bdd9f8b5bc0007c>`;
+
+		// fields
+	
+		static :ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string :ref:`WEBSOCKET_VERSION<doxid-class_poco_1_1_net_1_1_web_socket_1a52607dbf08ad2671e46bc145aed7ff0e>`;
+
+		// construction
+	
+		:ref:`WebSocket<doxid-class_poco_1_1_net_1_1_web_socket_1ab53ca4a5f7be1a7d584b54f9d9c34aa4>`(
+			:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`& request,
+			:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`& response
+			);
+	
+		:ref:`WebSocket<doxid-class_poco_1_1_net_1_1_web_socket_1a21a4b808dcfdc97f799ea94c70c45698>`(
+			:ref:`HTTPClientSession<doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`& cs,
+			:ref:`HTTPRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_request>`& request,
+			:ref:`HTTPResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_response>`& response
+			);
+	
+		:ref:`WebSocket<doxid-class_poco_1_1_net_1_1_web_socket_1abb60ec3a49308863bc259e1f158599a6>`(
+			:ref:`HTTPClientSession<doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`& cs,
+			:ref:`HTTPRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_request>`& request,
+			:ref:`HTTPResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_response>`& response,
+			:ref:`HTTPCredentials<doxid-class_poco_1_1_net_1_1_h_t_t_p_credentials>`& credentials
+			);
+	
+		:ref:`WebSocket<doxid-class_poco_1_1_net_1_1_web_socket_1ac877a8bbaa75c61d44f34369f49787ee>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket);
+
+		// methods
+	
+		WebSocket&
+		:ref:`operator=<doxid-class_poco_1_1_net_1_1_web_socket_1a2ef44dd00831bd6824d0cd70c1625e39>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket);
+	
+		void
+		:ref:`shutdown<doxid-class_poco_1_1_net_1_1_web_socket_1a8aa82a648322dce692022104d5789639>`();
+	
+		void
+		:ref:`shutdown<doxid-class_poco_1_1_net_1_1_web_socket_1a252a22cb88731ca6c54508b7b90608a8>`(
+			Poco::UInt16 statusCode,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& statusMessage = ""
+			);
+	
+		int
+		:ref:`sendFrame<doxid-class_poco_1_1_net_1_1_web_socket_1ab2f185fe6159a46c3a0018b7929ecc8e>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* buffer,
+			int length,
+			int flags = :ref:`FRAME_TEXT<doxid-class_poco_1_1_net_1_1_web_socket_1a2ef049908b08a72149460a41c507a3a9a010a5e2ee156cc6a6429dae92581d6f4>`
+			);
+	
+		int
+		:ref:`receiveFrame<doxid-class_poco_1_1_net_1_1_web_socket_1ab60771d6eb86a149f3dd131a5dc07c25>`(
+			void* buffer,
+			int length,
+			int& flags
+			);
+	
+		:ref:`Mode<doxid-class_poco_1_1_net_1_1_web_socket_1ae9f3fc5f36304f5d09450249ef26f62c>`
+		:ref:`mode<doxid-class_poco_1_1_net_1_1_web_socket_1a085eff93d76ba244c2396118705a87d3>`() const;
+
+	protected:
+		// methods
+	
+		static
+		:ref:`WebSocketImpl<doxid-class_poco_1_1_net_1_1_web_socket_impl>`*
+		:target:`accept<doxid-class_poco_1_1_net_1_1_web_socket_1a65825b1175423092436cc26c815bf380>`(
+			:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`& request,
+			:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`& response
+			);
+	
+		static
+		:ref:`WebSocketImpl<doxid-class_poco_1_1_net_1_1_web_socket_impl>`*
+		:target:`connect<doxid-class_poco_1_1_net_1_1_web_socket_1a8f0c8dd0fe10797bcc031979100c6ae5>`(
+			:ref:`HTTPClientSession<doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`& cs,
+			:ref:`HTTPRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_request>`& request,
+			:ref:`HTTPResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_response>`& response,
+			:ref:`HTTPCredentials<doxid-class_poco_1_1_net_1_1_h_t_t_p_credentials>`& credentials
+			);
+	
+		static
+		:ref:`WebSocketImpl<doxid-class_poco_1_1_net_1_1_web_socket_impl>`*
+		:target:`completeHandshake<doxid-class_poco_1_1_net_1_1_web_socket_1a029561811dc3540dfc91cedd17230072>`(
+			:ref:`HTTPClientSession<doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`& cs,
+			:ref:`HTTPResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_response>`& response,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& key
+			);
+	
+		static
+		std::string
+		:target:`computeAccept<doxid-class_poco_1_1_net_1_1_web_socket_1a26b831e294671d09849732b563be6d4b>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& key);
+	
+		static
+		std::string
+		:target:`createKey<doxid-class_poco_1_1_net_1_1_web_socket_1a4b75ebb23d323d027586934335dfb3ed>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// typedefs
+	
+		typedef std::vector<:ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`> :ref:`SocketList<doxid-class_poco_1_1_net_1_1_socket_1a315ed5b3dc1d380eaa8a7ac72c249dfe>`;
+
+		// enums
+	
+		enum :ref:`SelectMode<doxid-class_poco_1_1_net_1_1_socket_1a4f2719a7b9af7039b8081636e5e2fc67>`;
+
+		// methods
+	
+		:ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`&
+		:ref:`operator=<doxid-class_poco_1_1_net_1_1_socket_1af9a8696aa734348dc92fe9ae048651af>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket);
+	
+		bool
+		:ref:`operator==<doxid-class_poco_1_1_net_1_1_socket_1a380e206bef3f6861e175384a93d23516>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket) const;
+	
+		bool
+		:ref:`operator!=<doxid-class_poco_1_1_net_1_1_socket_1ae08fbe96cfea9be3e9d51e2708110867>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket) const;
+	
+		bool
+		:ref:`operator<<doxid-class_poco_1_1_net_1_1_socket_1a606f0afdfaea73d9b34c4b4f778dcb44>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket) const;
+	
+		bool
+		:ref:`operator<=<doxid-class_poco_1_1_net_1_1_socket_1a0c807b51985702536be2afe8ccdfc3fb>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket) const;
+	
+		bool
+		:ref:`operator><doxid-class_poco_1_1_net_1_1_socket_1aa2210ca68e5ffa16388f414af3fe580d>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket) const;
+	
+		bool
+		:ref:`operator>=<doxid-class_poco_1_1_net_1_1_socket_1a2f3ae39578712d7e06c5c8b545d1b9fe>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket) const;
+	
+		void
+		:ref:`close<doxid-class_poco_1_1_net_1_1_socket_1ab29f65f9263a1cc48e641b1e41134ff1>`();
+	
+		bool
+		:ref:`poll<doxid-class_poco_1_1_net_1_1_socket_1ad2cf208c0ce3eb1bcc50ca8c27d24e4a>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& timeout,
+			int mode
+			) const;
+	
+		int
+		:ref:`available<doxid-class_poco_1_1_net_1_1_socket_1afbe4bee1dc9e37420606c2be412debb9>`() const;
+	
+		void
+		:ref:`setSendBufferSize<doxid-class_poco_1_1_net_1_1_socket_1a473e73c78a3bbe6161d7e7c2894b7439>`(int size);
+	
+		int
+		:ref:`getSendBufferSize<doxid-class_poco_1_1_net_1_1_socket_1a0b5ffad8ea21959c02464355a4b3b0bd>`() const;
+	
+		void
+		:ref:`setReceiveBufferSize<doxid-class_poco_1_1_net_1_1_socket_1a146d6b42a2f70b8cdbc6c06e4b076225>`(int size);
+	
+		int
+		:ref:`getReceiveBufferSize<doxid-class_poco_1_1_net_1_1_socket_1aac068c66d2c67fb1847c9dd1ecdfa07a>`() const;
+	
+		void
+		:ref:`setSendTimeout<doxid-class_poco_1_1_net_1_1_socket_1a69fd0e82469d36929f91d96d63dade89>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& timeout);
+	
+		:ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`
+		:ref:`getSendTimeout<doxid-class_poco_1_1_net_1_1_socket_1ae1d0b997da5324b52e1cdd7e2d884811>`() const;
+	
+		void
+		:ref:`setReceiveTimeout<doxid-class_poco_1_1_net_1_1_socket_1a9f9001c54738af42b93fe11f132e0801>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& timeout);
+	
+		:ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`
+		:ref:`getReceiveTimeout<doxid-class_poco_1_1_net_1_1_socket_1ab1921d3c58dc490f6a4e1ade6cd25fc1>`() const;
+	
+		void
+		:ref:`setOption<doxid-class_poco_1_1_net_1_1_socket_1a3d1aa81a141d1f1b3bfb071f036b0fa6>`(
+			int level,
+			int option,
+			int value
+			);
+	
+		void
+		:ref:`setOption<doxid-class_poco_1_1_net_1_1_socket_1a83379bf3c0e5f86e1d8fee194fb0ee23>`(
+			int level,
+			int option,
+			unsigned value
+			);
+	
+		void
+		:ref:`setOption<doxid-class_poco_1_1_net_1_1_socket_1a3b0cd6b667345d18ba14b5ee129bc644>`(
+			int level,
+			int option,
+			unsigned char value
+			);
+	
+		void
+		:ref:`setOption<doxid-class_poco_1_1_net_1_1_socket_1a30441a67011a6c4035b98c74bab91a7e>`(
+			int level,
+			int option,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& value
+			);
+	
+		void
+		:ref:`setOption<doxid-class_poco_1_1_net_1_1_socket_1a91514c913493a3fe54351e44ed83ec50>`(
+			int level,
+			int option,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`IPAddress<doxid-class_poco_1_1_net_1_1_i_p_address>`& value
+			);
+	
+		void
+		:ref:`getOption<doxid-class_poco_1_1_net_1_1_socket_1ad1f11bb29b991646aab5bffedd373aa2>`(
+			int level,
+			int option,
+			int& value
+			) const;
+	
+		void
+		:ref:`getOption<doxid-class_poco_1_1_net_1_1_socket_1a7240a4349e2a12c19ed0a75f3120a349>`(
+			int level,
+			int option,
+			unsigned& value
+			) const;
+	
+		void
+		:ref:`getOption<doxid-class_poco_1_1_net_1_1_socket_1a95730d6c5f4fbcad02e0870438f89b68>`(
+			int level,
+			int option,
+			unsigned char& value
+			) const;
+	
+		void
+		:ref:`getOption<doxid-class_poco_1_1_net_1_1_socket_1a151742e2e524654ba8d390d67097d8cf>`(
+			int level,
+			int option,
+			:ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& value
+			) const;
+	
+		void
+		:ref:`getOption<doxid-class_poco_1_1_net_1_1_socket_1a16d19cd8e3d6b32044bd0c1e6b5319c9>`(
+			int level,
+			int option,
+			:ref:`IPAddress<doxid-class_poco_1_1_net_1_1_i_p_address>`& value
+			) const;
+	
+		void
+		:ref:`setLinger<doxid-class_poco_1_1_net_1_1_socket_1a170d9415f6ecfc7fd700ede78190dabd>`(
+			bool on,
+			int seconds
+			);
+	
+		void
+		:ref:`getLinger<doxid-class_poco_1_1_net_1_1_socket_1aa6be0f597bddc2568514f9d7d6e3424c>`(
+			bool& on,
+			int& seconds
+			) const;
+	
+		void
+		:ref:`setNoDelay<doxid-class_poco_1_1_net_1_1_socket_1af9c5034912615b98ec8430d4c50cb6bd>`(bool flag);
+	
+		bool
+		:ref:`getNoDelay<doxid-class_poco_1_1_net_1_1_socket_1a038c8e59c05cff6b5ea5998486465055>`() const;
+	
+		void
+		:ref:`setKeepAlive<doxid-class_poco_1_1_net_1_1_socket_1a765cf373854d78ee2736b807a495863b>`(bool flag);
+	
+		bool
+		:ref:`getKeepAlive<doxid-class_poco_1_1_net_1_1_socket_1a3de1a81d36c55c49ed6979997eef3b2d>`() const;
+	
+		void
+		:ref:`setReuseAddress<doxid-class_poco_1_1_net_1_1_socket_1aa72a6f98d0962f419ec1f2f9c65499fb>`(bool flag);
+	
+		bool
+		:ref:`getReuseAddress<doxid-class_poco_1_1_net_1_1_socket_1a1c5465897c9ddb84a32f758144491ef2>`() const;
+	
+		void
+		:ref:`setReusePort<doxid-class_poco_1_1_net_1_1_socket_1aef394e0d07fb5581d3d87aa324f87508>`(bool flag);
+	
+		bool
+		:ref:`getReusePort<doxid-class_poco_1_1_net_1_1_socket_1acc77c06b00b05ce7797dbfe49ac76b2c>`() const;
+	
+		void
+		:ref:`setOOBInline<doxid-class_poco_1_1_net_1_1_socket_1ab1fd49a609cb99272db395eaffdef9a3>`(bool flag);
+	
+		bool
+		:ref:`getOOBInline<doxid-class_poco_1_1_net_1_1_socket_1a0bbbca3e0d50b2c8ec6c8205c57f2268>`() const;
+	
+		void
+		:ref:`setBlocking<doxid-class_poco_1_1_net_1_1_socket_1ac134ebb19caac648ecf010f750f5daf1>`(bool flag);
+	
+		bool
+		:ref:`getBlocking<doxid-class_poco_1_1_net_1_1_socket_1aada554cc9847d3e1da9b29567b5c4ad4>`() const;
+	
+		:ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`
+		:ref:`address<doxid-class_poco_1_1_net_1_1_socket_1a4d09afdbb03e7235e1453c2354bc7972>`() const;
+	
+		:ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`
+		:ref:`peerAddress<doxid-class_poco_1_1_net_1_1_socket_1a54a140a6a3e2107e828d01b25096b040>`() const;
+	
+		:ref:`SocketImpl<doxid-class_poco_1_1_net_1_1_socket_impl>`*
+		:ref:`impl<doxid-class_poco_1_1_net_1_1_socket_1aedb94763d83874e7294fcf9d056288ad>`() const;
+	
+		bool
+		:ref:`secure<doxid-class_poco_1_1_net_1_1_socket_1a5e1fb2fd8fc7b70f3c34e8f6371bdd63>`() const;
+	
+		void
+		:ref:`init<doxid-class_poco_1_1_net_1_1_socket_1a3b2019a38bdfe6a4744a690f4f4ca9d0>`(int af);
+	
+		static
+		int
+		:ref:`select<doxid-class_poco_1_1_net_1_1_socket_1a4b64fe1fc3848e6dec346b49f0708248>`(
+			:ref:`SocketList<doxid-class_poco_1_1_net_1_1_socket_1a315ed5b3dc1d380eaa8a7ac72c249dfe>`& readList,
+			:ref:`SocketList<doxid-class_poco_1_1_net_1_1_socket_1a315ed5b3dc1d380eaa8a7ac72c249dfe>`& writeList,
+			:ref:`SocketList<doxid-class_poco_1_1_net_1_1_socket_1a315ed5b3dc1d380eaa8a7ac72c249dfe>`& exceptList,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& timeout
+			);
+	
+		static
+		bool
+		:ref:`supportsIPv4<doxid-class_poco_1_1_net_1_1_socket_1a9984aca97d4457ba8978c1a69192ad5f>`();
+	
+		static
+		bool
+		:ref:`supportsIPv6<doxid-class_poco_1_1_net_1_1_socket_1af705fd05a2f647ebbe0faee274668a9f>`();
+	
+		:ref:`StreamSocket<doxid-class_poco_1_1_net_1_1_stream_socket>`&
+		:ref:`operator=<doxid-class_poco_1_1_net_1_1_stream_socket_1aa4fc3fe1f5b444d450ae61eca27ba862>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket);
+	
+		void
+		:ref:`connect<doxid-class_poco_1_1_net_1_1_stream_socket_1a4f7be10a71f621f3e254a0b851d34c01>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`& address);
+	
+		void
+		:ref:`connect<doxid-class_poco_1_1_net_1_1_stream_socket_1ad946b010823839a1c60cb9795716073f>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`& address,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Poco::Timespan<doxid-class_poco_1_1_timespan>`& timeout
+			);
+	
+		void
+		:ref:`connectNB<doxid-class_poco_1_1_net_1_1_stream_socket_1a363e1b7ef2863118da170ef17f82c8ff>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`SocketAddress<doxid-class_poco_1_1_net_1_1_socket_address>`& address);
+	
+		void
+		:ref:`shutdownReceive<doxid-class_poco_1_1_net_1_1_stream_socket_1a548d68b70668c565b277585c2950d97e>`();
+	
+		void
+		:ref:`shutdownSend<doxid-class_poco_1_1_net_1_1_stream_socket_1adf1dcd077d9a8d52682978dc2080663d>`();
+	
+		void
+		:ref:`shutdown<doxid-class_poco_1_1_net_1_1_stream_socket_1a137381760453bee6ed1a5882f0d65cff>`();
+	
+		int
+		:ref:`sendBytes<doxid-class_poco_1_1_net_1_1_stream_socket_1a655e35c1f32c0688ca35dcfb9eb05c2c>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* buffer,
+			int length,
+			int flags = 0
+			);
+	
+		int
+		:ref:`sendBytes<doxid-class_poco_1_1_net_1_1_stream_socket_1ac0e40c07ed525762dd0ff700c73430d6>`(:ref:`Poco::FIFOBuffer<doxid-namespace_poco_1af5cc76cc5962c03b1302383336f5af80>`& buffer);
+	
+		int
+		:ref:`receiveBytes<doxid-class_poco_1_1_net_1_1_stream_socket_1a33cee8a58a5b1a47570617d3ea59e5ba>`(
+			void* buffer,
+			int length,
+			int flags = 0
+			);
+	
+		int
+		:ref:`receiveBytes<doxid-class_poco_1_1_net_1_1_stream_socket_1acf63b78237888a70afa276f4b18ff245>`(:ref:`Poco::FIFOBuffer<doxid-namespace_poco_1af5cc76cc5962c03b1302383336f5af80>`& buffer);
+	
+		void
+		:ref:`sendUrgent<doxid-class_poco_1_1_net_1_1_stream_socket_1a90b0676d5525daac0e0360e68b5a1081>`(unsigned char data);
+
+	protected:
+		// methods
+	
+		poco_socket_t
+		:ref:`sockfd<doxid-class_poco_1_1_net_1_1_socket_1a00217abc6aed61f8accb03c8239727a1>`() const;
+
+.. _details-class_poco_1_1_net_1_1_web_socket:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class implements a :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` according to the :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` protocol specification in RFC 6455.
+
+Both client-side and server-side WebSockets are supported.
+
+Server-side WebSockets are usually created from within a :ref:`HTTPRequestHandler <doxid-class_poco_1_1_net_1_1_h_t_t_p_request_handler>`.
+
+Client-side WebSockets are created using a :ref:`HTTPClientSession <doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`.
+
+Note that special frames like PING must be handled at application level. In the case of a PING, a PONG message must be returned.
+
+Fields
+------
+
+.. index:: pair: variable; WEBSOCKET_VERSION
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1a52607dbf08ad2671e46bc145aed7ff0e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static :ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string WEBSOCKET_VERSION
+
+The :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` protocol version supported (13).
+
+Construction
+------------
+
+.. index:: pair: function; WebSocket
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1ab53ca4a5f7be1a7d584b54f9d9c34aa4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	WebSocket(
+		:ref:`HTTPServerRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_request>`& request,
+		:ref:`HTTPServerResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_server_response>`& response
+		)
+
+Creates a server-side :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` from within a :ref:`HTTPRequestHandler <doxid-class_poco_1_1_net_1_1_h_t_t_p_request_handler>`.
+
+First verifies that the request is a valid :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` upgrade request. If so, completes the handshake by sending a proper 101 response.
+
+Throws an exception if the request is not a proper :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` upgrade request.
+
+.. index:: pair: function; WebSocket
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1a21a4b808dcfdc97f799ea94c70c45698:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	WebSocket(
+		:ref:`HTTPClientSession<doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`& cs,
+		:ref:`HTTPRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_request>`& request,
+		:ref:`HTTPResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_response>`& response
+		)
+
+Creates a client-side :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>`, using the given :ref:`HTTPClientSession <doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>` and :ref:`HTTPRequest <doxid-class_poco_1_1_net_1_1_h_t_t_p_request>` for the initial handshake (HTTP Upgrade request).
+
+Additional HTTP headers for the initial handshake request (such as Origin or Sec-WebSocket-Protocol) can be given in the request object.
+
+The result of the handshake can be obtained from the response object.
+
+.. index:: pair: function; WebSocket
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1abb60ec3a49308863bc259e1f158599a6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	WebSocket(
+		:ref:`HTTPClientSession<doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>`& cs,
+		:ref:`HTTPRequest<doxid-class_poco_1_1_net_1_1_h_t_t_p_request>`& request,
+		:ref:`HTTPResponse<doxid-class_poco_1_1_net_1_1_h_t_t_p_response>`& response,
+		:ref:`HTTPCredentials<doxid-class_poco_1_1_net_1_1_h_t_t_p_credentials>`& credentials
+		)
+
+Creates a client-side :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>`, using the given :ref:`HTTPClientSession <doxid-class_poco_1_1_net_1_1_h_t_t_p_client_session>` and :ref:`HTTPRequest <doxid-class_poco_1_1_net_1_1_h_t_t_p_request>` for the initial handshake (HTTP Upgrade request).
+
+The given credentials are used for authentication if requested by the server.
+
+Additional HTTP headers for the initial handshake request (such as Origin or Sec-WebSocket-Protocol) can be given in the request object.
+
+The result of the handshake can be obtained from the response object.
+
+.. index:: pair: function; WebSocket
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1ac877a8bbaa75c61d44f34369f49787ee:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	WebSocket(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket)
+
+Creates a :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` from another :ref:`Socket <doxid-class_poco_1_1_net_1_1_socket>`, which must be a :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>`, otherwise a Poco::InvalidArgumentException will be thrown.
+
+Methods
+-------
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1a2ef44dd00831bd6824d0cd70c1625e39:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	WebSocket&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Socket<doxid-class_poco_1_1_net_1_1_socket>`& socket)
+
+Assignment operator.
+
+The other socket must be a :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>`, otherwise a Poco::InvalidArgumentException will be thrown.
+
+.. index:: pair: function; shutdown
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1a8aa82a648322dce692022104d5789639:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	shutdown()
+
+Sends a Close control frame to the server end of the connection to initiate an orderly shutdown of the connection.
+
+.. index:: pair: function; shutdown
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1a252a22cb88731ca6c54508b7b90608a8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	shutdown(
+		Poco::UInt16 statusCode,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& statusMessage = ""
+		)
+
+Sends a Close control frame to the server end of the connection to initiate an orderly shutdown of the connection.
+
+.. index:: pair: function; sendFrame
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1ab2f185fe6159a46c3a0018b7929ecc8e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	sendFrame(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* buffer,
+		int length,
+		int flags = :ref:`FRAME_TEXT<doxid-class_poco_1_1_net_1_1_web_socket_1a2ef049908b08a72149460a41c507a3a9a010a5e2ee156cc6a6429dae92581d6f4>`
+		)
+
+Sends the contents of the given buffer through the socket as a single frame.
+
+Values from the FrameFlags, FrameOpcodes and SendFlags enumerations can be specified in flags.
+
+Returns the number of bytes sent, which may be less than the number of bytes specified.
+
+Certain socket implementations may also return a negative value denoting a certain condition.
+
+.. index:: pair: function; receiveFrame
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1ab60771d6eb86a149f3dd131a5dc07c25:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	receiveFrame(
+		void* buffer,
+		int length,
+		int& flags
+		)
+
+Receives a frame from the socket and stores it in buffer.
+
+Up to length bytes are received. If the frame's payload is larger, a WebSocketException is thrown and the :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` connection must be terminated.
+
+Returns the number of bytes received. A return value of 0 means that the peer has shut down or closed the connection.
+
+Throws a TimeoutException if a receive timeout has been set and nothing is received within that interval. Throws a NetException (or a subclass) in case of other errors.
+
+The frame flags and opcode (FrameFlags and FrameOpcodes) is stored in flags.
+
+.. index:: pair: function; mode
+.. _doxid-class_poco_1_1_net_1_1_web_socket_1a085eff93d76ba244c2396118705a87d3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Mode<doxid-class_poco_1_1_net_1_1_web_socket_1ae9f3fc5f36304f5d09450249ef26f62c>`
+	mode() const
+
+Returns WS_SERVER if the :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>` is a server-side :ref:`WebSocket <doxid-class_poco_1_1_net_1_1_web_socket>`, or WS_CLIENT otherwise.
+

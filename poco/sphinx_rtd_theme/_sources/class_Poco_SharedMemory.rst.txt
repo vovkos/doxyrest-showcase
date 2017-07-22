@@ -1,0 +1,186 @@
+.. index:: pair: class; Poco::SharedMemory
+.. _doxid-class_poco_1_1_shared_memory:
+
+class Poco::SharedMemory
+========================
+
+.. toctree::
+	:hidden:
+
+	enum_Poco_SharedMemory_AccessMode.rst
+
+Overview
+~~~~~~~~
+
+Create and manage a shared memory object. :ref:`More...<details-class_poco_1_1_shared_memory>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <SharedMemory.h>
+	
+	class SharedMemory
+	{
+	public:
+		// enums
+	
+		enum :ref:`AccessMode<doxid-class_poco_1_1_shared_memory_1a12ab0f4ee9f7fa6b90387507a0a141ee>`;
+
+		// construction
+	
+		:ref:`SharedMemory<doxid-class_poco_1_1_shared_memory_1a15eb1c28f52d1117d3d17e81a64e9afb>`();
+	
+		:ref:`SharedMemory<doxid-class_poco_1_1_shared_memory_1adb04711f68f65b697f6f8eb794dfade8>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name,
+			std::size_t size,
+			:ref:`AccessMode<doxid-class_poco_1_1_shared_memory_1a12ab0f4ee9f7fa6b90387507a0a141ee>` mode,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* addrHint = 0,
+			bool server = true
+			);
+	
+		:ref:`SharedMemory<doxid-class_poco_1_1_shared_memory_1a550a7f770b6529db9902bf56eeccf16a>`(
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`File<doxid-class_poco_1_1_file>`& file,
+			:ref:`AccessMode<doxid-class_poco_1_1_shared_memory_1a12ab0f4ee9f7fa6b90387507a0a141ee>` mode,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* addrHint = 0
+			);
+	
+		:ref:`SharedMemory<doxid-class_poco_1_1_shared_memory_1a785d35b31169c4ebb3a9ecd297a4e433>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` SharedMemory& other);
+
+		// methods
+	
+		SharedMemory&
+		:ref:`operator=<doxid-class_poco_1_1_shared_memory_1af44d4725029fe0d5d5f9075f861cc0f0>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` SharedMemory& other);
+	
+		void
+		:ref:`swap<doxid-class_poco_1_1_shared_memory_1ad82086a99f7e2ddc8e9c79239c2e974a>`(SharedMemory& other);
+	
+		char*
+		:ref:`begin<doxid-class_poco_1_1_shared_memory_1a4a90f2c4960f59a4b048c4ab525513f2>`() const;
+	
+		char*
+		:ref:`end<doxid-class_poco_1_1_shared_memory_1ac63f1952a055839712945338a25abc50>`() const;
+	};
+.. _details-class_poco_1_1_shared_memory:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Create and manage a shared memory object.
+
+A :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object has value semantics, but is implemented using a handle/implementation idiom. Therefore, multiple :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` objects can share a single, reference counted :ref:`SharedMemoryImpl <doxid-class_poco_1_1_shared_memory_impl>` object.
+
+Construction
+------------
+
+.. index:: pair: function; SharedMemory
+.. _doxid-class_poco_1_1_shared_memory_1a15eb1c28f52d1117d3d17e81a64e9afb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	SharedMemory()
+
+Default constructor creates an unmapped :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object.
+
+No clients can connect to an unmapped :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object.
+
+.. index:: pair: function; SharedMemory
+.. _doxid-class_poco_1_1_shared_memory_1adb04711f68f65b697f6f8eb794dfade8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	SharedMemory(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::string& name,
+		std::size_t size,
+		:ref:`AccessMode<doxid-class_poco_1_1_shared_memory_1a12ab0f4ee9f7fa6b90387507a0a141ee>` mode,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* addrHint = 0,
+		bool server = true
+		)
+
+Creates or connects to a shared memory object with the given name.
+
+For maximum portability, name should be a valid Unix filename and not contain any slashes or backslashes.
+
+An address hint can be passed to the system, specifying the desired start address of the shared memory area. Whether the hint is actually honored is, however, up to the system. Windows platform will generally ignore the hint.
+
+If server is set to true, the shared memory region will be unlinked by calling shm_unlink() (on POSIX platforms) when the :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object is destroyed. The server parameter is ignored on Windows platforms.
+
+.. index:: pair: function; SharedMemory
+.. _doxid-class_poco_1_1_shared_memory_1a550a7f770b6529db9902bf56eeccf16a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	SharedMemory(
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`File<doxid-class_poco_1_1_file>`& file,
+		:ref:`AccessMode<doxid-class_poco_1_1_shared_memory_1a12ab0f4ee9f7fa6b90387507a0a141ee>` mode,
+		:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` void* addrHint = 0
+		)
+
+Maps the entire contents of file into a shared memory segment.
+
+An address hint can be passed to the system, specifying the desired start address of the shared memory area. Whether the hint is actually honored is, however, up to the system. Windows platform will generally ignore the hint.
+
+.. index:: pair: function; SharedMemory
+.. _doxid-class_poco_1_1_shared_memory_1a785d35b31169c4ebb3a9ecd297a4e433:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	SharedMemory(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` SharedMemory& other)
+
+Creates a :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object by copying another one.
+
+Methods
+-------
+
+.. index:: pair: function; operator=
+.. _doxid-class_poco_1_1_shared_memory_1af44d4725029fe0d5d5f9075f861cc0f0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	SharedMemory&
+	operator=(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` SharedMemory& other)
+
+Assigns another :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object.
+
+.. index:: pair: function; swap
+.. _doxid-class_poco_1_1_shared_memory_1ad82086a99f7e2ddc8e9c79239c2e974a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	swap(SharedMemory& other)
+
+Swaps the :ref:`SharedMemory <doxid-class_poco_1_1_shared_memory>` object with another one.
+
+.. index:: pair: function; begin
+.. _doxid-class_poco_1_1_shared_memory_1a4a90f2c4960f59a4b048c4ab525513f2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	char*
+	begin() const
+
+Returns the start address of the shared memory segment.
+
+Will be NULL for illegal segments.
+
+.. index:: pair: function; end
+.. _doxid-class_poco_1_1_shared_memory_1ac63f1952a055839712945338a25abc50:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	char*
+	end() const
+
+Returns the one-past-end end address of the shared memory segment.
+
+Will be NULL for illegal segments.
+

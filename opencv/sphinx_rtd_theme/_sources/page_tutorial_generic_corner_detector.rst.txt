@@ -1,0 +1,135 @@
+.. index:: pair: page; Creating yor own corner detector
+.. _doxid-d9/dbc/tutorial_generic_corner_detector:
+
+Creating yor own corner detector
+================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::cornerEigenValsAndVecs <doxid-dd/d1a/group__imgproc__feature_1ga4055896d9ef77dd3cacf2c5f60e13f1c>` to find the eigenvalues and eigenvectors to determine if a pixel is a corner.
+
+* Use the OpenCV function :ref:`cv::cornerMinEigenVal <doxid-dd/d1a/group__imgproc__feature_1ga3dbce297c1feb859ee36707e1003e0a8>` to find the minimum eigenvalues for corner detection.
+
+* To implement our own version of the Harris detector as well as the Shi-Tomasi detector, by using the two functions above.
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/TrackingMotion/cornerDetector_Demo.cpp>`__
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, src_gray;
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` myHarris_dst; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` myHarris_copy; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` Mc;
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` myShiTomasi_dst; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` myShiTomasi_copy;
+	
+	int myShiTomasi_qualityLevel = 50;
+	int myHarris_qualityLevel = 50;
+	int max_qualityLevel = 100;
+	
+	double myHarris_minVal; double myHarris_maxVal;
+	double myShiTomasi_minVal; double myShiTomasi_maxVal;
+	
+	:ref:`RNG <doxid-d3/df8/classcv_1_1_r_n_g>` rng(12345);
+	
+	const char* myHarris_window = "My Harris corner detector";
+	const char* myShiTomasi_window = "My Shi Tomasi corner detector";
+	
+	void myShiTomasi_function( int, void* );
+	void myHarris_function( int, void* );
+	
+	int main( int, char** argv )
+	{
+	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+	  :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, src_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+	
+	  int blockSize = 3; int apertureSize = 3;
+	
+	  myHarris_dst = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`( src_gray.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_32FC <doxid-d1/d1b/group__core__hal__interface_1ga56e67b727727f2f9b73a4b62f0c4b2b5>`(6) );
+	  Mc = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`( src_gray.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_32FC1 <doxid-d1/d1b/group__core__hal__interface_1ga32ec76240e43e4c9c7b2e2785180a7e6>` );
+	
+	  :ref:`cornerEigenValsAndVecs <doxid-dd/d1a/group__imgproc__feature_1ga4055896d9ef77dd3cacf2c5f60e13f1c>`( src_gray, myHarris_dst, blockSize, apertureSize, :ref:`BORDER_DEFAULT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>` );
+	
+	  /* calculate Mc */
+	  for( int j = 0; j < src_gray.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; j++ )
+	     { for( int i = 0; i < src_gray.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; i++ )
+	          {
+	            float lambda_1 = myHarris_dst.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec6f <doxid-db/d93/classcv_1_1_vec>`>(j, i)[0];
+	            float lambda_2 = myHarris_dst.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec6f <doxid-db/d93/classcv_1_1_vec>`>(j, i)[1];
+	            Mc.at<float>(j,i) = lambda_1*lambda_2 - 0.04f*:ref:`pow <doxid-d2/d75/namespacecv_1a8bc36646a43b82baa15f151a973fb0c5>`( ( lambda_1 + lambda_2 ), 2 );
+	          }
+	     }
+	
+	  :ref:`minMaxLoc <doxid-d2/de8/group__core__array_1gab473bf2eb6d14ff97e89b355dac20707>`( Mc, &myHarris_minVal, &myHarris_maxVal, 0, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`() );
+	
+	  /* Create Window and Trackbar */
+	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( myHarris_window, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( " Quality Level:", myHarris_window, &myHarris_qualityLevel, max_qualityLevel, myHarris_function );
+	  myHarris_function( 0, 0 );
+	
+	  myShiTomasi_dst = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`( src_gray.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_32FC1 <doxid-d1/d1b/group__core__hal__interface_1ga32ec76240e43e4c9c7b2e2785180a7e6>` );
+	  :ref:`cornerMinEigenVal <doxid-dd/d1a/group__imgproc__feature_1ga3dbce297c1feb859ee36707e1003e0a8>`( src_gray, myShiTomasi_dst, blockSize, apertureSize, :ref:`BORDER_DEFAULT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>` );
+	
+	  :ref:`minMaxLoc <doxid-d2/de8/group__core__array_1gab473bf2eb6d14ff97e89b355dac20707>`( myShiTomasi_dst, &myShiTomasi_minVal, &myShiTomasi_maxVal, 0, 0, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`() );
+	
+	  /* Create Window and Trackbar */
+	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( myShiTomasi_window, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( " Quality Level:", myShiTomasi_window, &myShiTomasi_qualityLevel, max_qualityLevel, myShiTomasi_function );
+	  myShiTomasi_function( 0, 0 );
+	
+	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	  return(0);
+	}
+	
+	void myShiTomasi_function( int, void* )
+	{
+	  myShiTomasi_copy = src.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+	
+	  if( myShiTomasi_qualityLevel < 1 ) { myShiTomasi_qualityLevel = 1; }
+	
+	  for( int j = 0; j < src_gray.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; j++ )
+	     { for( int i = 0; i < src_gray.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; i++ )
+	          {
+	            if( myShiTomasi_dst.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<float>(j,i) > myShiTomasi_minVal + ( myShiTomasi_maxVal - myShiTomasi_minVal )*myShiTomasi_qualityLevel/max_qualityLevel )
+	              { :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( myShiTomasi_copy, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(i,j), 4, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( rng.uniform(0,255), rng.uniform(0,255), rng.uniform(0,255) ), -1, 8, 0 ); }
+	          }
+	     }
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( myShiTomasi_window, myShiTomasi_copy );
+	}
+	
+	void myHarris_function( int, void* )
+	{
+	  myHarris_copy = src.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+	
+	  if( myHarris_qualityLevel < 1 ) { myHarris_qualityLevel = 1; }
+	
+	  for( int j = 0; j < src_gray.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; j++ )
+	     { for( int i = 0; i < src_gray.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; i++ )
+	          {
+	            if( Mc.at<float>(j,i) > myHarris_minVal + ( myHarris_maxVal - myHarris_minVal )*myHarris_qualityLevel/max_qualityLevel )
+	              { :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( myHarris_copy, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(i,j), 4, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( rng.uniform(0,255), rng.uniform(0,255), rng.uniform(0,255) ), -1, 8, 0 ); }
+	          }
+	     }
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( myHarris_window, myHarris_copy );
+	}
+
+.. rubric:: Explanation
+
+.. rubric:: Result
+
+.. image:: My_Harris_corner_detector_Result.jpg
+
+.. image:: My_Shi_Tomasi_corner_detector_Result.jpg
+

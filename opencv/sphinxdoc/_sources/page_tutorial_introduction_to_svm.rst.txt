@@ -1,0 +1,251 @@
+.. index:: pair: page; Introduction to Support Vector Machines
+.. _doxid-d1/d73/tutorial_introduction_to_svm:
+
+Introduction to Support Vector Machines
+=======================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV functions :ref:`cv::ml::SVM::train <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1af96a0e04f1677a835cc25263c7db3c0c>` to build a classifier based on SVMs and :ref:`cv::ml::SVM::predict <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1a1a7e49e1febd10392452727498771bc1>` to test its performance.
+
+.. rubric:: What is a SVM?
+
+A Support Vector Machine (SVM) is a discriminative classifier formally defined by a separating hyperplane. In other words, given labeled training data (*supervised learning*), the algorithm outputs an optimal hyperplane which categorizes new examples.
+
+In which sense is the hyperplane obtained optimal? Let's consider the following simple problem:
+
+For a linearly separable set of 2D-points which belong to one of two classes, find a separating straight line.
+
+.. image:: separating-lines.png
+
+In this example we deal with lines and points in the Cartesian plane instead of hyperplanes and vectors in a high dimensional space. This is a simplification of the problem.It is important to understand that this is done only because our intuition is better built from examples that are easy to imagine. However, the same concepts apply to tasks where the examples to classify lie in a space whose dimension is higher than two.
+
+In the above picture you can see that there exists multiple lines that offer a solution to the problem. Is any of them better than the others? We can intuitively define a criterion to estimate the worth of the lines: *A line is bad if it passes too close to the points because it will be noise sensitive and it will not generalize correctly.* Therefore, our goal should be to find the line passing as far as possible from all points.
+
+Then, the operation of the SVM algorithm is based on finding the hyperplane that gives the largest minimum distance to the training examples. Twice, this distance receives the important name of **margin** within SVM's theory. Therefore, the optimal separating hyperplane *maximizes* the margin of the training data.
+
+.. image:: optimal-hyperplane.png
+
+.. rubric:: How is the optimal hyperplane computed?
+
+Let's introduce the notation used to define formally a hyperplane:
+
+.. math::
+
+	f(x) = \beta_{0} + \beta^{T} x,
+
+where :math:`\beta` is known as the *weight vector* and :math:`\beta_{0}` as the *bias*.
+
+The optimal hyperplane can be represented in an infinite number of different ways by scaling of :math:`\beta` and :math:`\beta_{0}`. As a matter of convention, among all the possible representations of the hyperplane, the one chosen is
+
+.. math::
+
+	|\beta_{0} + \beta^{T} x| = 1
+
+where :math:`x` symbolizes the training examples closest to the hyperplane. In general, the training examples that are closest to the hyperplane are called **support vectors**. This representation is known as the **canonical hyperplane**.
+
+Now, we use the result of geometry that gives the distance between a point :math:`x` and a hyperplane :math:`(\beta, \beta_{0})` :
+
+.. math::
+
+	\mathrm{distance} = \frac{|\beta_{0} + \beta^{T} x|}{||\beta||}.
+
+In particular, for the canonical hyperplane, the numerator is equal to one and the distance to the support vectors is
+
+.. math::
+
+	\mathrm{distance}_{\text{ support vectors}} = \frac{|\beta_{0} + \beta^{T} x|}{||\beta||} = \frac{1}{||\beta||}.
+
+Recall that the margin introduced in the previous section, here denoted as :math:`M`, is twice the distance to the closest examples:
+
+.. math::
+
+	M = \frac{2}{||\beta||}
+
+Finally, the problem of maximizing :math:`M` is equivalent to the problem of minimizing a function :math:`L(\beta)` subject to some constraints. The constraints model the requirement for the hyperplane to classify correctly all the training examples :math:`x_{i}`. Formally,
+
+.. math::
+
+	\min_{\beta, \beta_{0}} L(\beta) = \frac{1}{2}||\beta||^{2} \text{ subject to } y_{i}(\beta^{T} x_{i} + \beta_{0}) \geq 1 \text{ } \forall i,
+
+where :math:`y_{i}` represents each of the labels of the training examples.
+
+This is a problem of Lagrangian optimization that can be solved using Lagrange multipliers to obtain the weight vector :math:`\beta` and the bias :math:`\beta_{0}` of the optimal hyperplane.
+
+.. rubric:: Source Code
+
+The following code has been implemented with OpenCV 3.0 classes and functions. An equivalent version of the code using OpenCV 2.4 can be found in `this page. <http://docs.opencv.org/2.4/doc/tutorials/ml/introduction_to_svm/introduction_to_svm.html#introductiontosvms>`__
+
+
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/core.hpp>
+	#include <opencv2/imgproc.hpp>
+	#include "opencv2/imgcodecs.hpp"
+	#include <opencv2/highgui.hpp>
+	#include <opencv2/ml.hpp>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`cv::ml <doxid-d8/df1/namespacecv_1_1ml>`;
+	
+	int main(int, char**)
+	{
+	    // Data for visual representation
+	    int width = 512, height = 512;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`(height, width, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	
+	    // Set up training data
+	    int labels[4] = {1, -1, -1, -1};
+	    float trainingData[4][2] = { {501, 10}, {255, 10}, {501, 255}, {10, 501} };
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` trainingDataMat(4, 2, :ref:`CV_32FC1 <doxid-d1/d1b/group__core__hal__interface_1ga32ec76240e43e4c9c7b2e2785180a7e6>`, trainingData);
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` labelsMat(4, 1, :ref:`CV_32SC1 <doxid-d1/d1b/group__core__hal__interface_1ga32f03fbb8f73bff70215b77f5c3cac11>`, labels);
+	
+	
+	    // Train the SVM
+	    :ref:`Ptr\<SVM> <doxid-d2/d56/structcv_1_1_ptr>` svm = :ref:`SVM::create <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1a2fe8b5bf897c34b8e911397b42e2cb44>`();
+	    svm->:ref:`setType <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1a0dd2c2aea178a3c9136eda6443d5bb7b>`(:ref:`SVM::C_SVC <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1ab4b93a4c42bbe213ffd9fb3832c6c44fa18157ccaec6a252b901cff6de285d608>`);
+	    svm->:ref:`setKernel <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1ad6f4f45983d06817b9782978ca0f6f6f>`(:ref:`SVM::LINEAR <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1aad7f1aaccced3c33bb256640910a0e56ab92a19ab0c193735c3fd71f938dd87e7>`);
+	    svm->:ref:`setTermCriteria <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1a6a86483c5518c332fedf6ec381a1daa7>`(:ref:`TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER <doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`, 100, 1e-6));
+	    svm->:ref:`train <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1af96a0e04f1677a835cc25263c7db3c0c>`(trainingDataMat, :ref:`ROW_SAMPLE <doxid-dd/ded/group__ml_1gga9c57a2b823008dda53d2c7f7059a8710ab8565ac2eb79152a4e3c80b0e9c9fd4c>`, labelsMat);
+	
+	    // Show the decision regions given by the SVM
+	    :ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>` green(0,255,0), blue (255,0,0);
+	    for (int i = 0; i < image.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; ++i)
+	        for (int j = 0; j < image.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; ++j)
+	        {
+	            :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` sampleMat = (:ref:`Mat_\<float> <doxid-d9/de0/classcv_1_1_mat__>`(1,2) << j,i);
+	            float response = svm->:ref:`predict <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1a1a7e49e1febd10392452727498771bc1>`(sampleMat);
+	
+	            if (response == 1)
+	                image.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(i,j)  = green;
+	            else if (response == -1)
+	                image.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-db/d93/classcv_1_1_vec>`>(i,j)  = blue;
+	        }
+	
+	    // Show the training data
+	    int thickness = -1;
+	    int lineType = 8;
+	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(501,  10), 5, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(  0,   0,   0), thickness, lineType );
+	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(255,  10), 5, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 255, 255), thickness, lineType );
+	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(501, 255), 5, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 255, 255), thickness, lineType );
+	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 10, 501), 5, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(255, 255, 255), thickness, lineType );
+	
+	    // Show support vectors
+	    thickness = 2;
+	    lineType  = 8;
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` sv = svm->:ref:`getUncompressedSupportVectors <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1ab7dc5b5cfb55e0452a96e69ae1f1d3c8>`();
+	
+	    for (int i = 0; i < sv.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; ++i)
+	    {
+	        const float* v = sv.:ref:`ptr <doxid-db/de6/classcv_1_1_mat_1a13acd320291229615ef15f96ff1ff738>`<float>(i);
+	        :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( image,  :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( (int) v[0], (int) v[1]),   6,  :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(128, 128, 128), thickness, lineType);
+	    }
+	
+	    :ref:`imwrite <doxid-d4/da8/group__imgcodecs_1gabbc7ef1aa2edfaa87772f1202d67e0ce>`("result.png", image);        // save the image
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("SVM Simple Example", image); // show it to the user
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	}
+
+.. rubric:: Explanation
+
+#. **Set up the training data**
+   
+   The training data of this exercise is formed by a set of labeled 2D-points that belong to one of two different classes; one of the classes consists of one point and the other of three points.
+   
+   .. ref-code-block:: cpp
+   
+   	int labels[4] = {1, -1, -1, -1};
+   	float trainingData[4][2] = { {501, 10}, {255, 10}, {501, 255}, {10, 501} };
+   
+   The function :ref:`cv::ml::SVM::train <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1af96a0e04f1677a835cc25263c7db3c0c>` that will be used afterwards requires the training data to be stored as :ref:`cv::Mat <doxid-db/de6/classcv_1_1_mat>` objects of floats. Therefore, we create these objects from the arrays defined above:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat trainingDataMat(4, 2, :ref:`CV_32FC1 <doxid-d1/d1b/group__core__hal__interface_1ga32ec76240e43e4c9c7b2e2785180a7e6>`, trainingData);
+   	Mat labelsMat(4, 1, :ref:`CV_32SC1 <doxid-d1/d1b/group__core__hal__interface_1ga32f03fbb8f73bff70215b77f5c3cac11>`, labels);
+
+#. **Set up SVM's parameters**
+   
+   In this tutorial we have introduced the theory of SVMs in the most simple case, when the training examples are spread into two classes that are linearly separable. However, SVMs can be used in a wide variety of problems (e.g. problems with non-linearly separable data, a SVM using a kernel function to raise the dimensionality of the examples, etc). As a consequence of this, we have to define some parameters before training the SVM. These parameters are stored in an object of the class :ref:`cv::ml::SVM <doxid-da/d05/classcv_1_1ml_1_1_s_v_m>`.
+   
+   .. ref-code-block:: cpp
+   
+   	Ptr<SVM> svm = SVM::create();
+   	svm->setType(SVM::C_SVC);
+   	svm->setKernel(:ref:`SVM::LINEAR <doxid-dc/d8c/namespacecvflann_1a4e3e6c98d774ea77fd7f0045c9bc7817a706a9f2a18a0cbe5e0de7ffdc8d692d9>`);
+   	svm->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, 100, 1e-6));
+   
+   Here:
+   
+   * *Type of SVM*. We choose here the type :ref:`C_SVC <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1ab4b93a4c42bbe213ffd9fb3832c6c44fa18157ccaec6a252b901cff6de285d608>` that can be used for n-class classification (n :math:`\geq` 2). The important feature of this type is that it deals with imperfect separation of classes (i.e. when the training data is non-linearly separable). This feature is not important here since the data is linearly separable and we chose this SVM type only for being the most commonly used.
+   
+   * *Type of SVM kernel*. We have not talked about kernel functions since they are not interesting for the training data we are dealing with. Nevertheless, let's explain briefly now the main idea behind a kernel function. It is a mapping done to the training data to improve its resemblance to a linearly separable set of data. This mapping consists of increasing the dimensionality of the data and is done efficiently using a kernel function. We choose here the type :ref:`LINEAR <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1aad7f1aaccced3c33bb256640910a0e56ab92a19ab0c193735c3fd71f938dd87e7>` which means that no mapping is done. This parameter is defined using :ref:`cv::ml::SVM::setKernel <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1ad6f4f45983d06817b9782978ca0f6f6f>`.
+   
+   * *Termination criteria of the algorithm*. The SVM training procedure is implemented solving a constrained quadratic optimization problem in an **iterative** fashion. Here we specify a maximum number of iterations and a tolerance error so we allow the algorithm to finish in less number of steps even if the optimal hyperplane has not been computed yet. This parameter is defined in a structure :ref:`cv::TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>`.
+
+#. **Train the SVM** We call the method :ref:`cv::ml::SVM::train <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1af96a0e04f1677a835cc25263c7db3c0c>` to build the SVM model.
+   
+   .. ref-code-block:: cpp
+   
+   	svm->train(trainingDataMat, :ref:`ROW_SAMPLE <doxid-dd/ded/group__ml_1gga9c57a2b823008dda53d2c7f7059a8710ab8565ac2eb79152a4e3c80b0e9c9fd4c>`, labelsMat);
+
+#. **Regions classified by the SVM**
+   
+   The method :ref:`cv::ml::SVM::predict <doxid-d9/d36/classcv_1_1ml_1_1_stat_model_1a1a7e49e1febd10392452727498771bc1>` is used to classify an input sample using a trained SVM. In this example we have used this method in order to color the space depending on the prediction done by the SVM. In other words, an image is traversed interpreting its pixels as points of the Cartesian plane. Each of the points is colored depending on the class predicted by the SVM; in green if it is the class with label 1 and in blue if it is the class with label -1.
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>` green(0,255,0), blue (255,0,0);
+   	for (int i = 0; i < image.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; ++i)
+   	    for (int j = 0; j < image.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`; ++j)
+   	    {
+   	        Mat sampleMat = (Mat_<float>(1,2) << j,i);
+   	        float response = svm->predict(sampleMat);
+   
+   	        if (response == 1)
+   	            image.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(i,j)  = green;
+   	        else if (response == -1)
+   	            image.:ref:`at <doxid-db/de6/classcv_1_1_mat_1aa5d20fc86d41d59e4d71ae93daee9726>`<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(i,j)  = blue;
+   	    }
+
+#. **Support vectors**
+   
+   We use here a couple of methods to obtain information about the support vectors. The method :ref:`cv::ml::SVM::getSupportVectors <doxid-da/d05/classcv_1_1ml_1_1_s_v_m_1a2c3fb4b3c80b8fce0b8654f103339300>` obtain all of the support vectors. We have used this methods here to find the training examples that are support vectors and highlight them.
+   
+   .. ref-code-block:: cpp
+   
+   	thickness = 2;
+   	lineType  = 8;
+   	Mat sv = svm->getUncompressedSupportVectors();
+   
+   	for (int i = 0; i < sv.rows; ++i)
+   	{
+   	    const float* v = sv.:ref:`ptr <doxid-db/de6/classcv_1_1_mat_1a13acd320291229615ef15f96ff1ff738>`<float>(i);
+   	    :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( image,  :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( (int) v[0], (int) v[1]),   6,  :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(128, 128, 128), thickness, lineType);
+   	}
+   
+   
+   
+   .. rubric:: Results
+
+
+
+* The code opens an image and shows the training examples of both classes. The points of one class are represented with white circles and black ones are used for the other class.
+
+* The SVM is trained and used to classify all the pixels of the image. This results in a division of the image in a blue region and a green region. The boundary between both regions is the optimal separating hyperplane.
+
+* Finally the support vectors are shown using gray rings around the training examples.
+
+.. image:: svm_intro_result.png
+
+
+
+.. rubric:: See also:
+
+A more in depth description of this and hyperplanes you can find in the section 4.5 (*Seperating Hyperplanes*) of the book: *Elements of Statistical Learning* by T. Hastie, R. Tibshirani and J. H. Friedman (:ref:`[83] <doxid-d0/de3/citelist_1CITEREF_HTF01>`).
+

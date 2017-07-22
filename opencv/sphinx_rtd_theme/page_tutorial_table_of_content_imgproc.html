@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Image Processing (imgproc module) &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Adding borders to your images" href="page_tutorial_copyMakeBorder.html" />
+    <link rel="prev" title="Reading Geospatial Raster files with GDAL" href="page_tutorial_raster_io_gdal.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Image Processing (imgproc module)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_copyMakeBorder.html">Adding borders to your images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_warp_affine.html">Affine Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_back_projection.html">Back Projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold.html">Basic Thresholding Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_canny_detector.html">Canny Edge Detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hull.html">Convex Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html">Creating Bounding boxes and circles for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html">Creating Bounding rotated boxes and ellipses for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_erosion_dilatation.html">Eroding and Dilating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html">Extract horizontal and vertical lines by using morphological operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_find_contours.html">Finding contours in your image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_calculation.html">Histogram Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_comparison.html">Histogram Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_equalization.html">Histogram Equalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hitOrMiss.html">Hit-or-Miss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_circle.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_lines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moments.html">Image Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_distance_transform.html">Image Segmentation with Distance Transform and Watershed Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_laplace_operator.html">Laplace Operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_filter_2d.html">Making your own linear filters!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_opening_closing_hats.html">More Morphology Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_point_polygon_test.html">Point Polygon Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_remap.html">Remapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html">Smoothing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_sobel_derivatives.html">Sobel Derivatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_template_matching.html">Template Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold_inRange.html">Thresholding Operations using inRange</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+      <li>Image Processing (imgproc module)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="image-processing-imgproc-module">
+<span id="doxid-d7-da8-tutorial-table-of-content-imgproc"></span><span id="index-0"></span><h1>Image Processing (imgproc module)</h1>
+<p>In this section you will learn about the image processing (manipulation) functions inside OpenCV.</p>
+<ul>
+<li><p class="first"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html#doxid-dc-dd3-tutorial-gausian-median-blur-bilateral-filter"><span class="std std-ref">Smoothing Images</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Let’s take a look at some basic linear filters!</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_erosion_dilatation.html#doxid-db-df6-tutorial-erosion-dilatation"><span class="std std-ref">Eroding and Dilating</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p>Author: Ana Huamán</p>
+<p>Let’s <em>change</em> the shape of objects!</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_opening_closing_hats.html#doxid-d3-dbe-tutorial-opening-closing-hats"><span class="std std-ref">More Morphology Transformations</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Here we investigate different morphology operators</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_hitOrMiss.html#doxid-dd-dbf-tutorial-hit-or-miss"><span class="std std-ref">Hit-or-Miss</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.4</p>
+<p><em>Author:</em> Lorena García</p>
+<p>Learn how to find patterns in binary images using the Hit-or-Miss operation</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html#doxid-d1-dee-tutorial-moprh-lines-detection"><span class="std std-ref">Extract horizontal and vertical lines by using morphological operations</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Theodore Tsesmelis</p>
+<p>Here we will show how we can use different morphological operators to extract horizontal and vertical lines</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_pyramids.html#doxid-d4-d1f-tutorial-pyramids"><span class="std std-ref">Image Pyramids</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>What if I need a bigger/smaller image?</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_threshold.html#doxid-db-d8e-tutorial-threshold"><span class="std std-ref">Basic Thresholding Operations</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>After so much processing, it is time to decide which pixels stay</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_threshold_inRange.html#doxid-dd-df3-tutorial-threshold-in-range"><span class="std std-ref">Thresholding Operations using inRange</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Rishiraj Surti</p>
+<p>Thresholding operations using inRange function.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_filter_2d.html#doxid-d4-dbd-tutorial-filter-2d"><span class="std std-ref">Making your own linear filters!</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn to design our own filters by using OpenCV functions</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_copyMakeBorder.html#doxid-d0-da1-tutorial-copy-make-border"><span class="std std-ref">Adding borders to your images</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to pad our images</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_sobel_derivatives.html#doxid-d2-d2c-tutorial-sobel-derivatives"><span class="std std-ref">Sobel Derivatives</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to calculate gradients and use them to detect edges</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_laplace_operator.html#doxid-d5-db5-tutorial-laplace-operator"><span class="std std-ref">Laplace Operator</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn about the <em>Laplace</em> operator and how to detect edges with it</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_canny_detector.html#doxid-da-d5c-tutorial-canny-detector"><span class="std std-ref">Canny Edge Detector</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn a sophisticated alternative to detect edges</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_hough_lines.html#doxid-d9-db0-tutorial-hough-lines"><span class="std std-ref">Hough Line Transform</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to detect lines</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_hough_circle.html#doxid-d4-d70-tutorial-hough-circle"><span class="std std-ref">Hough Circle Transform</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to detect circles</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_remap.html#doxid-d1-da0-tutorial-remap"><span class="std std-ref">Remapping</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to manipulate pixels locations</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_warp_affine.html#doxid-d4-d61-tutorial-warp-affine"><span class="std std-ref">Affine Transformations</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to rotate, translate and scale our images</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_histogram_equalization.html#doxid-d4-d1b-tutorial-histogram-equalization"><span class="std std-ref">Histogram Equalization</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to improve the contrast in our images</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_histogram_calculation.html#doxid-d8-dbc-tutorial-histogram-calculation"><span class="std std-ref">Histogram Calculation</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to create and generate histograms</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_histogram_comparison.html#doxid-d8-dc8-tutorial-histogram-comparison"><span class="std std-ref">Histogram Comparison</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn to calculate metrics between histograms</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_back_projection.html#doxid-da-d7f-tutorial-back-projection"><span class="std std-ref">Back Projection</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to use histograms to find similar objects in images</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_template_matching.html#doxid-de-da9-tutorial-template-matching"><span class="std std-ref">Template Matching</span></a></p>
+<p><em>Languages:</em> C++, Java, Python</p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to match templates in an image</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_find_contours.html#doxid-df-d0d-tutorial-find-contours"><span class="std std-ref">Finding contours in your image</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to find contours of objects in our image</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_hull.html#doxid-d7-d1d-tutorial-hull"><span class="std std-ref">Convex Hull</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to get hull contours and draw them</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html#doxid-da-d0c-tutorial-bounding-rects-circles"><span class="std std-ref">Creating Bounding boxes and circles for contours</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to obtain bounding boxes and circles for our contours</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html#doxid-de-d62-tutorial-bounding-rotated-ellipses"><span class="std std-ref">Creating Bounding rotated boxes and ellipses for contours</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to obtain rotated bounding boxes and ellipses for our contours</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_moments.html#doxid-d0-d49-tutorial-moments"><span class="std std-ref">Image Moments</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn to calculate the moments of an image</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_point_polygon_test.html#doxid-dc-d48-tutorial-point-polygon-test"><span class="std std-ref">Point Polygon Test</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Ana Huamán</p>
+<p>Where we learn how to calculate distances from the image to contours</p>
+</li>
+<li><p class="first"><a class="reference internal" href="page_tutorial_distance_transform.html#doxid-d2-dbd-tutorial-distance-transform"><span class="std std-ref">Image Segmentation with Distance Transform and Watershed Algorithm</span></a></p>
+<p><em>Compatibility:</em>&gt; OpenCV 2.0</p>
+<p><em>Author:</em> Theodore Tsesmelis</p>
+<p>Where we learn to segment objects using Laplacian filtering, the Distance Transformation and the Watershed algorithm.</p>
+</li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+<p class="rubric">Related Pages:</p>
+<div class="line-block">
+<div class="line"><a class="reference internal" href="page_tutorial_copyMakeBorder.html"><span class="doc">Adding borders to your images</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_warp_affine.html"><span class="doc">Affine Transformations</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_back_projection.html"><span class="doc">Back Projection</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_threshold.html"><span class="doc">Basic Thresholding Operations</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_canny_detector.html"><span class="doc">Canny Edge Detector</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_hull.html"><span class="doc">Convex Hull</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html"><span class="doc">Creating Bounding boxes and circles for contours</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html"><span class="doc">Creating Bounding rotated boxes and ellipses for contours</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_erosion_dilatation.html"><span class="doc">Eroding and Dilating</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html"><span class="doc">Extract horizontal and vertical lines by using morphological operations</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_find_contours.html"><span class="doc">Finding contours in your image</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_histogram_calculation.html"><span class="doc">Histogram Calculation</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_histogram_comparison.html"><span class="doc">Histogram Comparison</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_histogram_equalization.html"><span class="doc">Histogram Equalization</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_hitOrMiss.html"><span class="doc">Hit-or-Miss</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_hough_circle.html"><span class="doc">Hough Circle Transform</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_hough_lines.html"><span class="doc">Hough Line Transform</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_moments.html"><span class="doc">Image Moments</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_pyramids.html"><span class="doc">Image Pyramids</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_distance_transform.html"><span class="doc">Image Segmentation with Distance Transform and Watershed Algorithm</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_laplace_operator.html"><span class="doc">Laplace Operator</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_filter_2d.html"><span class="doc">Making your own linear filters!</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_opening_closing_hats.html"><span class="doc">More Morphology Transformations</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_point_polygon_test.html"><span class="doc">Point Polygon Test</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_remap.html"><span class="doc">Remapping</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html"><span class="doc">Smoothing Images</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_sobel_derivatives.html"><span class="doc">Sobel Derivatives</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_template_matching.html"><span class="doc">Template Matching</span></a></div>
+<div class="line"><a class="reference internal" href="page_tutorial_threshold_inRange.html"><span class="doc">Thresholding Operations using inRange</span></a></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_copyMakeBorder.html" class="btn btn-neutral float-right" title="Adding borders to your images" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_raster_io_gdal.html" class="btn btn-neutral float-left" title="Reading Geospatial Raster files with GDAL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

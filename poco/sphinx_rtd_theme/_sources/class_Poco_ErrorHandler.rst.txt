@@ -1,0 +1,214 @@
+.. index:: pair: class; Poco::ErrorHandler
+.. _doxid-class_poco_1_1_error_handler:
+
+class Poco::ErrorHandler
+========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This is the base class for thread error handlers. :ref:`More...<details-class_poco_1_1_error_handler>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <ErrorHandler.h>
+	
+	class ErrorHandler
+	{
+	public:
+		// methods
+	
+		virtual
+		void
+		:ref:`exception<doxid-class_poco_1_1_error_handler_1ae0b2effe50f475e59e723859988c9a8d>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc);
+	
+		virtual
+		void
+		:ref:`exception<doxid-class_poco_1_1_error_handler_1ac3e01ceb52e529677b3fa2510220a7eb>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::exception& exc);
+	
+		virtual
+		void
+		:ref:`exception<doxid-class_poco_1_1_error_handler_1aa9003522d497c9e1a0d04c26cbd02fa3>`();
+	
+		static
+		void
+		:ref:`handle<doxid-class_poco_1_1_error_handler_1a34d1d6f419037b05e869d800274c64b9>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc);
+	
+		static
+		void
+		:ref:`handle<doxid-class_poco_1_1_error_handler_1a3fa8a54e04edc883e6c0a8570748f6b6>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::exception& exc);
+	
+		static
+		void
+		:ref:`handle<doxid-class_poco_1_1_error_handler_1ab87184cfb0f1da63b5527d5f59e405bd>`();
+	
+		static
+		ErrorHandler*
+		:ref:`set<doxid-class_poco_1_1_error_handler_1a05bbac4028f59015f166d9e25c5b156c>`(ErrorHandler* pHandler);
+	
+		static
+		ErrorHandler*
+		:ref:`get<doxid-class_poco_1_1_error_handler_1aa2b58ee4d7e33bf0336a77d4891fb8aa>`();
+
+	protected:
+		// methods
+	
+		static
+		ErrorHandler*
+		:ref:`defaultHandler<doxid-class_poco_1_1_error_handler_1a5095f7874061e438781938147608d567>`();
+	};
+.. _details-class_poco_1_1_error_handler:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This is the base class for thread error handlers.
+
+An unhandled exception that causes a thread to terminate is usually silently ignored, since the class library cannot do anything meaningful about it.
+
+The :ref:`Thread <doxid-class_poco_1_1_thread>` class provides the possibility to register a global :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>` that is invoked whenever a thread has been terminated by an unhandled exception. The :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>` must be derived from this class and can provide implementations of all three :ref:`exception() <doxid-class_poco_1_1_error_handler_1aa9003522d497c9e1a0d04c26cbd02fa3>` overloads.
+
+The :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>` is always invoked within the context of the offending thread.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_error_handler_1ab08b0a650c9b37846db0ba0b4f92d3dd:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	~ErrorHandler()
+
+Destroys the :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>`.
+
+Methods
+-------
+
+.. index:: pair: function; exception
+.. _doxid-class_poco_1_1_error_handler_1ae0b2effe50f475e59e723859988c9a8d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	exception(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc)
+
+Called when a :ref:`Poco::Exception <doxid-class_poco_1_1_exception>` (or a subclass) caused the thread to terminate.
+
+This method should not throw any exception - it would be silently ignored.
+
+The default implementation just breaks into the debugger.
+
+.. index:: pair: function; exception
+.. _doxid-class_poco_1_1_error_handler_1ac3e01ceb52e529677b3fa2510220a7eb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	exception(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::exception& exc)
+
+Called when a std::exception (or a subclass) caused the thread to terminate.
+
+This method should not throw any exception - it would be silently ignored.
+
+The default implementation just breaks into the debugger.
+
+.. index:: pair: function; exception
+.. _doxid-class_poco_1_1_error_handler_1aa9003522d497c9e1a0d04c26cbd02fa3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	void
+	exception()
+
+Called when an exception that is neither a :ref:`Poco::Exception <doxid-class_poco_1_1_exception>` nor a std::exception caused the thread to terminate.
+
+This method should not throw any exception - it would be silently ignored.
+
+The default implementation just breaks into the debugger.
+
+.. index:: pair: function; handle
+.. _doxid-class_poco_1_1_error_handler_1a34d1d6f419037b05e869d800274c64b9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	handle(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc)
+
+Invokes the currently registered :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>`.
+
+.. index:: pair: function; handle
+.. _doxid-class_poco_1_1_error_handler_1a3fa8a54e04edc883e6c0a8570748f6b6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	handle(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` std::exception& exc)
+
+Invokes the currently registered :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>`.
+
+.. index:: pair: function; handle
+.. _doxid-class_poco_1_1_error_handler_1ab87184cfb0f1da63b5527d5f59e405bd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	void
+	handle()
+
+Invokes the currently registered :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>`.
+
+.. index:: pair: function; set
+.. _doxid-class_poco_1_1_error_handler_1a05bbac4028f59015f166d9e25c5b156c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	ErrorHandler*
+	set(ErrorHandler* pHandler)
+
+Registers the given handler as the current error handler.
+
+Returns the previously registered handler.
+
+.. index:: pair: function; get
+.. _doxid-class_poco_1_1_error_handler_1aa2b58ee4d7e33bf0336a77d4891fb8aa:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	ErrorHandler*
+	get()
+
+Returns a pointer to the currently registered :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>`.
+
+.. index:: pair: function; defaultHandler
+.. _doxid-class_poco_1_1_error_handler_1a5095f7874061e438781938147608d567:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	ErrorHandler*
+	defaultHandler()
+
+Returns the default :ref:`ErrorHandler <doxid-class_poco_1_1_error_handler>`.
+

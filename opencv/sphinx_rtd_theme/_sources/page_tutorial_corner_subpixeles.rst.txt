@@ -1,0 +1,109 @@
+.. index:: pair: page; Detecting corners location in subpixeles
+.. _doxid-d8/d5e/tutorial_corner_subpixeles:
+
+Detecting corners location in subpixeles
+========================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV function :ref:`cv::cornerSubPix <doxid-dd/d1a/group__imgproc__feature_1ga354e0d7c86d0d9da75de9b9701a9a87e>` to find more exact corner positions (more exact than integer pixels).
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/TrackingMotion/cornerSubPix_Demo.cpp>`__
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, src_gray;
+	
+	int maxCorners = 10;
+	int maxTrackbar = 25;
+	
+	:ref:`RNG <doxid-d3/df8/classcv_1_1_r_n_g>` rng(12345);
+	const char* source_window = "Image";
+	
+	void goodFeaturesToTrack_Demo( int, void* );
+	
+	int main( int, char** argv )
+	{
+	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` );
+	  :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, src_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` );
+	
+	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( source_window, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( "Max  corners:", source_window, &maxCorners, maxTrackbar, goodFeaturesToTrack_Demo );
+	
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( source_window, src );
+	
+	  goodFeaturesToTrack_Demo( 0, 0 );
+	
+	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	  return(0);
+	}
+	
+	void goodFeaturesToTrack_Demo( int, void* )
+	{
+	  if( maxCorners < 1 ) { maxCorners = 1; }
+	
+	  vector<Point2f> corners;
+	  double qualityLevel = 0.01;
+	  double minDistance = 10;
+	  int blockSize = 3;
+	  bool useHarrisDetector = false;
+	  double k = 0.04;
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` copy;
+	  copy = src.:ref:`clone <doxid-db/de6/classcv_1_1_mat_1ad1c9cc37d66c4e5bd05fae36f62d1cb4>`();
+	
+	  :ref:`goodFeaturesToTrack <doxid-dd/d1a/group__imgproc__feature_1ga1d6bb77486c8f92d79c8793ad995d541>`( src_gray,
+	               corners,
+	               maxCorners,
+	               qualityLevel,
+	               minDistance,
+	               :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(),
+	               blockSize,
+	               useHarrisDetector,
+	               k );
+	
+	
+	  cout<<"** Number of corners detected: "<<corners.size()<<endl;
+	  int r = 4;
+	  for( size_t i = 0; i < corners.size(); i++ )
+	     { :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( copy, corners[i], r, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(rng.uniform(0,255), rng.uniform(0,255), rng.uniform(0,255)), -1, 8, 0 ); }
+	
+	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( source_window, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` );
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( source_window, copy );
+	
+	  Size winSize = :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( 5, 5 );
+	  Size zeroZone = :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( -1, -1 );
+	  :ref:`TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>`( :ref:`TermCriteria::EPS <doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>` + :ref:`TermCriteria::COUNT <doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57aeb9da694ea67b3ef7d524521b580867d>`, 40, 0.001 );
+	
+	  :ref:`cornerSubPix <doxid-dd/d1a/group__imgproc__feature_1ga354e0d7c86d0d9da75de9b9701a9a87e>`( src_gray, corners, winSize, zeroZone, criteria );
+	
+	  for( size_t i = 0; i < corners.size(); i++ )
+	     { cout<<" -- Refined Corner ["<<i<<"]  ("<<corners[i].x<<","<<corners[i].y<<")"<<endl; }
+	}
+
+.. rubric:: Explanation
+
+.. rubric:: Result
+
+.. image:: Corner_Subpixeles_Original_Image.jpg
+
+Here is the result:
+
+.. image:: Corner_Subpixeles_Result.jpg
+

@@ -1,0 +1,286 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Introduction to Support Vector Machines &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Support Vector Machines for Non-Linearly Separable Data" href="page_tutorial_non_linear_svms.html" />
+    <link rel="prev" title="Introduction to Principal Component Analysis (PCA)" href="page_tutorial_introduction_to_pca.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_non_linear_svms.html" title="Support Vector Machines for Non-Linearly Separable Data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_introduction_to_pca.html" title="Introduction to Principal Component Analysis (PCA)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_ml.html" accesskey="U">Machine Learning (ml module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_introduction_to_pca.html"
+                        title="previous chapter">Introduction to Principal Component Analysis (PCA)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_non_linear_svms.html"
+                        title="next chapter">Support Vector Machines for Non-Linearly Separable Data</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction-to-support-vector-machines">
+<span id="doxid-d1-d73-tutorial-introduction-to-svm"></span><span id="index-0"></span><h1>Introduction to Support Vector Machines</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV functions <a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1af96a0e04f1677a835cc25263c7db3c0c"><span class="std std-ref">cv::ml::SVM::train</span></a> to build a classifier based on SVMs and <a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1a1a7e49e1febd10392452727498771bc1"><span class="std std-ref">cv::ml::SVM::predict</span></a> to test its performance.</li>
+</ul>
+<p class="rubric">What is a SVM?</p>
+<p>A Support Vector Machine (SVM) is a discriminative classifier formally defined by a separating hyperplane. In other words, given labeled training data (<em>supervised learning</em>), the algorithm outputs an optimal hyperplane which categorizes new examples.</p>
+<p>In which sense is the hyperplane obtained optimal? Let’s consider the following simple problem:</p>
+<p>For a linearly separable set of 2D-points which belong to one of two classes, find a separating straight line.</p>
+<img alt="_images/separating-lines.png" src="_images/separating-lines.png" />
+<p>In this example we deal with lines and points in the Cartesian plane instead of hyperplanes and vectors in a high dimensional space. This is a simplification of the problem.It is important to understand that this is done only because our intuition is better built from examples that are easy to imagine. However, the same concepts apply to tasks where the examples to classify lie in a space whose dimension is higher than two.</p>
+<p>In the above picture you can see that there exists multiple lines that offer a solution to the problem. Is any of them better than the others? We can intuitively define a criterion to estimate the worth of the lines: <em>A line is bad if it passes too close to the points because it will be noise sensitive and it will not generalize correctly.</em> Therefore, our goal should be to find the line passing as far as possible from all points.</p>
+<p>Then, the operation of the SVM algorithm is based on finding the hyperplane that gives the largest minimum distance to the training examples. Twice, this distance receives the important name of <strong>margin</strong> within SVM’s theory. Therefore, the optimal separating hyperplane <em>maximizes</em> the margin of the training data.</p>
+<img alt="_images/optimal-hyperplane.png" src="_images/optimal-hyperplane.png" />
+<p class="rubric">How is the optimal hyperplane computed?</p>
+<p>Let’s introduce the notation used to define formally a hyperplane:</p>
+<div class="math notranslate nohighlight">
+\[f(x) = \beta_{0} + \beta^{T} x,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is known as the <em>weight vector</em> and <span class="math notranslate nohighlight">\(\beta_{0}\)</span> as the <em>bias</em>.</p>
+<p>The optimal hyperplane can be represented in an infinite number of different ways by scaling of <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\beta_{0}\)</span>. As a matter of convention, among all the possible representations of the hyperplane, the one chosen is</p>
+<div class="math notranslate nohighlight">
+\[|\beta_{0} + \beta^{T} x| = 1\]</div>
+<p>where <span class="math notranslate nohighlight">\(x\)</span> symbolizes the training examples closest to the hyperplane. In general, the training examples that are closest to the hyperplane are called <strong>support vectors</strong>. This representation is known as the <strong>canonical hyperplane</strong>.</p>
+<p>Now, we use the result of geometry that gives the distance between a point <span class="math notranslate nohighlight">\(x\)</span> and a hyperplane <span class="math notranslate nohighlight">\((\beta, \beta_{0})\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{distance} = \frac{|\beta_{0} + \beta^{T} x|}{||\beta||}.\]</div>
+<p>In particular, for the canonical hyperplane, the numerator is equal to one and the distance to the support vectors is</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{distance}_{\text{ support vectors}} = \frac{|\beta_{0} + \beta^{T} x|}{||\beta||} = \frac{1}{||\beta||}.\]</div>
+<p>Recall that the margin introduced in the previous section, here denoted as <span class="math notranslate nohighlight">\(M\)</span>, is twice the distance to the closest examples:</p>
+<div class="math notranslate nohighlight">
+\[M = \frac{2}{||\beta||}\]</div>
+<p>Finally, the problem of maximizing <span class="math notranslate nohighlight">\(M\)</span> is equivalent to the problem of minimizing a function <span class="math notranslate nohighlight">\(L(\beta)\)</span> subject to some constraints. The constraints model the requirement for the hyperplane to classify correctly all the training examples <span class="math notranslate nohighlight">\(x_{i}\)</span>. Formally,</p>
+<div class="math notranslate nohighlight">
+\[\min_{\beta, \beta_{0}} L(\beta) = \frac{1}{2}||\beta||^{2} \text{ subject to } y_{i}(\beta^{T} x_{i} + \beta_{0}) \geq 1 \text{ } \forall i,\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_{i}\)</span> represents each of the labels of the training examples.</p>
+<p>This is a problem of Lagrangian optimization that can be solved using Lagrange multipliers to obtain the weight vector <span class="math notranslate nohighlight">\(\beta\)</span> and the bias <span class="math notranslate nohighlight">\(\beta_{0}\)</span> of the optimal hyperplane.</p>
+<p class="rubric">Source Code</p>
+<p>The following code has been implemented with OpenCV 3.0 classes and functions. An equivalent version of the code using OpenCV 2.4 can be found in <a class="reference external" href="http://docs.opencv.org/2.4/doc/tutorials/ml/introduction_to_svm/introduction_to_svm.html#introductiontosvms">this page.</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgproc.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/ml.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv_ml.html#doxid-d8-df1-namespacecv-1-1ml"><span class="std std-ref">cv::ml</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Data for visual representation</span>
+    <span class="kt">int</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">512</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">Mat::zeros</span></a><span></span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span><span class="p">);</span>
+
+    <span class="c1">// Set up training data</span>
+    <span class="kt">int</span> <span class="n">labels</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+    <span class="kt">float</span> <span class="n">trainingData</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{</span><span class="mi">501</span><span class="p">,</span> <span class="mi">10</span><span class="p">},</span> <span class="p">{</span><span class="mi">255</span><span class="p">,</span> <span class="mi">10</span><span class="p">},</span> <span class="p">{</span><span class="mi">501</span><span class="p">,</span> <span class="mi">255</span><span class="p">},</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">501</span><span class="p">}</span> <span class="p">};</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">trainingDataMat</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32ec76240e43e4c9c7b2e2785180a7e6"><span class="std std-ref">CV_32FC1</span></a><span></span><span class="p">,</span> <span class="n">trainingData</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">labelsMat</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32f03fbb8f73bff70215b77f5c3cac11"><span class="std std-ref">CV_32SC1</span></a><span></span><span class="p">,</span> <span class="n">labels</span><span class="p">);</span>
+
+
+    <span class="c1">// Train the SVM</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;SVM&gt;</span></a><span></span> <span class="n">svm</span> <span class="o">=</span> <a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1a2fe8b5bf897c34b8e911397b42e2cb44"><span class="std std-ref">SVM::create</span></a><span></span><span class="p">();</span>
+    <span class="n">svm</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1a0dd2c2aea178a3c9136eda6443d5bb7b"><span class="std std-ref">setType</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_ml_SVM_Types.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1ab4b93a4c42bbe213ffd9fb3832c6c44fa18157ccaec6a252b901cff6de285d608"><span class="std std-ref">SVM::C_SVC</span></a><span></span><span class="p">);</span>
+    <span class="n">svm</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1ad6f4f45983d06817b9782978ca0f6f6f"><span class="std std-ref">setKernel</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_ml_SVM_KernelTypes.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1aad7f1aaccced3c33bb256640910a0e56ab92a19ab0c193735c3fd71f938dd87e7"><span class="std std-ref">SVM::LINEAR</span></a><span></span><span class="p">);</span>
+    <span class="n">svm</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1a6a86483c5518c332fedf6ec381a1daa7"><span class="std std-ref">setTermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_TermCriteria_Type.html#doxid-df-d8a-classcv-1-1-term-criteria-1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e"><span class="std std-ref">TermCriteria::MAX_ITER</span></a><span></span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">));</span>
+    <span class="n">svm</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1af96a0e04f1677a835cc25263c7db3c0c"><span class="std std-ref">train</span></a><span></span><span class="p">(</span><span class="n">trainingDataMat</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ml_SampleTypes.html#doxid-dd-ded-group-ml-1gga9c57a2b823008dda53d2c7f7059a8710ab8565ac2eb79152a4e3c80b0e9c9fd4c"><span class="std std-ref">ROW_SAMPLE</span></a><span></span><span class="p">,</span> <span class="n">labelsMat</span><span class="p">);</span>
+
+    <span class="c1">// Show the decision regions given by the SVM</span>
+    <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span> <span class="n">green</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">blue</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+        <span class="p">{</span>
+            <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">sampleMat</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="class_cv_Mat_.html#doxid-d9-de0-classcv-1-1-mat"><span class="std std-ref">Mat_&lt;float&gt;</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+            <span class="kt">float</span> <span class="n">response</span> <span class="o">=</span> <span class="n">svm</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1a1a7e49e1febd10392452727498771bc1"><span class="std std-ref">predict</span></a><span></span><span class="p">(</span><span class="n">sampleMat</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">response</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>  <span class="o">=</span> <span class="n">green</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">response</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>  <span class="o">=</span> <span class="n">blue</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="c1">// Show the training data</span>
+    <span class="kt">int</span> <span class="n">thickness</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="mi">501</span><span class="p">,</span>  <span class="mi">10</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span>  <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">),</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">lineType</span> <span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span>  <span class="mi">10</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">lineType</span> <span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">lineType</span> <span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">501</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">lineType</span> <span class="p">);</span>
+
+    <span class="c1">// Show support vectors</span>
+    <span class="n">thickness</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">lineType</span>  <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">sv</span> <span class="o">=</span> <span class="n">svm</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1ab7dc5b5cfb55e0452a96e69ae1f1d3c8"><span class="std std-ref">getUncompressedSupportVectors</span></a><span></span><span class="p">();</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sv</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">v</span> <span class="o">=</span> <span class="n">sv</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a13acd320291229615ef15f96ff1ff738"><span class="std std-ref">ptr</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span>  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>   <span class="mi">6</span><span class="p">,</span>  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">lineType</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;result.png&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">);</span>        <span class="c1">// save the image</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;SVM Simple Example&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">);</span> <span class="c1">// show it to the user</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first"><strong>Set up the training data</strong></p>
+<p>The training data of this exercise is formed by a set of labeled 2D-points that belong to one of two different classes; one of the classes consists of one point and the other of three points.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">labels</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kt">float</span> <span class="n">trainingData</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{</span><span class="mi">501</span><span class="p">,</span> <span class="mi">10</span><span class="p">},</span> <span class="p">{</span><span class="mi">255</span><span class="p">,</span> <span class="mi">10</span><span class="p">},</span> <span class="p">{</span><span class="mi">501</span><span class="p">,</span> <span class="mi">255</span><span class="p">},</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">501</span><span class="p">}</span> <span class="p">};</span>
+</pre>
+<p>The function <a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1af96a0e04f1677a835cc25263c7db3c0c"><span class="std std-ref">cv::ml::SVM::train</span></a> that will be used afterwards requires the training data to be stored as <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a> objects of floats. Therefore, we create these objects from the arrays defined above:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">trainingDataMat</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32ec76240e43e4c9c7b2e2785180a7e6"><span class="std std-ref">CV_32FC1</span></a><span></span><span class="p">,</span> <span class="n">trainingData</span><span class="p">);</span>
+<span class="n">Mat</span> <span class="n">labelsMat</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32f03fbb8f73bff70215b77f5c3cac11"><span class="std std-ref">CV_32SC1</span></a><span></span><span class="p">,</span> <span class="n">labels</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first"><strong>Set up SVM’s parameters</strong></p>
+<p>In this tutorial we have introduced the theory of SVMs in the most simple case, when the training examples are spread into two classes that are linearly separable. However, SVMs can be used in a wide variety of problems (e.g. problems with non-linearly separable data, a SVM using a kernel function to raise the dimensionality of the examples, etc). As a consequence of this, we have to define some parameters before training the SVM. These parameters are stored in an object of the class <a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m"><span class="std std-ref">cv::ml::SVM</span></a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">SVM</span><span class="o">&gt;</span> <span class="n">svm</span> <span class="o">=</span> <span class="n">SVM</span><span class="o">::</span><span class="n">create</span><span class="p">();</span>
+<span class="n">svm</span><span class="o">-&gt;</span><span class="n">setType</span><span class="p">(</span><span class="n">SVM</span><span class="o">::</span><span class="n">C_SVC</span><span class="p">);</span>
+<span class="n">svm</span><span class="o">-&gt;</span><span class="n">setKernel</span><span class="p">(</span><a class="reference internal" href="enum_cvflann_flann_algorithm_t.html#doxid-dc-d8c-namespacecvflann-1a4e3e6c98d774ea77fd7f0045c9bc7817a706a9f2a18a0cbe5e0de7ffdc8d692d9"><span class="std std-ref">SVM::LINEAR</span></a><span></span><span class="p">);</span>
+<span class="n">svm</span><span class="o">-&gt;</span><span class="n">setTermCriteria</span><span class="p">(</span><span class="n">TermCriteria</span><span class="p">(</span><span class="n">TermCriteria</span><span class="o">::</span><span class="n">MAX_ITER</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">));</span>
+</pre>
+<p>Here:</p>
+<ul class="simple">
+<li><em>Type of SVM</em>. We choose here the type <a class="reference internal" href="enum_cv_ml_SVM_Types.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1ab4b93a4c42bbe213ffd9fb3832c6c44fa18157ccaec6a252b901cff6de285d608"><span class="std std-ref">C_SVC</span></a> that can be used for n-class classification (n <span class="math notranslate nohighlight">\(\geq\)</span> 2). The important feature of this type is that it deals with imperfect separation of classes (i.e. when the training data is non-linearly separable). This feature is not important here since the data is linearly separable and we chose this SVM type only for being the most commonly used.</li>
+<li><em>Type of SVM kernel</em>. We have not talked about kernel functions since they are not interesting for the training data we are dealing with. Nevertheless, let’s explain briefly now the main idea behind a kernel function. It is a mapping done to the training data to improve its resemblance to a linearly separable set of data. This mapping consists of increasing the dimensionality of the data and is done efficiently using a kernel function. We choose here the type <a class="reference internal" href="enum_cv_ml_SVM_KernelTypes.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1aad7f1aaccced3c33bb256640910a0e56ab92a19ab0c193735c3fd71f938dd87e7"><span class="std std-ref">LINEAR</span></a> which means that no mapping is done. This parameter is defined using <a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1ad6f4f45983d06817b9782978ca0f6f6f"><span class="std std-ref">cv::ml::SVM::setKernel</span></a>.</li>
+<li><em>Termination criteria of the algorithm</em>. The SVM training procedure is implemented solving a constrained quadratic optimization problem in an <strong>iterative</strong> fashion. Here we specify a maximum number of iterations and a tolerance error so we allow the algorithm to finish in less number of steps even if the optimal hyperplane has not been computed yet. This parameter is defined in a structure <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">cv::TermCriteria</span></a>.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Train the SVM</strong> We call the method <a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1af96a0e04f1677a835cc25263c7db3c0c"><span class="std std-ref">cv::ml::SVM::train</span></a> to build the SVM model.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">svm</span><span class="o">-&gt;</span><span class="n">train</span><span class="p">(</span><span class="n">trainingDataMat</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ml_SampleTypes.html#doxid-dd-ded-group-ml-1gga9c57a2b823008dda53d2c7f7059a8710ab8565ac2eb79152a4e3c80b0e9c9fd4c"><span class="std std-ref">ROW_SAMPLE</span></a><span></span><span class="p">,</span> <span class="n">labelsMat</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first"><strong>Regions classified by the SVM</strong></p>
+<p>The method <a class="reference internal" href="class_cv_ml_StatModel.html#doxid-d9-d36-classcv-1-1ml-1-1-stat-model-1a1a7e49e1febd10392452727498771bc1"><span class="std std-ref">cv::ml::SVM::predict</span></a> is used to classify an input sample using a trained SVM. In this example we have used this method in order to color the space depending on the prediction done by the SVM. In other words, an image is traversed interpreting its pixels as points of the Cartesian plane. Each of the points is colored depending on the class predicted by the SVM; in green if it is the class with label 1 and in blue if it is the class with label -1.</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga7e6060c0b8d48459964df6e1eb524c03"><span class="std std-ref">Vec3b</span></a><span></span> <span class="n">green</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">blue</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Mat</span> <span class="n">sampleMat</span> <span class="o">=</span> <span class="p">(</span><span class="n">Mat_</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+        <span class="kt">float</span> <span class="n">response</span> <span class="o">=</span> <span class="n">svm</span><span class="o">-&gt;</span><span class="n">predict</span><span class="p">(</span><span class="n">sampleMat</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">response</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga7e6060c0b8d48459964df6e1eb524c03"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>  <span class="o">=</span> <span class="n">green</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">response</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga7e6060c0b8d48459964df6e1eb524c03"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>  <span class="o">=</span> <span class="n">blue</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first"><strong>Support vectors</strong></p>
+<p>We use here a couple of methods to obtain information about the support vectors. The method <a class="reference internal" href="class_cv_ml_SVM.html#doxid-da-d05-classcv-1-1ml-1-1-s-v-m-1a2c3fb4b3c80b8fce0b8654f103339300"><span class="std std-ref">cv::ml::SVM::getSupportVectors</span></a> obtain all of the support vectors. We have used this methods here to find the training examples that are support vectors and highlight them.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">thickness</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">lineType</span>  <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+<span class="n">Mat</span> <span class="n">sv</span> <span class="o">=</span> <span class="n">svm</span><span class="o">-&gt;</span><span class="n">getUncompressedSupportVectors</span><span class="p">();</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sv</span><span class="p">.</span><span class="n">rows</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">v</span> <span class="o">=</span> <span class="n">sv</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a13acd320291229615ef15f96ff1ff738"><span class="std std-ref">ptr</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="p">,</span>  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>   <span class="mi">6</span><span class="p">,</span>  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">lineType</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Results</p>
+</li>
+</ol>
+<ul class="simple">
+<li>The code opens an image and shows the training examples of both classes. The points of one class are represented with white circles and black ones are used for the other class.</li>
+<li>The SVM is trained and used to classify all the pixels of the image. This results in a division of the image in a blue region and a green region. The boundary between both regions is the optimal separating hyperplane.</li>
+<li>Finally the support vectors are shown using gray rings around the training examples.</li>
+</ul>
+<img alt="_images/svm_intro_result.png" src="_images/svm_intro_result.png" />
+<p class="rubric">See also:</p>
+<p>A more in depth description of this and hyperplanes you can find in the section 4.5 (<em>Seperating Hyperplanes</em>) of the book: <em>Elements of Statistical Learning</em> by T. Hastie, R. Tibshirani and J. H. Friedman (<a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-htf01"><span class="std std-ref">[83]</span></a>).</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_non_linear_svms.html" title="Support Vector Machines for Non-Linearly Separable Data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_introduction_to_pca.html" title="Introduction to Principal Component Analysis (PCA)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_ml.html" >Machine Learning (ml module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

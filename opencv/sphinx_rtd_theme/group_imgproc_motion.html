@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Motion Analysis and Object Tracking &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Object Detection" href="group_imgproc_object.html" />
+    <link rel="prev" title="enum cv::UndistortTypes" href="enum_cv_UndistortTypes.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_imgproc.html">Image processing</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_c.html">C API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_colormap.html">ColorMaps in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_draw.html">Drawing Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_feature.html">Feature Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_transform.html">Geometric Image Transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_hist.html">Histograms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_filter.html">Image Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_misc.html">Miscellaneous Image Transformations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Motion Analysis and Object Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_object.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_subdiv2d.html">Planar Subdivision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_shape.html">Structural Analysis and Shape Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HoughModes.html">enum cv::HoughModes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_CLAHE.html">class cv::CLAHE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_GeneralizedHough.html">class cv::GeneralizedHough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_GeneralizedHoughBallard.html">class cv::GeneralizedHoughBallard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_GeneralizedHoughGuil.html">class cv::GeneralizedHoughGuil</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_imgproc.html">Image processing</a> &raquo;</li>
+        
+      <li>Motion Analysis and Object Tracking</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="motion-analysis-and-object-tracking">
+<span id="doxid-d7-df3-group-imgproc-motion"></span><span id="index-0"></span><h1>Motion Analysis and Object Tracking</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// global functions</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga1a567a79901513811ff3b9976923b199"><span class="std std-ref">cv::accumulate</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga82518a940ecfda49460f66117ac82520"><span class="std std-ref">cv::accumulateProduct</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1gacb75e7ffb573227088cef9ceaf80be8c"><span class="std std-ref">cv::accumulateSquare</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga4f9552b541187f61f6818e8d2d826bc7"><span class="std std-ref">cv::accumulateWeighted</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga80e5c3de52f6bab3a7c1e60e89308e1b"><span class="std std-ref">cv::createHanningWindow</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">type</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga32986d8c6fd05949688352abd112509f"><span class="std std-ref">Point2d</span></a><span></span>
+<a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga552420a2ace9ef3fb053cd630fdb4952"><span class="std std-ref">cv::phaseCorrelate</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">window</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">response</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d7-df3-group-imgproc-motion"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d7-df3-group-imgproc-motion-1ga1a567a79901513811ff3b9976923b199">
+<span id="index-1"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">accumulate</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Adds an image to the accumulator.</p>
+<p>The function adds src or some of its elements to dst :</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) \leftarrow \texttt{dst} (x,y) + \texttt{src} (x,y) \quad \text{if} \quad \texttt{mask} (x,y) \ne 0\]</div>
+<p>The function supports multi-channel images. Each channel is processed independently.</p>
+<p>The functions accumulate* can be used, for example, to collect statistics of a scene background viewed by a still camera and for the further foreground-background segmentation.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input image of type <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga78c5506f62d99edd7e83aba259250394"><span class="std std-ref">CV_8UC(n)</span></a>, <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga76d22d2e9b90571328923e17f0f8af2a"><span class="std std-ref">CV_16UC(n)</span></a>, <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga56e67b727727f2f9b73a4b62f0c4b2b5"><span class="std std-ref">CV_32FC(n)</span></a> or <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4213eb262159eb6da4edf8c9255e8244"><span class="std std-ref">CV_64FC(n)</span></a>, where n is a positive integer.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Accumulator image with the same number of channels as input image, and a depth of CV_32F or CV_64F.</td>
+</tr>
+<tr class="row-odd"><td>mask</td>
+<td>Optional operation mask.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1gacb75e7ffb573227088cef9ceaf80be8c"><span class="std std-ref">accumulateSquare</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga82518a940ecfda49460f66117ac82520"><span class="std std-ref">accumulateProduct</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga4f9552b541187f61f6818e8d2d826bc7"><span class="std std-ref">accumulateWeighted</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d7-df3-group-imgproc-motion-1ga82518a940ecfda49460f66117ac82520">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">accumulateProduct</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Adds the per-element product of two input images to the accumulator.</p>
+<p>The function adds the product of two images or their selected regions to the accumulator dst :</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) \leftarrow \texttt{dst} (x,y) + \texttt{src1} (x,y) \cdot \texttt{src2} (x,y) \quad \text{if} \quad \texttt{mask} (x,y) \ne 0\]</div>
+<p>The function supports multi-channel images. Each channel is processed independently.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src1</td>
+<td>First input image, 1- or 3-channel, 8-bit or 32-bit floating point.</td>
+</tr>
+<tr class="row-even"><td>src2</td>
+<td>Second input image of the same type and the same size as src1 .</td>
+</tr>
+<tr class="row-odd"><td>dst</td>
+<td>Accumulator with the same number of channels as input images, 32-bit or 64-bit floating-point.</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>Optional operation mask.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga1a567a79901513811ff3b9976923b199"><span class="std std-ref">accumulate</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1gacb75e7ffb573227088cef9ceaf80be8c"><span class="std std-ref">accumulateSquare</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga4f9552b541187f61f6818e8d2d826bc7"><span class="std std-ref">accumulateWeighted</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d7-df3-group-imgproc-motion-1gacb75e7ffb573227088cef9ceaf80be8c">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">accumulateSquare</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Adds the square of a source image to the accumulator.</p>
+<p>The function adds the input image src or its selected region, raised to a power of 2, to the accumulator dst :</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) \leftarrow \texttt{dst} (x,y) + \texttt{src} (x,y)^2 \quad \text{if} \quad \texttt{mask} (x,y) \ne 0\]</div>
+<p>The function supports multi-channel images. Each channel is processed independently.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input image as 1- or 3-channel, 8-bit or 32-bit floating point.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Accumulator image with the same number of channels as input image, 32-bit or 64-bit floating-point.</td>
+</tr>
+<tr class="row-odd"><td>mask</td>
+<td>Optional operation mask.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1gacb75e7ffb573227088cef9ceaf80be8c"><span class="std std-ref">accumulateSquare</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga82518a940ecfda49460f66117ac82520"><span class="std std-ref">accumulateProduct</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga4f9552b541187f61f6818e8d2d826bc7"><span class="std std-ref">accumulateWeighted</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d7-df3-group-imgproc-motion-1ga4f9552b541187f61f6818e8d2d826bc7">
+<span id="index-4"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">accumulateWeighted</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">alpha</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">()</span>
+    <span class="p">)</span>
+</pre>
+<p>Updates a running average.</p>
+<p>The function calculates the weighted sum of the input image src and the accumulator dst so that dst becomes a running average of a frame sequence:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) \leftarrow (1- \texttt{alpha} ) \cdot \texttt{dst} (x,y) + \texttt{alpha} \cdot \texttt{src} (x,y) \quad \text{if} \quad \texttt{mask} (x,y) \ne 0\]</div>
+<p>That is, alpha regulates the update speed (how fast the accumulator “forgets” about earlier images). The function supports multi-channel images. Each channel is processed independently.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input image as 1- or 3-channel, 8-bit or 32-bit floating point.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Accumulator image with the same number of channels as input image, 32-bit or 64-bit floating-point.</td>
+</tr>
+<tr class="row-odd"><td>alpha</td>
+<td>Weight of the input image.</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>Optional operation mask.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga1a567a79901513811ff3b9976923b199"><span class="std std-ref">accumulate</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1gacb75e7ffb573227088cef9ceaf80be8c"><span class="std std-ref">accumulateSquare</span></a>, <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga82518a940ecfda49460f66117ac82520"><span class="std std-ref">accumulateProduct</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d7-df3-group-imgproc-motion-1ga80e5c3de52f6bab3a7c1e60e89308e1b">
+<span id="index-5"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createHanningWindow</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">type</span>
+    <span class="p">)</span>
+</pre>
+<p>This function computes a Hanning window coefficients in two dimensions.</p>
+<p>See (<a class="reference external" href="http://en.wikipedia.org/wiki/Hann_function">http://en.wikipedia.org/wiki/Hann_function</a>) and (<a class="reference external" href="http://en.wikipedia.org/wiki/Window_function">http://en.wikipedia.org/wiki/Window_function</a>) for more information.</p>
+<p>An example is shown below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// create hanning window of size 100x100 and type CV_32F</span>
+<span class="n">Mat</span> <span class="n">hann</span><span class="p">;</span>
+<span class="n">createHanningWindow</span><span class="p">(</span><span class="n">hann</span><span class="p">,</span> <span class="n">Size</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">CV_32F</span><span class="p">);</span>
+</pre>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>dst</td>
+<td>Destination array to place Hann coefficients in</td>
+</tr>
+<tr class="row-even"><td>winSize</td>
+<td>The window size specifications</td>
+</tr>
+<tr class="row-odd"><td>type</td>
+<td>Created array type</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d7-df3-group-imgproc-motion-1ga552420a2ace9ef3fb053cd630fdb4952">
+<span id="index-6"></span><a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga32986d8c6fd05949688352abd112509f"><span class="std std-ref">Point2d</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">phaseCorrelate</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src1</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src2</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">window</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <span class="kt">double</span><span class="o">*</span> <span class="n">response</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span>
+</pre>
+<p>The function is used to detect translational shifts that occur between two images.</p>
+<p>The operation takes advantage of the Fourier shift theorem for detecting the translational shift in the frequency domain. It can be used for fast image registration as well as motion estimation. For more information please see <a class="reference external" href="http://en.wikipedia.org/wiki/Phase_correlation">http://en.wikipedia.org/wiki/Phase_correlation</a></p>
+<p>Calculates the cross-power spectrum of two supplied source arrays. The arrays are padded if needed with getOptimalDFTSize.</p>
+<p>The function performs the following equations:</p>
+<ul>
+<li><p class="first">First it applies a Hanning window (see <a class="reference external" href="http://en.wikipedia.org/wiki/Hann_function">http://en.wikipedia.org/wiki/Hann_function</a>) to each image to remove possible edge effects. This window is cached until the array size changes to speed up processing time.</p>
+</li>
+<li><p class="first">Next it computes the forward DFTs of each source array:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{G}_a = \mathcal{F}\{src_1\}, \; \mathbf{G}_b = \mathcal{F}\{src_2\}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{F}\)</span> is the forward DFT.</p>
+</li>
+<li><p class="first">It then computes the cross-power spectrum of each frequency domain array:</p>
+<div class="math notranslate nohighlight">
+\[R = \frac{ \mathbf{G}_a \mathbf{G}_b^*}{|\mathbf{G}_a \mathbf{G}_b^*|}\]</div>
+</li>
+<li><p class="first">Next the cross-correlation is converted back into the time domain via the inverse DFT:</p>
+<div class="math notranslate nohighlight">
+\[r = \mathcal{F}^{-1}\{R\}\]</div>
+</li>
+<li><p class="first">Finally, it computes the peak location and computes a 5x5 weighted centroid around the peak to achieve sub-pixel accuracy.</p>
+<div class="math notranslate nohighlight">
+\[(\Delta x, \Delta y) = \texttt{weightedCentroid} \{\arg \max_{(x, y)}\{r\}\}\]</div>
+</li>
+<li><p class="first">If non-zero, the response parameter is computed as the sum of the elements of r within the 5x5 centroid around the peak location. It is normalized to a maximum of 1 (meaning there is a single peak) and will be smaller when there are multiple peaks.</p>
+</li>
+</ul>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src1</td>
+<td>Source floating point array (CV_32FC1 or CV_64FC1)</td>
+</tr>
+<tr class="row-even"><td>src2</td>
+<td>Source floating point array (CV_32FC1 or CV_64FC1)</td>
+</tr>
+<tr class="row-odd"><td>window</td>
+<td>Floating point array with windowing coefficients to reduce edge effects (optional).</td>
+</tr>
+<tr class="row-even"><td>response</td>
+<td>Signal power within the 5x5 centroid around the peak, between 0 and 1 (optional).</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Returns:</p>
+<p>detected phase shift (sub-pixel) between the two arrays.</p>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gadd6cf9baf2b8b704a11b5f04aaf4f39d"><span class="std std-ref">dft</span></a>, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6577a2e59968936ae02eb2edde5de299"><span class="std std-ref">getOptimalDFTSize</span></a>, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa708aa2d2e57a508f968eb0f69aa5ff1"><span class="std std-ref">idft</span></a>, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga3ab38646463c59bf0ce962a9d51db64f"><span class="std std-ref">mulSpectrums</span></a> <a class="reference internal" href="#doxid-d7-df3-group-imgproc-motion-1ga80e5c3de52f6bab3a7c1e60e89308e1b"><span class="std std-ref">createHanningWindow</span></a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="group_imgproc_object.html" class="btn btn-neutral float-right" title="Object Detection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="enum_cv_UndistortTypes.html" class="btn btn-neutral float-left" title="enum cv::UndistortTypes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

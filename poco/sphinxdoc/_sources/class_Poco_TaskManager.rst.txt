@@ -1,0 +1,221 @@
+.. index:: pair: class; Poco::TaskManager
+.. _doxid-class_poco_1_1_task_manager:
+
+class Poco::TaskManager
+=======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+The :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` manages a collection of tasks and monitors their lifetime. :ref:`More...<details-class_poco_1_1_task_manager>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <TaskManager.h>
+	
+	class TaskManager
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`AutoPtr<doxid-class_poco_1_1_auto_ptr>`<:ref:`Task<doxid-class_poco_1_1_task>`> :target:`TaskPtr<doxid-class_poco_1_1_task_manager_1a431d40f8cb3fdb17a48d916a6cfa57df>`;
+		typedef std::list<:ref:`TaskPtr<doxid-class_poco_1_1_task_manager_1a431d40f8cb3fdb17a48d916a6cfa57df>`> :target:`TaskList<doxid-class_poco_1_1_task_manager_1abb1c384f5fbf56ba1761cb20857fac6b>`;
+
+		// fields
+	
+		static :ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` int :target:`MIN_PROGRESS_NOTIFICATION_INTERVAL<doxid-class_poco_1_1_task_manager_1a16e8584c5bfd46355e1e1e0854f8ef08>`;
+
+		// construction
+	
+		:ref:`TaskManager<doxid-class_poco_1_1_task_manager_1a15a253d75b99924bc83d40dc5742f51d>`();
+		:ref:`TaskManager<doxid-class_poco_1_1_task_manager_1a2cf79fb1d336d135edb842cf965b37c0>`(:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& pool);
+
+		// methods
+	
+		void
+		:ref:`start<doxid-class_poco_1_1_task_manager_1a5fc6d977ecdbea270b9dfb5a7b3ac934>`(:ref:`Task<doxid-class_poco_1_1_task>`* pTask);
+	
+		void
+		:ref:`cancelAll<doxid-class_poco_1_1_task_manager_1abcbbe15ca080ce3a9cdf6f133312f625>`();
+	
+		void
+		:ref:`joinAll<doxid-class_poco_1_1_task_manager_1afd962887bf3270ab327b419790faaf45>`();
+	
+		:ref:`TaskList<doxid-class_poco_1_1_task_manager_1abb1c384f5fbf56ba1761cb20857fac6b>`
+		:ref:`taskList<doxid-class_poco_1_1_task_manager_1a79ff7d34894ae1f71dc7f3124af67aab>`() const;
+	
+		int
+		:ref:`count<doxid-class_poco_1_1_task_manager_1a91ee9cbd27a0280599c4699a4331b473>`() const;
+	
+		void
+		:ref:`addObserver<doxid-class_poco_1_1_task_manager_1ad68254d2c820203f04c9eb1c1845883f>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer);
+	
+		void
+		:ref:`removeObserver<doxid-class_poco_1_1_task_manager_1a6b4e721de886766005409c0dea3df80f>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer);
+
+	protected:
+		// methods
+	
+		void
+		:ref:`postNotification<doxid-class_poco_1_1_task_manager_1ad8d035378fd814d8dff93f28eb5efda3>`(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`& pNf);
+	
+		void
+		:target:`taskStarted<doxid-class_poco_1_1_task_manager_1a0ac897fcbd831db1ac41451759803d8c>`(:ref:`Task<doxid-class_poco_1_1_task>`* pTask);
+	
+		void
+		:target:`taskProgress<doxid-class_poco_1_1_task_manager_1a6836221b9b667d7016d8df1b1c104225>`(
+			:ref:`Task<doxid-class_poco_1_1_task>`* pTask,
+			float progress
+			);
+	
+		void
+		:target:`taskCancelled<doxid-class_poco_1_1_task_manager_1aca539d2ef95885882ca0c2c5aa1bb70b>`(:ref:`Task<doxid-class_poco_1_1_task>`* pTask);
+	
+		void
+		:target:`taskFinished<doxid-class_poco_1_1_task_manager_1a3ec315eec67929fcc1cd7d561346374d>`(:ref:`Task<doxid-class_poco_1_1_task>`* pTask);
+	
+		void
+		:target:`taskFailed<doxid-class_poco_1_1_task_manager_1a8026cdd475fd777cc319876b9621a357>`(
+			:ref:`Task<doxid-class_poco_1_1_task>`* pTask,
+			:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Exception<doxid-class_poco_1_1_exception>`& exc
+			);
+	};
+.. _details-class_poco_1_1_task_manager:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+The :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` manages a collection of tasks and monitors their lifetime.
+
+A :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` has a built-in :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>` that is used to send out notifications on task progress and task states. See the :ref:`TaskNotification <doxid-class_poco_1_1_task_notification>` class and its subclasses for the various events that result in a notification. To keep the number of notifications small, a :ref:`TaskProgressNotification <doxid-class_poco_1_1_task_progress_notification>` will only be sent out once in 100 milliseconds.
+
+Construction
+------------
+
+.. index:: pair: function; TaskManager
+.. _doxid-class_poco_1_1_task_manager_1a15a253d75b99924bc83d40dc5742f51d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TaskManager()
+
+Creates the :ref:`TaskManager <doxid-class_poco_1_1_task_manager>`, using the default :ref:`ThreadPool <doxid-class_poco_1_1_thread_pool>`.
+
+.. index:: pair: function; TaskManager
+.. _doxid-class_poco_1_1_task_manager_1a2cf79fb1d336d135edb842cf965b37c0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	TaskManager(:ref:`ThreadPool<doxid-class_poco_1_1_thread_pool>`& pool)
+
+Creates the :ref:`TaskManager <doxid-class_poco_1_1_task_manager>`, using the given :ref:`ThreadPool <doxid-class_poco_1_1_thread_pool>`.
+
+Methods
+-------
+
+.. index:: pair: function; start
+.. _doxid-class_poco_1_1_task_manager_1a5fc6d977ecdbea270b9dfb5a7b3ac934:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	start(:ref:`Task<doxid-class_poco_1_1_task>`* pTask)
+
+Starts the given task in a thread obtained from the thread pool.
+
+The :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` takes ownership of the :ref:`Task <doxid-class_poco_1_1_task>` object and deletes it when it it finished.
+
+.. index:: pair: function; cancelAll
+.. _doxid-class_poco_1_1_task_manager_1abcbbe15ca080ce3a9cdf6f133312f625:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cancelAll()
+
+Requests cancellation of all tasks.
+
+.. index:: pair: function; joinAll
+.. _doxid-class_poco_1_1_task_manager_1afd962887bf3270ab327b419790faaf45:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	joinAll()
+
+Waits for the completion of all the threads in the :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` 's thread pool.
+
+Note: :ref:`joinAll() <doxid-class_poco_1_1_task_manager_1afd962887bf3270ab327b419790faaf45>` will wait for ALL tasks in the :ref:`TaskManager <doxid-class_poco_1_1_task_manager>` 's :ref:`ThreadPool <doxid-class_poco_1_1_thread_pool>` to complete. If the :ref:`ThreadPool <doxid-class_poco_1_1_thread_pool>` has threads created by other facilities, these threads must also complete before :ref:`joinAll() <doxid-class_poco_1_1_task_manager_1afd962887bf3270ab327b419790faaf45>` can return.
+
+.. index:: pair: function; taskList
+.. _doxid-class_poco_1_1_task_manager_1a79ff7d34894ae1f71dc7f3124af67aab:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`TaskList<doxid-class_poco_1_1_task_manager_1abb1c384f5fbf56ba1761cb20857fac6b>`
+	taskList() const
+
+Returns a copy of the internal task list.
+
+.. index:: pair: function; count
+.. _doxid-class_poco_1_1_task_manager_1a91ee9cbd27a0280599c4699a4331b473:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	count() const
+
+Returns the number of tasks in the internal task list.
+
+.. index:: pair: function; addObserver
+.. _doxid-class_poco_1_1_task_manager_1ad68254d2c820203f04c9eb1c1845883f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	addObserver(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer)
+
+Registers an observer with the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+Usage:
+
+.. ref-code-block:: cpp
+
+	Observer<MyClass, MyNotification> obs(*this, &MyClass::handleNotification);
+	notificationCenter.addObserver(obs);
+
+.. index:: pair: function; removeObserver
+.. _doxid-class_poco_1_1_task_manager_1a6b4e721de886766005409c0dea3df80f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	removeObserver(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`AbstractObserver<doxid-class_poco_1_1_abstract_observer>`& observer)
+
+Unregisters an observer with the :ref:`NotificationCenter <doxid-class_poco_1_1_notification_center>`.
+
+.. index:: pair: function; postNotification
+.. _doxid-class_poco_1_1_task_manager_1ad8d035378fd814d8dff93f28eb5efda3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	postNotification(:ref:`const<doxid-zconf_8h_1a2c212835823e3c54a8ab6d95c652660e>` :ref:`Notification::Ptr<doxid-class_poco_1_1_notification_1a135c7b6ff2d0e72b57b40c52534c7744>`& pNf)
+
+Posts a notification to the task manager's notification center.
+

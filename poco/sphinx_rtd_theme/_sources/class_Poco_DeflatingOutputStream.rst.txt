@@ -1,0 +1,135 @@
+.. index:: pair: class; Poco::DeflatingOutputStream
+.. _doxid-class_poco_1_1_deflating_output_stream:
+
+class Poco::DeflatingOutputStream
+=================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This stream compresses all data passing through it using zlib's deflate algorithm. :ref:`More...<details-class_poco_1_1_deflating_output_stream>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <DeflatingStream.h>
+	
+	class DeflatingOutputStream:
+	    public ostream,
+	    public :ref:`Poco::DeflatingIOS<doxid-class_poco_1_1_deflating_i_o_s>`
+	{
+	public:
+		// construction
+	
+		:ref:`DeflatingOutputStream<doxid-class_poco_1_1_deflating_output_stream_1a83ebe53de96f8cbf6736350505757fc0>`(
+			std::ostream& ostr,
+			:ref:`DeflatingStreamBuf::StreamType<doxid-class_poco_1_1_deflating_stream_buf_1a2c66cb1fa4d7a4f3aaca878a242e6e1f>` type = :ref:`DeflatingStreamBuf::STREAM_ZLIB<doxid-class_poco_1_1_deflating_stream_buf_1a2c66cb1fa4d7a4f3aaca878a242e6e1fa484f07be91f3a6bc08bb5f711ff0311e>`,
+			int level = :ref:`Z_DEFAULT_COMPRESSION<doxid-zlib_8h_1af5387baee05124298e431ebe6fe96b17>`
+			);
+	
+		:ref:`DeflatingOutputStream<doxid-class_poco_1_1_deflating_output_stream_1a7fd16d2446b2d2da99f2e7f990749dec>`(
+			std::ostream& ostr,
+			int windowBits,
+			int level
+			);
+
+		// methods
+	
+		int
+		:ref:`close<doxid-class_poco_1_1_deflating_output_stream_1a9ed4619a3175261cc8d9788dc31390c5>`();
+
+	protected:
+		// methods
+	
+		virtual
+		int
+		:target:`sync<doxid-class_poco_1_1_deflating_output_stream_1aba0f1641392a0e9d82366e03fa3b55c0>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		:ref:`DeflatingStreamBuf<doxid-class_poco_1_1_deflating_stream_buf>`*
+		:ref:`rdbuf<doxid-class_poco_1_1_deflating_i_o_s_1a27c074c4261d0d04bca8138bfaa21385>`();
+
+	protected:
+		// fields
+	
+		:ref:`DeflatingStreamBuf<doxid-class_poco_1_1_deflating_stream_buf>` :ref:`_buf<doxid-class_poco_1_1_deflating_i_o_s_1a6dd00143da363ece1aa02e3ecc1e005b>`;
+
+.. _details-class_poco_1_1_deflating_output_stream:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This stream compresses all data passing through it using zlib's deflate algorithm.
+
+After all data has been written to the stream, :ref:`close() <doxid-class_poco_1_1_deflating_output_stream_1a9ed4619a3175261cc8d9788dc31390c5>` must be called to ensure completion of compression. Example:
+
+.. ref-code-block:: cpp
+
+	std::ofstream ostr("data.gz", std::ios::binary);
+	DeflatingOutputStream deflater(ostr, DeflatingStreamBuf::STREAM_GZIP);
+	deflater << "Hello, world!" << std::endl;
+	deflater.close();
+	ostr.close();
+
+Construction
+------------
+
+.. index:: pair: function; DeflatingOutputStream
+.. _doxid-class_poco_1_1_deflating_output_stream_1a83ebe53de96f8cbf6736350505757fc0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	DeflatingOutputStream(
+		std::ostream& ostr,
+		:ref:`DeflatingStreamBuf::StreamType<doxid-class_poco_1_1_deflating_stream_buf_1a2c66cb1fa4d7a4f3aaca878a242e6e1f>` type = :ref:`DeflatingStreamBuf::STREAM_ZLIB<doxid-class_poco_1_1_deflating_stream_buf_1a2c66cb1fa4d7a4f3aaca878a242e6e1fa484f07be91f3a6bc08bb5f711ff0311e>`,
+		int level = :ref:`Z_DEFAULT_COMPRESSION<doxid-zlib_8h_1af5387baee05124298e431ebe6fe96b17>`
+		)
+
+Creates a :ref:`DeflatingOutputStream <doxid-class_poco_1_1_deflating_output_stream>` for compressing data passed through and forwarding it to the given output stream.
+
+.. index:: pair: function; DeflatingOutputStream
+.. _doxid-class_poco_1_1_deflating_output_stream_1a7fd16d2446b2d2da99f2e7f990749dec:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	DeflatingOutputStream(
+		std::ostream& ostr,
+		int windowBits,
+		int level
+		)
+
+Creates a :ref:`DeflatingOutputStream <doxid-class_poco_1_1_deflating_output_stream>` for compressing data passed through and forwarding it to the given output stream.
+
+Please refer to the zlib documentation of :ref:`deflateInit2() <doxid-zlib_8h_1a59b575a521efe7ea0d3b9dd3c8d315c1>` for a description of the windowBits parameter.
+
+Methods
+-------
+
+.. index:: pair: function; close
+.. _doxid-class_poco_1_1_deflating_output_stream_1a9ed4619a3175261cc8d9788dc31390c5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	close()
+
+Finishes up the stream.
+
+Must be called when deflating to an output stream.
+

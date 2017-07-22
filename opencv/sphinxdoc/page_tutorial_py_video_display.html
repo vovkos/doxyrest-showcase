@@ -1,0 +1,201 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Getting Started with Videos &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mouse as a Paint-Brush" href="page_tutorial_py_mouse_handling.html" />
+    <link rel="prev" title="Getting Started with Images" href="page_tutorial_py_image_display.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_mouse_handling.html" title="Mouse as a Paint-Brush"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_image_display.html" title="Getting Started with Images"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_gui.html" accesskey="U">Gui Features in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_image_display.html"
+                        title="previous chapter">Getting Started with Images</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_mouse_handling.html"
+                        title="next chapter">Mouse as a Paint-Brush</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started-with-videos">
+<span id="doxid-dd-d43-tutorial-py-video-display"></span><span id="index-0"></span><h1>Getting Started with Videos</h1>
+<p class="rubric">Goal</p>
+<ul class="simple">
+<li>Learn to read video, display video and save video.</li>
+<li>Learn to capture from Camera and display it.</li>
+<li>You will learn these functions : <strong>cv2.VideoCapture()</strong>, <strong>cv2.VideoWriter()</strong></li>
+</ul>
+<p class="rubric">Capture Video from Camera</p>
+<p>Often, we have to capture live stream with camera. OpenCV provides a very simple interface to this. Let’s capture a video from the camera (I am using the in-built webcam of my laptop), convert it into grayscale video and display it. Just a simple task to get started.</p>
+<p>To capture a video, you need to create a <strong>VideoCapture</strong> object. Its argument can be either the device index or the name of a video file. Device index is just the number to specify which camera. Normally one camera will be connected (as in my case). So I simply pass 0 (or -1). You can select the second camera by passing 1 and so on. After that, you can capture frame-by-frame. But at the end, don’t forget to release the capture.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">while</span><span class="p">(</span><span class="n">True</span><span class="p">)</span><span class="o">:</span>
+    <span class="cp"># Capture frame-by-frame</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="cp"># Our operations on the frame come here</span>
+    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+    <span class="cp"># Display the resulting frame</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">gray</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="n">ord</span><span class="p">(</span><span class="sc">&#39;q&#39;</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="cp"># When everything done, release the capture</span>
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p><code class="docutils literal notranslate"><span class="pre">cap.read()</span></code> returns a bool (<code class="docutils literal notranslate"><span class="pre">True</span></code> / <code class="docutils literal notranslate"><span class="pre">False</span></code>). If frame is read correctly, it will be <code class="docutils literal notranslate"><span class="pre">True</span></code>. So you can check end of the video by checking this return value.</p>
+<p>Sometimes, cap may not have initialized the capture. In that case, this code shows error. You can check whether it is initialized or not by the method <strong>cap.isOpened()</strong>. If it is <code class="docutils literal notranslate"><span class="pre">True</span></code>, OK. Otherwise open it using <strong>cap.open()</strong>.</p>
+<p>You can also access some of the features of this video using <strong>cap.get(propId)</strong> method where propId is a number from 0 to 18. Each number denotes a property of the video (if it is applicable to that video) and full details can be seen here: <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1aa6480e6972ef4c00d74814ec841a2939"><span class="std std-ref">cv::VideoCapture::get()</span></a>. Some of these values can be modified using <strong>cap.set(propId, value)</strong>. Value is the new value you want.</p>
+<p>For example, I can check the frame width and height by <code class="docutils literal notranslate"><span class="pre">cap.get(cv2.CAP_PROP_FRAME_WIDTH)</span></code> and <code class="docutils literal notranslate"><span class="pre">cap.get(cv2.CAP_PROP_FRAME_HEIGHT)</span></code>. It gives me 640x480 by default. But I want to modify it to 320x240. Just use <code class="docutils literal notranslate"><span class="pre">ret</span> <span class="pre">=</span> <span class="pre">cap.set(cv2.CAP_PROP_FRAME_WIDTH,320)</span></code> and <code class="docutils literal notranslate"><span class="pre">ret</span> <span class="pre">=</span> <span class="pre">cap.set(cv2.CAP_PROP_FRAME_HEIGHT,240)</span></code>.</p>
+<p>If you are getting error, make sure camera is working fine using any other camera application (like Cheese in Linux).</p>
+<p class="rubric">Playing Video from file</p>
+<p>It is same as capturing from Camera, just change camera index with video file name. Also while displaying the frame, use appropriate time for <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">cv2.waitKey()</span></a>. If it is too less, video will be very fast and if it is too high, video will be slow (Well, that is how you can display videos in slow motion). 25 milliseconds will be OK in normal cases.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="sc">&#39;vtest.avi&#39;</span><span class="p">)</span>
+
+<span class="k">while</span><span class="p">(</span><span class="n">cap</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span><span class="o">:</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">gray</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="n">ord</span><span class="p">(</span><span class="sc">&#39;q&#39;</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p>Make sure proper versions of ffmpeg or gstreamer is installed. Sometimes, it is a headache to work with Video Capture mostly due to wrong installation of ffmpeg/gstreamer.</p>
+<p class="rubric">Saving a Video</p>
+<p>So we capture a video, process it frame-by-frame and we want to save that video. For images, it is very simple, just use <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv2.imwrite()</span></a>. Here a little more work is required.</p>
+<p>This time we create a <strong>VideoWriter</strong> object. We should specify the output file name (eg: output.avi). Then we should specify the <strong>FourCC</strong> code (details in next paragraph). Then number of frames per second (fps) and frame size should be passed. And last one is <strong>isColor</strong> flag. If it is <code class="docutils literal notranslate"><span class="pre">True</span></code>, encoder expect color frame, otherwise it works with grayscale frame.</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/FourCC">FourCC</a> is a 4-byte code used to specify the video codec. The list of available codes can be found in <a class="reference external" href="http://www.fourcc.org/codecs.php">fourcc.org</a>. It is platform dependent. Following codecs works fine for me.</p>
+<ul class="simple">
+<li>In Fedora: DIVX, XVID, MJPG, X264, WMV1, WMV2. (XVID is more preferable. MJPG results in high size video. X264 gives very small size video)</li>
+<li>In Windows: DIVX (More to be tested and added)</li>
+<li>In OSX : *(I don’t have access to OSX. Can some one fill this?)*</li>
+</ul>
+<p>FourCC code is passed as cv2.VideoWriter_fourcc(‘M’,’J’,’P’,’G’) or cv2.VideoWriter_fourcc(*’MJPG’) for MJPG.</p>
+<p>Below code capture from a Camera, flip every frame in vertical direction and saves it.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># Define the codec and create VideoWriter object</span>
+<span class="n">fourcc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoWriter_fourcc</span><span class="p">(</span><span class="o">*</span><span class="sc">&#39;XVID&#39;</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="sc">&#39;output.avi&#39;</span><span class="p">,</span><span class="n">fourcc</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">640</span><span class="p">,</span><span class="mi">480</span><span class="p">))</span>
+
+<span class="k">while</span><span class="p">(</span><span class="n">cap</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span><span class="o">:</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ret</span><span class="o">==</span><span class="nl">True</span><span class="p">:</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">flip</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="cp"># write the flipped frame</span>
+        <span class="n">out</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+        <span class="n">cv2</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="sc">&#39;frame&#39;</span><span class="p">,</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="n">ord</span><span class="p">(</span><span class="sc">&#39;q&#39;</span><span class="p">)</span><span class="o">:</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="k">break</span>
+
+<span class="cp"># Release everything if job is finished</span>
+<span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">out</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
+</pre>
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_mouse_handling.html" title="Mouse as a Paint-Brush"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_image_display.html" title="Getting Started with Images"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_gui.html" >Gui Features in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

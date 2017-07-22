@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Video Input with OpenCV and similarity measurement &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Video analysis (video module)" href="page_tutorial_table_of_content_video.html" />
+    <link rel="prev" title="Using Kinect and other OpenNI compatible depth sensors" href="page_tutorial_kinect_openni.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_video_write.html">Creating a video with OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_intelperc.html">Using Creative Senz3D and other Intel Perceptual Computing SDK compatible depth sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_kinect_openni.html">Using Kinect and other OpenNI compatible depth sensors</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Video Input with OpenCV and similarity measurement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a> &raquo;</li>
+        
+      <li>Video Input with OpenCV and similarity measurement</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="video-input-with-opencv-and-similarity-measurement">
+<span id="doxid-d5-dc4-tutorial-video-input-psnr-ssim"></span><span id="index-0"></span><h1>Video Input with OpenCV and similarity measurement</h1>
+<p class="rubric">Goal</p>
+<p>Today it is common to have a digital video recording system at your disposal. Therefore, you will eventually come to the situation that you no longer process a batch of images, but video streams. These may be of two kinds: real-time image feed (in the case of a webcam) or prerecorded and hard disk drive stored files. Luckily OpenCV threats these two in the same manner, with the same C++ class. So here’s what you’ll learn in this tutorial:</p>
+<ul class="simple">
+<li>How to open and read video streams</li>
+<li>Two ways for checking image similarity: PSNR and SSIM</li>
+</ul>
+<p class="rubric">The source code</p>
+<p>As a test case where to show off these using OpenCV I’ve created a small program that reads in two video files and performs a similarity check between them. This is something you could use to check just how well a new video compressing algorithms works. Let there be a reference (original) video like <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/data/Megamind.avi">this small Megamind clip</a> and <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/data/Megamind_bugy.avi">a compressed version of it</a>. You may also find the source code and these video file in the <code class="docutils literal notranslate"><span class="pre">samples/data</span></code> folder of the OpenCV source library.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt; // for standard I/O</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;   // for strings</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iomanip&gt;  // for controlling float print precision</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sstream&gt;  // string to number conversion</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;     // Basic OpenCV structures (cv::Mat, Scalar)</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgproc.hpp&gt;  // Gaussian Blur</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/videoio.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;  // OpenCV window I/O</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">double</span> <span class="n">getPSNR</span> <span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">);</span>
+<span class="n">Scalar</span> <span class="n">getMSSIM</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;------------------------------------------------------------------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;This program shows how to read a video file with OpenCV. In addition, it &quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;tests the similarity of two input videos first with PSNR, and for the frames &quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;below a PSNR trigger value, also with MSSIM.&quot;</span>                                   <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:&quot;</span>                                                                         <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;./video-input-psnr-ssim &lt;referenceVideo&gt; &lt;useCaseTestVideo&gt; &lt;PSNR_Trigger_Value&gt; &lt;Wait_Between_Frames&gt; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="s">&quot;--------------------------------------------------------------------------&quot;</span>     <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+        <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Not enough parameters&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">stringstream</span> <span class="n">conv</span><span class="p">;</span>
+
+    <span class="k">const</span> <span class="n">string</span> <span class="n">sourceReference</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sourceCompareWith</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">psnrTriggerValue</span><span class="p">,</span> <span class="n">delay</span><span class="p">;</span>
+    <span class="n">conv</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>       <span class="c1">// put in the strings</span>
+    <span class="n">conv</span> <span class="o">&gt;&gt;</span> <span class="n">psnrTriggerValue</span> <span class="o">&gt;&gt;</span> <span class="n">delay</span><span class="p">;</span>        <span class="c1">// take out the numbers</span>
+
+    <span class="kt">int</span> <span class="n">frameNum</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>          <span class="c1">// Frame counter</span>
+
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">captRefrnc</span><span class="p">(</span><span class="n">sourceReference</span><span class="p">),</span> <span class="n">captUndTst</span><span class="p">(</span><span class="n">sourceCompareWith</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">captRefrnc</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">cout</span>  <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open reference &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">sourceReference</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">captUndTst</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">cout</span>  <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open case test &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">sourceCompareWith</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Size</span> <span class="n">refS</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">((</span><span class="kt">int</span><span class="p">)</span> <span class="n">captRefrnc</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad"><span class="std std-ref">CAP_PROP_FRAME_WIDTH</span></a><span></span><span class="p">),</span>
+                     <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">captRefrnc</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e"><span class="std std-ref">CAP_PROP_FRAME_HEIGHT</span></a><span></span><span class="p">)),</span>
+         <span class="n">uTSi</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">((</span><span class="kt">int</span><span class="p">)</span> <span class="n">captUndTst</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad"><span class="std std-ref">CAP_PROP_FRAME_WIDTH</span></a><span></span><span class="p">),</span>
+                     <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">captUndTst</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e"><span class="std std-ref">CAP_PROP_FRAME_HEIGHT</span></a><span></span><span class="p">));</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">refS</span> <span class="o">!=</span> <span class="n">uTSi</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Inputs have different size!!! Closing.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">WIN_UT</span> <span class="o">=</span> <span class="s">&quot;Under Test&quot;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">WIN_RF</span> <span class="o">=</span> <span class="s">&quot;Reference&quot;</span><span class="p">;</span>
+
+    <span class="c1">// Windows</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="n">WIN_RF</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="n">WIN_UT</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga8d86b207f7211250dbe6e28f76307ffb"><span class="std std-ref">moveWindow</span></a><span></span><span class="p">(</span><span class="n">WIN_RF</span><span class="p">,</span> <span class="mi">400</span>       <span class="p">,</span> <span class="mi">0</span><span class="p">);</span>         <span class="c1">//750,  2 (bernat =0)</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga8d86b207f7211250dbe6e28f76307ffb"><span class="std std-ref">moveWindow</span></a><span></span><span class="p">(</span><span class="n">WIN_UT</span><span class="p">,</span> <span class="n">refS</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1abfe0367b32c407ddccf5ddf92667c73d"><span class="std std-ref">width</span></a><span></span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>         <span class="c1">//1500, 2</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Reference frame resolution: Width=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">refS</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1abfe0367b32c407ddccf5ddf92667c73d"><span class="std std-ref">width</span></a><span></span> <span class="o">&lt;&lt;</span> <span class="s">&quot;  Height=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">refS</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1a1d289dce6b5d8006a54f3ee0259fc545"><span class="std std-ref">height</span></a><span></span>
+         <span class="o">&lt;&lt;</span> <span class="s">&quot; of nr#: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">captRefrnc</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2"><span class="std std-ref">CAP_PROP_FRAME_COUNT</span></a><span></span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;PSNR trigger value &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">setiosflags</span><span class="p">(</span><span class="n">ios</span><span class="o">::</span><span class="n">fixed</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">setprecision</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+         <span class="o">&lt;&lt;</span> <span class="n">psnrTriggerValue</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frameReference</span><span class="p">,</span> <span class="n">frameUnderTest</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">psnrV</span><span class="p">;</span>
+    <span class="n">Scalar</span> <span class="n">mssimV</span><span class="p">;</span>
+
+    <span class="k">for</span><span class="p">(;;)</span> <span class="c1">//Show the image captured in the window and repeat</span>
+    <span class="p">{</span>
+        <span class="n">captRefrnc</span> <span class="o">&gt;&gt;</span> <span class="n">frameReference</span><span class="p">;</span>
+        <span class="n">captUndTst</span> <span class="o">&gt;&gt;</span> <span class="n">frameUnderTest</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">frameReference</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">frameUnderTest</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &lt; &lt; &lt;  Game over!  &gt; &gt; &gt; &quot;</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="o">++</span><span class="n">frameNum</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Frame: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">frameNum</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;# &quot;</span><span class="p">;</span>
+
+        <span class="n">psnrV</span> <span class="o">=</span> <span class="n">getPSNR</span><span class="p">(</span><span class="n">frameReference</span><span class="p">,</span><span class="n">frameUnderTest</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setiosflags</span><span class="p">(</span><span class="n">ios</span><span class="o">::</span><span class="n">fixed</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">setprecision</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">psnrV</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;dB&quot;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">psnrV</span> <span class="o">&lt;</span> <span class="n">psnrTriggerValue</span> <span class="o">&amp;&amp;</span> <span class="n">psnrV</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">mssimV</span> <span class="o">=</span> <span class="n">getMSSIM</span><span class="p">(</span><span class="n">frameReference</span><span class="p">,</span> <span class="n">frameUnderTest</span><span class="p">);</span>
+
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; MSSIM: &quot;</span>
+                <span class="o">&lt;&lt;</span> <span class="s">&quot; R &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">setiosflags</span><span class="p">(</span><span class="n">ios</span><span class="o">::</span><span class="n">fixed</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">setprecision</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">mssimV</span><span class="p">.</span><a class="reference internal" href="class_cv_Matx.html#doxid-db-d15-classcv-1-1-matx-1afa9ad3bc5b09ebcdfc6f98f44c15191d"><span class="std std-ref">val</span></a><span></span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;%&quot;</span>
+                <span class="o">&lt;&lt;</span> <span class="s">&quot; G &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">setiosflags</span><span class="p">(</span><span class="n">ios</span><span class="o">::</span><span class="n">fixed</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">setprecision</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">mssimV</span><span class="p">.</span><a class="reference internal" href="class_cv_Matx.html#doxid-db-d15-classcv-1-1-matx-1afa9ad3bc5b09ebcdfc6f98f44c15191d"><span class="std std-ref">val</span></a><span></span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;%&quot;</span>
+                <span class="o">&lt;&lt;</span> <span class="s">&quot; B &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">setiosflags</span><span class="p">(</span><span class="n">ios</span><span class="o">::</span><span class="n">fixed</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">setprecision</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">mssimV</span><span class="p">.</span><a class="reference internal" href="class_cv_Matx.html#doxid-db-d15-classcv-1-1-matx-1afa9ad3bc5b09ebcdfc6f98f44c15191d"><span class="std std-ref">val</span></a><span></span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;%&quot;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="n">WIN_RF</span><span class="p">,</span> <span class="n">frameReference</span><span class="p">);</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="n">WIN_UT</span><span class="p">,</span> <span class="n">frameUnderTest</span><span class="p">);</span>
+
+        <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="n">delay</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="mi">27</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">double</span> <span class="n">getPSNR</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">s1</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6fef31bc8c4071cbc114a758a2b79c14"><span class="std std-ref">absdiff</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">,</span> <span class="n">s1</span><span class="p">);</span>       <span class="c1">// |I1 - I2|</span>
+    <span class="n">s1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>  <span class="c1">// cannot make a square on 8 bits</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>           <span class="c1">// |I1 - I2|^2</span>
+
+    <span class="n">Scalar</span> <span class="n">s</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">sum</span></a><span></span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>        <span class="c1">// sum elements per channel</span>
+
+    <span class="kt">double</span> <span class="n">sse</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><a class="reference internal" href="class_cv_Matx.html#doxid-db-d15-classcv-1-1-matx-1afa9ad3bc5b09ebcdfc6f98f44c15191d"><span class="std std-ref">val</span></a><span></span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><a class="reference internal" href="class_cv_Matx.html#doxid-db-d15-classcv-1-1-matx-1afa9ad3bc5b09ebcdfc6f98f44c15191d"><span class="std std-ref">val</span></a><span></span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><a class="reference internal" href="class_cv_Matx.html#doxid-db-d15-classcv-1-1-matx-1afa9ad3bc5b09ebcdfc6f98f44c15191d"><span class="std std-ref">val</span></a><span></span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> <span class="c1">// sum channels</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">sse</span> <span class="o">&lt;=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="c1">// for small values return zero</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">mse</span>  <span class="o">=</span> <span class="n">sse</span> <span class="o">/</span> <span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">I1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa11336b9ac538e0475d840657ce164be"><span class="std std-ref">channels</span></a><span></span><span class="p">()</span> <span class="o">*</span> <span class="n">I1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa4d317d43fb0cba9c2503f3c61b866c8"><span class="std std-ref">total</span></a><span></span><span class="p">());</span>
+        <span class="kt">double</span> <span class="n">psnr</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga6d7f752d82c289caa24bbb5a278ac31d"><span class="std std-ref">log10</span></a><span></span><span class="p">((</span><span class="mi">255</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span> <span class="o">/</span> <span class="n">mse</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">psnr</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">Scalar</span> <span class="n">getMSSIM</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">i1</span><span class="p">,</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">i2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">double</span> <span class="n">C1</span> <span class="o">=</span> <span class="mf">6.5025</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="mf">58.5225</span><span class="p">;</span>
+    <span class="cm">/***************************** INITS **********************************/</span>
+    <span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">;</span>
+    <span class="n">i1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>            <span class="c1">// cannot calculate on one byte large values</span>
+    <span class="n">i2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">I2_2</span>   <span class="o">=</span> <span class="n">I2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>        <span class="c1">// I2^2</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">I1_2</span>   <span class="o">=</span> <span class="n">I1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">);</span>        <span class="c1">// I1^2</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">I1_I2</span>  <span class="o">=</span> <span class="n">I1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>        <span class="c1">// I1 * I2</span>
+
+    <span class="cm">/*************************** END INITS **********************************/</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">;</span>                   <span class="c1">// PRELIMINARY COMPUTING</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">mu1_2</span>   <span class="o">=</span>   <span class="n">mu1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">mu1</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">mu2_2</span>   <span class="o">=</span>   <span class="n">mu2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">mu2</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">mu1_mu2</span> <span class="o">=</span>   <span class="n">mu1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">mu2</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">sigma1_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1_2</span><span class="p">,</span> <span class="n">sigma1_2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <span class="n">sigma1_2</span> <span class="o">-=</span> <span class="n">mu1_2</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I2_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <span class="n">sigma2_2</span> <span class="o">-=</span> <span class="n">mu2_2</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1_I2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <span class="n">sigma12</span> <span class="o">-=</span> <span class="n">mu1_mu2</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">;</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu1_mu2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma12</span> <span class="o">+</span> <span class="n">C2</span><span class="p">;</span>
+    <span class="n">t3</span> <span class="o">=</span> <span class="n">t1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>                 <span class="c1">// t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">mu1_2</span> <span class="o">+</span> <span class="n">mu2_2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">sigma1_2</span> <span class="o">+</span> <span class="n">sigma2_2</span> <span class="o">+</span> <span class="n">C2</span><span class="p">;</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">t1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>                 <span class="c1">// t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">ssim_map</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6db555d30115642fedae0cda05604874"><span class="std std-ref">divide</span></a><span></span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ssim_map</span><span class="p">);</span>        <span class="c1">// ssim_map =  t3./t1;</span>
+
+    <span class="n">Scalar</span> <span class="n">mssim</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga191389f8a0e58180bb13a727782cd461"><span class="std std-ref">mean</span></a><span></span><span class="p">(</span><span class="n">ssim_map</span><span class="p">);</span>   <span class="c1">// mssim = average of ssim map</span>
+    <span class="k">return</span> <span class="n">mssim</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">How to read a video stream (online-camera or offline-file)?</p>
+<p>Essentially, all the functionalities required for video manipulation is integrated in the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> C++ class. This on itself builds on the FFmpeg open source library. This is a basic dependency of OpenCV so you shouldn’t need to worry about this. A video is composed of a succession of images, we refer to these in the literature as frames. In case of a video file there is a <em>frame rate</em> specifying just how long is between two frames. While for the video cameras usually there is a limit of just how many frames they can digitalize per second, this property is less important as at any time the camera sees the current snapshot of the world.</p>
+<p>The first task you need to do is to assign to a <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> class its source. You can do this either via the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a57c0e81e83e60f36c83027dc2a188e80"><span class="std std-ref">cv::VideoCapture::VideoCapture</span></a> or its <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">cv::VideoCapture::open</span></a> function. If this argument is an integer then you will bind the class to a camera, a device. The number passed here is the ID of the device, assigned by the operating system. If you have a single camera attached to your system its ID will probably be zero and further ones increasing from there. If the parameter passed to these is a string it will refer to a video file, and the string points to the location and name of the file. For example, to the upper source code a valid command line is:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">video</span><span class="o">/</span><span class="n">Megamind</span><span class="p">.</span><span class="n">avi</span> <span class="n">video</span><span class="o">/</span><span class="n">Megamind_bug</span><span class="p">.</span><span class="n">avi</span>  <span class="mi">35</span> <span class="mi">10</span>
+</pre>
+<p>We do a similarity check. This requires a reference and a test case video file. The first two arguments refer to this. Here we use a relative address. This means that the application will look into its current working directory and open the video folder and try to find inside this the <em>Megamind.avi</em> and the <em>Megamind_bug.avi</em>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">const</span> <span class="n">string</span> <span class="n">sourceReference</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">sourceCompareWith</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+
+<span class="n">VideoCapture</span> <span class="nf">captRefrnc</span><span class="p">(</span><span class="n">sourceReference</span><span class="p">);</span>
+<span class="c1">// or</span>
+<span class="n">VideoCapture</span> <span class="n">captUndTst</span><span class="p">;</span>
+<span class="n">captUndTst</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">sourceCompareWith</span><span class="p">);</span>
+</pre>
+<p>To check if the binding of the class to a video source was successful or not use the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9d2ca36789e7fcfe7a7be3b328038585"><span class="std std-ref">cv::VideoCapture::isOpened</span></a> function:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">captRefrnc</span><span class="p">.</span><span class="n">isOpened</span><span class="p">())</span>
+  <span class="p">{</span>
+  <span class="n">cout</span>  <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open reference &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">sourceReference</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre>
+<p>Closing the video is automatic when the objects destructor is called. However, if you want to close it before this you need to call its <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1afb4ab689e553ba2c8f0fec41b9344ae6"><span class="std std-ref">cv::VideoCapture::release</span></a> function. The frames of the video are just simple images. Therefore, we just need to extract them from the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> object and put them inside a <em>Mat</em> one. The video streams are sequential. You may get the frames one after another by the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a473055e77dd7faa4d26d686226b292c1"><span class="std std-ref">cv::VideoCapture::read</span></a> or the overloaded &gt;&gt; operator:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">frameReference</span><span class="p">,</span> <span class="n">frameUnderTest</span><span class="p">;</span>
+<span class="n">captRefrnc</span> <span class="o">&gt;&gt;</span> <span class="n">frameReference</span><span class="p">;</span>
+<span class="n">captUndTst</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">frameUnderTest</span><span class="p">);</span>
+</pre>
+<p>The upper read operations will leave empty the <em>Mat</em> objects if no frame could be acquired (either cause the video stream was closed or you got to the end of the video file). We can check this with a simple if:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span><span class="p">(</span> <span class="n">frameReference</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span>  <span class="o">||</span> <span class="n">frameUnderTest</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+<span class="p">{</span>
+ <span class="c1">// exit the program</span>
+<span class="p">}</span>
+</pre>
+<p>A read method is made of a frame grab and a decoding applied on that. You may call explicitly these two by using the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ae38c2a053d39d6b20c9c649e08ff0146"><span class="std std-ref">cv::VideoCapture::grab</span></a> and then the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9ac7f4b1cdfe624663478568486e6712"><span class="std std-ref">cv::VideoCapture::retrieve</span></a> functions.</p>
+<p>Videos have many-many information attached to them besides the content of the frames. These are usually numbers, however in some case it may be short character sequences (4 bytes or less). Due to this to acquire these information there is a general function named <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1aa6480e6972ef4c00d74814ec841a2939"><span class="std std-ref">cv::VideoCapture::get</span></a> that returns double values containing these properties. Use bitwise operations to decode the characters from a double type and conversions where valid values are only integers. Its single argument is the ID of the queried property. For example, here we get the size of the frames in the reference and test case video file; plus the number of frames inside the reference.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Size</span> <span class="n">refS</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">((</span><span class="kt">int</span><span class="p">)</span> <span class="n">captRefrnc</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dab26d2ba37086662261148e9fe93eecad"><span class="std std-ref">CAP_PROP_FRAME_WIDTH</span></a><span></span><span class="p">),</span>
+                 <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">captRefrnc</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dad8b57083fd9bd58e0f94e68a54b42b7e"><span class="std std-ref">CAP_PROP_FRAME_HEIGHT</span></a><span></span><span class="p">)),</span>
+
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Reference frame resolution: Width=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">refS</span><span class="p">.</span><a class="reference internal" href="class_cv_Size_.html#doxid-dd-da0-classcv-1-1-size-1abfe0367b32c407ddccf5ddf92667c73d"><span class="std std-ref">width</span></a><span></span> <span class="o">&lt;&lt;</span> <span class="s">&quot;  Height=&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">refS</span><span class="p">.</span><span class="n">height</span>
+     <span class="o">&lt;&lt;</span> <span class="s">&quot; of nr#: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">captRefrnc</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704dadadc646b31cfd2194794a3a80b8fa6c2"><span class="std std-ref">CAP_PROP_FRAME_COUNT</span></a><span></span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre>
+<p>When you are working with videos you may often want to control these values yourself. To do this there is a <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a8c6d8c2d37505b5ca61ffd4bb54e9a7c"><span class="std std-ref">cv::VideoCapture::set</span></a> function. Its first argument remains the name of the property you want to change and there is a second of double type containing the value to be set. It will return true if it succeeds and false otherwise. Good examples for this is seeking in a video file to a given time or frame:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">captRefrnc</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da7c2fa550ba270713fca1405397b90ae0"><span class="std std-ref">CAP_PROP_POS_MSEC</span></a><span></span><span class="p">,</span> <span class="mf">1.2</span><span class="p">);</span>  <span class="c1">// go to the 1.2 second in the video</span>
+<span class="n">captRefrnc</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068"><span class="std std-ref">CAP_PROP_POS_FRAMES</span></a><span></span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// go to the 10th frame of the video</span>
+<span class="c1">// now a read operation would read the frame at the set position</span>
+</pre>
+<p>For properties you can read and change look into the documentation of the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1aa6480e6972ef4c00d74814ec841a2939"><span class="std std-ref">cv::VideoCapture::get</span></a> and <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a8c6d8c2d37505b5ca61ffd4bb54e9a7c"><span class="std std-ref">cv::VideoCapture::set</span></a> functions.</p>
+<p class="rubric">Image similarity - PSNR and SSIM</p>
+<p>We want to check just how imperceptible our video converting operation went, therefore we need a system to check frame by frame the similarity or differences. The most common algorithm used for this is the PSNR (aka <strong>Peak signal-to-noise ratio</strong>). The simplest definition of this starts out from the <em>mean squad error</em>. Let there be two images: I1 and I2; with a two dimensional size i and j, composed of c number of channels.</p>
+<div class="math notranslate nohighlight">
+\[MSE = \frac{1}{c*i*j} \sum{(I_1-I_2)^2}\]</div>
+<p>Then the PSNR is expressed as:</p>
+<div class="math notranslate nohighlight">
+\[PSNR = 10 \cdot \log_{10} \left( \frac{MAX_I^2}{MSE} \right)\]</div>
+<p>Here the <span class="math notranslate nohighlight">\(MAX_I^2\)</span> is the maximum valid value for a pixel. In case of the simple single byte image per pixel per channel this is 255. When two images are the same the MSE will give zero, resulting in an invalid divide by zero operation in the PSNR formula. In this case the PSNR is undefined and as we’ll need to handle this case separately. The transition to a logarithmic scale is made because the pixel values have a very wide dynamic range. All this translated to OpenCV and a C++ function looks like:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="nf">getPSNR</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">Mat</span> <span class="n">s1</span><span class="p">;</span>
+ <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6fef31bc8c4071cbc114a758a2b79c14"><span class="std std-ref">absdiff</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">,</span> <span class="n">s1</span><span class="p">);</span>       <span class="c1">// |I1 - I2|</span>
+ <span class="n">s1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>  <span class="c1">// cannot make a square on 8 bits</span>
+ <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>           <span class="c1">// |I1 - I2|^2</span>
+
+ <span class="n">Scalar</span> <span class="n">s</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">sum</span></a><span></span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>        <span class="c1">// sum elements per channel</span>
+
+ <span class="kt">double</span> <span class="n">sse</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> <span class="c1">// sum channels</span>
+
+ <span class="k">if</span><span class="p">(</span> <span class="n">sse</span> <span class="o">&lt;=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="c1">// for small values return zero</span>
+     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+ <span class="k">else</span>
+ <span class="p">{</span>
+     <span class="kt">double</span>  <span class="n">mse</span> <span class="o">=</span><span class="n">sse</span> <span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">I1</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">*</span> <span class="n">I1</span><span class="p">.</span><span class="n">total</span><span class="p">());</span>
+     <span class="kt">double</span> <span class="n">psnr</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga6d7f752d82c289caa24bbb5a278ac31d"><span class="std std-ref">log10</span></a><span></span><span class="p">((</span><span class="mi">255</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">/</span><span class="n">mse</span><span class="p">);</span>
+     <span class="k">return</span> <span class="n">psnr</span><span class="p">;</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>Typically result values are anywhere between 30 and 50 for video compression, where higher is better. If the images significantly differ you’ll get much lower ones like 15 and so. This similarity check is easy and fast to calculate, however in practice it may turn out somewhat inconsistent with human eye perception. The <strong>structural similarity</strong> algorithm aims to correct this.</p>
+<p>Describing the methods goes well beyond the purpose of this tutorial. For that I invite you to read the article introducing it. Nevertheless, you can get a good image of it by looking at the OpenCV implementation below.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Scalar</span> <span class="nf">getMSSIM</span><span class="p">(</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i2</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="k">const</span> <span class="kt">double</span> <span class="n">C1</span> <span class="o">=</span> <span class="mf">6.5025</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="mf">58.5225</span><span class="p">;</span>
+ <span class="cm">/***************************** INITS **********************************/</span>
+ <span class="kt">int</span> <span class="n">d</span>     <span class="o">=</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">;</span>
+
+ <span class="n">Mat</span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">;</span>
+ <span class="n">i1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>           <span class="c1">// cannot calculate on one byte large values</span>
+ <span class="n">i2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>
+
+ <span class="n">Mat</span> <span class="n">I2_2</span>   <span class="o">=</span> <span class="n">I2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>        <span class="c1">// I2^2</span>
+ <span class="n">Mat</span> <span class="n">I1_2</span>   <span class="o">=</span> <span class="n">I1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">);</span>        <span class="c1">// I1^2</span>
+ <span class="n">Mat</span> <span class="n">I1_I2</span>  <span class="o">=</span> <span class="n">I1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>        <span class="c1">// I1 * I2</span>
+
+ <span class="cm">/***********************PRELIMINARY COMPUTING ******************************/</span>
+
+ <span class="n">Mat</span> <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">;</span>   <span class="c1">//</span>
+ <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+ <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+
+ <span class="n">Mat</span> <span class="n">mu1_2</span>   <span class="o">=</span>   <span class="n">mu1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">mu1</span><span class="p">);</span>
+ <span class="n">Mat</span> <span class="n">mu2_2</span>   <span class="o">=</span>   <span class="n">mu2</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">mu2</span><span class="p">);</span>
+ <span class="n">Mat</span> <span class="n">mu1_mu2</span> <span class="o">=</span>   <span class="n">mu1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">mu2</span><span class="p">);</span>
+
+ <span class="n">Mat</span> <span class="n">sigma1_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">;</span>
+
+ <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1_2</span><span class="p">,</span> <span class="n">sigma1_2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+ <span class="n">sigma1_2</span> <span class="o">-=</span> <span class="n">mu1_2</span><span class="p">;</span>
+
+ <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I2_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+ <span class="n">sigma2_2</span> <span class="o">-=</span> <span class="n">mu2_2</span><span class="p">;</span>
+
+ <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1_I2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+ <span class="n">sigma12</span> <span class="o">-=</span> <span class="n">mu1_mu2</span><span class="p">;</span>
+
+ <span class="n">Mat</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">;</span>
+
+ <span class="n">t1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu1_mu2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+ <span class="n">t2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma12</span> <span class="o">+</span> <span class="n">C2</span><span class="p">;</span>
+ <span class="n">t3</span> <span class="o">=</span> <span class="n">t1</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a385c09827713dc3e6d713bfad8460706"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>              <span class="c1">// t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))</span>
+
+ <span class="n">t1</span> <span class="o">=</span> <span class="n">mu1_2</span> <span class="o">+</span> <span class="n">mu2_2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+ <span class="n">t2</span> <span class="o">=</span> <span class="n">sigma1_2</span> <span class="o">+</span> <span class="n">sigma2_2</span> <span class="o">+</span> <span class="n">C2</span><span class="p">;</span>
+ <span class="n">t1</span> <span class="o">=</span> <span class="n">t1</span><span class="p">.</span><a class="reference internal" href="class_cv_MatExpr.html#doxid-d9-ddc-classcv-1-1-mat-expr-1a0e80cbf0fa6ed1187294697ab2b674ca"><span class="std std-ref">mul</span></a><span></span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>               <span class="c1">// t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))</span>
+
+ <span class="n">Mat</span> <span class="n">ssim_map</span><span class="p">;</span>
+ <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6db555d30115642fedae0cda05604874"><span class="std std-ref">divide</span></a><span></span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ssim_map</span><span class="p">);</span>      <span class="c1">// ssim_map =  t3./t1;</span>
+
+ <span class="n">Scalar</span> <span class="n">mssim</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga191389f8a0e58180bb13a727782cd461"><span class="std std-ref">mean</span></a><span></span><span class="p">(</span> <span class="n">ssim_map</span> <span class="p">);</span> <span class="c1">// mssim = average of ssim map</span>
+ <span class="k">return</span> <span class="n">mssim</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>This will return a similarity index for each channel of the image. This value is between zero and one, where one corresponds to perfect fit. Unfortunately, the many Gaussian blurring is quite costly, so while the PSNR may work in a real time like environment (24 frame per second) this will take significantly more than to accomplish similar performance results.</p>
+<p>Therefore, the source code presented at the start of the tutorial will perform the PSNR measurement for each frame, and the SSIM only for the frames where the PSNR falls below an input value. For visualization purpose we show both images in an OpenCV window and print the PSNR and MSSIM values to the console. Expect to see something like:</p>
+<img alt="_images/outputVideoInput.png" src="_images/outputVideoInput.png" />
+<p>You may observe a runtime instance of this on the <a class="reference external" href="https://www.youtube.com/watch?v=iOcNljutOgg">YouTube here</a>.</p>
+<p class="rubric">See also:</p>
+<dl class="docutils">
+<dt>SSIM is described more in-depth in the: “Z. Wang, A. C. Bovik, H. R. Sheikh and E. P.</dt>
+<dd>Simoncelli, “Image quality assessment: From error visibility to structural similarity,” IEEE
+Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.” article.</dd>
+</dl>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_table_of_content_video.html" class="btn btn-neutral float-right" title="Video analysis (video module)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_kinect_openni.html" class="btn btn-neutral float-left" title="Using Kinect and other OpenNI compatible depth sensors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

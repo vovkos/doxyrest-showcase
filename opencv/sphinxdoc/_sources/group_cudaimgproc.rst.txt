@@ -1,0 +1,530 @@
+.. index:: pair: group; Image Processing
+.. _doxid-d0/d05/group__cudaimgproc:
+
+Image Processing
+================
+
+.. toctree::
+	:hidden:
+
+	group_cudaimgproc_color.rst
+	group_cudaimgproc_feature.rst
+	group_cudaimgproc_hist.rst
+	group_cudaimgproc_hough.rst
+	class_cv_cuda_CannyEdgeDetector.rst
+	class_cv_cuda_TemplateMatching.rst
+
+Overview
+~~~~~~~~
+
+
+
+|	:ref:`Color space processing<doxid-db/d8c/group__cudaimgproc__color>`
+|	:ref:`Feature Detection<doxid-dc/d6d/group__cudaimgproc__feature>`
+|	:ref:`Histogram Calculation<doxid-d8/d0e/group__cudaimgproc__hist>`
+|	:ref:`Hough Transform<doxid-d2/d15/group__cudaimgproc__hough>`
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// classes
+
+	class :ref:`cv::cuda::CannyEdgeDetector<doxid-de/d77/classcv_1_1cuda_1_1_canny_edge_detector>`;
+	class :ref:`cv::cuda::TemplateMatching<doxid-de/db8/classcv_1_1cuda_1_1_template_matching>`;
+
+	// global functions
+
+	void
+	:ref:`cv::cuda::bilateralFilter<doxid-d0/d05/group__cudaimgproc_1ga6abeaecdd4e7edc0bd1393a04f4f20bd>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int kernel_size,
+		float sigma_color,
+		float sigma_spatial,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::blendLinear<doxid-d0/d05/group__cudaimgproc_1ga4793607e5729bcc15b27ea33d9fe335e>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img2,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` weights1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` weights2,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` result,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CannyEdgeDetector<doxid-de/d77/classcv_1_1cuda_1_1_canny_edge_detector>`>
+	:ref:`cv::cuda::createCannyEdgeDetector<doxid-d0/d05/group__cudaimgproc_1gabc17953de36faa404acb07dc587451fc>`(
+		double low_thresh,
+		double high_thresh,
+		int apperture_size = 3,
+		bool L2gradient = false
+		);
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`TemplateMatching<doxid-de/db8/classcv_1_1cuda_1_1_template_matching>`>
+	:ref:`cv::cuda::createTemplateMatching<doxid-d0/d05/group__cudaimgproc_1gad23350ed16d9b010d96c5ef76ccc29d0>`(
+		int srcType,
+		int method,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` user_block_size = :ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`()
+		);
+
+	void
+	:ref:`cv::cuda::meanShiftFiltering<doxid-d0/d05/group__cudaimgproc_1gae13b3035bc6df0e512d876dbb8c00555>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int sp,
+		int sr,
+		:ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`+:ref:`TermCriteria::EPS<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>`, 5, 1),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::meanShiftProc<doxid-d0/d05/group__cudaimgproc_1ga6039dc8ecbe2f912bc83fcc9b3bcca39>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dstr,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dstsp,
+		int sp,
+		int sr,
+		:ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`+:ref:`TermCriteria::EPS<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>`, 5, 1),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+	void
+	:ref:`cv::cuda::meanShiftSegmentation<doxid-d0/d05/group__cudaimgproc_1ga70ed80533a448829dc48cf22b1845c16>`(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int sp,
+		int sr,
+		int minsize,
+		:ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`+:ref:`TermCriteria::EPS<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>`, 5, 1),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		);
+
+.. _details-d0/d05/group__cudaimgproc:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Global Functions
+----------------
+
+.. index:: pair: function; bilateralFilter
+.. _doxid-d0/d05/group__cudaimgproc_1ga6abeaecdd4e7edc0bd1393a04f4f20bd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::bilateralFilter(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int kernel_size,
+		float sigma_color,
+		float sigma_spatial,
+		int borderMode = :ref:`BORDER_DEFAULT<doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01>`,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Performs bilateral filtering of passed image.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Supports only (channles != 2 && depth() != CV_8S && depth() != CV_32S && depth() != CV_64F).
+
+	*
+		- dst
+
+		- Destination imagwe.
+
+	*
+		- kernel_size
+
+		- Kernel window size.
+
+	*
+		- sigma_color
+
+		- :ref:`Filter <doxid-db/dde/classcv_1_1cuda_1_1_filter>` sigma in the color space.
+
+	*
+		- sigma_spatial
+
+		- :ref:`Filter <doxid-db/dde/classcv_1_1cuda_1_1_filter>` sigma in the coordinate space.
+
+	*
+		- borderMode
+
+		- Border type. See borderInterpolate for details. BORDER_REFLECT101 , BORDER_REPLICATE , BORDER_CONSTANT , BORDER_REFLECT and BORDER_WRAP are supported for now.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+
+
+.. rubric:: See also:
+
+:ref:`bilateralFilter <doxid-d0/d05/group__cudaimgproc_1ga6abeaecdd4e7edc0bd1393a04f4f20bd>`
+
+.. index:: pair: function; blendLinear
+.. _doxid-d0/d05/group__cudaimgproc_1ga4793607e5729bcc15b27ea33d9fe335e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::blendLinear(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` img2,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` weights1,
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` weights2,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` result,
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Performs linear blending of two images.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- img1
+
+		- First image. Supports only CV_8U and CV_32F depth.
+
+	*
+		- img2
+
+		- Second image. Must have the same size and the same type as img1 .
+
+	*
+		- weights1
+
+		- Weights for first image. Must have tha same size as img1 . Supports only CV_32F type.
+
+	*
+		- weights2
+
+		- Weights for second image. Must have tha same size as img2 . Supports only CV_32F type.
+
+	*
+		- result
+
+		- Destination image.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+.. index:: pair: function; createCannyEdgeDetector
+.. _doxid-d0/d05/group__cudaimgproc_1gabc17953de36faa404acb07dc587451fc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`CannyEdgeDetector<doxid-de/d77/classcv_1_1cuda_1_1_canny_edge_detector>`>
+	cv::cuda::createCannyEdgeDetector(
+		double low_thresh,
+		double high_thresh,
+		int apperture_size = 3,
+		bool L2gradient = false
+		)
+
+Creates implementation for :ref:`cuda::CannyEdgeDetector <doxid-de/d77/classcv_1_1cuda_1_1_canny_edge_detector>`.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- low_thresh
+
+		- First threshold for the hysteresis procedure.
+
+	*
+		- high_thresh
+
+		- Second threshold for the hysteresis procedure.
+
+	*
+		- apperture_size
+
+		- Aperture size for the Sobel operator.
+
+	*
+		- L2gradient
+
+		- Flag indicating whether a more accurate :math:`L_2` norm :math:`=\sqrt{(dI/dx)^2 + (dI/dy)^2}` should be used to compute the image gradient magnitude ( L2gradient=true ), or a faster default :math:`L_1` norm :math:`=|dI/dx|+|dI/dy|` is enough ( L2gradient=false ).
+
+.. index:: pair: function; createTemplateMatching
+.. _doxid-d0/d05/group__cudaimgproc_1gad23350ed16d9b010d96c5ef76ccc29d0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`TemplateMatching<doxid-de/db8/classcv_1_1cuda_1_1_template_matching>`>
+	cv::cuda::createTemplateMatching(
+		int srcType,
+		int method,
+		:ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>` user_block_size = :ref:`Size<doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`()
+		)
+
+Creates implementation for :ref:`cuda::TemplateMatching <doxid-de/db8/classcv_1_1cuda_1_1_template_matching>`.
+
+The following methods are supported for the CV_8U depth images for now:
+
+* CV_TM_SQDIFF
+
+* CV_TM_SQDIFF_NORMED
+
+* CV_TM_CCORR
+
+* CV_TM_CCORR_NORMED
+
+* CV_TM_CCOEFF
+
+* CV_TM_CCOEFF_NORMED
+
+The following methods are supported for the CV_32F images for now:
+
+* CV_TM_SQDIFF
+
+* CV_TM_CCORR
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- srcType
+
+		- Input source type. CV_32F and CV_8U depth images (1..4 channels) are supported for now.
+
+	*
+		- method
+
+		- Specifies the way to compare the template with the image.
+
+	*
+		- user_block_size
+
+		- You can use field user_block_size to set specific block size. If you leave its default value Size(0,0) then automatic estimation of block size will be used (which is optimized for speed). By varying user_block_size you can reduce memory requirements at the cost of speed.
+
+
+
+.. rubric:: See also:
+
+:ref:`matchTemplate <doxid-df/dfb/group__imgproc__object_1ga586ebfb0a7fb604b35a23d85391329be>`
+
+.. index:: pair: function; meanShiftFiltering
+.. _doxid-d0/d05/group__cudaimgproc_1gae13b3035bc6df0e512d876dbb8c00555:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::meanShiftFiltering(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int sp,
+		int sr,
+		:ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`+:ref:`TermCriteria::EPS<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>`, 5, 1),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Performs mean-shift filtering for each point of the source image.
+
+It maps each point of the source image into another point. As a result, you have a new color and new position of each point.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Only CV_8UC4 images are supported for now.
+
+	*
+		- dst
+
+		- Destination image containing the color of mapped points. It has the same size and type as src .
+
+	*
+		- sp
+
+		- Spatial window radius.
+
+	*
+		- sr
+
+		- Color window radius.
+
+	*
+		- criteria
+
+		- Termination criteria. See :ref:`TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>`.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+.. index:: pair: function; meanShiftProc
+.. _doxid-d0/d05/group__cudaimgproc_1ga6039dc8ecbe2f912bc83fcc9b3bcca39:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::meanShiftProc(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dstr,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dstsp,
+		int sp,
+		int sr,
+		:ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`+:ref:`TermCriteria::EPS<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>`, 5, 1),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Performs a mean-shift procedure and stores information about processed points (their colors and positions) in two images.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Only CV_8UC4 images are supported for now.
+
+	*
+		- dstr
+
+		- Destination image containing the color of mapped points. The size and type is the same as src .
+
+	*
+		- dstsp
+
+		- Destination image containing the position of mapped points. The size is the same as src size. The type is CV_16SC2 .
+
+	*
+		- sp
+
+		- Spatial window radius.
+
+	*
+		- sr
+
+		- Color window radius.
+
+	*
+		- criteria
+
+		- Termination criteria. See :ref:`TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>`.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+
+
+
+.. rubric:: See also:
+
+:ref:`cuda::meanShiftFiltering <doxid-d0/d05/group__cudaimgproc_1gae13b3035bc6df0e512d876dbb8c00555>`
+
+.. index:: pair: function; meanShiftSegmentation
+.. _doxid-d0/d05/group__cudaimgproc_1ga70ed80533a448829dc48cf22b1845c16:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::cuda::meanShiftSegmentation(
+		:ref:`InputArray<doxid-dc/d84/group__core__basic_1ga353a9de602fe76c709e12074a6f362ba>` src,
+		:ref:`OutputArray<doxid-dc/d84/group__core__basic_1gaad17fda1d0f0d1ee069aebb1df2913c0>` dst,
+		int sp,
+		int sr,
+		int minsize,
+		:ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>` criteria = :ref:`TermCriteria<doxid-df/d8a/classcv_1_1_term_criteria>`(:ref:`TermCriteria::MAX_ITER<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a56ca2bc5cd06345060a1c1c66a8fc06e>`+:ref:`TermCriteria::EPS<doxid-df/d8a/classcv_1_1_term_criteria_1a56fecdc291ccaba8aad27d67ccf72c57a857609e73e7028e638d2ea649f3b45d5>`, 5, 1),
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream>`& stream = :ref:`Stream::Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`()
+		)
+
+Performs a mean-shift segmentation of the source image and eliminates small segments.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source image. Only CV_8UC4 images are supported for now.
+
+	*
+		- dst
+
+		- Segmented image with the same size and type as src (host memory).
+
+	*
+		- sp
+
+		- Spatial window radius.
+
+	*
+		- sr
+
+		- Color window radius.
+
+	*
+		- minsize
+
+		- Minimum segment size. Smaller segments are merged.
+
+	*
+		- criteria
+
+		- Termination criteria. See :ref:`TermCriteria <doxid-df/d8a/classcv_1_1_term_criteria>`.
+
+	*
+		- stream
+
+		- :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` for the asynchronous version.
+

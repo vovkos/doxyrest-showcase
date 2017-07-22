@@ -1,0 +1,356 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hough Line Transform &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Image Moments" href="page_tutorial_moments.html" />
+    <link rel="prev" title="Hough Circle Transform" href="page_tutorial_hough_circle.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_moments.html" title="Image Moments"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_hough_circle.html" title="Hough Circle Transform"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_hough_circle.html"
+                        title="previous chapter">Hough Circle Transform</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_moments.html"
+                        title="next chapter">Image Moments</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hough-line-transform">
+<span id="doxid-d9-db0-tutorial-hough-lines"></span><span id="index-0"></span><h1>Hough Line Transform</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV functions <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga46b4e588934f6c8dfd509cc6e0e4545a"><span class="std std-ref">cv::HoughLines</span></a> and <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga8618180a5948286384e3b7ca02f6feeb"><span class="std std-ref">cv::HoughLinesP</span></a> to detect lines in an image.</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler.</p>
+<p class="rubric">Hough Line Transform</p>
+<ol class="arabic simple">
+<li>The Hough Line Transform is a transform used to detect straight lines.</li>
+<li>To apply the Transform, first an edge detection pre-processing is desirable.</li>
+</ol>
+<p class="rubric">How does it work?</p>
+<ol class="arabic">
+<li><p class="first">As you know, a line in the image space can be expressed with two variables. For example:</p>
+<ol class="arabic simple">
+<li>In the <strong>Cartesian coordinate system:</strong> Parameters: <span class="math notranslate nohighlight">\((m,b)\)</span>.</li>
+<li>In the <strong>Polar coordinate system:</strong> Parameters: <span class="math notranslate nohighlight">\((r,\theta)\)</span></li>
+</ol>
+<img alt="_images/Hough_Lines_Tutorial_Theory_0.jpg" src="_images/Hough_Lines_Tutorial_Theory_0.jpg" />
+<p>For Hough Transforms, we will express lines in the <em>Polar system</em>. Hence, a line equation can be written as:</p>
+<div class="math notranslate nohighlight">
+\[y = \left ( -\dfrac{\cos \theta}{\sin \theta} \right ) x + \left ( \dfrac{r}{\sin \theta} \right )\]</div>
+</li>
+</ol>
+<p>Arranging the terms: <span class="math notranslate nohighlight">\(r = x \cos \theta + y \sin \theta\)</span></p>
+<ol class="arabic">
+<li><p class="first">In general for each point <span class="math notranslate nohighlight">\((x_{0}, y_{0})\)</span>, we can define the family of lines that goes through that point as:</p>
+<div class="math notranslate nohighlight">
+\[r_{\theta} = x_{0} \cdot \cos \theta + y_{0} \cdot \sin \theta\]</div>
+<p>Meaning that each pair <span class="math notranslate nohighlight">\((r_{\theta},\theta)\)</span> represents each line that passes by <span class="math notranslate nohighlight">\((x_{0}, y_{0})\)</span>.</p>
+</li>
+<li><p class="first">If for a given <span class="math notranslate nohighlight">\((x_{0}, y_{0})\)</span> we plot the family of lines that goes through it, we get a sinusoid. For instance, for <span class="math notranslate nohighlight">\(x_{0} = 8\)</span> and <span class="math notranslate nohighlight">\(y_{0} = 6\)</span> we get the following plot (in a plane <span class="math notranslate nohighlight">\(\theta\)</span> - <span class="math notranslate nohighlight">\(r\)</span>):</p>
+<img alt="_images/Hough_Lines_Tutorial_Theory_1.jpg" src="_images/Hough_Lines_Tutorial_Theory_1.jpg" />
+<p>We consider only points such that <span class="math notranslate nohighlight">\(r &gt; 0\)</span> and <span class="math notranslate nohighlight">\(0&lt; \theta &lt; 2 \pi\)</span>.</p>
+</li>
+<li><p class="first">We can do the same operation above for all the points in an image. If the curves of two different points intersect in the plane <span class="math notranslate nohighlight">\(\theta\)</span> - <span class="math notranslate nohighlight">\(r\)</span>, that means that both points belong to a same line. For instance, following with the example above and drawing the plot for two more points: <span class="math notranslate nohighlight">\(x_{1} = 4\)</span>, <span class="math notranslate nohighlight">\(y_{1} = 9\)</span> and <span class="math notranslate nohighlight">\(x_{2} = 12\)</span>, <span class="math notranslate nohighlight">\(y_{2} = 3\)</span>, we get:</p>
+<img alt="_images/Hough_Lines_Tutorial_Theory_2.jpg" src="_images/Hough_Lines_Tutorial_Theory_2.jpg" />
+<p>The three plots intersect in one single point <span class="math notranslate nohighlight">\((0.925, 9.6)\)</span>, these coordinates are the parameters (<span class="math notranslate nohighlight">\(\theta, r\)</span>) or the line in which <span class="math notranslate nohighlight">\((x_{0}, y_{0})\)</span>, <span class="math notranslate nohighlight">\((x_{1}, y_{1})\)</span> and <span class="math notranslate nohighlight">\((x_{2}, y_{2})\)</span> lay.</p>
+</li>
+<li><p class="first">What does all the stuff above mean? It means that in general, a line can be <em>detected</em> by finding the number of intersections between curves.The more curves intersecting means that the line represented by that intersection have more points. In general, we can define a <em>threshold</em> of the minimum number of intersections needed to <em>detect</em> a line.</p>
+</li>
+<li><p class="first">This is what the Hough Line Transform does. It keeps track of the intersection between curves of every point in the image. If the number of intersections is above some <em>threshold</em>, then it declares it as a line with the parameters <span class="math notranslate nohighlight">\((\theta, r_{\theta})\)</span> of the intersection point.</p>
+</li>
+</ol>
+<p class="rubric">Standard and Probabilistic Hough Line Transform</p>
+<p>OpenCV implements two kind of Hough Line Transforms:</p>
+<ol class="loweralpha simple">
+<li><strong>The Standard Hough Transform</strong></li>
+</ol>
+<ul class="simple">
+<li>It consists in pretty much what we just explained in the previous section. It gives you as result a vector of couples <span class="math notranslate nohighlight">\((\theta, r_{\theta})\)</span></li>
+<li>In OpenCV it is implemented with the function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga46b4e588934f6c8dfd509cc6e0e4545a"><span class="std std-ref">cv::HoughLines</span></a></li>
+</ul>
+<ol class="loweralpha simple" start="2">
+<li><strong>The Probabilistic Hough Line Transform</strong></li>
+</ol>
+<ul class="simple">
+<li>A more efficient implementation of the Hough Line Transform. It gives as output the extremes of the detected lines <span class="math notranslate nohighlight">\((x_{0}, y_{0}, x_{1}, y_{1})\)</span></li>
+<li>In OpenCV it is implemented with the function <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga8618180a5948286384e3b7ca02f6feeb"><span class="std std-ref">cv::HoughLinesP</span></a></li>
+</ul>
+<p class="rubric">Code</p>
+<ol class="arabic">
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Loads an image</li>
+<li>Applies either a <em>Standard Hough Line Transform</em> or a <em>Probabilistic Line Transform</em>.</li>
+<li>Display the original image and the detected line in two windows.</li>
+</ul>
+</li>
+<li><p class="first">The sample code that we will explain can be downloaded from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/houghlines.cpp">here</a>. A slightly fancier version (which shows both Hough standard and probabilistic with trackbars for changing the threshold values) can be found <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/HoughLines_Demo.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">This program demonstrates line finding with the Hough transform.</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;Usage:</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;./houghlines &lt;image_name&gt;, Default is ../data/pic1.png</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">cv::CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span>
+        <span class="s">&quot;{help h||}{@image|../data/pic1.png|}&quot;</span>
+    <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;@image&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">filename</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;no image_name provided&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;can not open &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">dst</span><span class="p">,</span> <span class="n">cdst</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">Canny</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">cdst</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a869da65c045477f2f17d39395df65b2d"><span class="std std-ref">COLOR_GRAY2BGR</span></a><span></span><span class="p">);</span>
+
+<span class="cp">#if 0</span><span class="c"></span>
+<span class="c">    vector&lt;Vec2f&gt; lines;</span>
+<span class="err">    </span><a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga46b4e588934f6c8dfd509cc6e0e4545a"><span class="std std-ref">HoughLines</span></a><span></span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">CV_PI</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">lines</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">float</span> <span class="n">rho</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+        <span class="n">Point</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">;</span>
+        <span class="kt">double</span> <span class="n">a</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga2591489e47c1cb227d235872e4b5e433"><span class="std std-ref">cos</span></a><span></span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">b</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1gaa65ebb1958aa6daaacb7e0b94810ff87"><span class="std std-ref">sin</span></a><span></span><span class="p">(</span><span class="n">theta</span><span class="p">);</span>
+        <span class="kt">double</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">rho</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="n">rho</span><span class="p">;</span>
+        <span class="n">pt1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="p">));</span>
+        <span class="n">pt1</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
+        <span class="n">pt2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="p">));</span>
+        <span class="n">pt2</span><span class="p">.</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">cdst</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="group_imgproc_c.html#doxid-df-d4e-group-imgproc-c-1ga32a38de93cb76391d98a1545d587a8ff"><span class="std std-ref">CV_AA</span></a><span></span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="cp">#else</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec4i</span><span class="o">&gt;</span> <span class="n">lines</span><span class="p">;</span>
+    <a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga8618180a5948286384e3b7ca02f6feeb"><span class="std std-ref">HoughLinesP</span></a><span></span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">CV_PI</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">10</span> <span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">lines</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec4i</span></a><span></span> <span class="n">l</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">cdst</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="cp">#endif</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;source&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;detected lines&quot;</span><span class="p">,</span> <span class="n">cdst</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Load an image</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+<span class="p">{</span>
+  <span class="n">help</span><span class="p">();</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;can not open &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Detect the edges of the image by using a Canny detector</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">Canny</span></a><span></span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+</pre>
+<p>Now we will apply the Hough Line Transform. We will explain how to use both OpenCV functions available for this purpose:</p>
+</li>
+<li><p class="first"><strong>Standard Hough Line Transform</strong></p>
+<ol class="arabic">
+<li><p class="first">First, you apply the Transform:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec2f</span><span class="o">&gt;</span> <span class="n">lines</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga46b4e588934f6c8dfd509cc6e0e4545a"><span class="std std-ref">HoughLines</span></a><span></span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">CV_PI</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+</pre>
+<p>with the following arguments:</p>
+<ul class="simple">
+<li><em>dst</em> : Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)</li>
+<li><em>lines</em> : A vector that will store the parameters <span class="math notranslate nohighlight">\((r,\theta)\)</span> of the detected lines</li>
+<li><em>rho</em> : The resolution of the parameter <span class="math notranslate nohighlight">\(r\)</span> in pixels. We use <strong>1</strong> pixel.</li>
+<li><em>theta</em> : The resolution of the parameter <span class="math notranslate nohighlight">\(\theta\)</span> in radians. We use <strong>1 degree</strong> (CV_PI/180)</li>
+<li><em>threshold</em> : The minimum number of intersections to “*detect*” a line</li>
+<li><em>srn</em> and <em>stn</em> : Default parameters to zero. Check OpenCV reference for more info.</li>
+</ul>
+</li>
+<li><p class="first">And then you display the result by drawing the lines.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">lines</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">float</span> <span class="n">rho</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">Point</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">a</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga2591489e47c1cb227d235872e4b5e433"><span class="std std-ref">cos</span></a><span></span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">b</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1gaa65ebb1958aa6daaacb7e0b94810ff87"><span class="std std-ref">sin</span></a><span></span><span class="p">(</span><span class="n">theta</span><span class="p">);</span>
+  <span class="kt">double</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">rho</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="n">rho</span><span class="p">;</span>
+  <span class="n">pt1</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="p">));</span>
+  <span class="n">pt1</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
+  <span class="n">pt2</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="p">));</span>
+  <span class="n">pt2</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">cdst</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+</li>
+<li><p class="first"><strong>Probabilistic Hough Line Transform</strong></p>
+<ol class="arabic">
+<li><p class="first">First you apply the transform:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec4i</span><span class="o">&gt;</span> <span class="n">lines</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_feature.html#doxid-dd-d1a-group-imgproc-feature-1ga8618180a5948286384e3b7ca02f6feeb"><span class="std std-ref">HoughLinesP</span></a><span></span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">CV_PI</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">10</span> <span class="p">);</span>
+</pre>
+<p>with the arguments:</p>
+<ul class="simple">
+<li><em>dst</em> : Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)</li>
+<li><em>lines</em> : A vector that will store the parameters <span class="math notranslate nohighlight">\((x_{start}, y_{start}, x_{end}, y_{end})\)</span> of the detected lines</li>
+<li><em>rho</em> : The resolution of the parameter <span class="math notranslate nohighlight">\(r\)</span> in pixels. We use <strong>1</strong> pixel.</li>
+<li><em>theta</em> : The resolution of the parameter <span class="math notranslate nohighlight">\(\theta\)</span> in radians. We use <strong>1 degree</strong> (CV_PI/180)</li>
+<li><em>threshold</em> : The minimum number of intersections to “*detect*” a line</li>
+<li><em>minLinLength</em> : The minimum number of points that can form a line. Lines with less than this number of points are disregarded.</li>
+<li><em>maxLineGap</em> : The maximum gap between two points to be considered in the same line.</li>
+</ul>
+</li>
+<li><p class="first">And then you display the result by drawing the lines.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">lines</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga94ce799099ae6cdd66685e3fd0cad7d7"><span class="std std-ref">Vec4i</span></a><span></span> <span class="n">l</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">cdst</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f"><span class="std std-ref">LINE_AA</span></a><span></span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+</li>
+<li><p class="first">Display the original image and the detected lines:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;source&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;detected lines&quot;</span><span class="p">,</span> <span class="n">cdst</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Wait until the user exits the program</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">();</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Result</p>
+<p>The results below are obtained using the slightly fancier version we mentioned in the <em>Code</em> section. It still implements the same stuff as above, only adding the Trackbar for the Threshold.</p>
+<p>Using an input image such as:</p>
+<img alt="_images/Hough_Lines_Tutorial_Original_Image.jpg" src="_images/Hough_Lines_Tutorial_Original_Image.jpg" />
+<p>We get the following result by using the Probabilistic Hough Line Transform:</p>
+<img alt="_images/Hough_Lines_Tutorial_Result.jpg" src="_images/Hough_Lines_Tutorial_Result.jpg" />
+<p>You may observe that the number of lines detected vary while you change the <em>threshold</em>. The explanation is sort of evident: If you establish a higher threshold, fewer lines will be detected (since you will need more points to declare a line detected).</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_moments.html" title="Image Moments"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_hough_circle.html" title="Hough Circle Transform"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

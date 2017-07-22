@@ -1,0 +1,161 @@
+.. index:: pair: class; Poco::RWLock
+.. _doxid-class_poco_1_1_r_w_lock:
+
+class Poco::RWLock
+==================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+A reader writer lock allows multiple concurrent readers or one exclusive writer. :ref:`More...<details-class_poco_1_1_r_w_lock>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <RWLock.h>
+	
+	class RWLock: private :ref:`Poco::RWLockImpl<doxid-class_poco_1_1_r_w_lock_impl>`
+	{
+	public:
+		// typedefs
+	
+		typedef :ref:`ScopedRWLock<doxid-class_poco_1_1_scoped_r_w_lock>` :target:`ScopedLock<doxid-class_poco_1_1_r_w_lock_1a15b4e7018bde7b16ab2f8ea8635558eb>`;
+		typedef :ref:`ScopedReadRWLock<doxid-class_poco_1_1_scoped_read_r_w_lock>` :target:`ScopedReadLock<doxid-class_poco_1_1_r_w_lock_1a83eb1c184da57206a8b8e516c176d36b>`;
+		typedef :ref:`ScopedWriteRWLock<doxid-class_poco_1_1_scoped_write_r_w_lock>` :target:`ScopedWriteLock<doxid-class_poco_1_1_r_w_lock_1a264b1828d7feb55e71ac9202e01acd8f>`;
+
+		// methods
+	
+		void
+		:ref:`readLock<doxid-class_poco_1_1_r_w_lock_1ad7ef3afa2abd3691a1f12a6fec095807>`();
+	
+		bool
+		:ref:`tryReadLock<doxid-class_poco_1_1_r_w_lock_1aa83b6cc37a812f978bd6dfd64c39acfd>`();
+	
+		void
+		:ref:`writeLock<doxid-class_poco_1_1_r_w_lock_1ac0e43a78709ac415aee8537f862202f6>`();
+	
+		bool
+		:ref:`tryWriteLock<doxid-class_poco_1_1_r_w_lock_1a7a9d49bb0f1519c3e767d0b0c7cfbcbb>`();
+	
+		void
+		:ref:`unlock<doxid-class_poco_1_1_r_w_lock_1a0c94cadd067613ee8cf4a52d640790d0>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	protected:
+		// methods
+	
+		bool
+		:ref:`tryReadLockImpl<doxid-class_poco_1_1_r_w_lock_impl_1ae9f117d7028739de7e10e82925421101>`();
+	
+		bool
+		:ref:`tryWriteLockImpl<doxid-class_poco_1_1_r_w_lock_impl_1a004032f9d05494de3511e55d246491ca>`();
+	
+		void
+		:ref:`readLockImpl<doxid-class_poco_1_1_r_w_lock_impl_1ae4d5ce44fe0a29b34c9c8aba6e57295d>`();
+	
+		bool
+		:ref:`tryReadLockImpl<doxid-class_poco_1_1_r_w_lock_impl_1ad3c42d73cc8106beab1e3b0a0b53b6c4>`(DWORD timeout = 1);
+	
+		void
+		:ref:`writeLockImpl<doxid-class_poco_1_1_r_w_lock_impl_1a2fdceeabd8b4315d9d170a65c6990b48>`();
+	
+		bool
+		:ref:`tryWriteLockImpl<doxid-class_poco_1_1_r_w_lock_impl_1a4999a2c83d48ac22e915b6864a864ece>`(DWORD timeout = 1);
+	
+		void
+		:ref:`unlockImpl<doxid-class_poco_1_1_r_w_lock_impl_1a11bbf1e6044b39d15efc6d91ee61b197>`();
+
+.. _details-class_poco_1_1_r_w_lock:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+A reader writer lock allows multiple concurrent readers or one exclusive writer.
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_r_w_lock_1a4d3ec2ef05af535b614a0c6419452cae:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~RWLock()
+
+Destroys the Reader/Writer lock.
+
+Methods
+-------
+
+.. index:: pair: function; readLock
+.. _doxid-class_poco_1_1_r_w_lock_1ad7ef3afa2abd3691a1f12a6fec095807:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	readLock()
+
+Acquires a read lock.
+
+If another thread currently holds a write lock, waits until the write lock is released.
+
+.. index:: pair: function; tryReadLock
+.. _doxid-class_poco_1_1_r_w_lock_1aa83b6cc37a812f978bd6dfd64c39acfd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryReadLock()
+
+Tries to acquire a read lock.
+
+Immediately returns true if successful, or false if another thread currently holds a write lock.
+
+.. index:: pair: function; writeLock
+.. _doxid-class_poco_1_1_r_w_lock_1ac0e43a78709ac415aee8537f862202f6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	writeLock()
+
+Acquires a write lock.
+
+If one or more other threads currently hold locks, waits until all locks are released. The results are undefined if the same thread already holds a read or write lock
+
+.. index:: pair: function; tryWriteLock
+.. _doxid-class_poco_1_1_r_w_lock_1a7a9d49bb0f1519c3e767d0b0c7cfbcbb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	tryWriteLock()
+
+Tries to acquire a write lock.
+
+Immediately returns true if successful, or false if one or more other threads currently hold locks. The result is undefined if the same thread already holds a read or write lock.
+
+.. index:: pair: function; unlock
+.. _doxid-class_poco_1_1_r_w_lock_1a0c94cadd067613ee8cf4a52d640790d0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	unlock()
+
+Releases the read or write lock.
+

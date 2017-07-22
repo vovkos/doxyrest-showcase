@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>High level stitching API (Stitcher class) &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction to OpenCV" href="page_tutorial_table_of_content_introduction.html" />
+    <link rel="prev" title="Images stitching (stitching module)" href="page_tutorial_table_of_content_stitching.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">High level stitching API (Stitcher class)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a> &raquo;</li>
+        
+      <li>High level stitching API (Stitcher class)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="high-level-stitching-api-stitcher-class">
+<span id="doxid-d8-d19-tutorial-stitcher"></span><span id="index-0"></span><h1>High level stitching API (Stitcher class)</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>use the high-level stitching API for stitching provided by<ul>
+<li><a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">cv::Stitcher</span></a></li>
+</ul>
+</li>
+<li>learn how to use preconfigured Stitcher configurations to stitch images using different camera models.</li>
+</ul>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/samples/cpp/stitching.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/*M///////////////////////////////////////////////////////////////////////////////////////</span>
+<span class="cm">//</span>
+<span class="cm">//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.</span>
+<span class="cm">//</span>
+<span class="cm">//  By downloading, copying, installing or using the software you agree to this license.</span>
+<span class="cm">//  If you do not agree to this license, do not download, install,</span>
+<span class="cm">//  copy or use the software.</span>
+<span class="cm">//</span>
+<span class="cm">//</span>
+<span class="cm">//                          License Agreement</span>
+<span class="cm">//                For Open Source Computer Vision Library</span>
+<span class="cm">//</span>
+<span class="cm">// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.</span>
+<span class="cm">// Copyright (C) 2009, Willow Garage Inc., all rights reserved.</span>
+<span class="cm">// Third party copyrights are property of their respective owners.</span>
+<span class="cm">//</span>
+<span class="cm">// Redistribution and use in source and binary forms, with or without modification,</span>
+<span class="cm">// are permitted provided that the following conditions are met:</span>
+<span class="cm">//</span>
+<span class="cm">//   * Redistribution&#39;s of source code must retain the above copyright notice,</span>
+<span class="cm">//     this list of conditions and the following disclaimer.</span>
+<span class="cm">//</span>
+<span class="cm">//   * Redistribution&#39;s in binary form must reproduce the above copyright notice,</span>
+<span class="cm">//     this list of conditions and the following disclaimer in the documentation</span>
+<span class="cm">//     and/or other materials provided with the distribution.</span>
+<span class="cm">//</span>
+<span class="cm">//   * The name of the copyright holders may not be used to endorse or promote products</span>
+<span class="cm">//     derived from this software without specific prior written permission.</span>
+<span class="cm">//</span>
+<span class="cm">// This software is provided by the copyright holders and contributors &quot;as is&quot; and</span>
+<span class="cm">// any express or implied warranties, including, but not limited to, the implied</span>
+<span class="cm">// warranties of merchantability and fitness for a particular purpose are disclaimed.</span>
+<span class="cm">// In no event shall the Intel Corporation or contributors be liable for any direct,</span>
+<span class="cm">// indirect, incidental, special, exemplary, or consequential damages</span>
+<span class="cm">// (including, but not limited to, procurement of substitute goods or services;</span>
+<span class="cm">// loss of use, data, or profits; or business interruption) however caused</span>
+<span class="cm">// and on any theory of liability, whether in contract, strict liability,</span>
+<span class="cm">// or tort (including negligence or otherwise) arising in any way out of</span>
+<span class="cm">// the use of this software, even if advised of the possibility of such damage.</span>
+<span class="cm">//</span>
+<span class="cm">//M*/</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/stitching.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">bool</span> <span class="n">try_use_gpu</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<a class="reference internal" href="enum_cv_Stitcher_Mode.html#doxid-d7-d79-classcv-1-1-stitcher-1a114713924ec05a0309f4df7e918c0324"><span class="std std-ref">Stitcher::Mode</span></a><span></span> <span class="n">mode</span> <span class="o">=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">PANORAMA</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">imgs</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">result_name</span> <span class="o">=</span> <span class="s">&quot;result.jpg&quot;</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">printUsage</span><span class="p">();</span>
+<span class="kt">int</span> <span class="nf">parseCmdArgs</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">retval</span> <span class="o">=</span> <span class="n">parseCmdArgs</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">pano</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;Stitcher&gt;</span></a><span></span> <span class="n">stitcher</span> <span class="o">=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">try_use_gpu</span><span class="p">);</span>
+    <a class="reference internal" href="enum_cv_Stitcher_Status.html#doxid-d7-d79-classcv-1-1-stitcher-1a507409ce9435dd89857469d12ec06b45"><span class="std std-ref">Stitcher::Status</span></a><span></span> <span class="n">status</span> <span class="o">=</span> <span class="n">stitcher</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher-1a37ee5bacf229e9d0fb9f97c8f5ed1acd"><span class="std std-ref">stitch</span></a><span></span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">pano</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">OK</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Can&#39;t stitch images, error code = &quot;</span> <span class="o">&lt;&lt;</span> <span class="kt">int</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="n">result_name</span><span class="p">,</span> <span class="n">pano</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">printUsage</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span>
+        <span class="s">&quot;Images stitcher.</span><span class="se">\n\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;stitching img1 img2 [...imgN]</span><span class="se">\n\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;Flags:</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;  --try_use_gpu (yes|no)</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;      Try to use GPU. The default value is &#39;no&#39;. All default values</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;      are for CPU mode.</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;  --mode (panorama|scans)</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;      Determines configuration of stitcher. The default is &#39;panorama&#39;,</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;      mode suitable for creating photo panoramas. Option &#39;scans&#39; is suitable</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;      for stitching materials under affine transformation, such as scans.</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;  --output &lt;result_img&gt;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;      The default is &#39;result.jpg&#39;.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">int</span> <span class="n">parseCmdArgs</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printUsage</span><span class="p">();</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">argc</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;--help&quot;</span> <span class="o">||</span> <span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;/?&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">printUsage</span><span class="p">();</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;--try_use_gpu&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;no&quot;</span><span class="p">)</span>
+                <span class="n">try_use_gpu</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+            <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;yes&quot;</span><span class="p">)</span>
+                <span class="n">try_use_gpu</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Bad --try_use_gpu flag value</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;--output&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">result_name</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;--mode&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;panorama&quot;</span><span class="p">)</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">PANORAMA</span><span class="p">;</span>
+            <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="s">&quot;scans&quot;</span><span class="p">)</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">SCANS</span><span class="p">;</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Bad --mode flag value</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">img</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">())</span>
+            <span class="p">{</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Can&#39;t read image &#39;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">imgs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">img</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>The most important code part is:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">pano</span><span class="p">;</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">Stitcher</span><span class="o">&gt;</span> <span class="n">stitcher</span> <span class="o">=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">try_use_gpu</span><span class="p">);</span>
+<span class="n">Stitcher</span><span class="o">::</span><span class="n">Status</span> <span class="n">status</span> <span class="o">=</span> <span class="n">stitcher</span><span class="o">-&gt;</span><span class="n">stitch</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">pano</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Stitcher</span><span class="o">::</span><span class="n">OK</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Can&#39;t stitch images, error code = &quot;</span> <span class="o">&lt;&lt;</span> <span class="kt">int</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>A new instance of stitcher is created and the <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher-1a37ee5bacf229e9d0fb9f97c8f5ed1acd"><span class="std std-ref">cv::Stitcher::stitch</span></a> will do all the hard work.</p>
+<p><a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher-1acb32106b3b3e7870d4b39082ab58a26e"><span class="std std-ref">cv::Stitcher::create</span></a> can create stitcher in one of the predefined configurations (argument <code class="docutils literal notranslate"><span class="pre">mode</span></code>). See <a class="reference internal" href="enum_cv_Stitcher_Mode.html#doxid-d7-d79-classcv-1-1-stitcher-1a114713924ec05a0309f4df7e918c0324"><span class="std std-ref">cv::Stitcher::Mode</span></a> for details. These configurations will setup multiple stitcher properties to operate in one of predefined scenarios. After you create stitcher in one of predefined configurations you can adjust stitching by setting any of the stitcher properties.</p>
+<p>If you have cuda device <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">cv::Stitcher</span></a> can be configured to offload certain operations to GPU. If you prefer this configuration set <code class="docutils literal notranslate"><span class="pre">try_use_gpu</span></code> to true. OpenCL acceleration will be used transparently based on global OpenCV settings regardless of this flag.</p>
+<p>Stitching might fail for several reasons, you should always check if everything went good and resulting pano is stored in <code class="docutils literal notranslate"><span class="pre">pano</span></code>. See <a class="reference internal" href="enum_cv_Stitcher_Status.html#doxid-d7-d79-classcv-1-1-stitcher-1a507409ce9435dd89857469d12ec06b45"><span class="std std-ref">cv::Stitcher::Status</span></a> documentation for possible error codes.</p>
+<p class="rubric">Camera models</p>
+<p>There are currently 2 camera models implemented in stitching pipeline.</p>
+<ul class="simple">
+<li><em>Homography model</em> expecting perspective transformations between images implemented in <a class="reference internal" href="class_cv_detail_BestOf2NearestMatcher.html#doxid-d1-d16-classcv-1-1detail-1-1-best-of2-nearest-matcher"><span class="std std-ref">cv::detail::BestOf2NearestMatcher</span></a> <a class="reference internal" href="class_cv_detail_HomographyBasedEstimator.html#doxid-da-d96-classcv-1-1detail-1-1-homography-based-estimator"><span class="std std-ref">cv::detail::HomographyBasedEstimator</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterReproj.html#doxid-d4-d9d-classcv-1-1detail-1-1-bundle-adjuster-reproj"><span class="std std-ref">cv::detail::BundleAdjusterReproj</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterRay.html#doxid-d2-d79-classcv-1-1detail-1-1-bundle-adjuster-ray"><span class="std std-ref">cv::detail::BundleAdjusterRay</span></a></li>
+<li><em>Affine model</em> expecting affine transformation with 6 DOF or 4 DOF implemented in <a class="reference internal" href="class_cv_detail_AffineBestOf2NearestMatcher.html#doxid-d3-dc2-classcv-1-1detail-1-1-affine-best-of2-nearest-matcher"><span class="std std-ref">cv::detail::AffineBestOf2NearestMatcher</span></a> <a class="reference internal" href="class_cv_detail_AffineBasedEstimator.html#doxid-d1-da3-classcv-1-1detail-1-1-affine-based-estimator"><span class="std std-ref">cv::detail::AffineBasedEstimator</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterAffine.html#doxid-d6-d86-classcv-1-1detail-1-1-bundle-adjuster-affine"><span class="std std-ref">cv::detail::BundleAdjusterAffine</span></a> <a class="reference internal" href="class_cv_detail_BundleAdjusterAffinePartial.html#doxid-da-d8b-classcv-1-1detail-1-1-bundle-adjuster-affine-partial"><span class="std std-ref">cv::detail::BundleAdjusterAffinePartial</span></a> <a class="reference internal" href="class_cv_AffineWarper.html#doxid-d2-d53-classcv-1-1-affine-warper"><span class="std std-ref">cv::AffineWarper</span></a></li>
+</ul>
+<p>Homography model is useful for creating photo panoramas captured by camera, while affine-based model can be used to stitch scans and object captured by specialized devices.</p>
+<p>Certain detailed settings of <a class="reference internal" href="class_cv_Stitcher.html#doxid-d7-d79-classcv-1-1-stitcher"><span class="std std-ref">cv::Stitcher</span></a> might not make sense. Especially you should not mix classes implementing affine model and classes implementing Homography model, as they work with different transformations.</p>
+<p class="rubric">Try it out</p>
+<p>If you enabled building samples you can found binary under <code class="docutils literal notranslate"><span class="pre">build/bin/cpp-example-stitching</span></code>. This example is a console application, run it without arguments to see help. <code class="docutils literal notranslate"><span class="pre">opencv_extra</span></code> provides some sample data for testing all available configurations.</p>
+<p>to try panorama mode run:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">example</span><span class="o">-</span><span class="n">stitching</span> <span class="o">--</span><span class="n">mode</span> <span class="n">panorama</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">opencv_extra</span><span class="o">&gt;/</span><span class="n">testdata</span><span class="o">/</span><span class="n">stitching</span><span class="o">/</span><span class="n">boat</span><span class="o">*</span>
+</pre>
+<img alt="_images/boat.jpg" src="_images/boat.jpg" />
+<p>to try scans mode run (dataset from home-grade scanner):</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">example</span><span class="o">-</span><span class="n">stitching</span> <span class="o">--</span><span class="n">mode</span> <span class="n">scans</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">opencv_extra</span><span class="o">&gt;/</span><span class="n">testdata</span><span class="o">/</span><span class="n">stitching</span><span class="o">/</span><span class="n">newspaper</span><span class="o">*</span>
+</pre>
+<img alt="_images/newspaper.jpg" src="_images/newspaper.jpg" />
+<p>or (dataset from professional book scanner):</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">cpp</span><span class="o">-</span><span class="n">example</span><span class="o">-</span><span class="n">stitching</span> <span class="o">--</span><span class="n">mode</span> <span class="n">scans</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">opencv_extra</span><span class="o">&gt;/</span><span class="n">testdata</span><span class="o">/</span><span class="n">stitching</span><span class="o">/</span><span class="n">budapest</span><span class="o">*</span>
+</pre>
+<img alt="_images/budapest.jpg" src="_images/budapest.jpg" />
+<p>Examples above expects POSIX platform, on windows you have to provide all files names explicitly (e.g. <code class="docutils literal notranslate"><span class="pre">boat1.jpg</span></code> <code class="docutils literal notranslate"><span class="pre">boat2.jpg</span></code>…) as windows command line does not support <code class="docutils literal notranslate"><span class="pre">*</span></code> expansion.</p>
+<p class="rubric">See also</p>
+<p>If you want to study internals of the stitching pipeline or you want to experiment with detailed configuration see <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/stitching_detailed.cpp">stitching_detailed.cpp</a> in <code class="docutils literal notranslate"><span class="pre">opencv/samples/cpp</span></code> folder.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_table_of_content_introduction.html" class="btn btn-neutral float-right" title="Introduction to OpenCV" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_table_of_content_stitching.html" class="btn btn-neutral float-left" title="Images stitching (stitching module)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

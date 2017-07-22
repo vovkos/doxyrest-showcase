@@ -1,0 +1,196 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Introduction to SURF (Speeded-Up Robust Features) &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ORB (Oriented FAST and Rotated BRIEF)" href="page_tutorial_py_orb.html" />
+    <link rel="prev" title="Introduction to SIFT (Scale-Invariant Feature Transform)" href="page_tutorial_py_sift_intro.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_orb.html" title="ORB (Oriented FAST and Rotated BRIEF)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_sift_intro.html" title="Introduction to SIFT (Scale-Invariant Feature Transform)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" accesskey="U">Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_sift_intro.html"
+                        title="previous chapter">Introduction to SIFT (Scale-Invariant Feature Transform)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_orb.html"
+                        title="next chapter">ORB (Oriented FAST and Rotated BRIEF)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction-to-surf-speeded-up-robust-features">
+<span id="doxid-df-dd2-tutorial-py-surf-intro"></span><span id="index-0"></span><h1>Introduction to SURF (Speeded-Up Robust Features)</h1>
+<p class="rubric">Goal</p>
+<p>In this chapter,</p>
+<ul class="simple">
+<li>We will see the basics of SURF</li>
+<li>We will see SURF functionalities in OpenCV</li>
+</ul>
+<p class="rubric">Theory</p>
+<p>In last chapter, we saw SIFT for keypoint detection and description. But it was comparatively slow and people needed more speeded-up version. In 2006, three people, Bay, H., Tuytelaars, T. and Van Gool, L, published another paper, “SURF: Speeded Up Robust Features” which introduced a new algorithm called SURF. As name suggests, it is a speeded-up version of SIFT.</p>
+<p>In SIFT, Lowe approximated Laplacian of Gaussian with Difference of Gaussian for finding scale-space. SURF goes a little further and approximates LoG with Box Filter. Below image shows a demonstration of such an approximation. One big advantage of this approximation is that, convolution with box filter can be easily calculated with the help of integral images. And it can be done in parallel for different scales. Also the SURF rely on determinant of Hessian matrix for both scale and location.</p>
+<img alt="image" src="_images/surf_boxfilter.jpg" />
+<p>For orientation assignment, SURF uses wavelet responses in horizontal and vertical direction for a neighbourhood of size 6s. Adequate guassian weights are also applied to it. Then they are plotted in a space as given in below image. The dominant orientation is estimated by calculating the sum of all responses within a sliding orientation window of angle 60 degrees. Interesting thing is that, wavelet response can be found out using integral images very easily at any scale. For many applications, rotation invariance is not required, so no need of finding this orientation, which speeds up the process. SURF provides such a functionality called Upright-SURF or U-SURF. It improves speed and is robust upto <span class="math notranslate nohighlight">\(\pm 15^{\circ}\)</span>. OpenCV supports both, depending upon the flag, <strong>upright</strong>. If it is 0, orientation is calculated. If it is 1, orientation is not calculated and it is more faster.</p>
+<img alt="image" src="_images/surf_orientation.jpg" />
+<p>For feature description, SURF uses Wavelet responses in horizontal and vertical direction (again, use of integral images makes things easier). A neighbourhood of size 20sX20s is taken around the keypoint where s is the size. It is divided into 4x4 subregions. For each subregion, horizontal and vertical wavelet responses are taken and a vector is formed like this, <span class="math notranslate nohighlight">\(v=( \sum{d_x}, \sum{d_y}, \sum{|d_x|}, \sum{|d_y|})\)</span>. This when represented as a vector gives SURF feature descriptor with total 64 dimensions. Lower the dimension, higher the speed of computation and matching, but provide better distinctiveness of features.</p>
+<p>For more distinctiveness, SURF feature descriptor has an extended 128 dimension version. The sums of <span class="math notranslate nohighlight">\(d_x\)</span> and <span class="math notranslate nohighlight">\(|d_x|\)</span> are computed separately for <span class="math notranslate nohighlight">\(d_y &lt; 0\)</span> and <span class="math notranslate nohighlight">\(d_y \geq 0\)</span>. Similarly, the sums of <span class="math notranslate nohighlight">\(d_y\)</span> and <span class="math notranslate nohighlight">\(|d_y|\)</span> are split up according to the sign of <span class="math notranslate nohighlight">\(d_x\)</span>, thereby doubling the number of features. It doesn’t add much computation complexity. OpenCV supports both by setting the value of flag <strong>extended</strong> with 0 and 1 for 64-dim and 128-dim respectively (default is 128-dim)</p>
+<p>Another important improvement is the use of sign of Laplacian (trace of Hessian Matrix) for underlying interest point. It adds no computation cost since it is already computed during detection. The sign of the Laplacian distinguishes bright blobs on dark backgrounds from the reverse situation. In the matching stage, we only compare features if they have the same type of contrast (as shown in image below). This minimal information allows for faster matching, without reducing the descriptor’s performance.</p>
+<img alt="image" src="_images/surf_matching.jpg" />
+<p>In short, SURF adds a lot of features to improve the speed in every step. Analysis shows it is 3 times faster than SIFT while performance is comparable to SIFT. SURF is good at handling images with blurring and rotation, but not good at handling viewpoint change and illumination change.</p>
+<p class="rubric">SURF in OpenCV</p>
+<p>OpenCV provides SURF functionalities just like SIFT. You initiate a SURF object with some optional conditions like 64/128-dim descriptors, Upright/Normal SURF etc. All the details are well explained in docs. Then as we did in SIFT, we can use SURF.detect(), SURF.compute() etc for finding keypoints and descriptors.</p>
+<p>First we will see a simple demo on how to find SURF keypoints and descriptors and draw it. All examples are shown in Python terminal since it is just same as SIFT only.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;fly.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="cp"># Create SURF object. You can specify params here or later.</span>
+<span class="cp"># Here I set Hessian Threshold to 400</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">surf</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">xfeatures2d</span><span class="p">.</span><span class="n">SURF_create</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+
+<span class="cp"># Find keypoints and descriptors directly</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kp</span><span class="p">,</span> <span class="n">des</span> <span class="o">=</span> <span class="n">surf</span><span class="p">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
+ <span class="mi">699</span>
+</pre>
+<p>1199 keypoints is too much to show in a picture. We reduce it to some 50 to draw it on an image. While matching, we may need all those features, but not now. So we increase the Hessian Threshold.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp"># Check present Hessian threshold</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">surf</span><span class="p">.</span><span class="n">getHessianThreshold</span><span class="p">()</span> <span class="p">)</span>
+<span class="mf">400.0</span>
+
+<span class="cp"># We set it to some 50000. Remember, it is just for representing in picture.</span>
+<span class="cp"># In actual cases, it is better to have a value 300-500</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">surf</span><span class="p">.</span><span class="n">setHessianThreshold</span><span class="p">(</span><span class="mi">50000</span><span class="p">)</span>
+
+<span class="cp"># Again compute keypoints and check its number.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kp</span><span class="p">,</span> <span class="n">des</span> <span class="o">=</span> <span class="n">surf</span><span class="p">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">len</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span> <span class="p">)</span>
+<span class="mi">47</span>
+</pre>
+<p>It is less than 50. Let’s draw it on the image.</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">drawKeypoints</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">kp</span><span class="p">,</span><span class="n">None</span><span class="p">,(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img2</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>See the result below. You can see that SURF is more like a blob detector. It detects the white blobs on wings of butterfly. You can test it with other images.</p>
+<img alt="image" src="_images/surf_kp1.jpg" />
+<p>Now I want to apply U-SURF, so that it won’t find the orientation.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp"># Check upright flag, if it False, set it to True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">surf</span><span class="p">.</span><span class="n">getUpright</span><span class="p">()</span> <span class="p">)</span>
+<span class="n">False</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">surf</span><span class="p">.</span><span class="n">setUpright</span><span class="p">(</span><span class="n">True</span><span class="p">)</span>
+
+<span class="cp"># Recompute the feature points and draw it</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">surf</span><span class="p">.</span><span class="n">detect</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">img2</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">drawKeypoints</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">kp</span><span class="p">,</span><span class="n">None</span><span class="p">,(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img2</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>See the results below. All the orientations are shown in same direction. It is more faster than previous. If you are working on cases where orientation is not a problem (like panorama stitching) etc, this is better.</p>
+<img alt="image" src="_images/surf_kp2.jpg" />
+<p>Finally we check the descriptor size and change it to 128 if it is only 64-dim.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp"># Find size of descriptor</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">surf</span><span class="p">.</span><span class="n">descriptorSize</span><span class="p">()</span> <span class="p">)</span>
+<span class="mi">64</span>
+
+<span class="cp"># That means flag, &quot;extended&quot; is False.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">surf</span><span class="p">.</span><span class="n">getExtended</span><span class="p">()</span>
+ <span class="n">False</span>
+
+<span class="cp"># So we make it to True to get 128-dim descriptors.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">surf</span><span class="p">.</span><span class="n">extended</span> <span class="o">=</span> <span class="n">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kp</span><span class="p">,</span> <span class="n">des</span> <span class="o">=</span> <span class="n">surf</span><span class="p">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">None</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">surf</span><span class="p">.</span><span class="n">descriptorSize</span><span class="p">()</span> <span class="p">)</span>
+<span class="mi">128</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">print</span><span class="p">(</span> <span class="n">des</span><span class="p">.</span><span class="n">shape</span> <span class="p">)</span>
+<span class="p">(</span><span class="mi">47</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre>
+<p>Remaining part is matching which we will do in another chapter.</p>
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_orb.html" title="ORB (Oriented FAST and Rotated BRIEF)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_sift_intro.html" title="Introduction to SIFT (Scale-Invariant Feature Transform)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_feature2d.html" >Feature Detection and Description</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

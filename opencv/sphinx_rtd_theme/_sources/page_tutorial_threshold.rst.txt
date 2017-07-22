@@ -1,0 +1,257 @@
+.. index:: pair: page; Basic Thresholding Operations
+.. _doxid-db/d8e/tutorial_threshold:
+
+Basic Thresholding Operations
+=============================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Perform basic thresholding operations using OpenCV function :ref:`cv::threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`
+
+.. rubric:: Cool Theory
+
+The explanation below belongs to the book **Learning OpenCV** by Bradski and Kaehler. What is
+
+
+
+.. rubric:: Thresholding?
+
+* The simplest segmentation method
+
+* Application example: Separate out regions of an image corresponding to objects which we want to analyze. This separation is based on the variation of intensity between the object pixels and the background pixels.
+
+* To differentiate the pixels we are interested in from the rest (which will eventually be rejected), we perform a comparison of each pixel intensity value with respect to a *threshold* (determined according to the problem to solve).
+
+* Once we have separated properly the important pixels, we can set them with a determined value to identify them (i.e. we can assign them a value of :math:`0` (black), :math:`255` (white) or any value that suits your needs).
+  
+  .. image:: Threshold_Tutorial_Theory_Example.jpg
+
+.. rubric:: Types of Thresholding
+
+* OpenCV offers the function :ref:`cv::threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>` to perform thresholding operations.
+
+* We can effectuate :math:`5` types of Thresholding operations with this function. We will explain them in the following subsections.
+
+* To illustrate how these thresholding processes work, let's consider that we have a source image with pixels with intensity values :math:`src(x,y)`. The plot below depicts this. The horizontal blue line represents the threshold :math:`thresh` (fixed).
+  
+  .. image:: Threshold_Tutorial_Theory_Base_Figure.png
+
+.. rubric:: Threshold Binary
+
+* This thresholding operation can be expressed as:
+  
+  .. math::
+  
+  	\texttt{dst} (x,y) = \fork{\texttt{maxVal}}{if \(\texttt{src}(x,y) > \texttt{thresh}\)}{0}{otherwise}
+
+* So, if the intensity of the pixel :math:`src(x,y)` is higher than :math:`thresh`, then the new pixel intensity is set to a :math:`MaxVal`. Otherwise, the pixels are set to :math:`0`.
+  
+  .. image:: Threshold_Tutorial_Theory_Binary.png
+
+.. rubric:: Threshold Binary, Inverted
+
+* This thresholding operation can be expressed as:
+  
+  .. math::
+  
+  	\texttt{dst} (x,y) = \fork{0}{if \(\texttt{src}(x,y) > \texttt{thresh}\)}{\texttt{maxVal}}{otherwise}
+
+* If the intensity of the pixel :math:`src(x,y)` is higher than :math:`thresh`, then the new pixel intensity is set to a :math:`0`. Otherwise, it is set to :math:`MaxVal`.
+  
+  .. image:: Threshold_Tutorial_Theory_Binary_Inverted.png
+
+.. rubric:: Truncate
+
+* This thresholding operation can be expressed as:
+  
+  .. math::
+  
+  	\texttt{dst} (x,y) = \fork{\texttt{threshold}}{if \(\texttt{src}(x,y) > \texttt{thresh}\)}{\texttt{src}(x,y)}{otherwise}
+
+* The maximum intensity value for the pixels is :math:`thresh`, if :math:`src(x,y)` is greater, then its value is *truncated*. See figure below:
+  
+  .. image:: Threshold_Tutorial_Theory_Truncate.png
+
+.. rubric:: Threshold to Zero
+
+* This operation can be expressed as:
+  
+  .. math::
+  
+  	\texttt{dst} (x,y) = \fork{\texttt{src}(x,y)}{if \(\texttt{src}(x,y) > \texttt{thresh}\)}{0}{otherwise}
+
+* If :math:`src(x,y)` is lower than :math:`thresh`, the new pixel value will be set to :math:`0`.
+  
+  .. image:: Threshold_Tutorial_Theory_Zero.png
+
+.. rubric:: Threshold to Zero, Inverted
+
+* This operation can be expressed as:
+  
+  .. math::
+  
+  	\texttt{dst} (x,y) = \fork{0}{if \(\texttt{src}(x,y) > \texttt{thresh}\)}{\texttt{src}(x,y)}{otherwise}
+
+* If :math:`src(x,y)` is greater than :math:`thresh`, the new pixel value will be set to :math:`0`.
+  
+  .. image:: Threshold_Tutorial_Theory_Zero_Inverted.png
+
+.. rubric:: Code
+
+The tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Threshold.cpp>`__
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	
+	int threshold_value = 0;
+	int threshold_type = 3;
+	int const max_value = 255;
+	int const max_type = 4;
+	int const max_BINARY_value = 255;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, src_gray, dst;
+	const char* window_name = "Threshold Demo";
+	
+	const char* trackbar_type = "Type: \n 0: Binary \n 1: Binary Inverted \n 2: Truncate \n 3: To Zero \n 4: To Zero Inverted";
+	const char* trackbar_value = "Value";
+	
+	void Threshold_Demo( int, void* );
+	
+	int main( int, char** argv )
+	{
+	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+	
+	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+	    { return -1; }
+	
+	  :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, src_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` ); // Convert the image to Gray
+	
+	  :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_name, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` ); // Create a window to display results
+	
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( trackbar_type,
+	                  window_name, &threshold_type,
+	                  max_type, Threshold_Demo ); // Create Trackbar to choose type of Threshold
+	
+	  :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( trackbar_value,
+	                  window_name, &threshold_value,
+	                  max_value, Threshold_Demo ); // Create Trackbar to choose Threshold value
+	
+	  Threshold_Demo( 0, 0 ); // Call the function to initialize
+	
+	  for(;;)
+	    {
+	      char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`( 20 );
+	      if( c == 27 )
+	    { break; }
+	    }
+	
+	}
+	
+	
+	void Threshold_Demo( int, void* )
+	{
+	  /* 0: Binary
+	     1: Binary Inverted
+	     2: Threshold Truncated
+	     3: Threshold to Zero
+	     4: Threshold to Zero Inverted
+	   */
+	
+	  :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`( src_gray, dst, threshold_value, max_BINARY_value,threshold_type );
+	
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+	}
+
+.. rubric:: Explanation
+
+#. Let's check the general structure of the program:
+   
+   * Load an image. If it is BGR we convert it to Grayscale. For this, remember that we can use the function :ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>` :
+     
+     .. ref-code-block:: cpp
+     
+     	src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>` ); // Load an image
+     
+     	if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+     	  { return -1; }
+     
+     	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`( src, src_gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>` ); // Convert the image to Gray
+   
+   * Create a window to display the result
+     
+     .. ref-code-block:: cpp
+     
+     	:ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`( window_name, :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>` ); // Create a window to display results
+   
+   * Create :math:`2` trackbars for the user to enter user input:
+     
+     * **Type of thresholding** : Binary, To Zero, etc...
+     
+     * **Threshold value**
+       
+       .. ref-code-block:: cpp
+       
+       	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( trackbar_type,
+       	                window_name, &threshold_type,
+       	                max_type, Threshold_Demo ); // Create Trackbar to choose type of Threshold
+       
+       	:ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`( trackbar_value,
+       	                window_name, &threshold_value,
+       	                max_value, Threshold_Demo ); // Create Trackbar to choose Threshold value
+   
+   * Wait until the user enters the threshold value, the type of thresholding (or until the program exits)
+   
+   * Whenever the user changes the value of any of the Trackbars, the function *Threshold_Demo* is called:
+     
+     .. ref-code-block:: cpp
+     
+     	
+     	void Threshold_Demo( int, void* )
+     	{
+     	  /* 0: Binary
+     	     1: Binary Inverted
+     	     2: Threshold Truncated
+     	     3: Threshold to Zero
+     	     4: Threshold to Zero Inverted
+     	   */
+     	
+     	  :ref:`threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`( src_gray, dst, threshold_value, max_BINARY_value,threshold_type );
+     	
+     	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+     	}
+     
+     As you can see, the function :ref:`cv::threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>` is invoked. We give :math:`5` parameters:
+     
+     * *src_gray* : Our input image
+     
+     * *dst* : Destination (output) image
+     
+     * *threshold_value* : The :math:`thresh` value with respect to which the thresholding operation is made
+     
+     * *max_BINARY_value* : The value used with the Binary thresholding operations (to set the chosen pixels)
+     
+     * *threshold_type* : One of the :math:`5` thresholding operations. They are listed in the comment section of the function above.
+
+.. rubric:: Results
+
+#. After compiling this program, run it giving a path to an image as argument. For instance, for an input image as:
+   
+   .. image:: Threshold_Tutorial_Original_Image.jpg
+
+#. First, we try to threshold our image with a *binary threhold inverted*. We expect that the pixels brighter than the :math:`thresh` will turn dark, which is what actually happens, as we can see in the snapshot below (notice from the original image, that the doggie's tongue and eyes are particularly bright in comparison with the image, this is reflected in the output image).
+   
+   .. image:: Threshold_Tutorial_Result_Binary_Inverted.jpg
+
+#. Now we try with the *threshold to zero*. With this, we expect that the darkest pixels (below the threshold) will become completely black, whereas the pixels with value greater than the threshold will keep its original value. This is verified by the following snapshot of the output image:
+   
+   .. image:: Threshold_Tutorial_Result_Zero.jpg
+

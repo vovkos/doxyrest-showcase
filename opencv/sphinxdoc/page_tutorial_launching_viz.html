@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Launching Viz &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pose of a widget" href="page_tutorial_widget_pose.html" />
+    <link rel="prev" title="Creating Widgets" href="page_tutorial_creating_widgets.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_widget_pose.html" title="Pose of a widget"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_creating_widgets.html" title="Creating Widgets"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_viz.html" accesskey="U">OpenCV Viz</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_creating_widgets.html"
+                        title="previous chapter">Creating Widgets</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_widget_pose.html"
+                        title="next chapter">Pose of a widget</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="launching-viz">
+<span id="doxid-d5-d7d-tutorial-launching-viz"></span><span id="index-0"></span><h1>Launching Viz</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to</p>
+<ul class="simple">
+<li>Open a visualization window.</li>
+<li>Access a window by its name.</li>
+<li>Start event loop.</li>
+<li>Start event loop for a given amount of time.</li>
+</ul>
+<p class="rubric">Code</p>
+<p>You can download the code from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/viz/launching_viz.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/viz.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;--------------------------------------------------------------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;This program shows how to launch a 3D visualization window. You can stop event loop to continue executing. &quot;</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;You can access the same window via its name. You can run event loop for a given period of time. &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:&quot;</span>                                                                     <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;./launching_viz&quot;</span>                                                            <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">help</span><span class="p">();</span>
+    <a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d"><span class="std std-ref">viz::Viz3d</span></a><span></span> <span class="n">myWindow</span><span class="p">(</span><span class="s">&quot;Viz Demo&quot;</span><span class="p">);</span>
+
+    <span class="n">myWindow</span><span class="p">.</span><span class="n">spin</span><span class="p">();</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;First event loop is over&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d"><span class="std std-ref">viz::Viz3d</span></a><span></span> <span class="n">sameWindow</span> <span class="o">=</span> <a class="reference internal" href="group_viz.html#doxid-d1-d19-group-viz-1ga91ed3eefdd38bcc0d3d8be527a58c6c7"><span class="std std-ref">viz::getWindowByName</span></a><span></span><span class="p">(</span><span class="s">&quot;Viz Demo&quot;</span><span class="p">);</span>
+
+    <span class="n">sameWindow</span><span class="p">.</span><a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d-1a26114066f4d49398fb1b98bde3b5dc78"><span class="std std-ref">spin</span></a><span></span><span class="p">();</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Second event loop is over&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+    <span class="n">sameWindow</span><span class="p">.</span><a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d-1a481d977ad11a63da44ece08e7f76fdef"><span class="std std-ref">spinOnce</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">sameWindow</span><span class="p">.</span><a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d-1aded2483c7f71d0e598aa25258b1b6fe7"><span class="std std-ref">wasStopped</span></a><span></span><span class="p">())</span>
+    <span class="p">{</span>
+
+        <span class="n">sameWindow</span><span class="p">.</span><a class="reference internal" href="class_cv_viz_Viz3d.html#doxid-dd-d47-classcv-1-1viz-1-1-viz3d-1a481d977ad11a63da44ece08e7f76fdef"><span class="std std-ref">spinOnce</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Last event loop is over&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>Here is the general structure of the program:</p>
+<ul>
+<li><p class="first">Create a window.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">viz</span><span class="o">::</span><span class="n">Viz3d</span> <span class="n">myWindow</span><span class="p">(</span><span class="s">&quot;Viz Demo&quot;</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Start event loop. This event loop will run until user terminates it by pressing <strong>e</strong>, <strong>E</strong>, <strong>q</strong>, <strong>Q</strong>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">myWindow</span><span class="p">.</span><span class="n">spin</span><span class="p">();</span>
+</pre>
+</li>
+<li><p class="first">Access same window via its name. Since windows are implicitly shared, <strong>sameWindow</strong> is exactly the same with <strong>myWindow</strong>. If the name does not exist, a new window is created.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">viz</span><span class="o">::</span><span class="n">Viz3d</span> <span class="n">sameWindow</span> <span class="o">=</span> <span class="n">viz</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Viz Demo&quot;</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Start a controlled event loop. Once it starts, <strong>wasStopped</strong> is set to false. Inside the while loop, in each iteration, <strong>spinOnce</strong> is called to prevent event loop from completely stopping. Inside the while loop, user can execute other statements including those which interact with the window.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">sameWindow</span><span class="p">.</span><span class="n">spinOnce</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">sameWindow</span><span class="p">.</span><span class="n">wasStopped</span><span class="p">())</span>
+<span class="p">{</span>
+
+    <span class="n">sameWindow</span><span class="p">.</span><span class="n">spinOnce</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Results</p>
+<p>Here is the result of the program.</p>
+<img alt="_images/window_demo.png" src="_images/window_demo.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_widget_pose.html" title="Pose of a widget"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_creating_widgets.html" title="Creating Widgets"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_viz.html" >OpenCV Viz</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,468 @@
+.. index:: pair: class; cv::CommandLineParser
+.. _doxid-da/dd8/classcv_1_1_command_line_parser:
+
+class cv::CommandLineParser
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Designed for command line parsing. :ref:`More...<details-da/dd8/classcv_1_1_command_line_parser>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <utility.hpp>
+	
+	class CommandLineParser
+	{
+	public:
+		// construction
+	
+		:ref:`CommandLineParser<doxid-da/dd8/classcv_1_1_command_line_parser_1ad0bb71c0bc9800e90bfdc44ff406293e>`(
+			int argc,
+			const char*const argv [],
+			const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& keys
+			);
+	
+		:ref:`CommandLineParser<doxid-da/dd8/classcv_1_1_command_line_parser_1a614095229293b2ab780cadd41a83313a>`(const CommandLineParser& parser);
+
+		// methods
+	
+		void
+		:ref:`about<doxid-da/dd8/classcv_1_1_command_line_parser_1a2e11e779047efded23f75d9c5c5dd82e>`(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& message);
+	
+		bool
+		:ref:`check<doxid-da/dd8/classcv_1_1_command_line_parser_1ad6b244a52f3b90da6fc463341c8a486f>`() const;
+	
+		template <typename T>
+		T
+		:ref:`get<doxid-da/dd8/classcv_1_1_command_line_parser_1a190215863579a6d244dccfd261ee0224>`(
+			const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& name,
+			bool space_delete = true
+			) const;
+	
+		template <typename T>
+		T
+		:ref:`get<doxid-da/dd8/classcv_1_1_command_line_parser_1a60f2b13d84edfc54aed723fb170478b9>`(
+			int index,
+			bool space_delete = true
+			) const;
+	
+		:ref:`String<doxid-dc/d0e/classcv_1_1_string>`
+		:ref:`getPathToApplication<doxid-da/dd8/classcv_1_1_command_line_parser_1a19086a9bc59b7e3d943ea13b0a9fcb7e>`() const;
+	
+		bool
+		:ref:`has<doxid-da/dd8/classcv_1_1_command_line_parser_1a8c41cf242b2ad8c0472e3b57893ef200>`(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& name) const;
+	
+		CommandLineParser&
+		:ref:`operator=<doxid-da/dd8/classcv_1_1_command_line_parser_1a1b7982e6ea32e8653ae0543ff0a81354>`(const CommandLineParser& parser);
+	
+		void
+		:ref:`printErrors<doxid-da/dd8/classcv_1_1_command_line_parser_1a70c31969ec5259b8c093d11a80c34f9f>`() const;
+	
+		void
+		:ref:`printMessage<doxid-da/dd8/classcv_1_1_command_line_parser_1a84cda3794b765332bfe43bf8367222fb>`() const;
+
+	protected:
+		// fields
+	
+		Impl* :target:`impl<doxid-da/dd8/classcv_1_1_command_line_parser_1a4f1f41fd43c10f0fd10e631f5dc60b6c>`;
+
+		// methods
+	
+		void
+		:target:`getByIndex<doxid-da/dd8/classcv_1_1_command_line_parser_1aa70c46ee6dc334ade348db51f7633f73>`(
+			int index,
+			bool space_delete,
+			int type,
+			void* dst
+			) const;
+	
+		void
+		:target:`getByName<doxid-da/dd8/classcv_1_1_command_line_parser_1a9ec8d8ea370cc20f9723ed659ac29c31>`(
+			const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& name,
+			bool space_delete,
+			int type,
+			void* dst
+			) const;
+	};
+.. _details-da/dd8/classcv_1_1_command_line_parser:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Designed for command line parsing.
+
+The sample below demonstrates how to use :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` :
+
+.. ref-code-block:: cpp
+
+	CommandLineParser parser(argc, argv, keys);
+	parser.about("Application name v1.0.0");
+	
+	if (parser.has("help"))
+	{
+	    parser.printMessage();
+	    return 0;
+	}
+	
+	int N = parser.get<int>("N");
+	double fps = parser.get<double>("fps");
+	String path = parser.get<String>("path");
+	
+	use_time_stamp = parser.has("timestamp");
+	
+	String img1 = parser.get<String>(0);
+	String img2 = parser.get<String>(1);
+	
+	int repeat = parser.get<int>(2);
+	
+	if (!parser.check())
+	{
+	    parser.printErrors();
+	    return 0;
+	}
+
+.. rubric:: Keys syntax
+
+The keys parameter is a string containing several blocks, each one is enclosed in curly braces and describes one argument. Each argument contains three parts separated by the ``|`` symbol:
+
+#. argument names is a space-separated list of option synonyms (to mark argument as positional, prefix it with the ``@`` symbol)
+
+#. default value will be used if the argument was not provided (can be empty)
+
+#. help message (can be empty)
+
+For example:
+
+.. ref-code-block:: cpp
+
+	    const String keys =
+	        "{help h usage ? |      | print this message   }"
+	        "{@image1        |      | image1 for compare   }"
+	        "{@image2        |<none>| image2 for compare   }"
+	        "{@repeat        |1     | number               }"
+	        "{path           |.     | path to file         }"
+	        "{fps            | -1.0 | fps for output video }"
+	        "{N count        |100   | count of objects     }"
+	        "{ts timestamp   |      | use time stamp       }"
+	        ;
+	}
+
+Note that there are no default values for ``help`` and ``timestamp`` so we can check their presence using the ``:ref:`has() <doxid-da/dd8/classcv_1_1_command_line_parser_1a8c41cf242b2ad8c0472e3b57893ef200>``` method. Arguments with default values are considered to be always present. Use the ``:ref:`get() <doxid-da/dd8/classcv_1_1_command_line_parser_1a190215863579a6d244dccfd261ee0224>``` method in these cases to check their actual value instead.
+
+:ref:`String <doxid-dc/d0e/classcv_1_1_string>` keys like ``get<:ref:`String <doxid-dc/d0e/classcv_1_1_string>`>("@image1")`` return the empty string ``""`` by default - even with an empty default value. Use the special ``<none>`` default value to enforce that the returned string must not be empty. (like in ``get<:ref:`String <doxid-dc/d0e/classcv_1_1_string>`>("@image2")``)
+
+.. rubric:: Usage
+
+For the described keys:
+
+.. ref-code-block:: cpp
+
+	# Good call (3 positional parameters: image1, image2 and repeat; N is 200, ts is true)
+	$ ./app -N=200 1.png 2.jpg 19 -ts
+	
+	# Bad call
+	$ ./app -fps=aaa
+	ERRORS:
+	Parameter 'fps': can not convert: [aaa] to [double]
+
+Construction
+------------
+
+.. index:: pair: function; CommandLineParser
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1ad0bb71c0bc9800e90bfdc44ff406293e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CommandLineParser(
+		int argc,
+		const char*const argv [],
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& keys
+		)
+
+Constructor.
+
+Initializes command line parser object
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- argc
+
+		- number of command line arguments (from main())
+
+	*
+		- argv
+
+		- array of command line arguments (from main())
+
+	*
+		- keys
+
+		- string describing acceptable command line parameters (see class description for syntax)
+
+.. index:: pair: function; CommandLineParser
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a614095229293b2ab780cadd41a83313a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CommandLineParser(const CommandLineParser& parser)
+
+Copy constructor.
+
+Methods
+-------
+
+.. index:: pair: function; about
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a2e11e779047efded23f75d9c5c5dd82e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	about(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& message)
+
+Set the about message.
+
+The about message will be shown when :ref:`printMessage <doxid-da/dd8/classcv_1_1_command_line_parser_1a84cda3794b765332bfe43bf8367222fb>` is called, right before arguments table.
+
+.. index:: pair: function; check
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1ad6b244a52f3b90da6fc463341c8a486f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	check() const
+
+Check for parsing errors.
+
+Returns true if error occurred while accessing the parameters (bad conversion, missing arguments, etc.). Call :ref:`printErrors <doxid-da/dd8/classcv_1_1_command_line_parser_1a70c31969ec5259b8c093d11a80c34f9f>` to print error messages list.
+
+.. index:: pair: function; get
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a190215863579a6d244dccfd261ee0224:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename T>
+	T
+	get(
+		const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& name,
+		bool space_delete = true
+		) const
+
+Access arguments by name.
+
+Returns argument converted to selected type. If the argument is not known or can not be converted to selected type, the error flag is set (can be checked with :ref:`check <doxid-da/dd8/classcv_1_1_command_line_parser_1ad6b244a52f3b90da6fc463341c8a486f>`).
+
+For example, define:
+
+.. ref-code-block:: cpp
+
+	String keys = "{N count||}";
+
+Call:
+
+.. ref-code-block:: cpp
+
+	$ ./my-app -N=20
+	# or
+	$ ./my-app --count=20
+
+Access:
+
+.. ref-code-block:: cpp
+
+	int N = parser.get<int>("N");
+
+You can access positional arguments by their ``@`` -prefixed name:
+
+.. ref-code-block:: cpp
+
+	parser.get<String>("@image");
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- name
+
+		- name of the argument
+
+	*
+		- space_delete
+
+		- remove spaces from the left and right of the string
+
+	*
+		- T
+
+		- the argument will be converted to this type if possible
+
+.. index:: pair: function; get
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a60f2b13d84edfc54aed723fb170478b9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	template <typename T>
+	T
+	get(
+		int index,
+		bool space_delete = true
+		) const
+
+Access positional arguments by index.
+
+Returns argument converted to selected type. Indexes are counted from zero.
+
+For example, define:
+
+.. ref-code-block:: cpp
+
+	String keys = "{@arg1||}{@arg2||}"
+
+Call:
+
+.. ref-code-block:: cpp
+
+	./my-app abc qwe
+
+Access arguments:
+
+.. ref-code-block:: cpp
+
+	String val_1 = parser.get<String>(0); // returns "abc", arg1
+	String val_2 = parser.get<String>(1); // returns "qwe", arg2
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- index
+
+		- index of the argument
+
+	*
+		- space_delete
+
+		- remove spaces from the left and right of the string
+
+	*
+		- T
+
+		- the argument will be converted to this type if possible
+
+.. index:: pair: function; getPathToApplication
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a19086a9bc59b7e3d943ea13b0a9fcb7e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`String<doxid-dc/d0e/classcv_1_1_string>`
+	getPathToApplication() const
+
+Returns application path.
+
+This method returns the path to the executable from the command line (``argv[0]``).
+
+For example, if the application has been started with such command:
+
+.. ref-code-block:: cpp
+
+	$ ./bin/my-executable
+
+this method will return ``./bin``.
+
+.. index:: pair: function; has
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a8c41cf242b2ad8c0472e3b57893ef200:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	has(const :ref:`String<doxid-dc/d0e/classcv_1_1_string>`& name) const
+
+Check if field was provided in the command line.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- name
+
+		- argument name to check
+
+.. index:: pair: function; operator=
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a1b7982e6ea32e8653ae0543ff0a81354:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CommandLineParser&
+	operator=(const CommandLineParser& parser)
+
+Assignment operator.
+
+.. index:: pair: function; printErrors
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a70c31969ec5259b8c093d11a80c34f9f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	printErrors() const
+
+Print list of errors occured.
+
+
+
+.. rubric:: See also:
+
+:ref:`check <doxid-da/dd8/classcv_1_1_command_line_parser_1ad6b244a52f3b90da6fc463341c8a486f>`
+
+.. index:: pair: function; printMessage
+.. _doxid-da/dd8/classcv_1_1_command_line_parser_1a84cda3794b765332bfe43bf8367222fb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	printMessage() const
+
+Print help message.
+
+This method will print standard help message containing the about message and arguments description.
+
+
+
+.. rubric:: See also:
+
+:ref:`about <doxid-da/dd8/classcv_1_1_command_line_parser_1a2e11e779047efded23f75d9c5c5dd82e>`
+

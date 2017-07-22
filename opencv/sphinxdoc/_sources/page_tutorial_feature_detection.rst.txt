@@ -1,0 +1,89 @@
+.. index:: pair: page; Feature Detection
+.. _doxid-d7/d66/tutorial_feature_detection:
+
+Feature Detection
+=================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the :ref:`cv::FeatureDetector <doxid-da/d9b/group__features2d_1ga15e1361bda978d83a2bea629b32dfd3c>` interface in order to find interest points. Specifically:
+  
+  * Use the cv::xfeatures2d::SURF and its function cv::xfeatures2d::SURF::detect to perform the detection process
+  
+  * Use the function :ref:`cv::drawKeypoints <doxid-d4/d5d/group__features2d__draw_1gab958f8900dd10f14316521c149a60433>` to draw the detected keypoints
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below.
+
+.. ref-code-block:: cpp
+
+	#include <stdio.h>
+	#include <iostream>
+	#include "opencv2/core.hpp"
+	#include "opencv2/features2d.hpp"
+	#include "opencv2/xfeatures2d.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace cv::xfeatures2d;
+	
+	void readme();
+	
+	/* @function main */
+	int main( int argc, char** argv )
+	{
+	  if( argc != 3 )
+	  { readme(); return -1; }
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_1 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>` );
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_2 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[2], :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>` );
+	
+	  if( !img_1.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` || !img_2.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` )
+	  { std::cout<< " --(!) Error reading images " << std::endl; return -1; }
+	
+	  //-- Step 1: Detect the keypoints using SURF Detector
+	  int minHessian = 400;
+	
+	  :ref:`Ptr\<SURF> <doxid-d2/d56/structcv_1_1_ptr>` detector = SURF::create( minHessian );
+	
+	  std::vector<KeyPoint> keypoints_1, keypoints_2;
+	
+	  detector->detect( img_1, keypoints_1 );
+	  detector->detect( img_2, keypoints_2 );
+	
+	  //-- Draw keypoints
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_keypoints_1; :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_keypoints_2;
+	
+	  :ref:`drawKeypoints <doxid-d4/d5d/group__features2d__draw_1gab958f8900dd10f14316521c149a60433>`( img_1, keypoints_1, img_keypoints_1, :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(-1), :ref:`DrawMatchesFlags::DEFAULT <doxid-d6/d1c/structcv_1_1_draw_matches_flags_1aa2ceb55f7161cc82164e358609453647a48e1d6053ba88b4f14bf1342e6795da6>` );
+	  :ref:`drawKeypoints <doxid-d4/d5d/group__features2d__draw_1gab958f8900dd10f14316521c149a60433>`( img_2, keypoints_2, img_keypoints_2, :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(-1), :ref:`DrawMatchesFlags::DEFAULT <doxid-d6/d1c/structcv_1_1_draw_matches_flags_1aa2ceb55f7161cc82164e358609453647a48e1d6053ba88b4f14bf1342e6795da6>` );
+	
+	  //-- Show detected (drawn) keypoints
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Keypoints 1", img_keypoints_1 );
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Keypoints 2", img_keypoints_2 );
+	
+	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	  return 0;
+	  }
+	
+	  /* @function readme */
+	  void readme()
+	  { std::cout << " Usage: ./SURF_detector <img1> <img2>" << std::endl; }
+
+.. rubric:: Explanation
+
+.. rubric:: Result
+
+#. Here is the result of the feature detection applied to the first image:
+   
+   .. image:: Feature_Detection_Result_a.jpg
+
+#. And here is the result for the second image:
+   
+   .. image:: Feature_Detection_Result_b.jpg
+

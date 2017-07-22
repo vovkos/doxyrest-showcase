@@ -1,0 +1,123 @@
+.. index:: pair: class; Poco::InflatingInputStream
+.. _doxid-class_poco_1_1_inflating_input_stream:
+
+class Poco::InflatingInputStream
+================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This stream decompresses all data passing through it using zlib's inflate algorithm. :ref:`More...<details-class_poco_1_1_inflating_input_stream>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <InflatingStream.h>
+	
+	class InflatingInputStream:
+	    public istream,
+	    public :ref:`Poco::InflatingIOS<doxid-class_poco_1_1_inflating_i_o_s>`
+	{
+	public:
+		// construction
+	
+		:ref:`InflatingInputStream<doxid-class_poco_1_1_inflating_input_stream_1a5c079dec1779f0905483fafb2225396f>`(
+			std::istream& istr,
+			:ref:`InflatingStreamBuf::StreamType<doxid-class_poco_1_1_inflating_stream_buf_1a7678081659f4d69ff0fcd2a80388ea7b>` type = :ref:`InflatingStreamBuf::STREAM_ZLIB<doxid-class_poco_1_1_inflating_stream_buf_1a7678081659f4d69ff0fcd2a80388ea7baab2dfd094f00f0ff115f19d8a89e7dac>`
+			);
+	
+		:ref:`InflatingInputStream<doxid-class_poco_1_1_inflating_input_stream_1a6047b7116a78c3980c19d93a932dce8b>`(
+			std::istream& istr,
+			int windowBits
+			);
+
+		// methods
+	
+		void
+		:ref:`reset<doxid-class_poco_1_1_inflating_input_stream_1ab6805dc5473a81be1344dd3df9b6492b>`();
+	};
+
+Inherited Members
+-----------------
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-inherited-code-block
+
+	public:
+		// methods
+	
+		:ref:`InflatingStreamBuf<doxid-class_poco_1_1_inflating_stream_buf>`*
+		:ref:`rdbuf<doxid-class_poco_1_1_inflating_i_o_s_1a3b4e32e2bfc3c54f443d5340de5db670>`();
+
+	protected:
+		// fields
+	
+		:ref:`InflatingStreamBuf<doxid-class_poco_1_1_inflating_stream_buf>` :ref:`_buf<doxid-class_poco_1_1_inflating_i_o_s_1aa5460345cc0ee254044edad9f64c08cc>`;
+
+.. _details-class_poco_1_1_inflating_input_stream:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This stream decompresses all data passing through it using zlib's inflate algorithm.
+
+Example:
+
+.. ref-code-block:: cpp
+
+	std::ifstream istr("data.gz", std::ios::binary);
+	InflatingInputStream inflater(istr, InflatingStreamBuf::STREAM_GZIP);
+	std::string data;
+	inflater >> data;
+
+The underlying input stream can contain more than one gzip/deflate stream. After a gzip/deflate stream has been processed, :ref:`reset() <doxid-class_poco_1_1_inflating_input_stream_1ab6805dc5473a81be1344dd3df9b6492b>` can be called to inflate the next stream.
+
+Construction
+------------
+
+.. index:: pair: function; InflatingInputStream
+.. _doxid-class_poco_1_1_inflating_input_stream_1a5c079dec1779f0905483fafb2225396f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	InflatingInputStream(
+		std::istream& istr,
+		:ref:`InflatingStreamBuf::StreamType<doxid-class_poco_1_1_inflating_stream_buf_1a7678081659f4d69ff0fcd2a80388ea7b>` type = :ref:`InflatingStreamBuf::STREAM_ZLIB<doxid-class_poco_1_1_inflating_stream_buf_1a7678081659f4d69ff0fcd2a80388ea7baab2dfd094f00f0ff115f19d8a89e7dac>`
+		)
+
+Creates an :ref:`InflatingInputStream <doxid-class_poco_1_1_inflating_input_stream>` for expanding the compressed data read from the given input stream.
+
+.. index:: pair: function; InflatingInputStream
+.. _doxid-class_poco_1_1_inflating_input_stream_1a6047b7116a78c3980c19d93a932dce8b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	InflatingInputStream(
+		std::istream& istr,
+		int windowBits
+		)
+
+Creates an :ref:`InflatingInputStream <doxid-class_poco_1_1_inflating_input_stream>` for expanding the compressed data read from the given input stream.
+
+Please refer to the zlib documentation of :ref:`inflateInit2() <doxid-zlib_8h_1a611fc206e69f34e812ca8b590982fdd5>` for a description of the windowBits parameter.
+
+Methods
+-------
+
+.. index:: pair: function; reset
+.. _doxid-class_poco_1_1_inflating_input_stream_1ab6805dc5473a81be1344dd3df9b6492b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	reset()
+
+Resets the zlib machinery so that another zlib stream can be read from the same underlying input stream.
+

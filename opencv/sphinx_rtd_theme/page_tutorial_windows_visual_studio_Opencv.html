@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to build applications with OpenCV inside the “Microsoft Visual Studio” &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Image Watch: viewing in-memory images in the Visual Studio debugger" href="page_tutorial_windows_visual_studio_image_watch.html" />
+    <link rel="prev" title="Cross compilation for ARM based Linux systems" href="page_tutorial_arm_crosscompile_with_cmake.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_dev_with_OCV_on_Android.html">Android Development with OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_building_tegra_cuda.html">Building OpenCV for Tegra with CUDA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_arm_crosscompile_with_cmake.html">Cross compilation for ARM based Linux systems</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">How to build applications with OpenCV inside the “Microsoft Visual Studio”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_windows_visual_studio_image_watch.html">Image Watch: viewing in-memory images in the Visual Studio debugger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_linux_install.html">Installation in Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_windows_install.html">Installation in Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_ios_install.html">Installation in iOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_android_dev_intro.html">Introduction into Android Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_java_dev_intro.html">Introduction to Java Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_clojure_dev_intro.html">Introduction to OpenCV Development with Clojure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_display_image.html">Load and Display an Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_load_save_image.html">Load, Modify, and Save an Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_O4A_SDK.html">OpenCV4Android SDK</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_transition_guide.html">Transition guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_android_ocl_intro.html">Use OpenCL in Android camera preview based CV application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_java_eclipse.html">Using OpenCV Java with Eclipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_linux_eclipse.html">Using OpenCV with Eclipse (plugin CDT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_biicode.html">Using OpenCV with biicode dependency manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_linux_gcc_cmake.html">Using OpenCV with gcc and CMake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_documentation.html">Writing documentation for OpenCV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a> &raquo;</li>
+        
+      <li>How to build applications with OpenCV inside the “Microsoft Visual Studio”</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-build-applications-with-opencv-inside-the-microsoft-visual-studio">
+<span id="doxid-d6-d81-tutorial-windows-visual-studio-opencv"></span><span id="index-0"></span><h1>How to build applications with OpenCV inside the “Microsoft Visual Studio”</h1>
+<p>Everything I describe here will apply to the <code class="docutils literal notranslate"><span class="pre">C\C++</span></code> interface of OpenCV. I start out from the assumption that you have read and completed with success the <a class="reference internal" href="page_tutorial_windows_install.html#doxid-d3-d52-tutorial-windows-install"><span class="std std-ref">Installation in Windows</span></a> tutorial. Therefore, before you go any further make sure you have an OpenCV directory that contains the OpenCV header files plus binaries and you have set the environment variables as described here <a class="reference internal" href="page_tutorial_windows_install.html#doxid-d3-d52-tutorial-windows-install-1tutorial-windows-install-path"><span class="std std-ref">Set the OpenCV environment variable and add it to the systems path</span></a>.</p>
+<img alt="_images/OpenCV_Install_Directory.jpg" src="_images/OpenCV_Install_Directory.jpg" />
+<p>The OpenCV libraries, distributed by us, on the Microsoft Windows operating system are in a Dynamic Linked Libraries (<em>DLL</em>). These have the advantage that all the content of the library is loaded only at runtime, on demand, and that countless programs may use the same library file. This means that if you have ten applications using the OpenCV library, no need to have around a version for each one of them. Of course you need to have the <em>dll</em> of the OpenCV on all systems where you want to run your application.</p>
+<p>Another approach is to use static libraries that have <em>lib</em> extensions. You may build these by using our source files as described in the <a class="reference internal" href="page_tutorial_windows_install.html#doxid-d3-d52-tutorial-windows-install"><span class="std std-ref">Installation in Windows</span></a> tutorial. When you use this the library will be built-in inside your <em>exe</em> file. So there is no chance that the user deletes them, for some reason. As a drawback your application will be larger one and as, it will take more time to load it during its startup.</p>
+<p>To build an application with OpenCV you need to do two things:</p>
+<ul>
+<li><p class="first"><em>Tell</em> to the compiler how the OpenCV library <em>looks</em>. You do this by <em>showing</em> it the header files.</p>
+</li>
+<li><p class="first"><em>Tell</em> to the linker from where to get the functions or data structures of OpenCV, when they are needed.</p>
+<p>If you use the <em>lib</em> system you must set the path where the library files are and specify in which one of them to look. During the build the linker will look into these libraries and add the definitions and implementation of all <em>used</em> functions and data structures to the executable file.</p>
+<p>If you use the <em>DLL</em> system you must again specify all this, however now for a different reason. This is a Microsoft OS specific stuff. It seems that the linker needs to know that where in the DLL to search for the data structure or function at the runtime. This information is stored inside <em>lib</em> files. Nevertheless, they aren’t static libraries. They are so called import libraries. This is why when you make some <em>DLLs</em> in Windows you will also end up with some <em>lib</em> extension libraries. The good part is that at runtime only the <em>DLL</em> is required.</p>
+</li>
+</ul>
+<p>To pass on all this information to the Visual Studio IDE you can either do it globally (so all your future projects will get this information) or locally (so only for you current project). The advantage of the global one is that you only need to do it once; however, it may be undesirable to clump all your projects all the time with all this information. In case of the global one how you do it depends on the Microsoft Visual Studio you use. There is a <strong>2008 and previous versions</strong> and a <strong>2010 way</strong> of doing it. Inside the global section of this tutorial I’ll show what the main differences are.</p>
+<p>The base item of a project in Visual Studio is a solution. A solution may contain multiple projects. Projects are the building blocks of an application. Every project will realize something and you will have a main project in which you can put together this project puzzle. In case of the many simple applications (like many of the tutorials will be) you do not need to break down the application into modules. In these cases, your main project will be the only existing one. Now go create a new solution inside Visual studio by going through the File&gt; New&gt; Project menu selection. Choose <em>Win32 Console Application</em> as type. Enter its name and select the path where to create it. Then in the upcoming dialog make sure you create an empty project.</p>
+<img alt="_images/NewProjectVisualStudio.jpg" src="_images/NewProjectVisualStudio.jpg" />
+<p class="rubric">The  method</p>
+<p>Every project is built separately from the others. Due to this every project has its own rule package. Inside this rule packages are stored all the information the <em>IDE</em> needs to know to build your project. For any application there are at least two build modes: a <em>Release</em> and a <em>Debug</em> one. The <em>Debug</em> has many features that exist so you can find and resolve easier bugs inside your application. In contrast the <em>Release</em> is an optimized version, where the goal is to make the application run as fast as possible or to be as small as possible. You may figure that these modes also require different rules to use during build. Therefore, there exist different rule packages for each of your build modes. These rule packages are called inside the IDE as <em>project properties</em> and you can view and modify them by using the <em>Property Manager</em>. You can bring this up with View&gt; Property Pages (For Visual Studio 2013 onwards, go to View&gt; Other Windows&gt; Property Manager). Expand it and you can see the existing rule packages (called <em>Property Sheets</em>).</p>
+<img alt="_images/PropertyPageExample.jpg" src="_images/PropertyPageExample.jpg" />
+<p>The really useful stuff of these is that you may create a rule package <em>once</em> and you can later just add it to your new projects. Create it once and reuse it later. We want to create a new <em>Property Sheet</em> that will contain all the rules that the compiler and linker needs to know. Of course we will need a separate one for the Debug and the Release Builds. Start up with the Debug one as shown in the image below:</p>
+<img alt="_images/AddNewPropertySheet.jpg" src="_images/AddNewPropertySheet.jpg" />
+<p>Use for example the <em>OpenCV_Debug</em> name. Then by selecting the sheet Right Click&gt; Properties. In the following I will show to set the OpenCV rules locally, as I find unnecessary to pollute projects with custom rules that I do not use it. Go the C++ groups General entry and under the *”Additional Include Directories”* add the path to your OpenCV include. If you don’t have *”C/C++”* group, you should add any .c/.cpp file to the project.</p>
+<pre class="highlight literal-block">
+<span></span><span class="err">$</span><span class="p">(</span><span class="n">OPENCV_DIR</span><span class="p">)</span><span class="err">\</span><span class="p">..</span><span class="err">\</span><span class="p">..</span><span class="err">\</span><span class="n">include</span>
+</pre>
+<img alt="_images/PropertySheetOpenCVInclude.jpg" src="_images/PropertySheetOpenCVInclude.jpg" />
+<p>When adding third party libraries settings it is generally a good idea to use the power behind the environment variables. The full location of the OpenCV library may change on each system. Moreover, you may even end up yourself with moving the install directory for some reason. If you would give explicit paths inside your property sheet your project will end up not working when you pass it further to someone else who has a different OpenCV install path. Moreover, fixing this would require to manually modifying every explicit path. A more elegant solution is to use the environment variables. Anything that you put inside a parenthesis started with a dollar sign will be replaced at runtime with the current environment variables value. Here comes in play the environment variable setting we already made in our previous tutorial <a class="reference internal" href="page_tutorial_windows_install.html#doxid-d3-d52-tutorial-windows-install-1tutorial-windows-install-path"><span class="std std-ref">Set the OpenCV environment variable and add it to the systems path</span></a>.</p>
+<p>Next go to the Linker&gt; General and under the *”Additional Library Directories”* add the libs directory:</p>
+<pre class="highlight literal-block">
+<span></span><span class="err">$</span><span class="p">(</span><span class="n">OPENCV_DIR</span><span class="p">)</span><span class="err">\</span><span class="n">lib</span>
+</pre>
+<img alt="_images/PropertySheetOpenCVLib.jpg" src="_images/PropertySheetOpenCVLib.jpg" />
+<p>Then you need to specify the libraries in which the linker should look into. To do this go to the Linker&gt; Input and under the *”Additional Dependencies”* entry add the name of all modules which you want to use:</p>
+<img alt="_images/PropertySheetOpenCVLibrariesDebugSmple.jpg" src="_images/PropertySheetOpenCVLibrariesDebugSmple.jpg" />
+<img alt="_images/PropertySheetOpenCVLibrariesDebug.jpg" src="_images/PropertySheetOpenCVLibrariesDebug.jpg" />
+<p>The names of the libraries are as follow:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">opencv_</span><span class="p">(</span><span class="n">The</span> <span class="n">Name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">module</span><span class="p">)(</span><span class="n">The</span> <span class="n">version</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">the</span> <span class="n">library</span> <span class="n">you</span> <span class="n">use</span><span class="p">)</span><span class="n">d</span><span class="p">.</span><span class="n">lib</span>
+</pre>
+<p>A full list, for the latest version would contain:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">opencv_calib3d300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_core300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_features2d300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_flann300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_highgui300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_imgcodecs300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_imgproc300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_ml300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_objdetect300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_photo300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_shape300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_stitching300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_superres300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_ts300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_video300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_videoio300d</span><span class="p">.</span><span class="n">lib</span>
+<span class="n">opencv_videostab300d</span><span class="p">.</span><span class="n">lib</span>
+</pre>
+<p>The letter <em>d</em> at the end just indicates that these are the libraries required for the debug. Now click ok to save and do the same with a new property inside the Release rule section. Make sure to omit the <em>d</em> letters from the library names and to save the property sheets with the save icon above them.</p>
+<img alt="_images/PropertySheetOpenCVLibrariesRelease.jpg" src="_images/PropertySheetOpenCVLibrariesRelease.jpg" />
+<p>You can find your property sheets inside your projects directory. At this point, it is a wise decision to back them up into some special directory, to always have them at hand in the future, whenever you create an OpenCV project. Note that for Visual Studio 2010 the file extension is <em>props</em>, while for 2008 this is <em>vsprops</em>.</p>
+<img alt="_images/PropertySheetInsideFolder.jpg" src="_images/PropertySheetInsideFolder.jpg" />
+<p>Next time when you make a new OpenCV project just use the “Add Existing Property Sheet…” menu entry inside the Property Manager to easily add the OpenCV build rules.</p>
+<img alt="_images/PropertyPageAddExisting.jpg" src="_images/PropertyPageAddExisting.jpg" />
+<p class="rubric">The  method</p>
+<p>In case you find it too troublesome to add the property pages to each and every one of your projects you can also add this rules to a *”global property page”*. However, this applies only to the additional include and library directories. The name of the libraries to use you still need to specify manually by using for instance: a Property page.</p>
+<p>In Visual Studio 2008 you can find this under the: Tools&gt; Options&gt; Projects and Solutions&gt; VC++ Directories.</p>
+<img alt="_images/VCDirectories2008.jpg" src="_images/VCDirectories2008.jpg" />
+<p>In Visual Studio 2010 this has been moved to a global property sheet which is automatically added to every project you create:</p>
+<img alt="_images/VCDirectories2010.jpg" src="_images/VCDirectories2010.jpg" />
+<p>The process is the same as described in case of the local approach. Just add the include directories by using the environment variable <em>OPENCV_DIR</em>.</p>
+<p class="rubric">Test it!</p>
+<p>Now to try this out download our little test <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/introduction/windows_visual_studio_Opencv/introduction_windows_vs.cpp">source code</a> or get it from the sample code folder of the OpenCV sources. Add this to your project and build it. Here’s its content:</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgcodecs.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">{</span>
+     <span class="n">cout</span> <span class="o">&lt;&lt;</span><span class="s">&quot; Usage: display_image ImageToLoadAndDisplay&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span><span class="p">;</span>
+    <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span><span class="p">);</span> <span class="c1">// Read the file</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span> <span class="c1">// Check for invalid input</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not open or find the image&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span> <span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Display window&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span> <span class="c1">// Create a window for display.</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Display window&quot;</span><span class="p">,</span> <span class="n">image</span> <span class="p">);</span> <span class="c1">// Show our image inside it.</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// Wait for a keystroke in the window</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>You can start a Visual Studio build from two places. Either inside from the <em>IDE</em> (keyboard combination: Control-F5) or by navigating to your build directory and start the application with a double click. The catch is that these two <strong>aren’t</strong> the same. When you start it from the <em>IDE</em> its current working directory is the projects directory, while otherwise it is the folder where the application file currently is (so usually your build directory). Moreover, in case of starting from the <em>IDE</em> the console window will not close once finished. It will wait for a keystroke of yours.</p>
+<p>This is important to remember when you code inside the code open and save commands. Your resources will be saved ( and queried for at opening!!!) relatively to your working directory. This is unless you give a full, explicit path as a parameter for the I/O functions. In the code above we open <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/data/opencv-logo.png">this OpenCV logo</a>. Before starting up the application, make sure you place the image file in your current working directory. Modify the image file name inside the code to try it out on other images too. Run it and voil á:</p>
+<img alt="_images/SuccessVisualStudioWindows.jpg" src="_images/SuccessVisualStudioWindows.jpg" />
+<p class="rubric">Command line arguments with Visual Studio</p>
+<p>Throughout some of our future tutorials, you’ll see that the programs main input method will be by giving a runtime argument. To do this you can just start up a command windows (cmd + Enter in the start menu), navigate to your executable file and start it with an argument. So for example in case of my upper project this would look like:</p>
+<pre class="highlight literal-block">
+<span></span><span class="nl">D</span><span class="p">:</span>
+<span class="n">CD</span> <span class="n">OpenCV</span><span class="err">\</span><span class="n">MySolutionName</span><span class="err">\</span><span class="n">Release</span>
+<span class="n">MySolutionName</span><span class="p">.</span><span class="n">exe</span> <span class="n">exampleImage</span><span class="p">.</span><span class="n">jpg</span>
+</pre>
+<p>Here I first changed my drive (if your project isn’t on the OS local drive), navigated to my project and start it with an example image argument. While under Linux system it is common to fiddle around with the console window on the Microsoft Windows many people come to use it almost never. Besides, adding the same argument again and again while you are testing your application is, somewhat, a cumbersome task. Luckily, in the Visual Studio there is a menu to automate all this:</p>
+<img alt="_images/VisualStudioCommandLineArguments.jpg" src="_images/VisualStudioCommandLineArguments.jpg" />
+<p>Specify here the name of the inputs and while you start your application from the Visual Studio environment you have automatic argument passing. In the next introductory tutorial you’ll see an in-depth explanation of the upper source code: <a class="reference internal" href="page_tutorial_display_image.html#doxid-db-deb-tutorial-display-image"><span class="std std-ref">Load and Display an Image</span></a>.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_windows_visual_studio_image_watch.html" class="btn btn-neutral float-right" title="Image Watch: viewing in-memory images in the Visual Studio debugger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_arm_crosscompile_with_cmake.html" class="btn btn-neutral float-left" title="Cross compilation for ARM based Linux systems" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

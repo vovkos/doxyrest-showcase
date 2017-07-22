@@ -1,0 +1,218 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cascade Classifier &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cascade Classifier Training" href="page_tutorial_traincascade.html" />
+    <link rel="prev" title="Object Detection (objdetect module)" href="page_tutorial_table_of_content_objdetect.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_traincascade.html" title="Cascade Classifier Training"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_objdetect.html" title="Object Detection (objdetect module)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_objdetect.html" accesskey="U">Object Detection (objdetect module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_objdetect.html"
+                        title="previous chapter">Object Detection (objdetect module)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_traincascade.html"
+                        title="next chapter">Cascade Classifier Training</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cascade-classifier">
+<span id="doxid-db-d28-tutorial-cascade-classifier"></span><span id="index-0"></span><h1>Cascade Classifier</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the <a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier"><span class="std std-ref">cv::CascadeClassifier</span></a> class to detect objects in a video stream. Particularly, we will use the functions:<ul>
+<li><a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier-1a1a5884c8cc749422f9eb77c2471958bc"><span class="std std-ref">cv::CascadeClassifier::load</span></a> to load a .xml classifier file. It can be either a Haar or a LBP classifer</li>
+<li><a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier-1aaf8181cb63968136476ec4204ffca498"><span class="std std-ref">cv::CascadeClassifier::detectMultiScale</span></a> to perform the detection.</li>
+</ul>
+</li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/objectDetection/objectDetection.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/objdetect.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/videoio.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="n">detectAndDisplay</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span> <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span> <span class="n">face_cascade_name</span><span class="p">,</span> <span class="n">eyes_cascade_name</span><span class="p">;</span>
+<a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier"><span class="std std-ref">CascadeClassifier</span></a><span></span> <span class="n">face_cascade</span><span class="p">;</span>
+<a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier"><span class="std std-ref">CascadeClassifier</span></a><span></span> <span class="n">eyes_cascade</span><span class="p">;</span>
+<a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;Capture - Face detection&quot;</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span>
+        <span class="s">&quot;{help h||}&quot;</span>
+        <span class="s">&quot;{face_cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}&quot;</span>
+        <span class="s">&quot;{eyes_cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}&quot;</span><span class="p">);</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">This program demonstrates using the cv::CascadeClassifier class to detect objects (Face + eyes) in a video stream.</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;You can use Haar or LBP features.</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">;</span>
+    <span class="n">parser</span><span class="p">.</span><span class="n">printMessage</span><span class="p">();</span>
+
+    <span class="n">face_cascade_name</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;face_cascade&quot;</span><span class="p">);</span>
+    <span class="n">eyes_cascade_name</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;eyes_cascade&quot;</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">capture</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">;</span>
+
+    <span class="c1">//-- 1. Load the cascades</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">face_cascade</span><span class="p">.</span><a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier-1a1a5884c8cc749422f9eb77c2471958bc"><span class="std std-ref">load</span></a><span></span><span class="p">(</span> <span class="n">face_cascade_name</span> <span class="p">)</span> <span class="p">){</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;--(!)Error loading face cascade</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">};</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">eyes_cascade</span><span class="p">.</span><a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier-1a1a5884c8cc749422f9eb77c2471958bc"><span class="std std-ref">load</span></a><span></span><span class="p">(</span> <span class="n">eyes_cascade_name</span> <span class="p">)</span> <span class="p">){</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;--(!)Error loading eyes cascade</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">};</span>
+
+    <span class="c1">//-- 2. Read the video stream</span>
+    <span class="n">capture</span><span class="p">.</span><span class="n">open</span><span class="p">(</span> <span class="mi">0</span> <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="n">capture</span><span class="p">.</span><span class="n">isOpened</span><span class="p">()</span> <span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;--(!)Error opening video capture</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">while</span> <span class="p">(</span> <span class="n">capture</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&quot; --(!) No captured frame -- Break!&quot;</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">//-- 3. Apply the classifier to the frame</span>
+        <span class="n">detectAndDisplay</span><span class="p">(</span> <span class="n">frame</span> <span class="p">);</span>
+
+        <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span> <span class="c1">// escape</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">detectAndDisplay</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Rect</span><span class="o">&gt;</span> <span class="n">faces</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame_gray</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">frame</span><span class="p">,</span> <span class="n">frame_gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga7e54091f0c937d49bf84152a16f76d6e"><span class="std std-ref">equalizeHist</span></a><span></span><span class="p">(</span> <span class="n">frame_gray</span><span class="p">,</span> <span class="n">frame_gray</span> <span class="p">);</span>
+
+    <span class="c1">//-- Detect faces</span>
+    <span class="n">face_cascade</span><span class="p">.</span><a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier-1aaf8181cb63968136476ec4204ffca498"><span class="std std-ref">detectMultiScale</span></a><span></span><span class="p">(</span> <span class="n">frame_gray</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="o">|</span><a class="reference internal" href="namespace_cv.html#doxid-d5-d54-group-objdetect-1ggaf9da076edb99cf8cb211c313b3f0fbe7a1d35c5234686c05c075d224efc91d673"><span class="std std-ref">CASCADE_SCALE_IMAGE</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span> <span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">faces</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Point</span> <span class="n">center</span><span class="p">(</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">+</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">+</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">height</span><span class="o">/</span><span class="mi">2</span> <span class="p">);</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">ellipse</span></a><span></span><span class="p">(</span> <span class="n">frame</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">height</span><span class="o">/</span><span class="mi">2</span> <span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">faceROI</span> <span class="o">=</span> <span class="n">frame_gray</span><span class="p">(</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Rect</span><span class="o">&gt;</span> <span class="n">eyes</span><span class="p">;</span>
+
+        <span class="c1">//-- In each face, detect eyes</span>
+        <span class="n">eyes_cascade</span><span class="p">.</span><a class="reference internal" href="class_cv_CascadeClassifier.html#doxid-dd-d5f-classcv-1-1-cascade-classifier-1aaf8181cb63968136476ec4204ffca498"><span class="std std-ref">detectMultiScale</span></a><span></span><span class="p">(</span> <span class="n">faceROI</span><span class="p">,</span> <span class="n">eyes</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span> <span class="o">|</span><a class="reference internal" href="namespace_cv.html#doxid-d5-d54-group-objdetect-1ggaf9da076edb99cf8cb211c313b3f0fbe7a1d35c5234686c05c075d224efc91d673"><span class="std std-ref">CASCADE_SCALE_IMAGE</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span> <span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(</span> <span class="kt">size_t</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">eyes</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">Point</span> <span class="n">eye_center</span><span class="p">(</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">+</span> <span class="n">eyes</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">x</span> <span class="o">+</span> <span class="n">eyes</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">faces</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">+</span> <span class="n">eyes</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">y</span> <span class="o">+</span> <span class="n">eyes</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">height</span><span class="o">/</span><span class="mi">2</span> <span class="p">);</span>
+            <span class="kt">int</span> <span class="n">radius</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="n">eyes</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">width</span> <span class="o">+</span> <span class="n">eyes</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">height</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span> <span class="p">);</span>
+            <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">frame</span><span class="p">,</span> <span class="n">eye_center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//-- Show what you got</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">frame</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p class="rubric">Result</p>
+<ol class="arabic">
+<li><p class="first">Here is the result of running the code above and using as input the video stream of a build-in webcam:</p>
+<img alt="_images/Cascade_Classifier_Tutorial_Result_Haar.jpg" src="_images/Cascade_Classifier_Tutorial_Result_Haar.jpg" />
+<p>Be sure the program will find the path of files <em>haarcascade_frontalface_alt.xml</em> and <em>haarcascade_eye_tree_eyeglasses.xml</em>. They are located in <em>opencv/data/haarcascades</em></p>
+</li>
+<li><p class="first">This is the result of using the file <em>lbpcascade_frontalface.xml</em> (LBP trained) for the face detection. For the eyes we keep using the file used in the tutorial.</p>
+<img alt="_images/Cascade_Classifier_Tutorial_Result_LBP.jpg" src="_images/Cascade_Classifier_Tutorial_Result_LBP.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_traincascade.html" title="Cascade Classifier Training"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_objdetect.html" title="Object Detection (objdetect module)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_objdetect.html" >Object Detection (objdetect module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

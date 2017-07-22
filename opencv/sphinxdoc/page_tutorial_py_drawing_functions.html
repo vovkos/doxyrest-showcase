@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Drawing Functions in OpenCV &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started with Images" href="page_tutorial_py_image_display.html" />
+    <link rel="prev" title="Gui Features in OpenCV" href="page_tutorial_py_table_of_contents_gui.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_image_display.html" title="Getting Started with Images"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_gui.html" title="Gui Features in OpenCV"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_gui.html" accesskey="U">Gui Features in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_gui.html"
+                        title="previous chapter">Gui Features in OpenCV</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_image_display.html"
+                        title="next chapter">Getting Started with Images</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="drawing-functions-in-opencv">
+<span id="doxid-dc-da5-tutorial-py-drawing-functions"></span><span id="index-0"></span><h1>Drawing Functions in OpenCV</h1>
+<p class="rubric">Goal</p>
+<ul class="simple">
+<li>Learn to draw different geometric shapes with OpenCV</li>
+<li>You will learn these functions : <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">cv2.line()</span></a>, <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">cv2.circle()</span></a>, <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">cv2.rectangle()</span></a>, <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">cv2.ellipse()</span></a>, <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">cv2.putText()</span></a> etc.</li>
+</ul>
+<p class="rubric">Code</p>
+<p>In all the above functions, you will see some common arguments as given below:</p>
+<ul class="simple">
+<li>img : The image where you want to draw the shapes</li>
+<li>color : Color of the shape. for BGR, pass it as a tuple, eg: (255,0,0) for blue. For grayscale, just pass the scalar value.</li>
+<li>thickness : Thickness of the line or circle etc. If <strong>-1</strong> is passed for closed figures like circles, it will fill the shape. <em>default thickness = 1</em></li>
+<li>lineType : Type of line, whether 8-connected, anti-aliased line etc. <em>By default, it is 8-connected.</em> cv2.LINE_AA gives anti-aliased line which looks great for curves.</li>
+</ul>
+<p class="rubric">Drawing Line</p>
+<p>To draw a line, you need to pass starting and ending coordinates of line. We will create a black image and draw a blue line on it from top-left to bottom-right corners.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">import</span> <span class="n">cv2</span>
+
+<span class="cp"># Create a black image</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">512</span><span class="p">,</span><span class="mi">512</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">)</span>
+
+<span class="cp"># Draw a diagonal blue line with thickness of 5 px</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">511</span><span class="p">,</span><span class="mi">511</span><span class="p">),(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span>
+</pre>
+<p class="rubric">Drawing Rectangle</p>
+<p>To draw a rectangle, you need top-left corner and bottom-right corner of rectangle. This time we will draw a green rectangle at the top-right corner of image.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">384</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">510</span><span class="p">,</span><span class="mi">128</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">3</span><span class="p">)</span>
+</pre>
+<p class="rubric">Drawing Circle</p>
+<p>To draw a circle, you need its center coordinates and radius. We will draw a circle inside the rectangle drawn above.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cv2</span><span class="p">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">447</span><span class="p">,</span><span class="mi">63</span><span class="p">),</span> <span class="mi">63</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+<p class="rubric">Drawing Ellipse</p>
+<p>To draw the ellipse, we need to pass several arguments. One argument is the center location (x,y). Next argument is axes lengths (major axis length, minor axis length). angle is the angle of rotation of ellipse in anti-clockwise direction. startAngle and endAngle denotes the starting and ending of ellipse arc measured in clockwise direction from major axis. i.e. giving values 0 and 360 gives the full ellipse. For more details, check the documentation of <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">cv2.ellipse()</span></a>. Below example draws a half ellipse at the center of the image.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">cv2</span><span class="p">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">img</span><span class="p">,(</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">),(</span><span class="mi">100</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+<p class="rubric">Drawing Polygon</p>
+<p>To draw a polygon, first you need coordinates of vertices. Make those points into an array of shape ROWSx1x2 where ROWS are number of vertices and it should be of type int32. Here we draw a small polygon of with four vertices in yellow color.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">70</span><span class="p">,</span><span class="mi">20</span><span class="p">],[</span><span class="mi">50</span><span class="p">,</span><span class="mi">10</span><span class="p">]],</span> <span class="n">np</span><span class="p">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">img</span><span class="p">,[</span><span class="n">pts</span><span class="p">],</span><span class="n">True</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span>
+</pre>
+<p>If third argument is False, you will get a polylines joining all the points, not a closed shape.</p>
+<p><a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga444cb8a2666320f47f09d5af08d91ffb"><span class="std std-ref">cv2.polylines()</span></a> can be used to draw multiple lines. Just create a list of all the lines you want to draw and pass it to the function. All lines will be drawn individually. It is a much better and faster way to draw a group of lines than calling <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">cv2.line()</span></a> for each line.</p>
+<p class="rubric">Adding Text to Images:</p>
+<p>To put texts in images, you need specify following things.</p>
+<ul class="simple">
+<li>Text data that you want to write</li>
+<li>Position coordinates of where you want put it (i.e. bottom-left corner where data starts).</li>
+<li>Font type (Check <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">cv2.putText()</span></a> docs for supported fonts)</li>
+<li>Font Scale (specifies the size of font)</li>
+<li>regular things like color, thickness, lineType etc. For better look, lineType = cv2.LINE_AA is recommended.</li>
+</ul>
+<p>We will write <strong>OpenCV</strong> on our image in white color.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">font</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span>
+<span class="n">cv2</span><span class="p">.</span><span class="n">putText</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="sc">&#39;OpenCV&#39;</span><span class="p">,(</span><span class="mi">10</span><span class="p">,</span><span class="mi">500</span><span class="p">),</span> <span class="n">font</span><span class="p">,</span> <span class="mi">4</span><span class="p">,(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span><span class="mi">2</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+</pre>
+<p class="rubric">Result</p>
+<p>So it is time to see the final result of our drawing. As you studied in previous articles, display the image to see it.</p>
+<img alt="image" src="_images/drawing_result.jpg" />
+<p class="rubric">Additional Resources</p>
+<ol class="arabic simple">
+<li>The angles used in ellipse function is not our circular angles. For more details, visit <a class="reference external" href="http://answers.opencv.org/question/14541/angles-in-ellipse-function/">this discussion</a>.</li>
+</ol>
+<p class="rubric">Exercises</p>
+<ol class="arabic simple">
+<li>Try to create the logo of OpenCV using drawing functions available in OpenCV.</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_image_display.html" title="Getting Started with Images"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_gui.html" title="Gui Features in OpenCV"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_gui.html" >Gui Features in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

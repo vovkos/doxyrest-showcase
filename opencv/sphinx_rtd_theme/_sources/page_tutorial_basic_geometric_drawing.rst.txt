@@ -1,0 +1,415 @@
+.. index:: pair: page; Basic Drawing
+.. _doxid-d3/d96/tutorial_basic_geometric_drawing:
+
+Basic Drawing
+=============
+
+.. rubric:: Goals
+
+In this tutorial you will learn how to:
+
+* Use :ref:`cv::Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` to define 2D points in an image.
+
+* Use :ref:`cv::Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` and why it is useful
+
+* Draw a **line** by using the OpenCV function :ref:`cv::line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`
+
+* Draw an **ellipse** by using the OpenCV function :ref:`cv::ellipse <doxid-d6/d6e/group__imgproc__draw_1ga28b2267d35786f5f890ca167236cbc69>`
+
+* Draw a **rectangle** by using the OpenCV function :ref:`cv::rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`
+
+* Draw a **circle** by using the OpenCV function :ref:`cv::circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`
+
+* Draw a **filled polygon** by using the OpenCV function :ref:`cv::fillPoly <doxid-d6/d6e/group__imgproc__draw_1gaf30888828337aa4c6b56782b5dfbd4b7>`
+
+.. rubric:: OpenCV Theory
+
+For this tutorial, we will heavily use two structures: :ref:`cv::Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` and :ref:`cv::Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>` :
+
+.. rubric:: Point
+
+It represents a 2D point, specified by its image coordinates :math:`x` and :math:`y`. We can define it as:
+
+.. ref-code-block:: cpp
+
+	Point pt;
+	pt.x = 10;
+	pt.y = 8;
+
+or
+
+.. ref-code-block:: cpp
+
+	Point pt =  :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(10, 8);
+
+
+
+.. rubric:: Scalar
+
+* Represents a 4-element vector. The type Scalar is widely used in OpenCV for passing pixel values.
+
+* In this tutorial, we will use it extensively to represent BGR color values (3 parameters). It is not necessary to define the last argument if it is not going to be used.
+
+* Let's see an example, if we are asked for a color argument and we give:
+  
+  .. ref-code-block:: cpp
+  
+  	:ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( a, b, c )
+  
+  We would be defining a BGR color such as: *Blue = a*, *Green = b* and *Red = c*
+
+.. rubric:: Code
+
+* This code is in your OpenCV sample folder. Otherwise you can grab it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/Matrix/Drawing_1.cpp>`__
+  
+  .. ref-code-block:: cpp
+  
+  	
+  	#include <opencv2/core.hpp>
+  	#include <opencv2/imgproc.hpp>
+  	#include <opencv2/highgui.hpp>
+  	
+  	#define w 400
+  	
+  	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+  	
+  	void MyEllipse( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img, double angle );
+  	void MyFilledCircle( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img, Point center );
+  	void MyPolygon( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img );
+  	void MyLine( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img, Point start, Point end );
+  	
+  	int main( void ){
+  	
+  	  char atom_window[] = "Drawing 1: Atom";
+  	  char rook_window[] = "Drawing 2: Rook";
+  	
+  	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` atom_image = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`( w, w, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+  	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` rook_image = :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`( w, w, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+  	
+  	
+  	  MyEllipse( atom_image, 90 );
+  	  MyEllipse( atom_image, 0 );
+  	  MyEllipse( atom_image, 45 );
+  	  MyEllipse( atom_image, -45 );
+  	
+  	  MyFilledCircle( atom_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, w/2) );
+  	
+  	
+  	  MyPolygon( rook_image );
+  	
+  	  :ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( rook_image,
+  	         :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 0, 7*w/8 ),
+  	         :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w, w),
+  	         :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 255, 255 ),
+  	         :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`,
+  	         :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>` );
+  	
+  	  MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 0, 15*w/16 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w, 15*w/16 ) );
+  	  MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/4, 7*w/8 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/4, w ) );
+  	  MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, 7*w/8 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, w ) );
+  	  MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 3*w/4, 7*w/8 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 3*w/4, w ) );
+  	
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( atom_window, atom_image );
+  	  :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`( atom_window, 0, 200 );
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( rook_window, rook_image );
+  	  :ref:`moveWindow <doxid-d7/dfc/group__highgui_1ga8d86b207f7211250dbe6e28f76307ffb>`( rook_window, w, 200 );
+  	
+  	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`( 0 );
+  	  return(0);
+  	}
+  	
+  	
+  	
+  	void MyEllipse( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img, double angle )
+  	{
+  	  int thickness = 2;
+  	  int lineType = 8;
+  	
+  	  :ref:`ellipse <doxid-d6/d6e/group__imgproc__draw_1ga28b2267d35786f5f890ca167236cbc69>`( img,
+  	       :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, w/2 ),
+  	       :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( w/4, w/16 ),
+  	       angle,
+  	       0,
+  	       360,
+  	       :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 255, 0, 0 ),
+  	       thickness,
+  	       lineType );
+  	}
+  	
+  	
+  	void MyFilledCircle( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img, Point center )
+  	{
+  	  :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( img,
+  	      center,
+  	      w/32,
+  	      :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 0, 255 ),
+  	      :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`,
+  	      :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>` );
+  	}
+  	
+  	
+  	void MyPolygon( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img )
+  	{
+  	  int lineType = :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>`;
+  	
+  	  Point rook_points[1][20];
+  	  rook_points[0][0]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,   7*w/8 );
+  	  rook_points[0][1]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,   7*w/8 );
+  	  rook_points[0][2]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,  13*w/16 );
+  	  rook_points[0][3]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 11*w/16, 13*w/16 );
+  	  rook_points[0][4]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 19*w/32,  3*w/8 );
+  	  rook_points[0][5]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,   3*w/8 );
+  	  rook_points[0][6]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,     w/8 );
+  	  rook_points[0][7]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 26*w/40,    w/8 );
+  	  rook_points[0][8]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 26*w/40,    w/4 );
+  	  rook_points[0][9]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 22*w/40,    w/4 );
+  	  rook_points[0][10] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 22*w/40,    w/8 );
+  	  rook_points[0][11] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 18*w/40,    w/8 );
+  	  rook_points[0][12] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 18*w/40,    w/4 );
+  	  rook_points[0][13] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 14*w/40,    w/4 );
+  	  rook_points[0][14] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 14*w/40,    w/8 );
+  	  rook_points[0][15] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,     w/8 );
+  	  rook_points[0][16] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,   3*w/8 );
+  	  rook_points[0][17] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 13*w/32,  3*w/8 );
+  	  rook_points[0][18] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  5*w/16, 13*w/16 );
+  	  rook_points[0][19] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,  13*w/16 );
+  	
+  	  const Point* ppt[1] = { rook_points[0] };
+  	  int npt[] = { 20 };
+  	
+  	  :ref:`fillPoly <doxid-d6/d6e/group__imgproc__draw_1gaf30888828337aa4c6b56782b5dfbd4b7>`( img,
+  	        ppt,
+  	        npt,
+  	        1,
+  	        :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 255, 255, 255 ),
+  	        lineType );
+  	}
+  	
+  	
+  	void MyLine( :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img, Point start, Point end )
+  	{
+  	  int thickness = 2;
+  	  int lineType = :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>`;
+  	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( img,
+  	    start,
+  	    end,
+  	    :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 0, 0 ),
+  	    thickness,
+  	    lineType );
+  	}
+
+.. rubric:: Explanation
+
+#. Since we plan to draw two examples (an atom and a rook), we have to create two images and two windows to display them.
+   
+   .. ref-code-block:: cpp
+   
+   	char atom_window[] = "Drawing 1: Atom";
+   	char rook_window[] = "Drawing 2: Rook";
+   
+   	Mat atom_image = Mat::zeros( w, w, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+   	Mat rook_image = Mat::zeros( w, w, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>` );
+
+#. We created functions to draw different geometric shapes. For instance, to draw the atom we used *MyEllipse* and *MyFilledCircle* :
+   
+   .. ref-code-block:: cpp
+   
+   	MyEllipse( atom_image, 90 );
+   	MyEllipse( atom_image, 0 );
+   	MyEllipse( atom_image, 45 );
+   	MyEllipse( atom_image, -45 );
+   
+   	MyFilledCircle( atom_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, w/2) );
+
+#. And to draw the rook we employed *MyLine*, *rectangle* and a *MyPolygon* :
+   
+   .. ref-code-block:: cpp
+   
+   	MyPolygon( rook_image );
+   
+   	:ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( rook_image,
+   	       :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 0, 7*w/8 ),
+   	       :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w, w),
+   	       :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 255, 255 ),
+   	       :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`,
+   	       :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>` );
+   
+   	MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 0, 15*w/16 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w, 15*w/16 ) );
+   	MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/4, 7*w/8 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/4, w ) );
+   	MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, 7*w/8 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, w ) );
+   	MyLine( rook_image, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 3*w/4, 7*w/8 ), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 3*w/4, w ) );
+
+#. Let's check what is inside each of these functions:
+   
+   * *MyLine*
+     
+     .. ref-code-block:: cpp
+     
+     	
+     	void MyLine( Mat img, Point start, Point end )
+     	{
+     	  int thickness = 2;
+     	  int lineType = :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>`;
+     	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( img,
+     	    start,
+     	    end,
+     	    :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 0, 0 ),
+     	    thickness,
+     	    lineType );
+     	}
+     
+     As we can see, *MyLine* just call the function :ref:`cv::line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`, which does the following:
+     
+     * Draw a line from Point **start** to Point **end**
+     
+     * The line is displayed in the image **img**
+     
+     * The line color is defined by **Scalar( 0, 0, 0)** which is the RGB value correspondent to **Black**
+     
+     * The line thickness is set to **thickness** (in this case 2)
+     
+     * The line is a 8-connected one (**lineType** = 8)
+   
+   * *MyEllipse*
+     
+     .. ref-code-block:: cpp
+     
+     	
+     	void MyEllipse( Mat img, double angle )
+     	{
+     	  int thickness = 2;
+     	  int lineType = 8;
+     	
+     	  :ref:`ellipse <doxid-d6/d6e/group__imgproc__draw_1ga28b2267d35786f5f890ca167236cbc69>`( img,
+     	       :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w/2, w/2 ),
+     	       :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( w/4, w/16 ),
+     	       angle,
+     	       0,
+     	       360,
+     	       :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 255, 0, 0 ),
+     	       thickness,
+     	       lineType );
+     	}
+     
+     From the code above, we can observe that the function :ref:`cv::ellipse <doxid-d6/d6e/group__imgproc__draw_1ga28b2267d35786f5f890ca167236cbc69>` draws an ellipse such that:
+     
+     * The ellipse is displayed in the image **img**
+     
+     * The ellipse center is located in the point \*\*(w/2, w/2)\*\* and is enclosed in a box of size \*\*(w/4, w/16)\*\*
+     
+     * The ellipse is rotated **angle** degrees
+     
+     * The ellipse extends an arc between **0** and **360** degrees
+     
+     * The color of the figure will be **Scalar( 255, 0, 0)** which means blue in BGR value.
+     
+     * The ellipse's **thickness** is 2.
+   
+   * *MyFilledCircle*
+     
+     .. ref-code-block:: cpp
+     
+     	
+     	void MyFilledCircle( Mat img, Point center )
+     	{
+     	  :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`( img,
+     	      center,
+     	      w/32,
+     	      :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 0, 255 ),
+     	      :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`,
+     	      :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>` );
+     	}
+     
+     Similar to the ellipse function, we can observe that *circle* receives as arguments:
+     
+     * The image where the circle will be displayed (**img**)
+     
+     * The center of the circle denoted as the Point **center**
+     
+     * The radius of the circle: **w/32**
+     
+     * The color of the circle: **Scalar(0, 0, 255)** which means *Red* in BGR
+     
+     * Since **thickness** = -1, the circle will be drawn filled.
+   
+   * *MyPolygon*
+     
+     .. ref-code-block:: cpp
+     
+     	
+     	void MyPolygon( Mat img )
+     	{
+     	  int lineType = :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>`;
+     	
+     	  Point rook_points[1][20];
+     	  rook_points[0][0]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,   7*w/8 );
+     	  rook_points[0][1]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,   7*w/8 );
+     	  rook_points[0][2]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,  13*w/16 );
+     	  rook_points[0][3]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 11*w/16, 13*w/16 );
+     	  rook_points[0][4]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 19*w/32,  3*w/8 );
+     	  rook_points[0][5]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,   3*w/8 );
+     	  rook_points[0][6]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  3*w/4,     w/8 );
+     	  rook_points[0][7]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 26*w/40,    w/8 );
+     	  rook_points[0][8]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 26*w/40,    w/4 );
+     	  rook_points[0][9]  = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 22*w/40,    w/4 );
+     	  rook_points[0][10] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 22*w/40,    w/8 );
+     	  rook_points[0][11] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 18*w/40,    w/8 );
+     	  rook_points[0][12] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 18*w/40,    w/4 );
+     	  rook_points[0][13] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 14*w/40,    w/4 );
+     	  rook_points[0][14] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 14*w/40,    w/8 );
+     	  rook_points[0][15] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,     w/8 );
+     	  rook_points[0][16] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,   3*w/8 );
+     	  rook_points[0][17] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 13*w/32,  3*w/8 );
+     	  rook_points[0][18] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(  5*w/16, 13*w/16 );
+     	  rook_points[0][19] = :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(    w/4,  13*w/16 );
+     	
+     	  const Point* ppt[1] = { rook_points[0] };
+     	  int npt[] = { 20 };
+     	
+     	  :ref:`fillPoly <doxid-d6/d6e/group__imgproc__draw_1gaf30888828337aa4c6b56782b5dfbd4b7>`( img,
+     	        ppt,
+     	        npt,
+     	        1,
+     	        :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 255, 255, 255 ),
+     	        lineType );
+     	}
+     
+     To draw a filled polygon we use the function :ref:`cv::fillPoly <doxid-d6/d6e/group__imgproc__draw_1gaf30888828337aa4c6b56782b5dfbd4b7>`. We note that:
+     
+     * The polygon will be drawn on **img**
+     
+     * The vertices of the polygon are the set of points in **ppt**
+     
+     * The total number of vertices to be drawn are **npt**
+     
+     * The number of polygons to be drawn is only **1**
+     
+     * The color of the polygon is defined by **Scalar( 255, 255, 255)**, which is the BGR value for *white*
+   
+   * *rectangle*
+     
+     .. ref-code-block:: cpp
+     
+     	:ref:`rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`( rook_image,
+     	       :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( 0, 7*w/8 ),
+     	       :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`( w, w),
+     	       :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`( 0, 255, 255 ),
+     	       :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`,
+     	       :ref:`LINE_8 <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a>` );
+     
+     Finally we have the :ref:`cv::rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>` function (we did not create a special function for this guy). We note that:
+     
+     * The rectangle will be drawn on **rook_image**
+     
+     * Two opposite vertices of the rectangle are defined by \*\* Point( 0, 7\*w/8 )\*\* andPoint( w, w)\*\*
+     
+     * The color of the rectangle is given by **Scalar(0, 255, 255)** which is the BGR value for *yellow*
+     
+     * Since the thickness value is given by **FILLED (-1)**, the rectangle will be filled.
+
+.. rubric:: Result
+
+Compiling and running your program should give you a result like this:
+
+.. image:: Drawing_1_Tutorial_Result_0.png
+

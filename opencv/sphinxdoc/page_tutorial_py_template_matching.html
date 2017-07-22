@@ -1,0 +1,205 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Template Matching &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction to OpenCV" href="page_tutorial_py_table_of_contents_setup.html" />
+    <link rel="prev" title="Smoothing Images" href="page_tutorial_py_filtering.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_setup.html" title="Introduction to OpenCV"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_filtering.html" title="Smoothing Images"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" accesskey="U">Image Processing in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_py_filtering.html"
+                        title="previous chapter">Smoothing Images</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_py_table_of_contents_setup.html"
+                        title="next chapter">Introduction to OpenCV</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="template-matching">
+<span id="doxid-d4-dc6-tutorial-py-template-matching"></span><span id="index-0"></span><h1>Template Matching</h1>
+<p class="rubric">Goals</p>
+<p>In this chapter, you will learn</p>
+<ul class="simple">
+<li>To find objects in an image using Template Matching</li>
+<li>You will see these functions : <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">cv2.matchTemplate()</span></a>, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">cv2.minMaxLoc()</span></a></li>
+</ul>
+<p class="rubric">Theory</p>
+<p>Template Matching is a method for searching and finding the location of a template image in a larger image. OpenCV comes with a function <a class="reference internal" href="group_imgproc_object.html#doxid-df-dfb-group-imgproc-object-1ga586ebfb0a7fb604b35a23d85391329be"><span class="std std-ref">cv2.matchTemplate()</span></a> for this purpose. It simply slides the template image over the input image (as in 2D convolution) and compares the template and patch of input image under the template image. Several comparison methods are implemented in OpenCV. (You can check docs for more details). It returns a grayscale image, where each pixel denotes how much does the neighbourhood of that pixel match with template.</p>
+<p>If input image is of size (WxH) and template image is of size (wxh), output image will have a size of (W-w+1, H-h+1). Once you got the result, you can use <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">cv2.minMaxLoc()</span></a> function to find where is the maximum/minimum value. Take it as the top-left corner of rectangle and take (w,h) as width and height of the rectangle. That rectangle is your region of template.</p>
+<p>If you are using cv2.TM_SQDIFF as comparison method, minimum value gives the best match.</p>
+<p class="rubric">Template Matching in OpenCV</p>
+<p>Here, as an example, we will search for Messi’s face in his photo. So I created a template as below:</p>
+<img alt="image" src="_images/messi_face.jpg" />
+<p>We will try all the comparison methods so that we can see how their results look like:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;messi5.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="k">template</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;template.jpg&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="k">template</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">::-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="cp"># All the 6 methods for comparison in a list</span>
+<span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;cv2.TM_CCOEFF&#39;</span><span class="p">,</span> <span class="sc">&#39;cv2.TM_CCOEFF_NORMED&#39;</span><span class="p">,</span> <span class="sc">&#39;cv2.TM_CCORR&#39;</span><span class="p">,</span>
+            <span class="sc">&#39;cv2.TM_CCORR_NORMED&#39;</span><span class="p">,</span> <span class="sc">&#39;cv2.TM_SQDIFF&#39;</span><span class="p">,</span> <span class="sc">&#39;cv2.TM_SQDIFF_NORMED&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">meth</span> <span class="n">in</span> <span class="nl">methods</span><span class="p">:</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img2</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">meth</span><span class="p">)</span>
+
+    <span class="cp"># Apply template Matching</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="k">template</span><span class="p">,</span><span class="n">method</span><span class="p">)</span>
+    <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">min_loc</span><span class="p">,</span> <span class="n">max_loc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">minMaxLoc</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="cp"># If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="n">in</span> <span class="p">[</span><span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">TM_SQDIFF_NORMED</span><span class="p">]</span><span class="o">:</span>
+        <span class="n">top_left</span> <span class="o">=</span> <span class="n">min_loc</span>
+    <span class="k">else</span><span class="o">:</span>
+        <span class="n">top_left</span> <span class="o">=</span> <span class="n">max_loc</span>
+    <span class="n">bottom_right</span> <span class="o">=</span> <span class="p">(</span><span class="n">top_left</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">top_left</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">cmap</span> <span class="o">=</span> <span class="sc">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;Matching Result&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">),</span><span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">cmap</span> <span class="o">=</span> <span class="sc">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="sc">&#39;Detected Point&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="p">.</span><span class="n">xticks</span><span class="p">([]),</span> <span class="n">plt</span><span class="p">.</span><span class="n">yticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">meth</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<p>See the results below:</p>
+<ul class="simple">
+<li>cv2.TM_CCOEFF</li>
+</ul>
+<img alt="image" src="_images/template_ccoeff_1.jpg" />
+<ul class="simple">
+<li>cv2.TM_CCOEFF_NORMED</li>
+</ul>
+<img alt="image" src="_images/template_ccoeffn_2.jpg" />
+<ul class="simple">
+<li>cv2.TM_CCORR</li>
+</ul>
+<img alt="image" src="_images/template_ccorr_3.jpg" />
+<ul class="simple">
+<li>cv2.TM_CCORR_NORMED</li>
+</ul>
+<img alt="image" src="_images/template_ccorrn_4.jpg" />
+<ul class="simple">
+<li>cv2.TM_SQDIFF</li>
+</ul>
+<img alt="image" src="_images/template_sqdiff_5.jpg" />
+<ul class="simple">
+<li>cv2.TM_SQDIFF_NORMED</li>
+</ul>
+<img alt="image" src="_images/template_sqdiffn_6.jpg" />
+<p>You can see that the result using <strong>cv2.TM_CCORR</strong> is not good as we expected.</p>
+<p class="rubric">Template Matching with Multiple Objects</p>
+<p>In the previous section, we searched image for Messi’s face, which occurs only once in the image. Suppose you are searching for an object which has multiple occurances, <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">cv2.minMaxLoc()</span></a> won’t give you all the locations. In that case, we will use thresholding. So in this example, we will use a screenshot of the famous game <strong>Mario</strong> and we will find the coins in it.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">import</span> <span class="n">cv2</span>
+<span class="n">import</span> <span class="n">numpy</span> <span class="n">as</span> <span class="n">np</span>
+<span class="n">from</span> <span class="n">matplotlib</span> <span class="n">import</span> <span class="n">pyplot</span> <span class="n">as</span> <span class="n">plt</span>
+
+<span class="n">img_rgb</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;mario.png&#39;</span><span class="p">)</span>
+<span class="n">img_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+<span class="k">template</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imread</span><span class="p">(</span><span class="sc">&#39;mario_coin.png&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="k">template</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">::-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">img_gray</span><span class="p">,</span><span class="k">template</span><span class="p">,</span><span class="n">cv2</span><span class="p">.</span><span class="n">TM_CCOEFF_NORMED</span><span class="p">)</span>
+<span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span> <span class="n">res</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">pt</span> <span class="n">in</span> <span class="n">zip</span><span class="p">(</span><span class="o">*</span><span class="n">loc</span><span class="p">[</span><span class="o">::-</span><span class="mi">1</span><span class="p">])</span><span class="o">:</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="n">imwrite</span><span class="p">(</span><span class="sc">&#39;res.png&#39;</span><span class="p">,</span><span class="n">img_rgb</span><span class="p">)</span>
+</pre>
+<p>Result:</p>
+<img alt="image" src="_images/res_mario.jpg" />
+<p class="rubric">Additional Resources</p>
+<p class="rubric">Exercises</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_py_table_of_contents_setup.html" title="Introduction to OpenCV"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_py_filtering.html" title="Smoothing Images"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_py_root.html" >OpenCV-Python Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_py_table_of_contents_imgproc.html" >Image Processing in OpenCV</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

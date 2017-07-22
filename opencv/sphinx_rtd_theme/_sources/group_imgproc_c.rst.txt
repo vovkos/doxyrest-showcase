@@ -1,0 +1,4650 @@
+.. index:: pair: group; C API
+.. _doxid-df/d4e/group__imgproc__c:
+
+C API
+=====
+
+.. toctree::
+	:hidden:
+
+	enum_MorphShapes_c.rst
+	enum_SmoothMethod_c.rst
+	struct_CvChainPtReader.rst
+	struct_CvConnectedComp.rst
+	struct_CvConvexityDefect.rst
+	struct_CvFont.rst
+	struct_CvHuMoments.rst
+	struct_CvMoments.rst
+
+Overview
+~~~~~~~~
+
+
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// typedefs
+
+	typedef struct _CvContourScanner* :target:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>`;
+
+	typedef float (*:target:`CvDistanceFunction<doxid-df/d4e/group__imgproc__c_1gaca3c69e72011d0dda4f0fd09003eeafd>`)(
+		const float *a,
+		const float *b,
+		void *user_param
+		);
+
+	// enums
+
+	enum
+	{
+	    :target:`@79::CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>` = 7,
+	};
+
+	enum
+	{
+	    :target:`@80::CV_SCHARR<doxid-df/d4e/group__imgproc__c_1gga4b4213b1f9d54da7c7e36bde32fc7c80adb2396a00641b2d62acd1ccdbd8256ad>`          =-1,
+	    :target:`@80::CV_MAX_SOBEL_KSIZE<doxid-df/d4e/group__imgproc__c_1gga4b4213b1f9d54da7c7e36bde32fc7c80ae344c671237da7c0a293595eb3d669e0>` =7,
+	};
+
+	enum
+	{
+	    :target:`@81::CV_BGR2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1e4ecb057e893e1bed27131cc2d2cae5>`        =0,
+	    :target:`@81::CV_RGB2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a36470690e0b8938cebc1baa30fefcd1d>`        =CV_BGR2BGRA,
+	    :target:`@81::CV_BGRA2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8c8a1d070039303bb98761f53a67f822>`        =1,
+	    :target:`@81::CV_RGBA2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ac70ba8ae43beb5a96084733bded6a329>`        =CV_BGRA2BGR,
+	    :target:`@81::CV_BGR2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a0332e0012ed05976e3b7c21bd5e7a478>`        =2,
+	    :target:`@81::CV_RGB2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa96645ff1e0e4261c8a0bc6ad5ae488c>`        =CV_BGR2RGBA,
+	    :target:`@81::CV_RGBA2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ad4f8cf32a6a7e6717573c46cf9c07170>`        =3,
+	    :target:`@81::CV_BGRA2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a0557a7fb7b75c23959e49f8b8bcd5e4f>`        =CV_RGBA2BGR,
+	    :target:`@81::CV_BGR2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aee41616bc9c5ed1eee84dba9428995b2>`         =4,
+	    :target:`@81::CV_RGB2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af992fcbf857cf854302d3c1e0159d829>`         =CV_BGR2RGB,
+	    :target:`@81::CV_BGRA2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af10394186fd151c76f6a1b8c05360aeb>`       =5,
+	    :target:`@81::CV_RGBA2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9abc625973a40cf34532e05e1d593cf112>`       =CV_BGRA2RGBA,
+	    :target:`@81::CV_BGR2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a398508a98b3bf25bd1b9307ccba4e7dd>`        =6,
+	    :target:`@81::CV_RGB2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9acea913a1b5fc065f37b63fc8811c214d>`        =7,
+	    :target:`@81::CV_GRAY2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a3e44f821dfa46abff2d3cee4cca0a69d>`        =8,
+	    :target:`@81::CV_GRAY2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa402de6ff8d46ef19f7866ee94f4b1e7>`        =CV_GRAY2BGR,
+	    :target:`@81::CV_GRAY2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a07c7aa0ee731e7102777d4405f5e29b9>`       =9,
+	    :target:`@81::CV_GRAY2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8d96cc266e95db4c842f16005c4b4edc>`       =CV_GRAY2BGRA,
+	    :target:`@81::CV_BGRA2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ac239feb8f424d1e93d9257dc105b7ea7>`       =10,
+	    :target:`@81::CV_RGBA2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2f1515ed9862d5d7c3088901c10a25cb>`       =11,
+	    :target:`@81::CV_BGR2BGR565<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2942e37e04d4a93ab0ade26085b8da28>`      =12,
+	    :target:`@81::CV_RGB2BGR565<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1708e0cf1115b9728ef26fdc66cd67f2>`      =13,
+	    :target:`@81::CV_BGR5652BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a280e201b6dc9ed17eed3ded873b3a9e2>`      =14,
+	    :target:`@81::CV_BGR5652RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8776dc14ac9438e26403861fab34f8f3>`      =15,
+	    :target:`@81::CV_BGRA2BGR565<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae340828eb7275631e972c9878a725cf2>`     =16,
+	    :target:`@81::CV_RGBA2BGR565<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2ca4d4864e171e0a53841d097f907675>`     =17,
+	    :target:`@81::CV_BGR5652BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a930c88991a27a6059872ef2c8aa48be7>`     =18,
+	    :target:`@81::CV_BGR5652RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a920861d6294747185da745d672e46c97>`     =19,
+	    :target:`@81::CV_GRAY2BGR565<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a91c2cdbdd93b888b2b1952fa391653f0>`     =20,
+	    :target:`@81::CV_BGR5652GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a019a1e74ca150e9b7b7df4eed3e7c226>`     =21,
+	    :target:`@81::CV_BGR2BGR555<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2bf753f71e5f8306a5cac3055c3d3d99>`      =22,
+	    :target:`@81::CV_RGB2BGR555<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ad2cce0eec67bec0c36906eaa6025ebce>`      =23,
+	    :target:`@81::CV_BGR5552BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a210b532c33d75aa4cb631143d4020f4d>`      =24,
+	    :target:`@81::CV_BGR5552RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a673fa91a566ec77e0760d090d7928013>`      =25,
+	    :target:`@81::CV_BGRA2BGR555<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa84371d347de7f5f27b87a301a1b5831>`     =26,
+	    :target:`@81::CV_RGBA2BGR555<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9afda6346d04e11510b84bea8bb982433e>`     =27,
+	    :target:`@81::CV_BGR5552BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a36fadebfc424391ea321cfde201b3225>`     =28,
+	    :target:`@81::CV_BGR5552RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae04cb6107ab9ff55c504fec996cc79cc>`     =29,
+	    :target:`@81::CV_GRAY2BGR555<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a825015b35e27f076c9ef4e124787d00b>`     =30,
+	    :target:`@81::CV_BGR5552GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a0079a944357c4d149e8cb7acba9db748>`     =31,
+	    :target:`@81::CV_BGR2XYZ<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a3662357dae0998be8cf640646f72469f>`         =32,
+	    :target:`@81::CV_RGB2XYZ<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a943b12ab00b31563ef310fdbc4fc3fd9>`         =33,
+	    :target:`@81::CV_XYZ2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9afc7fb0478623c765848acd005a183f39>`         =34,
+	    :target:`@81::CV_XYZ2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2fa4336a4f8fed808720460609e7251c>`         =35,
+	    :target:`@81::CV_BGR2YCrCb<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9afb02fdbcb86a95df995f251025f42e73>`       =36,
+	    :target:`@81::CV_RGB2YCrCb<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae9e6a67dac72f606ed264281f67c1cb9>`       =37,
+	    :target:`@81::CV_YCrCb2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a6f3dd77a765945d2b0dd2296790951dd>`       =38,
+	    :target:`@81::CV_YCrCb2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aef6ccc3d79a4cfbf054f5af2820bf083>`       =39,
+	    :target:`@81::CV_BGR2HSV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ac89e3e7b2248a43377ed380cccd4dede>`         =40,
+	    :target:`@81::CV_RGB2HSV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5878d54d471c5f49eca0e15707074c52>`         =41,
+	    :target:`@81::CV_BGR2Lab<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9afd7cd4b73af8329e3f93883f07825ace>`         =44,
+	    :target:`@81::CV_RGB2Lab<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a76525576de8c684b951435bed5a83cde>`         =45,
+	    :target:`@81::CV_BayerBG2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ac2700ec425b876bd7c8f3b392bd6430a>`     =46,
+	    :target:`@81::CV_BayerGB2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8fe2b2520783eac2951b688350b2a87c>`     =47,
+	    :target:`@81::CV_BayerRG2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5cbacb1289fc70792fcc2dd3cb0d8444>`     =48,
+	    :target:`@81::CV_BayerGR2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a697809e146b83ee0ec166f2bd98e2199>`     =49,
+	    :target:`@81::CV_BayerBG2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa6ad9e7a3647cbf0ddb811b3545fe8e6>`     =CV_BayerRG2BGR,
+	    :target:`@81::CV_BayerGB2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2eee5c5fae7942483894105ed22b7b22>`     =CV_BayerGR2BGR,
+	    :target:`@81::CV_BayerRG2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a0a88b0e05d404a9ff422185e57256fcb>`     =CV_BayerBG2BGR,
+	    :target:`@81::CV_BayerGR2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a075ffd0db1c8ab363444077de46ec077>`     =CV_BayerGB2BGR,
+	    :target:`@81::CV_BGR2Luv<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af21e6a84330e682de79c6a0877dfeb42>`         =50,
+	    :target:`@81::CV_RGB2Luv<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae4ba22deea00de5c0eb7682a4ecb881d>`         =51,
+	    :target:`@81::CV_BGR2HLS<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab66519299c3f210813efe994f7d9578f>`         =52,
+	    :target:`@81::CV_RGB2HLS<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a08928e3b5da643564727b1bca3c42d88>`         =53,
+	    :target:`@81::CV_HSV2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a32416ca92bd669039fec8f789b9605f2>`         =54,
+	    :target:`@81::CV_HSV2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a533faf0fc19d4f8c0f259a8b14e2a4c6>`         =55,
+	    :target:`@81::CV_Lab2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aed3e34638b8d020925e4945f8dbfe6ff>`         =56,
+	    :target:`@81::CV_Lab2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab2561267714dd4e6a5336839991ab7a5>`         =57,
+	    :target:`@81::CV_Luv2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af8e92f930dcb87624cd8583e615034d1>`         =58,
+	    :target:`@81::CV_Luv2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1d3a736f7b3cc4d9abb8f22c14af492e>`         =59,
+	    :target:`@81::CV_HLS2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa1eb67572fd0ce150882bd07278d6b06>`         =60,
+	    :target:`@81::CV_HLS2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a6a5ce235a16f16ef30a2355ea75dcbff>`         =61,
+	    :target:`@81::CV_BayerBG2BGR_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ad5f38d1137bec3404c86839127ab0c31>` =62,
+	    :target:`@81::CV_BayerGB2BGR_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af9b9870d42866f142836fd1f65771a2a>` =63,
+	    :target:`@81::CV_BayerRG2BGR_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a7e6e10d83c259eb4a7db5c593a4d1563>` =64,
+	    :target:`@81::CV_BayerGR2BGR_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ad61390179d4721475d160bf9bb4572ca>` =65,
+	    :target:`@81::CV_BayerBG2RGB_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ac9afa17e28ec95b844b77f05e2c81d1a>` =CV_BayerRG2BGR_VNG,
+	    :target:`@81::CV_BayerGB2RGB_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5f5b06c0fcba9ebc7fb43a51da2f378c>` =CV_BayerGR2BGR_VNG,
+	    :target:`@81::CV_BayerRG2RGB_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a96f521b93c0604536393a8d8a1134a86>` =CV_BayerBG2BGR_VNG,
+	    :target:`@81::CV_BayerGR2RGB_VNG<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a16be28dafec7bcba7b74362e527a7231>` =CV_BayerGB2BGR_VNG,
+	    :target:`@81::CV_BGR2HSV_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8c22fcd2d8df67797cecfadb5b1abe2d>`    = 66,
+	    :target:`@81::CV_RGB2HSV_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae20da1f7a5dd600134fa749b28c27f67>`    = 67,
+	    :target:`@81::CV_BGR2HLS_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a7f70f95b5a22c30d33bac17302e00539>`    = 68,
+	    :target:`@81::CV_RGB2HLS_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a4455fbc6af590606a3f5976dafa3130e>`    = 69,
+	    :target:`@81::CV_HSV2BGR_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab69a1e07c74b9d648e69663b8a3eb3bc>`    = 70,
+	    :target:`@81::CV_HSV2RGB_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a97b108d207dd21bf5ed608602b1e06b8>`    = 71,
+	    :target:`@81::CV_HLS2BGR_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a23477d35f7d63697a3b61ad7737155ea>`    = 72,
+	    :target:`@81::CV_HLS2RGB_FULL<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa7aad86d340f00a603064b278032e076>`    = 73,
+	    :target:`@81::CV_LBGR2Lab<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aaa4ba60fe87eb1fe7a1f669e22c1e621>`        = 74,
+	    :target:`@81::CV_LRGB2Lab<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a80e5fc24417e38902e590623d9385cda>`        = 75,
+	    :target:`@81::CV_LBGR2Luv<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a3cf7fff1bda97ec1c2ffbeb27ab72a5b>`        = 76,
+	    :target:`@81::CV_LRGB2Luv<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ad8139a28ea37cd89a11c98cb330031a7>`        = 77,
+	    :target:`@81::CV_Lab2LBGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a62356475ec058cd2ed869641c2503d69>`        = 78,
+	    :target:`@81::CV_Lab2LRGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2fcb6491c2a5a94c1182e4dcdcffcae4>`        = 79,
+	    :target:`@81::CV_Luv2LBGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a2c9de9b187cab8919fa05b4a78e0da81>`        = 80,
+	    :target:`@81::CV_Luv2LRGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a141d1f09f5e99014b07b063b085cb6d5>`        = 81,
+	    :target:`@81::CV_BGR2YUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9adc1e8e69c5d0af3e070a81eac10070e8>`         = 82,
+	    :target:`@81::CV_RGB2YUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af28d30b227e554b59581130fef9cd85c>`         = 83,
+	    :target:`@81::CV_YUV2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af54bcfdf44bcac1c59a46835b78798f0>`         = 84,
+	    :target:`@81::CV_YUV2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a584fd261062de51534195b2e97d8cdde>`         = 85,
+	    :target:`@81::CV_BayerBG2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a892454ac38286b953331c39d8fed64f0>`    = 86,
+	    :target:`@81::CV_BayerGB2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af1928d406005365ba909fd2463599948>`    = 87,
+	    :target:`@81::CV_BayerRG2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a81d76cd8c7fbe96754be8e82157fd0d4>`    = 88,
+	    :target:`@81::CV_BayerGR2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5ae0e7c926bbbdbb824fe72737327e46>`    = 89,
+	    :target:`@81::CV_YUV2RGB_NV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a3279b7c5256372f1fc7758ba82f873d4>`    = 90,
+	    :target:`@81::CV_YUV2BGR_NV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a27f92b0e248285bce6eafd7efdef24a5>`    = 91,
+	    :target:`@81::CV_YUV2RGB_NV21<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae920d66243e480bd5205c9c8db272011>`    = 92,
+	    :target:`@81::CV_YUV2BGR_NV21<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9adc3e904bb2a77ed551c0051e39671068>`    = 93,
+	    :target:`@81::CV_YUV420sp2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a33333f0ef0b27bd13144c1ebe862104a>`    = CV_YUV2RGB_NV21,
+	    :target:`@81::CV_YUV420sp2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9acb6979c6589f996ef5454fd6612d003c>`    = CV_YUV2BGR_NV21,
+	    :target:`@81::CV_YUV2RGBA_NV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a4b67143c40cafc01780096fc93ca7528>`   = 94,
+	    :target:`@81::CV_YUV2BGRA_NV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a461e86f22fa7ef501c19039c09d36b44>`   = 95,
+	    :target:`@81::CV_YUV2RGBA_NV21<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa57c413f2ed6bc1c3c7bb2d49df7d926>`   = 96,
+	    :target:`@81::CV_YUV2BGRA_NV21<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aef57c21dde90063d0982f032465affd2>`   = 97,
+	    :target:`@81::CV_YUV420sp2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa23773ce3e3100cd1b084d05c46897d2>`   = CV_YUV2RGBA_NV21,
+	    :target:`@81::CV_YUV420sp2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af85b8a00d069cc3d66f1e612925695cc>`   = CV_YUV2BGRA_NV21,
+	    :target:`@81::CV_YUV2RGB_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a0a6867da4612aa5082ee72527cc69f12>`    = 98,
+	    :target:`@81::CV_YUV2BGR_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a40d0c111516eddeaee6d7ef08a5d28cc>`    = 99,
+	    :target:`@81::CV_YUV2RGB_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aab4a75417d5f60e4193a43b65e689e43>`    = 100,
+	    :target:`@81::CV_YUV2BGR_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8f0c479611f0bda314bdb6b7989ea874>`    = 101,
+	    :target:`@81::CV_YUV2RGB_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab71d7a9e375ded9045ca4b1dda4120c3>`    = CV_YUV2RGB_IYUV,
+	    :target:`@81::CV_YUV2BGR_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae2455703490af6afea01e7c3fefec681>`    = CV_YUV2BGR_IYUV,
+	    :target:`@81::CV_YUV420p2RGB<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a4f76192a31247047562b1780a5a06611>`     = CV_YUV2RGB_YV12,
+	    :target:`@81::CV_YUV420p2BGR<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9acbd92f0b79b8d665f672d4217d7b3257>`     = CV_YUV2BGR_YV12,
+	    :target:`@81::CV_YUV2RGBA_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab8fbabd8fc1617ab1117d83ddfa33df6>`   = 102,
+	    :target:`@81::CV_YUV2BGRA_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1dc7e66a2f82cad930dd7b9e30ab47b4>`   = 103,
+	    :target:`@81::CV_YUV2RGBA_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a57d707aa9175bc39716fed7b8608eb91>`   = 104,
+	    :target:`@81::CV_YUV2BGRA_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab7bb1c4e0a03e1815058ed09f4a5d684>`   = 105,
+	    :target:`@81::CV_YUV2RGBA_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a01ccfd5dff075bdbd80cee4b93cbdde2>`   = CV_YUV2RGBA_IYUV,
+	    :target:`@81::CV_YUV2BGRA_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a31f8d0c45e15bf3e7683fee813f328bc>`   = CV_YUV2BGRA_IYUV,
+	    :target:`@81::CV_YUV420p2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a398f41fc44f11208225c2d3d9f7ff4fb>`    = CV_YUV2RGBA_YV12,
+	    :target:`@81::CV_YUV420p2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a42c4fc81a74842d78ea56e53efc7818a>`    = CV_YUV2BGRA_YV12,
+	    :target:`@81::CV_YUV2GRAY_420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae0257672b5a1e564acb519bdb3513397>`    = 106,
+	    :target:`@81::CV_YUV2GRAY_NV21<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a65c3efc3cce7e1cc9b96b05ed38f8759>`   = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV2GRAY_NV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a9d4ed94b61af37be8e87b320ee18f012>`   = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV2GRAY_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af2a576edba579702625d0a2cba6e87d3>`   = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV2GRAY_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1d7262385d2381211ad94e6a84ba3798>`   = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV2GRAY_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af746cc9eaebb0d015f87a7562f272603>`   = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV420sp2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae0723c0f02cc98382fa10269be9f1e34>`   = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV420p2GRAY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ac348f95d66dba53ba77fd729e88cf3e0>`    = CV_YUV2GRAY_420,
+	    :target:`@81::CV_YUV2RGB_UYVY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a30ed7b1c610dbfcc66e6585499662dbe>`    = 107,
+	    :target:`@81::CV_YUV2BGR_UYVY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9affc0efe6721c77c89df3d2a3383409e7>`    = 108,
+	    :target:`@81::CV_YUV2RGB_Y422<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa1159be5c288c064f9ecc8f68a8dacac>`    = CV_YUV2RGB_UYVY,
+	    :target:`@81::CV_YUV2BGR_Y422<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a9188d6cadbb48b4d63f58c9a37b06e92>`    = CV_YUV2BGR_UYVY,
+	    :target:`@81::CV_YUV2RGB_UYNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa299704def51fc7d4275c4174db59273>`    = CV_YUV2RGB_UYVY,
+	    :target:`@81::CV_YUV2BGR_UYNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa70fa21bb8ea6170984c2de772789824>`    = CV_YUV2BGR_UYVY,
+	    :target:`@81::CV_YUV2RGBA_UYVY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae462e57c4154fc5eed9674f4467c1b75>`   = 111,
+	    :target:`@81::CV_YUV2BGRA_UYVY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aee47647102ff8635304ebafddcc185f1>`   = 112,
+	    :target:`@81::CV_YUV2RGBA_Y422<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a45ad40b0e83e8aa8983ee5ee3a9d1b27>`   = CV_YUV2RGBA_UYVY,
+	    :target:`@81::CV_YUV2BGRA_Y422<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9abbac595556846f75990dd9015c729c20>`   = CV_YUV2BGRA_UYVY,
+	    :target:`@81::CV_YUV2RGBA_UYNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a27dcb5ba6b5d348ddcca0b15d814e5a9>`   = CV_YUV2RGBA_UYVY,
+	    :target:`@81::CV_YUV2BGRA_UYNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a239de30247e466348a9842cca6ad4eab>`   = CV_YUV2BGRA_UYVY,
+	    :target:`@81::CV_YUV2RGB_YUY2<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a14cd9d376f12c1b424014e352a77046d>`    = 115,
+	    :target:`@81::CV_YUV2BGR_YUY2<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab82d32906f7bda92a7a1429f529f5387>`    = 116,
+	    :target:`@81::CV_YUV2RGB_YVYU<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa9bc649ad990084fbc23e60e97d2e6f5>`    = 117,
+	    :target:`@81::CV_YUV2BGR_YVYU<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa3cb65aa6a2bc3fbb34676b7031f3f93>`    = 118,
+	    :target:`@81::CV_YUV2RGB_YUYV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5e1c129880abed596a9ed255f3ec1a4c>`    = CV_YUV2RGB_YUY2,
+	    :target:`@81::CV_YUV2BGR_YUYV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a97a3a8a1ef2c916cc8e7bbcffed1b836>`    = CV_YUV2BGR_YUY2,
+	    :target:`@81::CV_YUV2RGB_YUNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a3ac565a7b68df8984cc4fce9297fd254>`    = CV_YUV2RGB_YUY2,
+	    :target:`@81::CV_YUV2BGR_YUNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a77d7d5ba1eb775d48863e1d931631a17>`    = CV_YUV2BGR_YUY2,
+	    :target:`@81::CV_YUV2RGBA_YUY2<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a7ec749191da18fab8736d8794d0f4c2a>`   = 119,
+	    :target:`@81::CV_YUV2BGRA_YUY2<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a39f222f73d02dbac2ca8d7772c470129>`   = 120,
+	    :target:`@81::CV_YUV2RGBA_YVYU<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a04594cfe82586dacd210380b124ca478>`   = 121,
+	    :target:`@81::CV_YUV2BGRA_YVYU<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa36ebf8b3b02f8dabd4000082011cc90>`   = 122,
+	    :target:`@81::CV_YUV2RGBA_YUYV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a4f91379f55270ba78c9858406550d08e>`   = CV_YUV2RGBA_YUY2,
+	    :target:`@81::CV_YUV2BGRA_YUYV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1c0c3e672b743f3c5febf1528f784a10>`   = CV_YUV2BGRA_YUY2,
+	    :target:`@81::CV_YUV2RGBA_YUNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a730108773595c1b563e8a6251a634244>`   = CV_YUV2RGBA_YUY2,
+	    :target:`@81::CV_YUV2BGRA_YUNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5e2c750bf3d1f969e689d40f1ea258ba>`   = CV_YUV2BGRA_YUY2,
+	    :target:`@81::CV_YUV2GRAY_UYVY<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a649b843055a4dd2d159f3992379f6fad>`   = 123,
+	    :target:`@81::CV_YUV2GRAY_YUY2<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a4c4ce3d68c136b6508328c6f5c937d67>`   = 124,
+	    :target:`@81::CV_YUV2GRAY_Y422<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a6a3866d7dbe7c5ad0b4a208d48136b57>`   = CV_YUV2GRAY_UYVY,
+	    :target:`@81::CV_YUV2GRAY_UYNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a0b6a4c2b8da12a242591fd67d787f287>`   = CV_YUV2GRAY_UYVY,
+	    :target:`@81::CV_YUV2GRAY_YVYU<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a91ac4c6f49284c316fee338799d4a86b>`   = CV_YUV2GRAY_YUY2,
+	    :target:`@81::CV_YUV2GRAY_YUYV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a9deda92cfbeb9aaf646d06ad63992565>`   = CV_YUV2GRAY_YUY2,
+	    :target:`@81::CV_YUV2GRAY_YUNV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a026a8b68c2bd6fca08ca080a25af1f87>`   = CV_YUV2GRAY_YUY2,
+	    :target:`@81::CV_RGBA2mRGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa77f53f53e5a94c044c4e916e6c26342>`      = 125,
+	    :target:`@81::CV_mRGBA2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aff446a848dfaef1de75efb0477f443ef>`      = 126,
+	    :target:`@81::CV_RGB2YUV_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa701539fa95eb5e2170c40fe621a62f0>`    = 127,
+	    :target:`@81::CV_BGR2YUV_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a4efa18b0b5edf92db432d501fce24f68>`    = 128,
+	    :target:`@81::CV_RGB2YUV_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a66ea6532f77248698ac1086eacd2dcb2>`    = CV_RGB2YUV_I420,
+	    :target:`@81::CV_BGR2YUV_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a1b8e9b8494334d48cd1f267ebf6907fa>`    = CV_BGR2YUV_I420,
+	    :target:`@81::CV_RGBA2YUV_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8c76c20ecb94898f4072f8dd4edb54a2>`   = 129,
+	    :target:`@81::CV_BGRA2YUV_I420<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af376a647c4917968e25ce32c2e022c50>`   = 130,
+	    :target:`@81::CV_RGBA2YUV_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a40a44d429e9217efd7cc91af71afcbbf>`   = CV_RGBA2YUV_I420,
+	    :target:`@81::CV_BGRA2YUV_IYUV<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aab61e5fd51126981bd0e30b0168b77fd>`   = CV_BGRA2YUV_I420,
+	    :target:`@81::CV_RGB2YUV_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a89d907cfac80767c336838ee0c077edc>`    = 131,
+	    :target:`@81::CV_BGR2YUV_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9abcac79102d9b3f1144316b0d301f39d1>`    = 132,
+	    :target:`@81::CV_RGBA2YUV_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa414671cdbe213150842bb715a12ffe6>`   = 133,
+	    :target:`@81::CV_BGRA2YUV_YV12<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ae9d042dadff29e856306a68629c0cd5a>`   = 134,
+	    :target:`@81::CV_BayerBG2BGR_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aac75a188d361bbdf4d360e6a4498bcf0>`  = 135,
+	    :target:`@81::CV_BayerGB2BGR_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a6acd12cbcb6b0195ce77892d7c1d2192>`  = 136,
+	    :target:`@81::CV_BayerRG2BGR_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a800e0abb85038066908bf5a96fbedb3a>`  = 137,
+	    :target:`@81::CV_BayerGR2BGR_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aed1835d3ecb20533e960c35e3e1989cf>`  = 138,
+	    :target:`@81::CV_BayerBG2RGB_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a896c18a27e1d884fdc48449f415d8a50>`  = CV_BayerRG2BGR_EA,
+	    :target:`@81::CV_BayerGB2RGB_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a8cb413f0936ea4dd0940713b49941047>`  = CV_BayerGR2BGR_EA,
+	    :target:`@81::CV_BayerRG2RGB_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aab78057426fd8465159071b4290499bc>`  = CV_BayerBG2BGR_EA,
+	    :target:`@81::CV_BayerGR2RGB_EA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a6ed058045e7084bde5d9bf829b5cd6e8>`  = CV_BayerGB2BGR_EA,
+	    :target:`@81::CV_BayerBG2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a308c178f00a481f5ec46f52fab755084>`    =139,
+	    :target:`@81::CV_BayerGB2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a20173e603c8f86db27d9174e25b4c303>`    =140,
+	    :target:`@81::CV_BayerRG2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aab0efe2c0209baa41c9e0fb79a6f352c>`    =141,
+	    :target:`@81::CV_BayerGR2BGRA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a6eefcf9f9e207c94c2322e6f6ad60cc0>`    =142,
+	    :target:`@81::CV_BayerBG2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9a5ae58b3bfde31bc78f01e2a9657973d2>`    =CV_BayerRG2BGRA,
+	    :target:`@81::CV_BayerGB2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aeab534eab4fc1701f3079df608d6afbd>`    =CV_BayerGR2BGRA,
+	    :target:`@81::CV_BayerRG2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9ab0905f4e9b26daa463c8b78f51c705f9>`    =CV_BayerBG2BGRA,
+	    :target:`@81::CV_BayerGR2RGBA<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9af8ae799970ba62223d96647b75dc391b>`    =CV_BayerGB2BGRA,
+	    :target:`@81::CV_COLORCVT_MAX<doxid-df/d4e/group__imgproc__c_1ggaa491173a6b1628f4ff82067b2e1ceaa9aa66ff5568ba7529eda3267b80ea296e2>`    = 143,
+	};
+
+	enum
+	{
+	    :target:`@82::CV_INTER_NN<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdab61aaff578aa6a49d03bbdeece3419f5>`       =0,
+	    :target:`@82::CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`   =1,
+	    :target:`@82::CV_INTER_CUBIC<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdab444b1f606b83ec6bb252a6122543fdc>`    =2,
+	    :target:`@82::CV_INTER_AREA<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbda929a2df7c6dd9e9f230019910d6cb890>`     =3,
+	    :target:`@82::CV_INTER_LANCZOS4<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdac48e3a4faa9d37f83d6a4f16db246e38>` =4,
+	};
+
+	enum
+	{
+	    :target:`@83::CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>` =8,
+	    :target:`@83::CV_WARP_INVERSE_MAP<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84ae1051155e2a7e0f2253823ee122eba2e>`   =16,
+	};
+
+	enum
+	{
+	    :target:`@84::CV_MOP_ERODE<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017ab87cc749459e9ffdd8129c21412cad40>`    =0,
+	    :target:`@84::CV_MOP_DILATE<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017a6cd56a7ec4900edb06403a084b1e3dc3>`   =1,
+	    :target:`@84::CV_MOP_OPEN<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017a0a9e00c76bc763a7ef04f9503ea57284>`     =2,
+	    :target:`@84::CV_MOP_CLOSE<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017a5c2edb93d6dd1354476e18186d15dc89>`    =3,
+	    :target:`@84::CV_MOP_GRADIENT<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017a6fc6bb64748aaf2a384c9fc8bb9eae4e>` =4,
+	    :target:`@84::CV_MOP_TOPHAT<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017a7abbb4dd4d29dbfd762b7cfedcbedafb>`   =5,
+	    :target:`@84::CV_MOP_BLACKHAT<doxid-df/d4e/group__imgproc__c_1gga634f9f55e799f3052a34590f08100017a8a33567a496eda04048043eb2d593836>` =6,
+	};
+
+	enum
+	{
+	    :target:`@85::CV_TM_SQDIFF<doxid-df/d4e/group__imgproc__c_1ggab39a415800ebd0d977c477376649649ba051653cd2ea0b4a8aef977182cfacd8a>`        =0,
+	    :target:`@85::CV_TM_SQDIFF_NORMED<doxid-df/d4e/group__imgproc__c_1ggab39a415800ebd0d977c477376649649bac9570158f34469936dec9c4017a2c0cb>` =1,
+	    :target:`@85::CV_TM_CCORR<doxid-df/d4e/group__imgproc__c_1ggab39a415800ebd0d977c477376649649babd426da6d52746ebc8d89a9dfcb44f49>`         =2,
+	    :target:`@85::CV_TM_CCORR_NORMED<doxid-df/d4e/group__imgproc__c_1ggab39a415800ebd0d977c477376649649ba83190d4cd72f78ef986706b0221b9bab>`  =3,
+	    :target:`@85::CV_TM_CCOEFF<doxid-df/d4e/group__imgproc__c_1ggab39a415800ebd0d977c477376649649ba9e685e55484ddc30e0760ce8405362be>`        =4,
+	    :target:`@85::CV_TM_CCOEFF_NORMED<doxid-df/d4e/group__imgproc__c_1ggab39a415800ebd0d977c477376649649ba09403dc91fb554e6c7dba7ef4de3938f>` =5,
+	};
+
+	enum
+	{
+	    :target:`@86::CV_RETR_EXTERNAL<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531a826a46df86827e600ae618c02dd83966>`  =0,
+	    :target:`@86::CV_RETR_LIST<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`      =1,
+	    :target:`@86::CV_RETR_CCOMP<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531a77c484cfa3202959ccd98567655de90a>`     =2,
+	    :target:`@86::CV_RETR_TREE<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531ab17d55b3fe9117bd2884e93c6db6bcf9>`      =3,
+	    :target:`@86::CV_RETR_FLOODFILL<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531a26fad6ff2e54e1cf5305291c99e3d7d2>` =4,
+	};
+
+	enum
+	{
+	    :target:`@87::CV_CHAIN_CODE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a652cfa3c223d69be8cc3b541ef3875d7>`             =0,
+	    :target:`@87::CV_CHAIN_APPROX_NONE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a68069f66db6f6a3540948eed23bf0dcf>`      =1,
+	    :target:`@87::CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`    =2,
+	    :target:`@87::CV_CHAIN_APPROX_TC89_L1<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a89808e2b79a82b8afac910ff1ad1e9c0>`   =3,
+	    :target:`@87::CV_CHAIN_APPROX_TC89_KCOS<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340af8371ab18a605f7fe112d7b1b12ebc57>` =4,
+	    :target:`@87::CV_LINK_RUNS<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340ad9a15a56ee6f410ade97cf230f193a31>`              =5,
+	};
+
+	enum
+	{
+	    :target:`@88::CV_POLY_APPROX_DP<doxid-df/d4e/group__imgproc__c_1gga5a77d65f4abba81d4456fa6ba8136e24a366a05a902ff71c1a1e6cdfaec88c9dd>` = 0,
+	};
+
+	enum
+	{
+	    :ref:`@89::CV_CONTOURS_MATCH_I1<doxid-df/d4e/group__imgproc__c_1ggaad393aa3e173d7f081ab4bbc6ba5027da6ae4597e01365cd5c3469dc2f5cd2fea>` =1,
+	    :ref:`@89::CV_CONTOURS_MATCH_I2<doxid-df/d4e/group__imgproc__c_1ggaad393aa3e173d7f081ab4bbc6ba5027dae3011fca74bc54836e9457de352069eb>` =2,
+	    :ref:`@89::CV_CONTOURS_MATCH_I3<doxid-df/d4e/group__imgproc__c_1ggaad393aa3e173d7f081ab4bbc6ba5027dad2141011f1cd57f6542c7da2412c9fe3>` =3,
+	};
+
+	enum
+	{
+	    :target:`@90::CV_CLOCKWISE<doxid-df/d4e/group__imgproc__c_1gga4f126a0a9b1d8c6a8f46a051ef8830bba48ee94d1ff963a2f194f6141858b3f70>`         =1,
+	    :target:`@90::CV_COUNTER_CLOCKWISE<doxid-df/d4e/group__imgproc__c_1gga4f126a0a9b1d8c6a8f46a051ef8830bbabc4b73cf3519af392072b752053380b6>` =2,
+	};
+
+	enum
+	{
+	    :target:`@91::CV_COMP_CORREL<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329af2b53ad2f16cf091adbbaf57f2ab8820>`        =0,
+	    :target:`@91::CV_COMP_CHISQR<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329ad6f8ffe35c41264efa94735b9d718d8c>`        =1,
+	    :target:`@91::CV_COMP_INTERSECT<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329aa04a0fa5ef93ce01c876880c7058d442>`     =2,
+	    :target:`@91::CV_COMP_BHATTACHARYYA<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329afdce2e4d57766a05f06156b988af6763>` =3,
+	    :target:`@91::CV_COMP_HELLINGER<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329a46c7a91b2b7193d2e47b0709b0c6f9c8>`     =CV_COMP_BHATTACHARYYA,
+	    :target:`@91::CV_COMP_CHISQR_ALT<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329aec54d8805eadaa086033f9f63a13a19d>`    =4,
+	    :target:`@91::CV_COMP_KL_DIV<doxid-df/d4e/group__imgproc__c_1ggadbaf9202177df73e6880eab6e6aab329ac0c19c13de9dc9a3b71e1260c5cf447f>`        =5,
+	};
+
+	enum
+	{
+	    :target:`@92::CV_DIST_MASK_3<doxid-df/d4e/group__imgproc__c_1gga7495a48740c9d555f7fbcb48246dbd93aef37c1cf89e06a57321ee189ed0680da>`       =3,
+	    :target:`@92::CV_DIST_MASK_5<doxid-df/d4e/group__imgproc__c_1gga7495a48740c9d555f7fbcb48246dbd93a8f219e5eb7f03b9df661196825f6fd6d>`       =5,
+	    :target:`@92::CV_DIST_MASK_PRECISE<doxid-df/d4e/group__imgproc__c_1gga7495a48740c9d555f7fbcb48246dbd93a0349680812eee3d20711e18c56ca8732>` =0,
+	};
+
+	enum
+	{
+	    :target:`@93::CV_DIST_LABEL_CCOMP<doxid-df/d4e/group__imgproc__c_1gga9a3be2d66956bd67c0b66c32d8b30f17a3e71b77bb9e87f093fbe5bea558d3961>` = 0,
+	    :target:`@93::CV_DIST_LABEL_PIXEL<doxid-df/d4e/group__imgproc__c_1gga9a3be2d66956bd67c0b66c32d8b30f17a5fd6565d6271341fd636ba1bee4b5da1>` = 1,
+	};
+
+	enum
+	{
+	    :ref:`@94::CV_DIST_USER<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709a85dc4b9e7225ea418574237f0490b2a6>`   =-1,
+	    :ref:`@94::CV_DIST_L1<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709a0b4bea01885957ad908478061c57e67b>`     =1,
+	    :ref:`@94::CV_DIST_L2<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae60a48ac6e8738abf6746c4beb4a9962>`     =2,
+	    :ref:`@94::CV_DIST_C<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709abac689302eb020962e5ef5615de87c07>`      =3,
+	    :ref:`@94::CV_DIST_L12<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae76bff7327eb425bf30cca11e4bc1387>`    =4,
+	    :ref:`@94::CV_DIST_FAIR<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709abcb84a93465c9ac0e37c0e17d0faae7e>`   =5,
+	    :ref:`@94::CV_DIST_WELSCH<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ac9d04b49e7f44944c936c707650327e4>` =6,
+	    :ref:`@94::CV_DIST_HUBER<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709a1725669ada87a92eea265d0346d09513>`  =7,
+	};
+
+	enum
+	{
+	    :ref:`@95::CV_THRESH_BINARY<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>`     =0,
+	    :ref:`@95::CV_THRESH_BINARY_INV<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa5605ead87cfc7a9a8daa1448f7fba488>` =1,
+	    :ref:`@95::CV_THRESH_TRUNC<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaab24c5803c81111f2758c91b14dd48cf1>`      =2,
+	    :ref:`@95::CV_THRESH_TOZERO<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaaaab30b5f1f73c2e5b280982f35d7c46d>`     =3,
+	    :ref:`@95::CV_THRESH_TOZERO_INV<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaac166f17f23efb6bcc221e9df92917de5>` =4,
+	    :target:`@95::CV_THRESH_MASK<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa8b51bb5ac73c9cfc925bd368e05af51f>`       =7,
+	    :ref:`@95::CV_THRESH_OTSU<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa2456934f4f01402e80006a317ea2693e>`       =8,
+	    :ref:`@95::CV_THRESH_TRIANGLE<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaad963b0512c243be1ec737eadfc4f3cfe>`   =16,
+	};
+
+	enum
+	{
+	    :target:`@96::CV_ADAPTIVE_THRESH_MEAN_C<doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`     =0,
+	    :target:`@96::CV_ADAPTIVE_THRESH_GAUSSIAN_C<doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815a7f7d6c4955f0a414ed7eadfb8ea8f071>` =1,
+	};
+
+	enum
+	{
+	    :target:`@97::CV_FLOODFILL_FIXED_RANGE<doxid-df/d4e/group__imgproc__c_1gga84fe57ba52f8e237004a413b27ea4db8ac9b982e7a2ef220af7d590ac3cd93dac>` =(1 <<16),
+	    :target:`@97::CV_FLOODFILL_MASK_ONLY<doxid-df/d4e/group__imgproc__c_1gga84fe57ba52f8e237004a413b27ea4db8a171333e689a8b2c759053ffefef0223f>`   =(1 <<17),
+	};
+
+	enum
+	{
+	    :target:`@98::CV_CANNY_L2_GRADIENT<doxid-df/d4e/group__imgproc__c_1gga78372742882dccd1c13323dbd66c25c5a779aa8d02f498dd7741fc81a45ef4409>` =(1 <<31),
+	};
+
+	enum
+	{
+	    :target:`@99::CV_HOUGH_STANDARD<doxid-df/d4e/group__imgproc__c_1gga2d5492e116eebd5075f247d21fb9db26acf999b3d3903642b44b61cafada3569d>`      =0,
+	    :target:`@99::CV_HOUGH_PROBABILISTIC<doxid-df/d4e/group__imgproc__c_1gga2d5492e116eebd5075f247d21fb9db26abd03fc88adeaa5dcc6c887c5a5fa3c19>` =1,
+	    :target:`@99::CV_HOUGH_MULTI_SCALE<doxid-df/d4e/group__imgproc__c_1gga2d5492e116eebd5075f247d21fb9db26a2191e639de7a55b0f8a79588f939b2fd>`   =2,
+	    :target:`@99::CV_HOUGH_GRADIENT<doxid-df/d4e/group__imgproc__c_1gga2d5492e116eebd5075f247d21fb9db26a1520e847233e665e988e0f0a94101869>`      =3,
+	};
+
+	enum :ref:`MorphShapes_c<doxid-df/d4e/group__imgproc__c_1gab5b30479580723fe97bab56d9b69239d>`;
+	enum :ref:`SmoothMethod_c<doxid-df/d4e/group__imgproc__c_1ga68a3a4144ad5ad650bed7f0ede3611c2>`;
+
+	// structs
+
+	struct :ref:`CvChainPtReader<doxid-d8/d9e/struct_cv_chain_pt_reader>`;
+	struct :ref:`CvConnectedComp<doxid-de/dd7/struct_cv_connected_comp>`;
+	struct :ref:`CvConvexityDefect<doxid-d4/dbc/struct_cv_convexity_defect>`;
+	struct :ref:`CvFont<doxid-d2/d14/struct_cv_font>`;
+	struct :ref:`CvHuMoments<doxid-d6/d92/struct_cv_hu_moments>`;
+	struct :ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`;
+
+	// global functions
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*
+	:ref:`cv2DRotationMatrix<doxid-df/d4e/group__imgproc__c_1ga8a01db322fe13ef1bf9c56bcb5a7537e>`(
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center,
+		double angle,
+		double scale,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		);
+
+	void
+	:ref:`cvAcc<doxid-df/d4e/group__imgproc__c_1ga4021fa53cf3ce7bb5612a12c9da37e66>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sum,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	void
+	:ref:`cvAdaptiveThreshold<doxid-df/d4e/group__imgproc__c_1gae8660c2e87627e9cd4ffc8657b84d773>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		double max_value,
+		int adaptive_method = :ref:`CV_ADAPTIVE_THRESH_MEAN_C<doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`,
+		int threshold_type = :ref:`CV_THRESH_BINARY<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>`,
+		int block_size = 3,
+		double param1 = 5
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvApproxChains<doxid-df/d4e/group__imgproc__c_1ga3d20e5af0fd7285d6e0a2ebf74818f56>`(
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`* src_seq,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		int method = :ref:`CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`,
+		double parameter = 0,
+		int minimal_perimeter = 0,
+		int recursive = 0
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvApproxPoly<doxid-df/d4e/group__imgproc__c_1gac58f9f35c3edb3d9c161f5a3bb3dcd68>`(
+		const void* src_seq,
+		int header_size,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		int method,
+		double eps,
+		int recursive = 0
+		);
+
+	double
+	:ref:`cvArcLength<doxid-df/d4e/group__imgproc__c_1gad35abc4dc428a4a3403595670091dfb7>`(
+		const void* curve,
+		:ref:`CvSlice<doxid-d8/d15/struct_cv_slice>` slice = :ref:`CV_WHOLE_SEQ<doxid-d2/df8/group__core__c_1gaf60a219def061a7b1335495e6aedd90b>`,
+		int is_closed = -1
+		);
+
+	:ref:`CvRect<doxid-de/d44/struct_cv_rect>`
+	:ref:`cvBoundingRect<doxid-df/d4e/group__imgproc__c_1gafcb1486899783b28b771538147bfc373>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		int update = 0
+		);
+
+	void
+	:ref:`cvBoxPoints<doxid-df/d4e/group__imgproc__c_1ga19e59d64a4a47a9b0b8cffbf2e73cfea>`(
+		:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>` box,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` pt [4]
+		);
+
+	void
+	:ref:`cvCalcArrBackProject<doxid-df/d4e/group__imgproc__c_1ga9c5d9d6a7134427fc02d7d5b510a7554>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`** image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist
+		);
+
+	void
+	:ref:`cvCalcArrBackProjectPatch<doxid-df/d4e/group__imgproc__c_1ga5ce7e33555b30c8a6f4967b75bc2967e>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`** image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` range,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		int method,
+		double factor
+		);
+
+	void
+	:ref:`cvCalcArrHist<doxid-df/d4e/group__imgproc__c_1gabb500248ad904bceb9a1db878e9a94b9>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`** arr,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		int accumulate = 0,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	void
+	:ref:`cvCalcBayesianProb<doxid-df/d4e/group__imgproc__c_1ga63909c904445f9d8cc8c0ae4a91ea97c>`(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** src,
+		int number,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** dst
+		);
+
+	float
+	:ref:`cvCalcEMD2<doxid-df/d4e/group__imgproc__c_1gad9e7f1ac6a63bfa0588804d7670fe5e7>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* signature1,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* signature2,
+		int distance_type,
+		:ref:`CvDistanceFunction<doxid-df/d4e/group__imgproc__c_1gaca3c69e72011d0dda4f0fd09003eeafd>` distance_func = NULL,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* cost_matrix = NULL,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* flow = NULL,
+		float* lower_bound = NULL,
+		void* userdata = NULL
+		);
+
+	void
+	:ref:`cvCalcHist<doxid-df/d4e/group__imgproc__c_1ga90e761238e009a923ad43860ceca5047>`(
+		:ref:`IplImage<doxid-dd/d51/struct_ipl_image>`** image,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		int accumulate = 0,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	void
+	:ref:`cvCalcProbDensity<doxid-df/d4e/group__imgproc__c_1gac282c42ba58abd5cabf2435defa97cb6>`(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist1,
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist2,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* dst_hist,
+		double scale = 255
+		);
+
+	void
+	:ref:`cvCanny<doxid-df/d4e/group__imgproc__c_1ga45b8373781a8ce684cc73b96a8de4ab1>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* edges,
+		double threshold1,
+		double threshold2,
+		int aperture_size = 3
+		);
+
+	int
+	:ref:`cvCheckContourConvexity<doxid-df/d4e/group__imgproc__c_1ga53fbc6a07d58a303bf1299387ff8cafe>`(const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour);
+
+	void
+	:ref:`cvCircle<doxid-df/d4e/group__imgproc__c_1ga7f4f4072ddb11d671416f56135042659>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` center,
+		int radius,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvClearHist<doxid-df/d4e/group__imgproc__c_1gade8c2465cf6c2c8649a307b5e884e7d5>`(:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist);
+
+	int
+	:ref:`cvClipLine<doxid-df/d4e/group__imgproc__c_1ga844a9e55b80d9b2baa64a1330c139be9>`(
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` img_size,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pt2
+		);
+
+	:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>`
+	:ref:`cvColorToScalar<doxid-df/d4e/group__imgproc__c_1gaad9342e1557dbc4bf1078fc73ad1d2e7>`(
+		double packed_color,
+		int arrtype
+		);
+
+	double
+	:ref:`cvCompareHist<doxid-df/d4e/group__imgproc__c_1gacfd947fdc3c09ead94f054cf1da21976>`(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist1,
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist2,
+		int method
+		);
+
+	double
+	:ref:`cvContourArea<doxid-df/d4e/group__imgproc__c_1gae248fd8cc90a1a364b7274da2450db7c>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour,
+		:ref:`CvSlice<doxid-d8/d15/struct_cv_slice>` slice = :ref:`CV_WHOLE_SEQ<doxid-d2/df8/group__core__c_1gaf60a219def061a7b1335495e6aedd90b>`,
+		int oriented = 0
+		);
+
+	double
+	:ref:`cvContourPerimeter<doxid-df/d4e/group__imgproc__c_1gaf001e50dfe927a1784544d02369fa14c>`(const void* contour);
+
+	void
+	:ref:`cvConvertMaps<doxid-df/d4e/group__imgproc__c_1gac477c242ff2a1f02525dd784fbd68a7a>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapxy,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapalpha
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvConvexHull2<doxid-df/d4e/group__imgproc__c_1ga34822bc83c18f98a936b8d9d16f2fb46>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* input,
+		void* hull_storage = NULL,
+		int orientation = :ref:`CV_CLOCKWISE<doxid-df/d4e/group__imgproc__c_1gga4f126a0a9b1d8c6a8f46a051ef8830bba48ee94d1ff963a2f194f6141858b3f70>`,
+		int return_points = 0
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvConvexityDefects<doxid-df/d4e/group__imgproc__c_1ga039d87c369c706a002413152b46e3114>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* convexhull,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage = NULL
+		);
+
+	void
+	:ref:`cvCopyHist<doxid-df/d4e/group__imgproc__c_1gaf5ea252c3fe277ad3edfb1abd3ebf2da>`(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* src,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** dst
+		);
+
+	void
+	:ref:`cvCopyMakeBorder<doxid-df/d4e/group__imgproc__c_1ga0b35f8698b266f28db3ca6dddafed04b>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset,
+		int bordertype,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` value = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		);
+
+	void
+	:ref:`cvCornerEigenValsAndVecs<doxid-df/d4e/group__imgproc__c_1ga122f079efd9f1d425c4754ef0d2884a9>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* eigenvv,
+		int block_size,
+		int aperture_size = 3
+		);
+
+	void
+	:ref:`cvCornerHarris<doxid-df/d4e/group__imgproc__c_1ga9ac3a10657c0ebfeeeb333536cdeb985>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* harris_response,
+		int block_size,
+		int aperture_size = 3,
+		double k = 0.04
+		);
+
+	void
+	:ref:`cvCornerMinEigenVal<doxid-df/d4e/group__imgproc__c_1ga4d17a5769ed9f4c61b85761c7680180f>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* eigenval,
+		int block_size,
+		int aperture_size = 3
+		);
+
+	:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`*
+	:ref:`cvCreateHist<doxid-df/d4e/group__imgproc__c_1ga805e17add35642a92d0dc9aa3053dbb8>`(
+		int dims,
+		int* sizes,
+		int type,
+		float** ranges = NULL,
+		int uniform = 1
+		);
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`**
+	:ref:`cvCreatePyramid<doxid-df/d4e/group__imgproc__c_1ga4645e40391701da8ae74d766077cd418>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		int extra_layers,
+		double rate,
+		const :ref:`CvSize<doxid-da/d4d/struct_cv_size>`* layer_sizes = 0,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* bufarr = 0,
+		int calc = 1,
+		int filter = :ref:`CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>`
+		);
+
+	:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`*
+	:ref:`cvCreateStructuringElementEx<doxid-df/d4e/group__imgproc__c_1ga23fb78d5cea9d715e5340286e6592f27>`(
+		int cols,
+		int rows,
+		int anchor_x,
+		int anchor_y,
+		int shape,
+		int* values = NULL
+		);
+
+	void
+	:ref:`cvCvtColor<doxid-df/d4e/group__imgproc__c_1ga7fe727f75cbc9473253e6fe23f3d188d>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int code
+		);
+
+	void
+	:ref:`cvDilate<doxid-df/d4e/group__imgproc__c_1ga42013330821c625f8628144bbc966bb7>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`* element = NULL,
+		int iterations = 1
+		);
+
+	void
+	:ref:`cvDistTransform<doxid-df/d4e/group__imgproc__c_1ga74099ce0233b79009d368c80c6edd1f2>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int distance_type = :ref:`CV_DIST_L2<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae60a48ac6e8738abf6746c4beb4a9962>`,
+		int mask_size = 3,
+		const float* mask = NULL,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* labels = NULL,
+		int labelType = :ref:`CV_DIST_LABEL_CCOMP<doxid-df/d4e/group__imgproc__c_1gga9a3be2d66956bd67c0b66c32d8b30f17a3e71b77bb9e87f093fbe5bea558d3961>`
+		);
+
+	void
+	:ref:`cvDrawContours<doxid-df/d4e/group__imgproc__c_1gaa0a06a6dcbd108dede25925271b3766d>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`* contour,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` external_color,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` hole_color,
+		int max_level,
+		int thickness = 1,
+		int line_type = 8,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0, 0)
+		);
+
+	void
+	:ref:`cvEllipse<doxid-df/d4e/group__imgproc__c_1ga3cbc95f7e1d21d8ac7237a3392bae979>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` center,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` axes,
+		double angle,
+		double start_angle,
+		double end_angle,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	int
+	:ref:`cvEllipse2Poly<doxid-df/d4e/group__imgproc__c_1gabef94272319c2f7f9cde0347af23ea3c>`(
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` center,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` axes,
+		int angle,
+		int arc_start,
+		int arc_end,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pts,
+		int delta
+		);
+
+	void
+	:target:`cvEllipseBox<doxid-df/d4e/group__imgproc__c_1gaadcd741f6a1e59e21866410173cac331>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>` box,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvEndFindContours<doxid-df/d4e/group__imgproc__c_1gafda37082153f87359ce07ab4cc17ddb5>`(:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>`* scanner);
+
+	void
+	:ref:`cvEqualizeHist<doxid-df/d4e/group__imgproc__c_1ga558b1432aeea00950cb8fe4604369e06>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst
+		);
+
+	void
+	:ref:`cvErode<doxid-df/d4e/group__imgproc__c_1ga5e7d0e84c73e54bdec293169a995e714>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`* element = NULL,
+		int iterations = 1
+		);
+
+	void
+	:ref:`cvFillConvexPoly<doxid-df/d4e/group__imgproc__c_1ga8d4eb00afad292c13065098fcc1fabba>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		const :ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pts,
+		int npts,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvFillPoly<doxid-df/d4e/group__imgproc__c_1ga83de2f367de46552438a7a7b97dde2f5>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`** pts,
+		const int* npts,
+		int contours,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvFilter2D<doxid-df/d4e/group__imgproc__c_1gaff2011d6f7376d406f1997778ab25958>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* kernel,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` anchor = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(-1,-1)
+		);
+
+	int
+	:ref:`cvFindContours<doxid-df/d4e/group__imgproc__c_1gaaeb1db57dfe206936d231e6d2ca472ed>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`** first_contour,
+		int header_size = sizeof(:ref:`CvContour<doxid-d9/db0/struct_cv_contour>`),
+		int mode = :ref:`CV_RETR_LIST<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`,
+		int method = :ref:`CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0, 0)
+		);
+
+	void
+	:ref:`cvFindCornerSubPix<doxid-df/d4e/group__imgproc__c_1gaec00b8b4b959fa52705c7f854fec099e>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* corners,
+		int count,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` win,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` zero_zone,
+		:ref:`CvTermCriteria<doxid-db/d3f/struct_cv_term_criteria>` criteria
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvFindNextContour<doxid-df/d4e/group__imgproc__c_1gac9e07bbd2b129f19bf28d882f0da080c>`(:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>` scanner);
+
+	:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>`
+	:ref:`cvFitEllipse2<doxid-df/d4e/group__imgproc__c_1ga24098c435c2d2b61694ae85640d78cfc>`(const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points);
+
+	void
+	:ref:`cvFitLine<doxid-df/d4e/group__imgproc__c_1ga57b94126f4ee2e235030bfd70475c808>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		int dist_type,
+		double param,
+		double reps,
+		double aeps,
+		float* line
+		);
+
+	void
+	:ref:`cvFloodFill<doxid-df/d4e/group__imgproc__c_1ga2e6bf05cf580d0ae0a4f900a7b07b370>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` seed_point,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` new_val,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` lo_diff = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0),
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` up_diff = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0),
+		:ref:`CvConnectedComp<doxid-de/dd7/struct_cv_connected_comp>`* comp = NULL,
+		int flags = 4,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	:ref:`CvFont<doxid-d2/d14/struct_cv_font>`
+	:target:`cvFont<doxid-df/d4e/group__imgproc__c_1ga2c41df978775b6f21616aff36a7010d7>`(
+		double scale,
+		int thickness = 1
+		);
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*
+	:ref:`cvGetAffineTransform<doxid-df/d4e/group__imgproc__c_1gab23beed78a837ce7ee992188abb4e1d2>`(
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* src,
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* dst,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		);
+
+	double
+	:ref:`cvGetCentralMoment<doxid-df/d4e/group__imgproc__c_1ga2dd83c6bf5b6d664fb29773d6043e101>`(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int x_order,
+		int y_order
+		);
+
+	void
+	:ref:`cvGetHuMoments<doxid-df/d4e/group__imgproc__c_1ga8b88a1c68382dbaa2409a77cde956b3f>`(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		:ref:`CvHuMoments<doxid-d6/d92/struct_cv_hu_moments>`* hu_moments
+		);
+
+	void
+	:ref:`cvGetMinMaxHistValue<doxid-df/d4e/group__imgproc__c_1gaaf470cc3cf5467c2964beaa501c21a7a>`(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		float* min_value,
+		float* max_value,
+		int* min_idx = NULL,
+		int* max_idx = NULL
+		);
+
+	double
+	:ref:`cvGetNormalizedCentralMoment<doxid-df/d4e/group__imgproc__c_1ga48e3ede8d8e7799629f48a77a9e2acf9>`(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int x_order,
+		int y_order
+		);
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*
+	:ref:`cvGetPerspectiveTransform<doxid-df/d4e/group__imgproc__c_1ga5daa6e3a55103896bbe5b92a51198784>`(
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* src,
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* dst,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		);
+
+	void
+	:ref:`cvGetQuadrangleSubPix<doxid-df/d4e/group__imgproc__c_1gab2a08c0fd40ca98ece130e1a480ffedd>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		);
+
+	void
+	:ref:`cvGetRectSubPix<doxid-df/d4e/group__imgproc__c_1ga526f62c3f987588817878c92d5ce4bda>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center
+		);
+
+	double
+	:ref:`cvGetSpatialMoment<doxid-df/d4e/group__imgproc__c_1ga76fce09b6bc258622684fe0a79c1392a>`(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int x_order,
+		int y_order
+		);
+
+	void
+	:ref:`cvGetTextSize<doxid-df/d4e/group__imgproc__c_1gaadbbcb2b9617f2333dff81b32c06adfe>`(
+		const char* text_string,
+		const :ref:`CvFont<doxid-d2/d14/struct_cv_font>`* font,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>`* text_size,
+		int* baseline
+		);
+
+	void
+	:ref:`cvGoodFeaturesToTrack<doxid-df/d4e/group__imgproc__c_1ga74cced3ad21b36eb89eab2864e27cfb1>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* eig_image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* temp_image,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* corners,
+		int* corner_count,
+		double quality_level,
+		double min_distance,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL,
+		int block_size = 3,
+		int use_harris = 0,
+		double k = 0.04
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvHoughCircles<doxid-df/d4e/group__imgproc__c_1ga8cc206fb609d9a1f478cbf423d1c79dd>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		void* circle_storage,
+		int method,
+		double dp,
+		double min_dist,
+		double param1 = 100,
+		double param2 = 100,
+		int min_radius = 0,
+		int max_radius = 0
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvHoughLines2<doxid-df/d4e/group__imgproc__c_1ga32eefbcbe46f6846a0a21d255a766789>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		void* line_storage,
+		int method,
+		double rho,
+		double theta,
+		int threshold,
+		double param1 = 0,
+		double param2 = 0,
+		double min_theta = 0,
+		double max_theta = :ref:`CV_PI<doxid-db/de0/group__core__utils_1ga677b89fae9308b340ddaebf0dba8455f>`
+		);
+
+	void
+	:ref:`cvInitFont<doxid-df/d4e/group__imgproc__c_1ga1a3feb4ddb31aed350989806b7095189>`(
+		:ref:`CvFont<doxid-d2/d14/struct_cv_font>`* font,
+		int font_face,
+		double hscale,
+		double vscale,
+		double shear = 0,
+		int thickness = 1,
+		int line_type = 8
+		);
+
+	int
+	:ref:`cvInitLineIterator<doxid-df/d4e/group__imgproc__c_1gaa4260850adf9162a9f360ff8573d55c6>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		:ref:`CvLineIterator<doxid-d2/dc0/struct_cv_line_iterator>`* line_iterator,
+		int connectivity = 8,
+		int left_to_right = 0
+		);
+
+	void
+	:ref:`cvInitUndistortMap<doxid-df/d4e/group__imgproc__c_1ga7269c3bceb1f02df73bc6fc2e85da5b1>`(
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* distortion_coeffs,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy
+		);
+
+	void
+	:ref:`cvInitUndistortRectifyMap<doxid-df/d4e/group__imgproc__c_1gaf6f747629bfeb90b6fc215a4d9f4506b>`(
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* dist_coeffs,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* R,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* new_camera_matrix,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy
+		);
+
+	void
+	:ref:`cvIntegral<doxid-df/d4e/group__imgproc__c_1gaf145f1863fce7d41efd245e8702d756b>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sum,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sqsum = NULL,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* tilted_sum = NULL
+		);
+
+	void
+	:ref:`cvLaplace<doxid-df/d4e/group__imgproc__c_1ga1f276d81366a57f48b83a1630cddf812>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int aperture_size = 3
+		);
+
+	void
+	:ref:`cvLine<doxid-df/d4e/group__imgproc__c_1ga0920d1bcccc507bd2a60110ff01467fb>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvLinearPolar<doxid-df/d4e/group__imgproc__c_1ga6095314307867c08a7ae029e7abb77df>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center,
+		double maxRadius,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`
+		);
+
+	void
+	:ref:`cvLogPolar<doxid-df/d4e/group__imgproc__c_1gaf627cafeb1019a63a954a02d1e06aea1>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center,
+		double M,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`
+		);
+
+	:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`*
+	:ref:`cvMakeHistHeaderForArray<doxid-df/d4e/group__imgproc__c_1ga5a452f95ca373376ea3cacfc74ad2839>`(
+		int dims,
+		int* sizes,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		float* data,
+		float** ranges = NULL,
+		int uniform = 1
+		);
+
+	double
+	:ref:`cvMatchShapes<doxid-df/d4e/group__imgproc__c_1ga1c30d37ebc9ed246605059d9938fedaf>`(
+		const void* object1,
+		const void* object2,
+		int method,
+		double parameter = 0
+		);
+
+	void
+	:ref:`cvMatchTemplate<doxid-df/d4e/group__imgproc__c_1gabbae85f6331ea7e59fdeba0eb2b8a6a8>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* templ,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* result,
+		int method
+		);
+
+	:ref:`CvRect<doxid-de/d44/struct_cv_rect>`
+	:ref:`cvMaxRect<doxid-df/d4e/group__imgproc__c_1gac2d3ac5127c7da8c5fdea93304ac2f13>`(
+		const :ref:`CvRect<doxid-de/d44/struct_cv_rect>`* rect1,
+		const :ref:`CvRect<doxid-de/d44/struct_cv_rect>`* rect2
+		);
+
+	:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>`
+	:ref:`cvMinAreaRect2<doxid-df/d4e/group__imgproc__c_1gadfbdb130e04de7446ea3ee74167723c4>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage = NULL
+		);
+
+	int
+	:ref:`cvMinEnclosingCircle<doxid-df/d4e/group__imgproc__c_1ga81f333d08e8396a77711a4d77fe08dcb>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* center,
+		float* radius
+		);
+
+	void
+	:ref:`cvMoments<doxid-df/d4e/group__imgproc__c_1ga1171d3f567db3c89a9d64549a2d66c83>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* arr,
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int binary = 0
+		);
+
+	void
+	:ref:`cvMorphologyEx<doxid-df/d4e/group__imgproc__c_1ga291b791b67f5840e3a2990152f762499>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* temp,
+		:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`* element,
+		int operation,
+		int iterations = 1
+		);
+
+	void
+	:ref:`cvMultiplyAcc<doxid-df/d4e/group__imgproc__c_1gabafd578e2ce9ad67cbe875fb98b75680>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image1,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image2,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* acc,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	void
+	:ref:`cvNormalizeHist<doxid-df/d4e/group__imgproc__c_1gae6dcca8f9e000d28fdf4a1fc37c3bce7>`(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		double factor
+		);
+
+	double
+	:ref:`cvPointPolygonTest<doxid-df/d4e/group__imgproc__c_1gab6b68780eee394d9433d13d4d43bc611>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` pt,
+		int measure_dist
+		);
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	:ref:`cvPointSeqFromMat<doxid-df/d4e/group__imgproc__c_1gac3277372be50da54999daa9390027b24>`(
+		int seq_kind,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mat,
+		:ref:`CvContour<doxid-d9/db0/struct_cv_contour>`* contour_header,
+		:ref:`CvSeqBlock<doxid-d7/d77/struct_cv_seq_block>`* block
+		);
+
+	void
+	:ref:`cvPolyLine<doxid-df/d4e/group__imgproc__c_1ga5900fbac1b58792ce3481343bc6b2e28>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`** pts,
+		const int* npts,
+		int contours,
+		int is_closed,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvPreCornerDetect<doxid-df/d4e/group__imgproc__c_1gad5b9c6b1f7e11ae81d568509f8eab52e>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* corners,
+		int aperture_size = 3
+		);
+
+	void
+	:ref:`cvPutText<doxid-df/d4e/group__imgproc__c_1ga6ea1d599f166f85efdebbf764015d1ae>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		const char* text,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` org,
+		const :ref:`CvFont<doxid-d2/d14/struct_cv_font>`* font,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color
+		);
+
+	void
+	:ref:`cvPyrDown<doxid-df/d4e/group__imgproc__c_1ga6534214d1c354a906f41b9d2718a9ea1>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int filter = :ref:`CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>`
+		);
+
+	void
+	:ref:`cvPyrMeanShiftFiltering<doxid-df/d4e/group__imgproc__c_1ga1d3df1ca2a7b1ee0d5296efa3ad028bf>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		double sp,
+		double sr,
+		int max_level = 1,
+		:ref:`CvTermCriteria<doxid-db/d3f/struct_cv_term_criteria>` termcrit = :ref:`cvTermCriteria<doxid-d2/df8/group__core__c_1ga7da63b8999cdae19145c9e6f7a6bdae3>`(:ref:`CV_TERMCRIT_ITER<doxid-d2/df8/group__core__c_1ga4f6009f584607989e908868751567fe7>`+:ref:`CV_TERMCRIT_EPS<doxid-d2/df8/group__core__c_1ga3d22bb48d24b85a1bbc5d10e0ddcff33>`, 5, 1)
+		);
+
+	void
+	:ref:`cvPyrUp<doxid-df/d4e/group__imgproc__c_1ga09f2411dbdc4e6fae96c41e2e607c405>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int filter = :ref:`CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>`
+		);
+
+	:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`
+	:ref:`cvReadChainPoint<doxid-df/d4e/group__imgproc__c_1gae11031f706b69b7245d592eca1bfe263>`(:ref:`CvChainPtReader<doxid-d8/d9e/struct_cv_chain_pt_reader>`* reader);
+
+	void
+	:ref:`cvRectangle<doxid-df/d4e/group__imgproc__c_1ga9a2700852e49d9580fb31a9572df59f6>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvRectangleR<doxid-df/d4e/group__imgproc__c_1gab96c53073ba315900b3933c3a563ddab>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvRect<doxid-de/d44/struct_cv_rect>` r,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		);
+
+	void
+	:ref:`cvReleaseHist<doxid-df/d4e/group__imgproc__c_1gadd790dc45874cc6b983c3c0467a7a4f6>`(:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** hist);
+
+	void
+	:ref:`cvReleasePyramid<doxid-df/d4e/group__imgproc__c_1gae21d5f1993329dc01aa37cf8f1715be7>`(
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*** pyramid,
+		int extra_layers
+		);
+
+	void
+	:ref:`cvReleaseStructuringElement<doxid-df/d4e/group__imgproc__c_1ga5af660e33f1deab66b4d1c053637fa8d>`(:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`** element);
+
+	void
+	:ref:`cvRemap<doxid-df/d4e/group__imgproc__c_1gae76f70b32b39b1d37c60059c631b8ab7>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` fillval = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		);
+
+	void
+	:ref:`cvResize<doxid-df/d4e/group__imgproc__c_1ga1119b1dc4f6db2a393057992ed574e25>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int interpolation = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`
+		);
+
+	void
+	:ref:`cvRunningAvg<doxid-df/d4e/group__imgproc__c_1gad9d03b6cd6105a8aba926e62a0004e43>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* acc,
+		double alpha,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	int
+	:ref:`cvSampleLine<doxid-df/d4e/group__imgproc__c_1gad90886b00fecd146616555f273b592fa>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		void* buffer,
+		int connectivity = 8
+		);
+
+	void
+	:ref:`cvSetHistBinRanges<doxid-df/d4e/group__imgproc__c_1gae21b1fb99432609944f802ba8664dc05>`(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		float** ranges,
+		int uniform = 1
+		);
+
+	void
+	:ref:`cvSmooth<doxid-df/d4e/group__imgproc__c_1gab82310a821307b169de8b5f1a5e5e486>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int smoothtype = :ref:`CV_GAUSSIAN<doxid-df/d4e/group__imgproc__c_1gga68a3a4144ad5ad650bed7f0ede3611c2a5f9c9d19089c103e1324b65ef51b77b1>`,
+		int size1 = 3,
+		int size2 = 0,
+		double sigma1 = 0,
+		double sigma2 = 0
+		);
+
+	void
+	:ref:`cvSobel<doxid-df/d4e/group__imgproc__c_1ga8fb0819ce63041084f2379f59f57bf8f>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int xorder,
+		int yorder,
+		int aperture_size = 3
+		);
+
+	void
+	:ref:`cvSquareAcc<doxid-df/d4e/group__imgproc__c_1gac4c7374b0132cc44d4cbf6e56cffa2f3>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sqsum,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		);
+
+	:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>`
+	:ref:`cvStartFindContours<doxid-df/d4e/group__imgproc__c_1ga2cf90d9d6026b7063323fcc03b0f19c1>`(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		int header_size = sizeof(:ref:`CvContour<doxid-d9/db0/struct_cv_contour>`),
+		int mode = :ref:`CV_RETR_LIST<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`,
+		int method = :ref:`CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0, 0)
+		);
+
+	void
+	:ref:`cvStartReadChainPoints<doxid-df/d4e/group__imgproc__c_1gaa705710877e21a66428507b3f6c609c0>`(
+		:ref:`CvChain<doxid-d6/dc5/struct_cv_chain>`* chain,
+		:ref:`CvChainPtReader<doxid-d8/d9e/struct_cv_chain_pt_reader>`* reader
+		);
+
+	void
+	:ref:`cvSubstituteContour<doxid-df/d4e/group__imgproc__c_1ga9a94ef14ffea176ff253717b8f257990>`(
+		:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>` scanner,
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`* new_contour
+		);
+
+	void
+	:ref:`cvThreshHist<doxid-df/d4e/group__imgproc__c_1ga8ab6f97d5d82b7b4d3debbc026cb86e5>`(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		double threshold
+		);
+
+	double
+	:ref:`cvThreshold<doxid-df/d4e/group__imgproc__c_1ga5c79f8ca95dc7a93f7142b218bea61f3>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		double threshold,
+		double max_value,
+		int threshold_type
+		);
+
+	void
+	:ref:`cvUndistort2<doxid-df/d4e/group__imgproc__c_1ga1117448e6594d672c19b8bf3130563f9>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* distortion_coeffs,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* new_camera_matrix = 0
+		);
+
+	void
+	:ref:`cvUndistortPoints<doxid-df/d4e/group__imgproc__c_1ga303213f7f6087b9c9cfbfba43c348750>`(
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* src,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* dist_coeffs,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* R = 0,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* P = 0
+		);
+
+	void
+	:ref:`cvWarpAffine<doxid-df/d4e/group__imgproc__c_1ga64a96df2274231ef38e8fa7679be5651>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` fillval = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		);
+
+	void
+	:ref:`cvWarpPerspective<doxid-df/d4e/group__imgproc__c_1ga950eb6d41a15ef3e3f238ba1f8d28fe3>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` fillval = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		);
+
+	void
+	:ref:`cvWatershed<doxid-df/d4e/group__imgproc__c_1ga79bf3d80f80bd5420a694cb68fc775ff>`(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* markers
+		);
+
+	// macros
+
+	#define :target:`CV_AA<doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`
+	#define :target:`CV_FILLED<doxid-df/d4e/group__imgproc__c_1ga0bbcfe5cf6dfb89747c48d124da67c64>`
+	#define :target:`CV_FONT_HERSHEY_COMPLEX<doxid-df/d4e/group__imgproc__c_1gad5b6e76528d1eb546b8c425b80568b19>`
+	#define :target:`CV_FONT_HERSHEY_COMPLEX_SMALL<doxid-df/d4e/group__imgproc__c_1gaee7bee788a4f4fd2aff89c38b7277a64>`
+	#define :target:`CV_FONT_HERSHEY_DUPLEX<doxid-df/d4e/group__imgproc__c_1ga2f709df2f80855399f42d6ca4b3db818>`
+	#define :target:`CV_FONT_HERSHEY_PLAIN<doxid-df/d4e/group__imgproc__c_1ga3c1600a7994221230ba2e9b7bd835f01>`
+	#define :target:`CV_FONT_HERSHEY_SCRIPT_COMPLEX<doxid-df/d4e/group__imgproc__c_1gae29525ea0d8010b79b657827bf9d2fe9>`
+	#define :target:`CV_FONT_HERSHEY_SCRIPT_SIMPLEX<doxid-df/d4e/group__imgproc__c_1ga8592da082e69a71c558e38faef3ad2b1>`
+	#define :target:`CV_FONT_HERSHEY_SIMPLEX<doxid-df/d4e/group__imgproc__c_1ga15c8488369d94bc5ff00836859da4cf3>`
+	#define :target:`CV_FONT_HERSHEY_TRIPLEX<doxid-df/d4e/group__imgproc__c_1gaafa920c2a58d66756073813934290b32>`
+	#define :target:`CV_FONT_ITALIC<doxid-df/d4e/group__imgproc__c_1ga12cfb7a768bfc561259f7fd36f38a4dd>`
+	#define :target:`CV_FONT_VECTOR0<doxid-df/d4e/group__imgproc__c_1ga6dd5dab67ad63b70c583128b366f26ad>`
+
+	#define :ref:`CV_INIT_3X3_DELTAS<doxid-df/d4e/group__imgproc__c_1gadd47b69c3f9fc86ba30c92488645229d>`( \
+		deltas, \
+		step, \
+		nch \
+		)
+
+	#define :target:`CV_NEXT_LINE_POINT<doxid-df/d4e/group__imgproc__c_1ga8d99d5caee87b79157e1b9d491be9c25>`(line_iterator)
+
+	#define :target:`CV_RGB<doxid-df/d4e/group__imgproc__c_1ga16fe14b01ea8dffdf2405dc5534e5f15>`( \
+		r, \
+		g, \
+		b \
+		)
+
+	#define :target:`cvCalcBackProject<doxid-df/d4e/group__imgproc__c_1gae842717d2116ce52fac4727bd02d4eb0>`( \
+		image, \
+		dst, \
+		hist \
+		)
+
+	#define :target:`cvCalcBackProjectPatch<doxid-df/d4e/group__imgproc__c_1ga633a12e74beb80ea22c690d12d9915cb>`( \
+		image, \
+		dst, \
+		range, \
+		hist, \
+		method, \
+		factor \
+		)
+
+	#define :target:`cvDrawCircle<doxid-df/d4e/group__imgproc__c_1ga66a67686039a3997def8c1ea4994294d>`
+	#define :target:`cvDrawEllipse<doxid-df/d4e/group__imgproc__c_1ga70a0a0e5b57ac41e0051e37b3e249505>`
+	#define :target:`cvDrawLine<doxid-df/d4e/group__imgproc__c_1gaaf73695a68e6782512f0ecb958e22ece>`
+	#define :target:`cvDrawPolyLine<doxid-df/d4e/group__imgproc__c_1gaf5d6df8e82501399f3f619f30e3fa0f9>`
+	#define :target:`cvDrawRect<doxid-df/d4e/group__imgproc__c_1ga419a1fc5285d1742e4808d63732c31ad>`
+
+.. _details-df/d4e/group__imgproc__c:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Enum Values
+-----------
+
+.. index:: pair: enumvalue; CV_CONTOURS_MATCH_I1
+.. _doxid-df/d4e/group__imgproc__c_1ggaad393aa3e173d7f081ab4bbc6ba5027da6ae4597e01365cd5c3469dc2f5cd2fea:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_CONTOURS_MATCH_I1
+
+.. math::
+
+	I_1(A,B) = \sum _{i=1...7} \left | \frac{1}{m^A_i} - \frac{1}{m^B_i} \right |
+
+.. index:: pair: enumvalue; CV_CONTOURS_MATCH_I2
+.. _doxid-df/d4e/group__imgproc__c_1ggaad393aa3e173d7f081ab4bbc6ba5027dae3011fca74bc54836e9457de352069eb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_CONTOURS_MATCH_I2
+
+.. math::
+
+	I_2(A,B) = \sum _{i=1...7} \left | m^A_i - m^B_i \right |
+
+.. index:: pair: enumvalue; CV_CONTOURS_MATCH_I3
+.. _doxid-df/d4e/group__imgproc__c_1ggaad393aa3e173d7f081ab4bbc6ba5027dad2141011f1cd57f6542c7da2412c9fe3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_CONTOURS_MATCH_I3
+
+.. math::
+
+	I_3(A,B) = \max _{i=1...7} \frac{ \left| m^A_i - m^B_i \right| }{ \left| m^A_i \right| }
+
+.. index:: pair: enumvalue; CV_DIST_USER
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709a85dc4b9e7225ea418574237f0490b2a6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_USER
+
+User defined distance
+
+.. index:: pair: enumvalue; CV_DIST_L1
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709a0b4bea01885957ad908478061c57e67b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_L1
+
+distance = \|x1-x2\| + \|y1-y2\|
+
+.. index:: pair: enumvalue; CV_DIST_L2
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae60a48ac6e8738abf6746c4beb4a9962:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_L2
+
+the simple euclidean distance
+
+.. index:: pair: enumvalue; CV_DIST_C
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709abac689302eb020962e5ef5615de87c07:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_C
+
+distance = max(\|x1-x2\|,\|y1-y2\|)
+
+.. index:: pair: enumvalue; CV_DIST_L12
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae76bff7327eb425bf30cca11e4bc1387:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_L12
+
+L1-L2 metric: distance = 2(sqrt(1+x\*x/2) - 1))
+
+.. index:: pair: enumvalue; CV_DIST_FAIR
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709abcb84a93465c9ac0e37c0e17d0faae7e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_FAIR
+
+distance = c^2(\|x\|/c-log(1+\|x\|/c)), c = 1.3998
+
+.. index:: pair: enumvalue; CV_DIST_WELSCH
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ac9d04b49e7f44944c936c707650327e4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_WELSCH
+
+distance = c^2/2(1-exp(-(x/c)^2)), c = 2.9846
+
+.. index:: pair: enumvalue; CV_DIST_HUBER
+.. _doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709a1725669ada87a92eea265d0346d09513:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_DIST_HUBER
+
+distance = \|x\|<c ? x^2/2 : c(\|x\|-c/2), c=1.345
+
+.. index:: pair: enumvalue; CV_THRESH_BINARY
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_BINARY
+
+value = value > threshold ? max_value : 0
+
+.. index:: pair: enumvalue; CV_THRESH_BINARY_INV
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa5605ead87cfc7a9a8daa1448f7fba488:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_BINARY_INV
+
+value = value > threshold ? 0 : max_value
+
+.. index:: pair: enumvalue; CV_THRESH_TRUNC
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaab24c5803c81111f2758c91b14dd48cf1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_TRUNC
+
+value = value > threshold ? threshold : value
+
+.. index:: pair: enumvalue; CV_THRESH_TOZERO
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaaaab30b5f1f73c2e5b280982f35d7c46d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_TOZERO
+
+value = value > threshold ? value : 0
+
+.. index:: pair: enumvalue; CV_THRESH_TOZERO_INV
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaac166f17f23efb6bcc221e9df92917de5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_TOZERO_INV
+
+value = value > threshold ? 0 : value
+
+.. index:: pair: enumvalue; CV_THRESH_OTSU
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa2456934f4f01402e80006a317ea2693e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_OTSU
+
+use Otsu algorithm to choose the optimal threshold value; combine the flag with one of the above CV_THRESH\_\* values
+
+.. index:: pair: enumvalue; CV_THRESH_TRIANGLE
+.. _doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaad963b0512c243be1ec737eadfc4f3cfe:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	CV_THRESH_TRIANGLE
+
+use Triangle algorithm to choose the optimal threshold value; combine the flag with one of the above CV_THRESH\_\* values, but not with CV_THRESH_OTSU
+
+Global Functions
+----------------
+
+.. index:: pair: function; cv2DRotationMatrix
+.. _doxid-df/d4e/group__imgproc__c_1ga8a01db322fe13ef1bf9c56bcb5a7537e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*
+	cv2DRotationMatrix(
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center,
+		double angle,
+		double scale,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		)
+
+Computes rotation_matrix matrix.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::getRotationMatrix2D <doxid-da/d54/group__imgproc__transform_1gafbbc470ce83812914a70abfb604f4326>`
+
+.. index:: pair: function; cvAcc
+.. _doxid-df/d4e/group__imgproc__c_1ga4021fa53cf3ce7bb5612a12c9da37e66:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvAcc(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sum,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+Adds image to accumulator.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::accumulate <doxid-d7/df3/group__imgproc__motion_1ga1a567a79901513811ff3b9976923b199>`
+
+.. index:: pair: function; cvAdaptiveThreshold
+.. _doxid-df/d4e/group__imgproc__c_1gae8660c2e87627e9cd4ffc8657b84d773:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvAdaptiveThreshold(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		double max_value,
+		int adaptive_method = :ref:`CV_ADAPTIVE_THRESH_MEAN_C<doxid-df/d4e/group__imgproc__c_1gga0b887f38fa71033f0904f8e2330b6815aa6d8e8df52568c5385e227a16269c278>`,
+		int threshold_type = :ref:`CV_THRESH_BINARY<doxid-df/d4e/group__imgproc__c_1ggaea33efd5e2c69d615faad5c5965510aaa6af8cb4caea50fb9578d4543aa7b6f20>`,
+		int block_size = 3,
+		double param1 = 5
+		)
+
+Applies adaptive threshold to grayscale image.
+
+The two parameters for methods CV_ADAPTIVE_THRESH_MEAN_C and CV_ADAPTIVE_THRESH_GAUSSIAN_C are: neighborhood size (3, 5, 7 etc.), and a constant subtracted from mean (...,-3,-2,-1,0,1,2,3,...)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::adaptiveThreshold <doxid-d7/d1b/group__imgproc__misc_1ga72b913f352e4a1b1b397736707afcde3>`
+
+.. index:: pair: function; cvApproxChains
+.. _doxid-df/d4e/group__imgproc__c_1ga3d20e5af0fd7285d6e0a2ebf74818f56:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvApproxChains(
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`* src_seq,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		int method = :ref:`CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`,
+		double parameter = 0,
+		int minimal_perimeter = 0,
+		int recursive = 0
+		)
+
+Approximates Freeman chain(s) with a polygonal curve.
+
+This is a standalone contour approximation routine, not represented in the new interface. When cvFindContours retrieves contours as Freeman chains, it calls the function to get approximated contours, represented as polygons.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src_seq
+
+		- Pointer to the approximated Freeman chain that can refer to other chains.
+
+	*
+		- storage
+
+		- Storage location for the resulting polylines.
+
+	*
+		- method
+
+		- Approximation method (see the description of the function :ocvFindContours ).
+
+	*
+		- parameter
+
+		- Method parameter (not used now).
+
+	*
+		- minimal_perimeter
+
+		- Approximates only those contours whose perimeters are not less than minimal_perimeter . Other chains are removed from the resulting structure.
+
+	*
+		- recursive
+
+		- Recursion flag. If it is non-zero, the function approximates all chains that can be obtained from chain by using the h_next or v_next links. Otherwise, the single input chain is approximated.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvStartReadChainPoints <doxid-df/d4e/group__imgproc__c_1gaa705710877e21a66428507b3f6c609c0>`, :ref:`cvReadChainPoint <doxid-df/d4e/group__imgproc__c_1gae11031f706b69b7245d592eca1bfe263>`
+
+.. index:: pair: function; cvApproxPoly
+.. _doxid-df/d4e/group__imgproc__c_1gac58f9f35c3edb3d9c161f5a3bb3dcd68:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvApproxPoly(
+		const void* src_seq,
+		int header_size,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		int method,
+		double eps,
+		int recursive = 0
+		)
+
+Approximates a single polygonal curve (contour) or a tree of polygonal curves (contours)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::approxPolyDP <doxid-d3/dc0/group__imgproc__shape_1ga0012a5fdaea70b8a9970165d98722b4c>`
+
+.. index:: pair: function; cvArcLength
+.. _doxid-df/d4e/group__imgproc__c_1gad35abc4dc428a4a3403595670091dfb7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvArcLength(
+		const void* curve,
+		:ref:`CvSlice<doxid-d8/d15/struct_cv_slice>` slice = :ref:`CV_WHOLE_SEQ<doxid-d2/df8/group__core__c_1gaf60a219def061a7b1335495e6aedd90b>`,
+		int is_closed = -1
+		)
+
+Calculates perimeter of a contour or length of a part of contour.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::arcLength <doxid-d3/dc0/group__imgproc__shape_1ga8d26483c636be6b35c3ec6335798a47c>`
+
+.. index:: pair: function; cvBoundingRect
+.. _doxid-df/d4e/group__imgproc__c_1gafcb1486899783b28b771538147bfc373:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvRect<doxid-de/d44/struct_cv_rect>`
+	cvBoundingRect(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		int update = 0
+		)
+
+Calculates contour bounding rectangle (update=1) or just retrieves pre-calculated rectangle (update=0)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::boundingRect <doxid-d3/dc0/group__imgproc__shape_1gacb413ddce8e48ff3ca61ed7cf626a366>`
+
+.. index:: pair: function; cvBoxPoints
+.. _doxid-df/d4e/group__imgproc__c_1ga19e59d64a4a47a9b0b8cffbf2e73cfea:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvBoxPoints(
+		:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>` box,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` pt [4]
+		)
+
+Finds coordinates of the box vertices.
+
+.. index:: pair: function; cvCalcArrBackProject
+.. _doxid-df/d4e/group__imgproc__c_1ga9c5d9d6a7134427fc02d7d5b510a7554:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCalcArrBackProject(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`** image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist
+		)
+
+Calculates back project.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvCalcBackProject <doxid-df/d4e/group__imgproc__c_1gae842717d2116ce52fac4727bd02d4eb0>`, :ref:`cv::calcBackProject <doxid-d6/dc7/group__imgproc__hist_1ga3a0af640716b456c3d14af8aee12e3ca>`
+
+.. index:: pair: function; cvCalcArrBackProjectPatch
+.. _doxid-df/d4e/group__imgproc__c_1ga5ce7e33555b30c8a6f4967b75bc2967e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCalcArrBackProjectPatch(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`** image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` range,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		int method,
+		double factor
+		)
+
+Locates a template within an image by using a histogram comparison.
+
+The function calculates the back projection by comparing histograms of the source image patches with the given histogram. The function is similar to matchTemplate, but instead of comparing the raster patch with all its possible positions within the search window, the function CalcBackProjectPatch compares histograms. See the algorithm diagram below:
+
+.. image:: backprojectpatch.png
+	:alt: image
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- image
+
+		- Source images (though, you may pass CvMat\*\* as well).
+
+	*
+		- dst
+
+		- Destination image.
+
+	*
+		- range
+
+		- 
+
+	*
+		- hist
+
+		- Histogram.
+
+	*
+		- method
+
+		- Comparison method passed to cvCompareHist (see the function description).
+
+	*
+		- factor
+
+		- Normalization factor for histograms that affects the normalization scale of the destination image. Pass 1 if not sure.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvCalcBackProjectPatch <doxid-df/d4e/group__imgproc__c_1ga633a12e74beb80ea22c690d12d9915cb>`
+
+.. index:: pair: function; cvCalcArrHist
+.. _doxid-df/d4e/group__imgproc__c_1gabb500248ad904bceb9a1db878e9a94b9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCalcArrHist(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`** arr,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		int accumulate = 0,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+Calculates array histogram.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::calcHist <doxid-d6/dc7/group__imgproc__hist_1ga4b2b5fd75503ff9e6844cc4dcdaed35d>`
+
+.. index:: pair: function; cvCalcBayesianProb
+.. _doxid-df/d4e/group__imgproc__c_1ga63909c904445f9d8cc8c0ae4a91ea97c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCalcBayesianProb(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** src,
+		int number,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** dst
+		)
+
+Calculates bayesian probabilistic histograms (each or src and dst is an array of *number* histograms.
+
+.. index:: pair: function; cvCalcEMD2
+.. _doxid-df/d4e/group__imgproc__c_1gad9e7f1ac6a63bfa0588804d7670fe5e7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	float
+	cvCalcEMD2(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* signature1,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* signature2,
+		int distance_type,
+		:ref:`CvDistanceFunction<doxid-df/d4e/group__imgproc__c_1gaca3c69e72011d0dda4f0fd09003eeafd>` distance_func = NULL,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* cost_matrix = NULL,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* flow = NULL,
+		float* lower_bound = NULL,
+		void* userdata = NULL
+		)
+
+Computes earth mover distance between two weighted point sets (called signatures)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::EMD <doxid-d6/dc7/group__imgproc__hist_1ga902b8e60cc7075c8947345489221e0e0>`
+
+.. index:: pair: function; cvCalcHist
+.. _doxid-df/d4e/group__imgproc__c_1ga90e761238e009a923ad43860ceca5047:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCalcHist(
+		:ref:`IplImage<doxid-dd/d51/struct_ipl_image>`** image,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		int accumulate = 0,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.
+
+.. index:: pair: function; cvCalcProbDensity
+.. _doxid-df/d4e/group__imgproc__c_1gac282c42ba58abd5cabf2435defa97cb6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCalcProbDensity(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist1,
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist2,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* dst_hist,
+		double scale = 255
+		)
+
+Divides one histogram by another.
+
+The function calculates the object probability density from two histograms as:
+
+.. math::
+
+	\texttt{disthist} (I)= \forkthree{0}{if \(\texttt{hist1}(I)=0\)}{\texttt{scale}}{if \(\texttt{hist1}(I) \ne 0\) and \(\texttt{hist2}(I) > \texttt{hist1}(I)\)}{\frac{\texttt{hist2}(I) \cdot \texttt{scale}}{\texttt{hist1}(I)}}{if \(\texttt{hist1}(I) \ne 0\) and \(\texttt{hist2}(I) \le \texttt{hist1}(I)\)}
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist1
+
+		- First histogram (the divisor).
+
+	*
+		- hist2
+
+		- Second histogram.
+
+	*
+		- dst_hist
+
+		- Destination histogram.
+
+	*
+		- scale
+
+		- Scale factor for the destination histogram.
+
+.. index:: pair: function; cvCanny
+.. _doxid-df/d4e/group__imgproc__c_1ga45b8373781a8ce684cc73b96a8de4ab1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCanny(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* edges,
+		double threshold1,
+		double threshold2,
+		int aperture_size = 3
+		)
+
+Runs canny edge detector.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`
+
+.. index:: pair: function; cvCheckContourConvexity
+.. _doxid-df/d4e/group__imgproc__c_1ga53fbc6a07d58a303bf1299387ff8cafe:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvCheckContourConvexity(const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour)
+
+Checks whether the contour is convex or not (returns 1 if convex, 0 if not)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::isContourConvex <doxid-d3/dc0/group__imgproc__shape_1ga8abf8010377b58cbc16db6734d92941b>`
+
+.. index:: pair: function; cvCircle
+.. _doxid-df/d4e/group__imgproc__c_1ga7f4f4072ddb11d671416f56135042659:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCircle(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` center,
+		int radius,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Draws a circle with specified center and radius.
+
+Thickness works in the same way as with cvRectangle
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`
+
+.. index:: pair: function; cvClearHist
+.. _doxid-df/d4e/group__imgproc__c_1gade8c2465cf6c2c8649a307b5e884e7d5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvClearHist(:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist)
+
+Clears the histogram.
+
+The function sets all of the histogram bins to 0 in case of a dense histogram and removes all histogram bins in case of a sparse array.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist
+
+		- Histogram.
+
+.. index:: pair: function; cvClipLine
+.. _doxid-df/d4e/group__imgproc__c_1ga844a9e55b80d9b2baa64a1330c139be9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvClipLine(
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` img_size,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pt2
+		)
+
+Clips the line segment connecting \*pt1 and \*pt2 by the rectangular window.
+
+(0<=x<img_size.width, 0<=y<img_size.height).
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::clipLine <doxid-d6/d6e/group__imgproc__draw_1gaf483cb46ad6b049bc35ec67052ef1c2c>`
+
+.. index:: pair: function; cvColorToScalar
+.. _doxid-df/d4e/group__imgproc__c_1gaad9342e1557dbc4bf1078fc73ad1d2e7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>`
+	cvColorToScalar(
+		double packed_color,
+		int arrtype
+		)
+
+Unpacks color value.
+
+if arrtype is CV_8UC?, *color* is treated as packed color value, otherwise the first channels (depending on arrtype) of destination scalar are set to the same value = *color*
+
+.. index:: pair: function; cvCompareHist
+.. _doxid-df/d4e/group__imgproc__c_1gacfd947fdc3c09ead94f054cf1da21976:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvCompareHist(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist1,
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist2,
+		int method
+		)
+
+Compares two histogram
+
+.. index:: pair: function; cvContourArea
+.. _doxid-df/d4e/group__imgproc__c_1gae248fd8cc90a1a364b7274da2450db7c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvContourArea(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour,
+		:ref:`CvSlice<doxid-d8/d15/struct_cv_slice>` slice = :ref:`CV_WHOLE_SEQ<doxid-d2/df8/group__core__c_1gaf60a219def061a7b1335495e6aedd90b>`,
+		int oriented = 0
+		)
+
+Calculates area of a contour or contour segment.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::contourArea <doxid-d3/dc0/group__imgproc__shape_1ga2c759ed9f497d4a618048a2f56dc97f1>`
+
+.. index:: pair: function; cvContourPerimeter
+.. _doxid-df/d4e/group__imgproc__c_1gaf001e50dfe927a1784544d02369fa14c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvContourPerimeter(const void* contour)
+
+same as cvArcLength for closed contour
+
+.. index:: pair: function; cvConvertMaps
+.. _doxid-df/d4e/group__imgproc__c_1gac477c242ff2a1f02525dd784fbd68a7a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvConvertMaps(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapxy,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapalpha
+		)
+
+Converts mapx & mapy from floating-point to integer formats for cvRemap.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::convertMaps <doxid-da/d54/group__imgproc__transform_1ga9156732fa8f01be9ebd1a194f2728b7f>`
+
+.. index:: pair: function; cvConvexHull2
+.. _doxid-df/d4e/group__imgproc__c_1ga34822bc83c18f98a936b8d9d16f2fb46:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvConvexHull2(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* input,
+		void* hull_storage = NULL,
+		int orientation = :ref:`CV_CLOCKWISE<doxid-df/d4e/group__imgproc__c_1gga4f126a0a9b1d8c6a8f46a051ef8830bba48ee94d1ff963a2f194f6141858b3f70>`,
+		int return_points = 0
+		)
+
+Calculates exact convex hull of 2d point set.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::convexHull <doxid-d3/dc0/group__imgproc__shape_1ga014b28e56cb8854c0de4a211cb2be656>`
+
+.. index:: pair: function; cvConvexityDefects
+.. _doxid-df/d4e/group__imgproc__c_1ga039d87c369c706a002413152b46e3114:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvConvexityDefects(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* convexhull,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage = NULL
+		)
+
+Finds convexity defects for the contour.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::convexityDefects <doxid-d3/dc0/group__imgproc__shape_1gada4437098113fd8683c932e0567f47ba>`
+
+.. index:: pair: function; cvCopyHist
+.. _doxid-df/d4e/group__imgproc__c_1gaf5ea252c3fe277ad3edfb1abd3ebf2da:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCopyHist(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* src,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** dst
+		)
+
+Copies a histogram.
+
+The function makes a copy of the histogram. If the second histogram pointer \*dst is NULL, a new histogram of the same size as src is created. Otherwise, both histograms must have equal types and sizes. Then the function copies the bin values of the source histogram to the destination histogram and sets the same bin value ranges as in src.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- Source histogram.
+
+	*
+		- dst
+
+		- Pointer to the destination histogram.
+
+.. index:: pair: function; cvCopyMakeBorder
+.. _doxid-df/d4e/group__imgproc__c_1ga0b35f8698b266f28db3ca6dddafed04b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCopyMakeBorder(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset,
+		int bordertype,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` value = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		)
+
+Copies source 2D array inside of the larger destination array and makes a border of the specified type (IPL_BORDER\_\*) around the copied area.
+
+.. index:: pair: function; cvCornerEigenValsAndVecs
+.. _doxid-df/d4e/group__imgproc__c_1ga122f079efd9f1d425c4754ef0d2884a9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCornerEigenValsAndVecs(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* eigenvv,
+		int block_size,
+		int aperture_size = 3
+		)
+
+Calculates eigen values and vectors of 2x2 gradient covariation matrix at every image pixel.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::cornerEigenValsAndVecs <doxid-dd/d1a/group__imgproc__feature_1ga4055896d9ef77dd3cacf2c5f60e13f1c>`
+
+.. index:: pair: function; cvCornerHarris
+.. _doxid-df/d4e/group__imgproc__c_1ga9ac3a10657c0ebfeeeb333536cdeb985:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCornerHarris(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* harris_response,
+		int block_size,
+		int aperture_size = 3,
+		double k = 0.04
+		)
+
+Harris corner detector:
+
+Calculates det(M) - k\*(trace(M)^2), where M is 2x2 gradient covariation matrix for each pixel
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::cornerHarris <doxid-dd/d1a/group__imgproc__feature_1gac1fc3598018010880e370e2f709b4345>`
+
+.. index:: pair: function; cvCornerMinEigenVal
+.. _doxid-df/d4e/group__imgproc__c_1ga4d17a5769ed9f4c61b85761c7680180f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCornerMinEigenVal(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* eigenval,
+		int block_size,
+		int aperture_size = 3
+		)
+
+Calculates minimal eigenvalue for 2x2 gradient covariation matrix at every image pixel.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::cornerMinEigenVal <doxid-dd/d1a/group__imgproc__feature_1ga3dbce297c1feb859ee36707e1003e0a8>`
+
+.. index:: pair: function; cvCreateHist
+.. _doxid-df/d4e/group__imgproc__c_1ga805e17add35642a92d0dc9aa3053dbb8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`*
+	cvCreateHist(
+		int dims,
+		int* sizes,
+		int type,
+		float** ranges = NULL,
+		int uniform = 1
+		)
+
+Creates a histogram.
+
+The function creates a histogram of the specified size and returns a pointer to the created histogram. If the array ranges is 0, the histogram bin ranges must be specified later via the function cvSetHistBinRanges. Though cvCalcHist and cvCalcBackProject may process 8-bit images without setting bin ranges, they assume they are equally spaced in 0 to 255 bins.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- dims
+
+		- Number of histogram dimensions.
+
+	*
+		- sizes
+
+		- Array of the histogram dimension sizes.
+
+	*
+		- type
+
+		- Histogram representation format. CV_HIST_ARRAY means that the histogram data is represented as a multi-dimensional dense array :ref:`CvMatND <doxid-d7/d5c/struct_cv_mat_n_d>`. CV_HIST_SPARSE means that histogram data is represented as a multi-dimensional sparse array :ref:`CvSparseMat <doxid-d3/d6a/struct_cv_sparse_mat>`.
+
+	*
+		- ranges
+
+		- Array of ranges for the histogram bins. Its meaning depends on the uniform parameter value. The ranges are used when the histogram is calculated or backprojected to determine which histogram bin corresponds to which value/tuple of values from the input image(s).
+
+	*
+		- uniform
+
+		- Uniformity flag. If not zero, the histogram has evenly spaced bins and for every :math:`0<=i<cDims` ranges[i] is an array of two numbers: lower and upper boundaries for the i-th histogram dimension. The whole range [lower,upper] is then split into dims[i] equal parts to determine the i-th input tuple value ranges for every histogram bin. And if uniform=0 , then the i-th element of the ranges array contains dims[i]+1 elements: :math:`\texttt{lower}_0, \texttt{upper}_0, \texttt{lower}_1, \texttt{upper}_1 = \texttt{lower}_2, ... \texttt{upper}_{dims[i]-1}` where :math:`\texttt{lower}_j` and :math:`\texttt{upper}_j` are lower and upper boundaries of the i-th input tuple value for the j-th bin, respectively. In either case, the input values that are beyond the specified range for a histogram bin are not counted by cvCalcHist and filled with 0 by cvCalcBackProject.
+
+.. index:: pair: function; cvCreatePyramid
+.. _doxid-df/d4e/group__imgproc__c_1ga4645e40391701da8ae74d766077cd418:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`**
+	cvCreatePyramid(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		int extra_layers,
+		double rate,
+		const :ref:`CvSize<doxid-da/d4d/struct_cv_size>`* layer_sizes = 0,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* bufarr = 0,
+		int calc = 1,
+		int filter = :ref:`CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>`
+		)
+
+Builds pyramid for an image.
+
+
+
+.. rubric:: See also:
+
+buildPyramid
+
+.. index:: pair: function; cvCreateStructuringElementEx
+.. _doxid-df/d4e/group__imgproc__c_1ga23fb78d5cea9d715e5340286e6592f27:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`*
+	cvCreateStructuringElementEx(
+		int cols,
+		int rows,
+		int anchor_x,
+		int anchor_y,
+		int shape,
+		int* values = NULL
+		)
+
+Returns a structuring element of the specified size and shape for morphological operations.
+
+the created structuring element IplConvKernel\* element must be released in the end using ``cvReleaseStructuringElement(&element)``.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- cols
+
+		- Width of the structuring element
+
+	*
+		- rows
+
+		- Height of the structuring element
+
+	*
+		- anchor_x
+
+		- x-coordinate of the anchor
+
+	*
+		- anchor_y
+
+		- y-coordinate of the anchor
+
+	*
+		- shape
+
+		- element shape that could be one of the cv::MorphShapes_c
+
+	*
+		- values
+
+		- integer array of cols\*rows elements that specifies the custom shape of the structuring element, when shape=CV_SHAPE_CUSTOM.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::getStructuringElement <doxid-d4/d86/group__imgproc__filter_1gac342a1bb6eabf6f55c803b09268e36dc>`
+
+.. index:: pair: function; cvCvtColor
+.. _doxid-df/d4e/group__imgproc__c_1ga7fe727f75cbc9473253e6fe23f3d188d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvCvtColor(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int code
+		)
+
+Converts input array pixels from one color space to another.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`
+
+.. index:: pair: function; cvDilate
+.. _doxid-df/d4e/group__imgproc__c_1ga42013330821c625f8628144bbc966bb7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvDilate(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`* element = NULL,
+		int iterations = 1
+		)
+
+dilates input image (applies maximum filter) one or more times.
+
+If element pointer is NULL, 3x3 rectangular element is used
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::dilate <doxid-d4/d86/group__imgproc__filter_1ga4ff0f3318642c4f469d0e11f242f3b6c>`
+
+.. index:: pair: function; cvDistTransform
+.. _doxid-df/d4e/group__imgproc__c_1ga74099ce0233b79009d368c80c6edd1f2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvDistTransform(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int distance_type = :ref:`CV_DIST_L2<doxid-df/d4e/group__imgproc__c_1gga2dbb833ef0dcc466dd02ee76badaf709ae60a48ac6e8738abf6746c4beb4a9962>`,
+		int mask_size = 3,
+		const float* mask = NULL,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* labels = NULL,
+		int labelType = :ref:`CV_DIST_LABEL_CCOMP<doxid-df/d4e/group__imgproc__c_1gga9a3be2d66956bd67c0b66c32d8b30f17a3e71b77bb9e87f093fbe5bea558d3961>`
+		)
+
+Applies distance transform to binary image.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::distanceTransform <doxid-d7/d1b/group__imgproc__misc_1ga8a0b7fdfcb7a13dde018988ba3a43042>`
+
+.. index:: pair: function; cvDrawContours
+.. _doxid-df/d4e/group__imgproc__c_1gaa0a06a6dcbd108dede25925271b3766d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvDrawContours(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`* contour,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` external_color,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` hole_color,
+		int max_level,
+		int thickness = 1,
+		int line_type = 8,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0, 0)
+		)
+
+Draws contour outlines or filled interiors on the image.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::drawContours <doxid-d6/d6e/group__imgproc__draw_1ga746c0625f1781f1ffc9056259103edbc>`
+
+.. index:: pair: function; cvEllipse
+.. _doxid-df/d4e/group__imgproc__c_1ga3cbc95f7e1d21d8ac7237a3392bae979:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvEllipse(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` center,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` axes,
+		double angle,
+		double start_angle,
+		double end_angle,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Draws ellipse outline, filled ellipse, elliptic arc or filled elliptic sector.
+
+depending on *thickness*, *start_angle* and *end_angle* parameters. The resultant figure is rotated by *angle*. All the angles are in degrees
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::ellipse <doxid-d6/d6e/group__imgproc__draw_1ga28b2267d35786f5f890ca167236cbc69>`
+
+.. index:: pair: function; cvEllipse2Poly
+.. _doxid-df/d4e/group__imgproc__c_1gabef94272319c2f7f9cde0347af23ea3c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvEllipse2Poly(
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` center,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` axes,
+		int angle,
+		int arc_start,
+		int arc_end,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pts,
+		int delta
+		)
+
+Returns the polygon points which make up the given ellipse.
+
+The ellipse is define by the box of size 'axes' rotated 'angle' around the 'center'. A partial sweep of the ellipse arc can be done by spcifying arc_start and arc_end to be something other than 0 and 360, respectively. The input array 'pts' must be large enough to hold the result. The total number of points stored into 'pts' is returned by this function.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::ellipse2Poly <doxid-d6/d6e/group__imgproc__draw_1ga727a72a3f6a625a2ae035f957c61051f>`
+
+.. index:: pair: function; cvEndFindContours
+.. _doxid-df/d4e/group__imgproc__c_1gafda37082153f87359ce07ab4cc17ddb5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvEndFindContours(:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>`* scanner)
+
+Releases contour scanner and returns pointer to the first outer contour.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvFindContours <doxid-df/d4e/group__imgproc__c_1gaaeb1db57dfe206936d231e6d2ca472ed>`
+
+.. index:: pair: function; cvEqualizeHist
+.. _doxid-df/d4e/group__imgproc__c_1ga558b1432aeea00950cb8fe4604369e06:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvEqualizeHist(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst
+		)
+
+equalizes histogram of 8-bit single-channel image
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::equalizeHist <doxid-d6/dc7/group__imgproc__hist_1ga7e54091f0c937d49bf84152a16f76d6e>`
+
+.. index:: pair: function; cvErode
+.. _doxid-df/d4e/group__imgproc__c_1ga5e7d0e84c73e54bdec293169a995e714:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvErode(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`* element = NULL,
+		int iterations = 1
+		)
+
+erodes input image (applies minimum filter) one or more times. If element pointer is NULL, 3x3 rectangular element is used
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::erode <doxid-d4/d86/group__imgproc__filter_1gaeb1e0c1033e3f6b891a25d0511362aeb>`
+
+.. index:: pair: function; cvFillConvexPoly
+.. _doxid-df/d4e/group__imgproc__c_1ga8d4eb00afad292c13065098fcc1fabba:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvFillConvexPoly(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		const :ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`* pts,
+		int npts,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Fills convex or monotonous polygon.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::fillConvexPoly <doxid-d6/d6e/group__imgproc__draw_1ga906aae1606ea4ed2f27bec1537f6c5c2>`
+
+.. index:: pair: function; cvFillPoly
+.. _doxid-df/d4e/group__imgproc__c_1ga83de2f367de46552438a7a7b97dde2f5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvFillPoly(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`** pts,
+		const int* npts,
+		int contours,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Fills an area bounded by one or more arbitrary polygons.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::fillPoly <doxid-d6/d6e/group__imgproc__draw_1gaf30888828337aa4c6b56782b5dfbd4b7>`
+
+.. index:: pair: function; cvFilter2D
+.. _doxid-df/d4e/group__imgproc__c_1gaff2011d6f7376d406f1997778ab25958:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvFilter2D(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* kernel,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` anchor = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(-1,-1)
+		)
+
+Convolves an image with the kernel.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- input image.
+
+	*
+		- dst
+
+		- output image of the same size and the same number of channels as src.
+
+	*
+		- kernel
+
+		- convolution kernel (or rather a correlation kernel), a single-channel floating point matrix; if you want to apply different kernels to different channels, split the image into separate color planes using split and process them individually.
+
+	*
+		- anchor
+
+		- anchor of the kernel that indicates the relative position of a filtered point within the kernel; the anchor should lie within the kernel; default value (-1,-1) means that the anchor is at the kernel center.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::filter2D <doxid-d4/d86/group__imgproc__filter_1ga27c049795ce870216ddfb366086b5a04>`
+
+.. index:: pair: function; cvFindContours
+.. _doxid-df/d4e/group__imgproc__c_1gaaeb1db57dfe206936d231e6d2ca472ed:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvFindContours(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`** first_contour,
+		int header_size = sizeof(:ref:`CvContour<doxid-d9/db0/struct_cv_contour>`),
+		int mode = :ref:`CV_RETR_LIST<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`,
+		int method = :ref:`CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0, 0)
+		)
+
+Retrieves outer and optionally inner boundaries of white (non-zero) connected components in the black (zero) background.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::findContours <doxid-d3/dc0/group__imgproc__shape_1ga17ed9f5d79ae97bd4c7cf18403e1689a>`, :ref:`cvStartFindContours <doxid-df/d4e/group__imgproc__c_1ga2cf90d9d6026b7063323fcc03b0f19c1>`, :ref:`cvFindNextContour <doxid-df/d4e/group__imgproc__c_1gac9e07bbd2b129f19bf28d882f0da080c>`, :ref:`cvSubstituteContour <doxid-df/d4e/group__imgproc__c_1ga9a94ef14ffea176ff253717b8f257990>`, :ref:`cvEndFindContours <doxid-df/d4e/group__imgproc__c_1gafda37082153f87359ce07ab4cc17ddb5>`
+
+.. index:: pair: function; cvFindCornerSubPix
+.. _doxid-df/d4e/group__imgproc__c_1gaec00b8b4b959fa52705c7f854fec099e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvFindCornerSubPix(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* corners,
+		int count,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` win,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>` zero_zone,
+		:ref:`CvTermCriteria<doxid-db/d3f/struct_cv_term_criteria>` criteria
+		)
+
+Adjust corner position using some sort of gradient search.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::cornerSubPix <doxid-dd/d1a/group__imgproc__feature_1ga354e0d7c86d0d9da75de9b9701a9a87e>`
+
+.. index:: pair: function; cvFindNextContour
+.. _doxid-df/d4e/group__imgproc__c_1gac9e07bbd2b129f19bf28d882f0da080c:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvFindNextContour(:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>` scanner)
+
+Retrieves next contour.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvFindContours <doxid-df/d4e/group__imgproc__c_1gaaeb1db57dfe206936d231e6d2ca472ed>`
+
+.. index:: pair: function; cvFitEllipse2
+.. _doxid-df/d4e/group__imgproc__c_1ga24098c435c2d2b61694ae85640d78cfc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>`
+	cvFitEllipse2(const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points)
+
+Fits ellipse into a set of 2d points.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::fitEllipse <doxid-d3/dc0/group__imgproc__shape_1gaf259efaad93098103d6c27b9e4900ffa>`
+
+.. index:: pair: function; cvFitLine
+.. _doxid-df/d4e/group__imgproc__c_1ga57b94126f4ee2e235030bfd70475c808:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvFitLine(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		int dist_type,
+		double param,
+		double reps,
+		double aeps,
+		float* line
+		)
+
+Fits a line into set of 2d or 3d points in a robust way (M-estimator technique)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::fitLine <doxid-d3/dc0/group__imgproc__shape_1gaf849da1fdafa67ee84b1e9a23b93f91f>`
+
+.. index:: pair: function; cvFloodFill
+.. _doxid-df/d4e/group__imgproc__c_1ga2e6bf05cf580d0ae0a4f900a7b07b370:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvFloodFill(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` seed_point,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` new_val,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` lo_diff = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0),
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` up_diff = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0),
+		:ref:`CvConnectedComp<doxid-de/dd7/struct_cv_connected_comp>`* comp = NULL,
+		int flags = 4,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+Fills the connected component until the color difference gets large enough.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::floodFill <doxid-d7/d1b/group__imgproc__misc_1gaf1f55a048f8a45bc3383586e80b1f0d0>`
+
+.. index:: pair: function; cvGetAffineTransform
+.. _doxid-df/d4e/group__imgproc__c_1gab23beed78a837ce7ee992188abb4e1d2:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*
+	cvGetAffineTransform(
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* src,
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* dst,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		)
+
+Computes affine transform matrix for mapping src[i] to dst[i] (i=0,1,2)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::getAffineTransform <doxid-da/d54/group__imgproc__transform_1ga8f6d378f9f8eebb5cb55cd3ae295a999>`
+
+.. index:: pair: function; cvGetCentralMoment
+.. _doxid-df/d4e/group__imgproc__c_1ga2dd83c6bf5b6d664fb29773d6043e101:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvGetCentralMoment(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int x_order,
+		int y_order
+		)
+
+Retrieve central moments.
+
+.. index:: pair: function; cvGetHuMoments
+.. _doxid-df/d4e/group__imgproc__c_1ga8b88a1c68382dbaa2409a77cde956b3f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvGetHuMoments(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		:ref:`CvHuMoments<doxid-d6/d92/struct_cv_hu_moments>`* hu_moments
+		)
+
+Calculates 7 Hu's invariants from precalculated spatial and central moments.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::HuMoments <doxid-d3/dc0/group__imgproc__shape_1gab001db45c1f1af6cbdbe64df04c4e944>`
+
+.. index:: pair: function; cvGetMinMaxHistValue
+.. _doxid-df/d4e/group__imgproc__c_1gaaf470cc3cf5467c2964beaa501c21a7a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvGetMinMaxHistValue(
+		const :ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		float* min_value,
+		float* max_value,
+		int* min_idx = NULL,
+		int* max_idx = NULL
+		)
+
+Finds the minimum and maximum histogram bins.
+
+The function finds the minimum and maximum histogram bins and their positions. All of output arguments are optional. Among several extremas with the same value the ones with the minimum index (in the lexicographical order) are returned. In case of several maximums or minimums, the earliest in the lexicographical order (extrema locations) is returned.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist
+
+		- Histogram.
+
+	*
+		- min_value
+
+		- Pointer to the minimum value of the histogram.
+
+	*
+		- max_value
+
+		- Pointer to the maximum value of the histogram.
+
+	*
+		- min_idx
+
+		- Pointer to the array of coordinates for the minimum.
+
+	*
+		- max_idx
+
+		- Pointer to the array of coordinates for the maximum.
+
+.. index:: pair: function; cvGetNormalizedCentralMoment
+.. _doxid-df/d4e/group__imgproc__c_1ga48e3ede8d8e7799629f48a77a9e2acf9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvGetNormalizedCentralMoment(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int x_order,
+		int y_order
+		)
+
+Retrieve normalized central moments.
+
+.. index:: pair: function; cvGetPerspectiveTransform
+.. _doxid-df/d4e/group__imgproc__c_1ga5daa6e3a55103896bbe5b92a51198784:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*
+	cvGetPerspectiveTransform(
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* src,
+		const :ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* dst,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		)
+
+Computes perspective transform matrix for mapping src[i] to dst[i] (i=0,1,2,3)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::getPerspectiveTransform <doxid-da/d54/group__imgproc__transform_1ga8c1ae0e3589a9d77fffc962c49b22043>`
+
+.. index:: pair: function; cvGetQuadrangleSubPix
+.. _doxid-df/d4e/group__imgproc__c_1gab2a08c0fd40ca98ece130e1a480ffedd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvGetQuadrangleSubPix(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix
+		)
+
+Retrieves quadrangle from the input array.
+
+matrixarr = ( a11 a12 \| b1 ) dst(x,y) <- src(A[x y]' + b) ( a21 a22 \| b2 ) (bilinear interpolation is used to retrieve pixels with fractional coordinates)
+
+
+
+.. rubric:: See also:
+
+:ref:`cvWarpAffine <doxid-df/d4e/group__imgproc__c_1ga64a96df2274231ef38e8fa7679be5651>`
+
+.. index:: pair: function; cvGetRectSubPix
+.. _doxid-df/d4e/group__imgproc__c_1ga526f62c3f987588817878c92d5ce4bda:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvGetRectSubPix(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center
+		)
+
+Retrieves the rectangular image region with specified center from the input array.
+
+dst(x,y) <- src(x + center.x - dst_width/2, y + center.y - dst_height/2). Values of pixels with fractional coordinates are retrieved using bilinear interpolation
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::getRectSubPix <doxid-da/d54/group__imgproc__transform_1ga77576d06075c1a4b6ba1a608850cd614>`
+
+.. index:: pair: function; cvGetSpatialMoment
+.. _doxid-df/d4e/group__imgproc__c_1ga76fce09b6bc258622684fe0a79c1392a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvGetSpatialMoment(
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int x_order,
+		int y_order
+		)
+
+Retrieve spatial moments.
+
+.. index:: pair: function; cvGetTextSize
+.. _doxid-df/d4e/group__imgproc__c_1gaadbbcb2b9617f2333dff81b32c06adfe:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvGetTextSize(
+		const char* text_string,
+		const :ref:`CvFont<doxid-d2/d14/struct_cv_font>`* font,
+		:ref:`CvSize<doxid-da/d4d/struct_cv_size>`* text_size,
+		int* baseline
+		)
+
+Calculates bounding box of text stroke (useful for alignment)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::getTextSize <doxid-d6/d6e/group__imgproc__draw_1ga3d2abfcb995fd2db908c8288199dba82>`
+
+.. index:: pair: function; cvGoodFeaturesToTrack
+.. _doxid-df/d4e/group__imgproc__c_1ga74cced3ad21b36eb89eab2864e27cfb1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvGoodFeaturesToTrack(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* eig_image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* temp_image,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* corners,
+		int* corner_count,
+		double quality_level,
+		double min_distance,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL,
+		int block_size = 3,
+		int use_harris = 0,
+		double k = 0.04
+		)
+
+Finds a sparse set of points within the selected region that seem to be easy to track.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::goodFeaturesToTrack <doxid-dd/d1a/group__imgproc__feature_1ga1d6bb77486c8f92d79c8793ad995d541>`
+
+.. index:: pair: function; cvHoughCircles
+.. _doxid-df/d4e/group__imgproc__c_1ga8cc206fb609d9a1f478cbf423d1c79dd:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvHoughCircles(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		void* circle_storage,
+		int method,
+		double dp,
+		double min_dist,
+		double param1 = 100,
+		double param2 = 100,
+		int min_radius = 0,
+		int max_radius = 0
+		)
+
+Finds circles in the image.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::HoughCircles <doxid-dd/d1a/group__imgproc__feature_1ga47849c3be0d0406ad3ca45db65a25d2d>`
+
+.. index:: pair: function; cvHoughLines2
+.. _doxid-df/d4e/group__imgproc__c_1ga32eefbcbe46f6846a0a21d255a766789:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvHoughLines2(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		void* line_storage,
+		int method,
+		double rho,
+		double theta,
+		int threshold,
+		double param1 = 0,
+		double param2 = 0,
+		double min_theta = 0,
+		double max_theta = :ref:`CV_PI<doxid-db/de0/group__core__utils_1ga677b89fae9308b340ddaebf0dba8455f>`
+		)
+
+Finds lines on binary image using one of several methods.
+
+line_storage is either memory storage or 1 x *max number of lines* :ref:`CvMat <doxid-d6/dda/struct_cv_mat>`, its number of columns is changed by the function. method is one of CV_HOUGH\_\*; rho, theta and threshold are used for each of those methods; param1 ~ line length, param2 ~ line gap - for probabilistic, param1 ~ srn, param2 ~ stn - for multi-scale
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::HoughLines <doxid-dd/d1a/group__imgproc__feature_1ga46b4e588934f6c8dfd509cc6e0e4545a>`
+
+.. index:: pair: function; cvInitFont
+.. _doxid-df/d4e/group__imgproc__c_1ga1a3feb4ddb31aed350989806b7095189:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvInitFont(
+		:ref:`CvFont<doxid-d2/d14/struct_cv_font>`* font,
+		int font_face,
+		double hscale,
+		double vscale,
+		double shear = 0,
+		int thickness = 1,
+		int line_type = 8
+		)
+
+Initializes font structure (OpenCV 1.x API).
+
+The function initializes the font structure that can be passed to text rendering functions.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- font
+
+		- Pointer to the font structure initialized by the function
+
+	*
+		- font_face
+
+		- Font name identifier. See :ref:`cv::HersheyFonts <doxid-d0/de1/group__core_1ga0f9314ea6e35f99bb23f29567fc16e11>` and corresponding old CV\_\* identifiers.
+
+	*
+		- hscale
+
+		- Horizontal scale. If equal to 1.0f , the characters have the original width depending on the font type. If equal to 0.5f , the characters are of half the original width.
+
+	*
+		- vscale
+
+		- Vertical scale. If equal to 1.0f , the characters have the original height depending on the font type. If equal to 0.5f , the characters are of half the original height.
+
+	*
+		- shear
+
+		- Approximate tangent of the character slope relative to the vertical line. A zero value means a non-italic font, 1.0f means about a 45 degree slope, etc.
+
+	*
+		- thickness
+
+		- Thickness of the text strokes
+
+	*
+		- line_type
+
+		- Type of the strokes, see line description
+
+
+
+.. rubric:: See also:
+
+:ref:`cvPutText <doxid-df/d4e/group__imgproc__c_1ga6ea1d599f166f85efdebbf764015d1ae>`
+
+.. index:: pair: function; cvInitLineIterator
+.. _doxid-df/d4e/group__imgproc__c_1gaa4260850adf9162a9f360ff8573d55c6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvInitLineIterator(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		:ref:`CvLineIterator<doxid-d2/dc0/struct_cv_line_iterator>`* line_iterator,
+		int connectivity = 8,
+		int left_to_right = 0
+		)
+
+Initializes line iterator.
+
+Initially, line_iterator->ptr will point to pt1 (or pt2, see left_to_right description) location in the image. Returns the number of pixels on the line between the ending points.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::LineIterator <doxid-dd/d2f/classcv_1_1_line_iterator>`
+
+.. index:: pair: function; cvInitUndistortMap
+.. _doxid-df/d4e/group__imgproc__c_1ga7269c3bceb1f02df73bc6fc2e85da5b1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvInitUndistortMap(
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* distortion_coeffs,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy
+		)
+
+Computes transformation map from intrinsic camera parameters that can used by cvRemap.
+
+.. index:: pair: function; cvInitUndistortRectifyMap
+.. _doxid-df/d4e/group__imgproc__c_1gaf6f747629bfeb90b6fc215a4d9f4506b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvInitUndistortRectifyMap(
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* dist_coeffs,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* R,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* new_camera_matrix,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy
+		)
+
+Computes undistortion+rectification map for a head of stereo camera.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::initUndistortRectifyMap <doxid-da/d54/group__imgproc__transform_1ga7dfb72c9cf9780a347fbe3d1c47e5d5a>`
+
+.. index:: pair: function; cvIntegral
+.. _doxid-df/d4e/group__imgproc__c_1gaf145f1863fce7d41efd245e8702d756b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvIntegral(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sum,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sqsum = NULL,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* tilted_sum = NULL
+		)
+
+Finds integral image: SUM(X,Y) = sum(x<X,y<Y)I(x,y)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::integral <doxid-d7/d1b/group__imgproc__misc_1gadeaf38d7701d7ad371278d663c50c77d>`
+
+.. index:: pair: function; cvLaplace
+.. _doxid-df/d4e/group__imgproc__c_1ga1f276d81366a57f48b83a1630cddf812:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvLaplace(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int aperture_size = 3
+		)
+
+Calculates the image Laplacian: (d2/dx + d2/dy)I.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::Laplacian <doxid-d4/d86/group__imgproc__filter_1gad78703e4c8fe703d479c1860d76429e6>`
+
+.. index:: pair: function; cvLine
+.. _doxid-df/d4e/group__imgproc__c_1ga0920d1bcccc507bd2a60110ff01467fb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvLine(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Draws 4-connected, 8-connected or antialiased line segment connecting two points.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`
+
+.. index:: pair: function; cvLinearPolar
+.. _doxid-df/d4e/group__imgproc__c_1ga6095314307867c08a7ae029e7abb77df:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvLinearPolar(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center,
+		double maxRadius,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`
+		)
+
+Performs forward or inverse linear-polar image transform
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::linearPolar <doxid-da/d54/group__imgproc__transform_1gaa38a6884ac8b6e0b9bed47939b5362f3>`
+
+.. index:: pair: function; cvLogPolar
+.. _doxid-df/d4e/group__imgproc__c_1gaf627cafeb1019a63a954a02d1e06aea1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvLogPolar(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` center,
+		double M,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`
+		)
+
+Performs forward or inverse log-polar image transform.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::logPolar <doxid-da/d54/group__imgproc__transform_1gaec3a0b126a85b5ca2c667b16e0ae022d>`
+
+.. index:: pair: function; cvMakeHistHeaderForArray
+.. _doxid-df/d4e/group__imgproc__c_1ga5a452f95ca373376ea3cacfc74ad2839:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`*
+	cvMakeHistHeaderForArray(
+		int dims,
+		int* sizes,
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		float* data,
+		float** ranges = NULL,
+		int uniform = 1
+		)
+
+Makes a histogram out of an array.
+
+The function initializes the histogram, whose header and bins are allocated by the user. cvReleaseHist does not need to be called afterwards. Only dense histograms can be initialized this way. The function returns hist.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- dims
+
+		- Number of the histogram dimensions.
+
+	*
+		- sizes
+
+		- Array of the histogram dimension sizes.
+
+	*
+		- hist
+
+		- Histogram header initialized by the function.
+
+	*
+		- data
+
+		- Array used to store histogram bins.
+
+	*
+		- ranges
+
+		- Histogram bin ranges. See cvCreateHist for details.
+
+	*
+		- uniform
+
+		- Uniformity flag. See cvCreateHist for details.
+
+.. index:: pair: function; cvMatchShapes
+.. _doxid-df/d4e/group__imgproc__c_1ga1c30d37ebc9ed246605059d9938fedaf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvMatchShapes(
+		const void* object1,
+		const void* object2,
+		int method,
+		double parameter = 0
+		)
+
+Compares two contours by matching their moments.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::matchShapes <doxid-d3/dc0/group__imgproc__shape_1gaadc90cb16e2362c9bd6e7363e6e4c317>`
+
+.. index:: pair: function; cvMatchTemplate
+.. _doxid-df/d4e/group__imgproc__c_1gabbae85f6331ea7e59fdeba0eb2b8a6a8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvMatchTemplate(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* templ,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* result,
+		int method
+		)
+
+Measures similarity between template and overlapped windows in the source image and fills the resultant image with the measurements.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::matchTemplate <doxid-df/dfb/group__imgproc__object_1ga586ebfb0a7fb604b35a23d85391329be>`
+
+.. index:: pair: function; cvMaxRect
+.. _doxid-df/d4e/group__imgproc__c_1gac2d3ac5127c7da8c5fdea93304ac2f13:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvRect<doxid-de/d44/struct_cv_rect>`
+	cvMaxRect(
+		const :ref:`CvRect<doxid-de/d44/struct_cv_rect>`* rect1,
+		const :ref:`CvRect<doxid-de/d44/struct_cv_rect>`* rect2
+		)
+
+Finds minimum rectangle containing two given rectangles.
+
+.. index:: pair: function; cvMinAreaRect2
+.. _doxid-df/d4e/group__imgproc__c_1gadfbdb130e04de7446ea3ee74167723c4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvBox2D<doxid-d9/d3b/struct_cv_box2_d>`
+	cvMinAreaRect2(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage = NULL
+		)
+
+Finds minimum area rotated rectangle bounding a set of points.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::minAreaRect <doxid-d3/dc0/group__imgproc__shape_1ga3d476a3417130ae5154aea421ca7ead9>`
+
+.. index:: pair: function; cvMinEnclosingCircle
+.. _doxid-df/d4e/group__imgproc__c_1ga81f333d08e8396a77711a4d77fe08dcb:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvMinEnclosingCircle(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* points,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>`* center,
+		float* radius
+		)
+
+Finds minimum enclosing circle for a set of points.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::minEnclosingCircle <doxid-d3/dc0/group__imgproc__shape_1ga8ce13c24081bbc7151e9326f412190f1>`
+
+.. index:: pair: function; cvMoments
+.. _doxid-df/d4e/group__imgproc__c_1ga1171d3f567db3c89a9d64549a2d66c83:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvMoments(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* arr,
+		:ref:`CvMoments<doxid-d3/d2d/struct_cv_moments>`* moments,
+		int binary = 0
+		)
+
+Calculates all spatial and central moments up to the 3rd order.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::moments <doxid-d3/dc0/group__imgproc__shape_1ga556a180f43cab22649c23ada36a8a139>`
+
+.. index:: pair: function; cvMorphologyEx
+.. _doxid-df/d4e/group__imgproc__c_1ga291b791b67f5840e3a2990152f762499:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvMorphologyEx(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* temp,
+		:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`* element,
+		int operation,
+		int iterations = 1
+		)
+
+Performs complex morphological transformation.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::morphologyEx <doxid-d4/d86/group__imgproc__filter_1ga67493776e3ad1a3df63883829375201f>`
+
+.. index:: pair: function; cvMultiplyAcc
+.. _doxid-df/d4e/group__imgproc__c_1gabafd578e2ce9ad67cbe875fb98b75680:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvMultiplyAcc(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image1,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image2,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* acc,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+Adds a product of two images to accumulator.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::accumulateProduct <doxid-d7/df3/group__imgproc__motion_1ga82518a940ecfda49460f66117ac82520>`
+
+.. index:: pair: function; cvNormalizeHist
+.. _doxid-df/d4e/group__imgproc__c_1gae6dcca8f9e000d28fdf4a1fc37c3bce7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvNormalizeHist(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		double factor
+		)
+
+Normalizes the histogram.
+
+The function normalizes the histogram bins by scaling them so that the sum of the bins becomes equal to factor.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist
+
+		- Pointer to the histogram.
+
+	*
+		- factor
+
+		- Normalization factor.
+
+.. index:: pair: function; cvPointPolygonTest
+.. _doxid-df/d4e/group__imgproc__c_1gab6b68780eee394d9433d13d4d43bc611:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvPointPolygonTest(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* contour,
+		:ref:`CvPoint2D32f<doxid-df/dd9/struct_cv_point2_d32f>` pt,
+		int measure_dist
+		)
+
+Checks whether the point is inside polygon, outside, on an edge (at a vertex).
+
+Returns positive, negative or zero value, correspondingly. Optionally, measures a signed distance between the point and the nearest polygon edge (measure_dist=1)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::pointPolygonTest <doxid-d3/dc0/group__imgproc__shape_1ga1a539e8db2135af2566103705d7a5722>`
+
+.. index:: pair: function; cvPointSeqFromMat
+.. _doxid-df/d4e/group__imgproc__c_1gac3277372be50da54999daa9390027b24:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`*
+	cvPointSeqFromMat(
+		int seq_kind,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mat,
+		:ref:`CvContour<doxid-d9/db0/struct_cv_contour>`* contour_header,
+		:ref:`CvSeqBlock<doxid-d7/d77/struct_cv_seq_block>`* block
+		)
+
+Initializes sequence header for a matrix (column or row vector) of points.
+
+a wrapper for cvMakeSeqHeaderForArray (it does not initialize bounding rectangle!!!)
+
+.. index:: pair: function; cvPolyLine
+.. _doxid-df/d4e/group__imgproc__c_1ga5900fbac1b58792ce3481343bc6b2e28:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvPolyLine(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`** pts,
+		const int* npts,
+		int contours,
+		int is_closed,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Draws one or more polygonal curves.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::polylines <doxid-d6/d6e/group__imgproc__draw_1ga444cb8a2666320f47f09d5af08d91ffb>`
+
+.. index:: pair: function; cvPreCornerDetect
+.. _doxid-df/d4e/group__imgproc__c_1gad5b9c6b1f7e11ae81d568509f8eab52e:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvPreCornerDetect(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* corners,
+		int aperture_size = 3
+		)
+
+Calculates constraint image for corner detection.
+
+Dx^2 \* Dyy + Dxx \* Dy^2 - 2 \* Dx \* Dy \* Dxy. Applying threshold to the result gives coordinates of corners
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::preCornerDetect <doxid-dd/d1a/group__imgproc__feature_1gaa819f39b5c994871774081803ae22586>`
+
+.. index:: pair: function; cvPutText
+.. _doxid-df/d4e/group__imgproc__c_1ga6ea1d599f166f85efdebbf764015d1ae:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvPutText(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		const char* text,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` org,
+		const :ref:`CvFont<doxid-d2/d14/struct_cv_font>`* font,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color
+		)
+
+Renders text stroke with specified font and color at specified location. :ref:`CvFont <doxid-d2/d14/struct_cv_font>` should be initialized with cvInitFont.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvInitFont <doxid-df/d4e/group__imgproc__c_1ga1a3feb4ddb31aed350989806b7095189>`, :ref:`cvGetTextSize <doxid-df/d4e/group__imgproc__c_1gaadbbcb2b9617f2333dff81b32c06adfe>`, :ref:`cvFont <doxid-df/d4e/group__imgproc__c_1ga2c41df978775b6f21616aff36a7010d7>`, :ref:`cv::putText <doxid-d6/d6e/group__imgproc__draw_1ga5126f47f883d730f633d74f07456c576>`
+
+.. index:: pair: function; cvPyrDown
+.. _doxid-df/d4e/group__imgproc__c_1ga6534214d1c354a906f41b9d2718a9ea1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvPyrDown(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int filter = :ref:`CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>`
+		)
+
+Smoothes the input image with gaussian kernel and then down-samples it.
+
+dst_width = floor(src_width/2)[+1], dst_height = floor(src_height/2)[+1]
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>`
+
+.. index:: pair: function; cvPyrMeanShiftFiltering
+.. _doxid-df/d4e/group__imgproc__c_1ga1d3df1ca2a7b1ee0d5296efa3ad028bf:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvPyrMeanShiftFiltering(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		double sp,
+		double sr,
+		int max_level = 1,
+		:ref:`CvTermCriteria<doxid-db/d3f/struct_cv_term_criteria>` termcrit = :ref:`cvTermCriteria<doxid-d2/df8/group__core__c_1ga7da63b8999cdae19145c9e6f7a6bdae3>`(:ref:`CV_TERMCRIT_ITER<doxid-d2/df8/group__core__c_1ga4f6009f584607989e908868751567fe7>`+:ref:`CV_TERMCRIT_EPS<doxid-d2/df8/group__core__c_1ga3d22bb48d24b85a1bbc5d10e0ddcff33>`, 5, 1)
+		)
+
+Filters image using meanshift algorithm.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::pyrMeanShiftFiltering <doxid-d4/d86/group__imgproc__filter_1ga9fabdce9543bd602445f5db3827e4cc0>`
+
+.. index:: pair: function; cvPyrUp
+.. _doxid-df/d4e/group__imgproc__c_1ga09f2411dbdc4e6fae96c41e2e607c405:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvPyrUp(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int filter = :ref:`CV_GAUSSIAN_5x5<doxid-df/d4e/group__imgproc__c_1gga70ad55be767ca0a42c9150d24618e4caa461568e540348c092e31bd2508f4ac37>`
+		)
+
+Up-samples image and smoothes the result with gaussian kernel.
+
+dst_width = src_width\*2, dst_height = src_height\*2
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>`
+
+.. index:: pair: function; cvReadChainPoint
+.. _doxid-df/d4e/group__imgproc__c_1gae11031f706b69b7245d592eca1bfe263:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>`
+	cvReadChainPoint(:ref:`CvChainPtReader<doxid-d8/d9e/struct_cv_chain_pt_reader>`* reader)
+
+Retrieves the next chain point.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvApproxChains <doxid-df/d4e/group__imgproc__c_1ga3d20e5af0fd7285d6e0a2ebf74818f56>`
+
+.. index:: pair: function; cvRectangle
+.. _doxid-df/d4e/group__imgproc__c_1ga9a2700852e49d9580fb31a9572df59f6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvRectangle(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Draws a rectangle given two opposite corners of the rectangle (pt1 & pt2)
+
+if thickness<0 (e.g. thickness == CV_FILLED), the filled box is drawn
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`
+
+.. index:: pair: function; cvRectangleR
+.. _doxid-df/d4e/group__imgproc__c_1gab96c53073ba315900b3933c3a563ddab:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvRectangleR(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* img,
+		:ref:`CvRect<doxid-de/d44/struct_cv_rect>` r,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` color,
+		int thickness = 1,
+		int line_type = 8,
+		int shift = 0
+		)
+
+Draws a rectangle specified by a :ref:`CvRect <doxid-de/d44/struct_cv_rect>` structure.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::rectangle <doxid-d6/d6e/group__imgproc__draw_1ga07d2f74cadcf8e305e810ce8eed13bc9>`
+
+.. index:: pair: function; cvReleaseHist
+.. _doxid-df/d4e/group__imgproc__c_1gadd790dc45874cc6b983c3c0467a7a4f6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvReleaseHist(:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`** hist)
+
+Releases the histogram.
+
+The function releases the histogram (header and the data). The pointer to the histogram is cleared by the function. If \*hist pointer is already NULL, the function does nothing.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist
+
+		- Double pointer to the released histogram.
+
+.. index:: pair: function; cvReleasePyramid
+.. _doxid-df/d4e/group__imgproc__c_1gae21d5f1993329dc01aa37cf8f1715be7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvReleasePyramid(
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`*** pyramid,
+		int extra_layers
+		)
+
+Releases pyramid.
+
+.. index:: pair: function; cvReleaseStructuringElement
+.. _doxid-df/d4e/group__imgproc__c_1ga5af660e33f1deab66b4d1c053637fa8d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvReleaseStructuringElement(:ref:`IplConvKernel<doxid-db/d9e/struct_ipl_conv_kernel>`** element)
+
+releases structuring element
+
+
+
+.. rubric:: See also:
+
+:ref:`cvCreateStructuringElementEx <doxid-df/d4e/group__imgproc__c_1ga23fb78d5cea9d715e5340286e6592f27>`
+
+.. index:: pair: function; cvRemap
+.. _doxid-df/d4e/group__imgproc__c_1gae76f70b32b39b1d37c60059c631b8ab7:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvRemap(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapx,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mapy,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` fillval = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		)
+
+Performs generic geometric transformation using the specified coordinate maps.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::remap <doxid-da/d54/group__imgproc__transform_1gab75ef31ce5cdfb5c44b6da5f3b908ea4>`
+
+.. index:: pair: function; cvResize
+.. _doxid-df/d4e/group__imgproc__c_1ga1119b1dc4f6db2a393057992ed574e25:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvResize(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int interpolation = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`
+		)
+
+Resizes image (input array is resized to fit the destination array)
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::resize <doxid-da/d54/group__imgproc__transform_1ga47a974309e9102f5f08231edc7e7529d>`
+
+.. index:: pair: function; cvRunningAvg
+.. _doxid-df/d4e/group__imgproc__c_1gad9d03b6cd6105a8aba926e62a0004e43:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvRunningAvg(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* acc,
+		double alpha,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+Adds image to accumulator with weights: acc = acc\*(1-alpha) + image\*alpha.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::accumulateWeighted <doxid-d7/df3/group__imgproc__motion_1ga4f9552b541187f61f6818e8d2d826bc7>`
+
+.. index:: pair: function; cvSampleLine
+.. _doxid-df/d4e/group__imgproc__c_1gad90886b00fecd146616555f273b592fa:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cvSampleLine(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt1,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` pt2,
+		void* buffer,
+		int connectivity = 8
+		)
+
+Fetches pixels that belong to the specified line segment and stores them to the buffer.
+
+Returns the number of retrieved points.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::LineSegmentDetector <doxid-dc/d72/classcv_1_1_line_segment_detector>`
+
+.. index:: pair: function; cvSetHistBinRanges
+.. _doxid-df/d4e/group__imgproc__c_1gae21b1fb99432609944f802ba8664dc05:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvSetHistBinRanges(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		float** ranges,
+		int uniform = 1
+		)
+
+Sets the bounds of the histogram bins.
+
+This is a standalone function for setting bin ranges in the histogram. For a more detailed description of the parameters ranges and uniform, see the :ocvCalcHist function that can initialize the ranges as well. Ranges for the histogram bins must be set before the histogram is calculated or the backproject of the histogram is calculated.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist
+
+		- Histogram.
+
+	*
+		- ranges
+
+		- Array of bin ranges arrays. See :ocvCreateHist for details.
+
+	*
+		- uniform
+
+		- Uniformity flag. See :ocvCreateHist for details.
+
+.. index:: pair: function; cvSmooth
+.. _doxid-df/d4e/group__imgproc__c_1gab82310a821307b169de8b5f1a5e5e486:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvSmooth(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int smoothtype = :ref:`CV_GAUSSIAN<doxid-df/d4e/group__imgproc__c_1gga68a3a4144ad5ad650bed7f0ede3611c2a5f9c9d19089c103e1324b65ef51b77b1>`,
+		int size1 = 3,
+		int size2 = 0,
+		double sigma1 = 0,
+		double sigma2 = 0
+		)
+
+Smooths the image in one of several ways.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- The source image
+
+	*
+		- dst
+
+		- The destination image
+
+	*
+		- smoothtype
+
+		- Type of the smoothing, see SmoothMethod_c
+
+	*
+		- size1
+
+		- The first parameter of the smoothing operation, the aperture width. Must be a positive odd number (1, 3, 5, ...)
+
+	*
+		- size2
+
+		- The second parameter of the smoothing operation, the aperture height. Ignored by CV_MEDIAN and CV_BILATERAL methods. In the case of simple scaled/non-scaled and Gaussian blur if size2 is zero, it is set to size1. Otherwise it must be a positive odd number.
+
+	*
+		- sigma1
+
+		- 
+		  In the case of a Gaussian parameter this parameter may specify Gaussian :math:`\sigma` (standard deviation). If it is zero, it is calculated from the kernel size:
+		  
+		  .. math::
+		  
+		  	\sigma = 0.3 (n/2 - 1) + 0.8 \quad \text{where} \quad n= \begin{array}{l l} \mbox{\texttt{size1} for horizontal kernel} \\ \mbox{\texttt{size2} for vertical kernel} \end{array}
+		  
+		  Using standard sigma for small kernels (:math:`3\times 3` to :math:`7\times 7`) gives better speed. If sigma1 is not zero, while size1 and size2 are zeros, the kernel size is calculated from the sigma (to provide accurate enough operation).
+
+	*
+		- sigma2
+
+		- additional parameter for bilateral filtering
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`, :ref:`cv::blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`, :ref:`cv::medianBlur <doxid-d4/d86/group__imgproc__filter_1ga564869aa33e58769b4469101aac458f9>`, :ref:`cv::bilateralFilter <doxid-d4/d86/group__imgproc__filter_1ga9d7064d478c95d60003cf839430737ed>`.
+
+.. index:: pair: function; cvSobel
+.. _doxid-df/d4e/group__imgproc__c_1ga8fb0819ce63041084f2379f59f57bf8f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvSobel(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		int xorder,
+		int yorder,
+		int aperture_size = 3
+		)
+
+Calculates an image derivative using generalized Sobel.
+
+(aperture_size = 1,3,5,7) or Scharr (aperture_size = -1) operator. Scharr can be used only for the first dx or dy derivative
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::Sobel <doxid-d4/d86/group__imgproc__filter_1gacea54f142e81b6758cb6f375ce782c8d>`
+
+.. index:: pair: function; cvSquareAcc
+.. _doxid-df/d4e/group__imgproc__c_1gac4c7374b0132cc44d4cbf6e56cffa2f3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvSquareAcc(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* sqsum,
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* mask = NULL
+		)
+
+Adds squared image to accumulator.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::accumulateSquare <doxid-d7/df3/group__imgproc__motion_1gacb75e7ffb573227088cef9ceaf80be8c>`
+
+.. index:: pair: function; cvStartFindContours
+.. _doxid-df/d4e/group__imgproc__c_1ga2cf90d9d6026b7063323fcc03b0f19c1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>`
+	cvStartFindContours(
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvMemStorage<doxid-d7/d51/struct_cv_mem_storage>`* storage,
+		int header_size = sizeof(:ref:`CvContour<doxid-d9/db0/struct_cv_contour>`),
+		int mode = :ref:`CV_RETR_LIST<doxid-df/d4e/group__imgproc__c_1ggae33c78feb670de33d2abf21ec0624531aec6d12db5ae363eb5182e77949b16d05>`,
+		int method = :ref:`CV_CHAIN_APPROX_SIMPLE<doxid-df/d4e/group__imgproc__c_1gga950bf8e3371138ceb9649d45e9a96340a6b22208abd75cd6323903a0ae3d896ed>`,
+		:ref:`CvPoint<doxid-d3/dc1/struct_cv_point>` offset = :ref:`cvPoint<doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0, 0)
+		)
+
+Initializes contour retrieving process.
+
+Calls cvStartFindContours. Calls cvFindNextContour until null pointer is returned or some other condition becomes true. Calls cvEndFindContours at the end.
+
+
+
+.. rubric:: See also:
+
+:ref:`cvFindContours <doxid-df/d4e/group__imgproc__c_1gaaeb1db57dfe206936d231e6d2ca472ed>`
+
+.. index:: pair: function; cvStartReadChainPoints
+.. _doxid-df/d4e/group__imgproc__c_1gaa705710877e21a66428507b3f6c609c0:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvStartReadChainPoints(
+		:ref:`CvChain<doxid-d6/dc5/struct_cv_chain>`* chain,
+		:ref:`CvChainPtReader<doxid-d8/d9e/struct_cv_chain_pt_reader>`* reader
+		)
+
+Initializes Freeman chain reader.
+
+The reader is used to iteratively get coordinates of all the chain points. If the Freeman codes should be read as is, a simple sequence reader should be used
+
+
+
+.. rubric:: See also:
+
+:ref:`cvApproxChains <doxid-df/d4e/group__imgproc__c_1ga3d20e5af0fd7285d6e0a2ebf74818f56>`
+
+.. index:: pair: function; cvSubstituteContour
+.. _doxid-df/d4e/group__imgproc__c_1ga9a94ef14ffea176ff253717b8f257990:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvSubstituteContour(
+		:ref:`CvContourScanner<doxid-df/d4e/group__imgproc__c_1ga11d28023276f66bd42d8a7f97a0712ae>` scanner,
+		:ref:`CvSeq<doxid-dd/d74/struct_cv_seq>`* new_contour
+		)
+
+Substitutes the last retrieved contour with the new one.
+
+(if the substitutor is null, the last retrieved contour is removed from the tree)
+
+
+
+.. rubric:: See also:
+
+:ref:`cvFindContours <doxid-df/d4e/group__imgproc__c_1gaaeb1db57dfe206936d231e6d2ca472ed>`
+
+.. index:: pair: function; cvThreshHist
+.. _doxid-df/d4e/group__imgproc__c_1ga8ab6f97d5d82b7b4d3debbc026cb86e5:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvThreshHist(
+		:ref:`CvHistogram<doxid-db/da9/struct_cv_histogram>`* hist,
+		double threshold
+		)
+
+Thresholds the histogram.
+
+The function clears histogram bins that are below the specified threshold.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- hist
+
+		- Pointer to the histogram.
+
+	*
+		- threshold
+
+		- Threshold level.
+
+.. index:: pair: function; cvThreshold
+.. _doxid-df/d4e/group__imgproc__c_1ga5c79f8ca95dc7a93f7142b218bea61f3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	double
+	cvThreshold(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		double threshold,
+		double max_value,
+		int threshold_type
+		)
+
+Applies fixed-level threshold to grayscale image.
+
+This is a basic operation applied before retrieving contours
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::threshold <doxid-d7/d1b/group__imgproc__misc_1gae8a4a146d1ca78c626a53577199e9c57>`
+
+.. index:: pair: function; cvUndistort2
+.. _doxid-df/d4e/group__imgproc__c_1ga1117448e6594d672c19b8bf3130563f9:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvUndistort2(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* distortion_coeffs,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* new_camera_matrix = 0
+		)
+
+Transforms the input image to compensate lens distortion.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::undistort <doxid-da/d54/group__imgproc__transform_1ga69f2545a8b62a6b0fc2ee060dc30559d>`
+
+.. index:: pair: function; cvUndistortPoints
+.. _doxid-df/d4e/group__imgproc__c_1ga303213f7f6087b9c9cfbfba43c348750:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvUndistortPoints(
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* src,
+		:ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* camera_matrix,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* dist_coeffs,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* R = 0,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* P = 0
+		)
+
+Computes the original (undistorted) feature coordinates from the observed (distorted) coordinates.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::undistortPoints <doxid-da/d54/group__imgproc__transform_1ga55c716492470bfe86b0ee9bf3a1f0f7e>`
+
+.. index:: pair: function; cvWarpAffine
+.. _doxid-df/d4e/group__imgproc__c_1ga64a96df2274231ef38e8fa7679be5651:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvWarpAffine(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` fillval = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		)
+
+Warps image with affine transform.
+
+:ref:`cvGetQuadrangleSubPix <doxid-df/d4e/group__imgproc__c_1gab2a08c0fd40ca98ece130e1a480ffedd>` is similar to :ref:`cvWarpAffine <doxid-df/d4e/group__imgproc__c_1ga64a96df2274231ef38e8fa7679be5651>`, but the outliers are extrapolated using replication border mode.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::warpAffine <doxid-da/d54/group__imgproc__transform_1ga0203d9ee5fcd28d40dbc4a1ea4451983>`
+
+.. index:: pair: function; cvWarpPerspective
+.. _doxid-df/d4e/group__imgproc__c_1ga950eb6d41a15ef3e3f238ba1f8d28fe3:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvWarpPerspective(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* src,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* dst,
+		const :ref:`CvMat<doxid-d6/dda/struct_cv_mat>`* map_matrix,
+		int flags = :ref:`CV_INTER_LINEAR<doxid-df/d4e/group__imgproc__c_1gga3babbf89cae9b856a12864a41506efbdae405aed4567beebcf8bd5a3dac7bfcd9>`+:ref:`CV_WARP_FILL_OUTLIERS<doxid-df/d4e/group__imgproc__c_1ggaa57e16cd48de3b9a989056ff8df26f84a4b47a5008357b27cf4febc0801ea6b2c>`,
+		:ref:`CvScalar<doxid-de/db0/struct_cv_scalar>` fillval = :ref:`cvScalarAll<doxid-d2/df8/group__core__c_1ga343ee4d57025c6d5b81ef08410342464>`(0)
+		)
+
+Warps image with perspective (projective) transform.
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::warpPerspective <doxid-da/d54/group__imgproc__transform_1gaf73673a7e8e18ec6963e3774e6a94b87>`
+
+.. index:: pair: function; cvWatershed
+.. _doxid-df/d4e/group__imgproc__c_1ga79bf3d80f80bd5420a694cb68fc775ff:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cvWatershed(
+		const :ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* image,
+		:ref:`CvArr<doxid-d2/df8/group__core__c_1gac5046bc0456e9295d80b37774384798c>`* markers
+		)
+
+Segments image using seed "markers".
+
+
+
+.. rubric:: See also:
+
+:ref:`cv::watershed <doxid-d7/d1b/group__imgproc__misc_1ga3267243e4d3f95165d55a618c65ac6e1>`
+
+Macros
+------
+
+.. index:: pair: define; CV_INIT_3X3_DELTAS
+.. _doxid-df/d4e/group__imgproc__c_1gadd47b69c3f9fc86ba30c92488645229d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	#define CV_INIT_3X3_DELTAS( \
+		deltas, \
+		step, \
+		nch \
+		)
+
+initializes 8-element array for fast access to 3x3 neighborhood of a pixel
+

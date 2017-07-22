@@ -1,0 +1,485 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Similarity check (PNSR and SSIM) on the GPU &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using a cv::cuda::GpuMat with thrust" href="page_tutorial_gpu_thrust_interop.html" />
+    <link rel="prev" title="GPU-Accelerated Computer Vision (cuda module)" href="page_tutorial_table_of_content_gpu.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_gpu_thrust_interop.html" title="Using a cv::cuda::GpuMat with thrust"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_gpu.html" title="GPU-Accelerated Computer Vision (cuda module)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_gpu.html" accesskey="U">GPU-Accelerated Computer Vision (cuda module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_gpu.html"
+                        title="previous chapter">GPU-Accelerated Computer Vision (cuda module)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_gpu_thrust_interop.html"
+                        title="next chapter">Using a cv::cuda::GpuMat with thrust</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="similarity-check-pnsr-and-ssim-on-the-gpu">
+<span id="doxid-dd-d3d-tutorial-gpu-basics-similarity"></span><span id="index-0"></span><h1>Similarity check (PNSR and SSIM) on the GPU</h1>
+<p>Todo update this tutorial</p>
+<p class="rubric">Goal</p>
+<p>In the <a class="reference internal" href="page_tutorial_video_input_psnr_ssim.html#doxid-d5-dc4-tutorial-video-input-psnr-ssim"><span class="std std-ref">Video Input with OpenCV and similarity measurement</span></a> tutorial I already presented the PSNR and SSIM methods for checking the similarity between the two images. And as you could see, the execution process takes quite some time , especially in the case of the SSIM. However, if the performance numbers of an OpenCV implementation for the CPU do not satisfy you and you happen to have an NVidia CUDA GPU device in your system, all is not lost. You may try to port or write your owm algorithm for the video card.</p>
+<p>This tutorial will give a good grasp on how to approach coding by using the GPU module of OpenCV. As a prerequisite you should already know how to handle the core, highgui and imgproc modules. So, our main goals are:</p>
+<ul class="simple">
+<li>What’s different compared to the CPU?</li>
+<li>Create the GPU code for the PSNR and SSIM</li>
+<li>Optimize the code for maximal performance</li>
+</ul>
+<p class="rubric">The source code</p>
+<p>You may also find the source code and the video file in the <code class="docutils literal notranslate"><span class="pre">samples/cpp/tutorial_code/gpu/gpu-basics-similarity/gpu-basics-similarity</span></code> directory of the OpenCV source library or download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/gpu/gpu-basics-similarity/gpu-basics-similarity.cpp">here</a>. The full source code is quite long (due to the controlling of the application via the command line arguments and performance measurement). Therefore, to avoid cluttering up these sections with those you’ll find here only the functions itself.</p>
+<p>The PSNR returns a float number, that if the two inputs are similar between 30 and 50 (higher is better).</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="nf">getPSNR</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Mat</span> <span class="n">s1</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6fef31bc8c4071cbc114a758a2b79c14"><span class="std std-ref">absdiff</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">,</span> <span class="n">s1</span><span class="p">);</span>       <span class="c1">// |I1 - I2|</span>
+    <span class="n">s1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>  <span class="c1">// cannot make a square on 8 bits</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>           <span class="c1">// |I1 - I2|^2</span>
+
+    <span class="n">Scalar</span> <span class="n">s</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">sum</span></a><span></span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>         <span class="c1">// sum elements per channel</span>
+
+    <span class="kt">double</span> <span class="n">sse</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> <span class="c1">// sum channels</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">sse</span> <span class="o">&lt;=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="c1">// for small values return zero</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="kt">double</span>  <span class="n">mse</span> <span class="o">=</span><span class="n">sse</span> <span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">I1</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">*</span> <span class="n">I1</span><span class="p">.</span><span class="n">total</span><span class="p">());</span>
+        <span class="kt">double</span> <span class="n">psnr</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga6d7f752d82c289caa24bbb5a278ac31d"><span class="std std-ref">log10</span></a><span></span><span class="p">((</span><span class="mi">255</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">/</span><span class="n">mse</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">psnr</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="nf">getPSNR_CUDA</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">gI1</span><span class="p">,</span> <span class="n">gI2</span><span class="p">,</span> <span class="n">gs</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">;</span>
+
+    <span class="n">gI1</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">I1</span><span class="p">);</span>
+    <span class="n">gI2</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>
+
+    <span class="n">gI1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>
+    <span class="n">gI2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>
+
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6fef31bc8c4071cbc114a758a2b79c14"><span class="std std-ref">cuda::absdiff</span></a><span></span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">t2</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">gs</span><span class="p">);</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">gs</span><span class="p">,</span> <span class="n">gs</span><span class="p">);</span>
+
+    <span class="n">Scalar</span> <span class="n">s</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">cuda::sum</span></a><span></span><span class="p">(</span><span class="n">gs</span><span class="p">);</span>
+    <span class="kt">double</span> <span class="n">sse</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">sse</span> <span class="o">&lt;=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="c1">// for small values return zero</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="kt">double</span>  <span class="n">mse</span> <span class="o">=</span><span class="n">sse</span> <span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">gI1</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">*</span> <span class="n">I1</span><span class="p">.</span><span class="n">total</span><span class="p">());</span>
+        <span class="kt">double</span> <span class="n">psnr</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga6d7f752d82c289caa24bbb5a278ac31d"><span class="std std-ref">log10</span></a><span></span><span class="p">((</span><span class="mi">255</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">/</span><span class="n">mse</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">psnr</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="k">struct</span> <span class="n">BufferPSNR</span>                                     <span class="c1">// Optimized CUDA versions</span>
+<span class="p">{</span>   <span class="c1">// Data allocations are very expensive on CUDA. Use a buffer to solve: allocate once reuse later.</span>
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">gI1</span><span class="p">,</span> <span class="n">gI2</span><span class="p">,</span> <span class="n">gs</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">;</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">buf</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="nf">getPSNR_CUDA_optimized</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">,</span> <span class="n">BufferPSNR</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">gI1</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">I1</span><span class="p">);</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">gI2</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>
+
+    <span class="n">b</span><span class="p">.</span><span class="n">gI1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">gI2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>
+
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6fef31bc8c4071cbc114a758a2b79c14"><span class="std std-ref">cuda::absdiff</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">b</span><span class="p">.</span><span class="n">gs</span><span class="p">);</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">gs</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">gs</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">gs</span><span class="p">);</span>
+
+    <span class="kt">double</span> <span class="n">sse</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">cuda::sum</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">gs</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">buf</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">sse</span> <span class="o">&lt;=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="c1">// for small values return zero</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">mse</span> <span class="o">=</span> <span class="n">sse</span> <span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">I1</span><span class="p">.</span><span class="n">channels</span><span class="p">()</span> <span class="o">*</span> <span class="n">I1</span><span class="p">.</span><span class="n">total</span><span class="p">());</span>
+        <span class="kt">double</span> <span class="n">psnr</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><a class="reference internal" href="namespace_cv_cudev.html#doxid-df-dfc-group-cudev-1ga6d7f752d82c289caa24bbb5a278ac31d"><span class="std std-ref">log10</span></a><span></span><span class="p">((</span><span class="mi">255</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">/</span><span class="n">mse</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">psnr</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>The SSIM returns the MSSIM of the images. This is too a floating point number between zero and one (higher is better), however we have one for each channel. Therefore, we return a <em>Scalar</em> OpenCV data structure:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Scalar</span> <span class="nf">getMSSIM</span><span class="p">(</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">double</span> <span class="n">C1</span> <span class="o">=</span> <span class="mf">6.5025</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="mf">58.5225</span><span class="p">;</span>
+    <span class="cm">/***************************** INITS **********************************/</span>
+    <span class="kt">int</span> <span class="n">d</span>     <span class="o">=</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">;</span>
+
+    <span class="n">Mat</span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">;</span>
+    <span class="n">i1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>           <span class="c1">// cannot calculate on one byte large values</span>
+    <span class="n">i2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>
+
+    <span class="n">Mat</span> <span class="n">I2_2</span>   <span class="o">=</span> <span class="n">I2</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>        <span class="c1">// I2^2</span>
+    <span class="n">Mat</span> <span class="n">I1_2</span>   <span class="o">=</span> <span class="n">I1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">I1</span><span class="p">);</span>        <span class="c1">// I1^2</span>
+    <span class="n">Mat</span> <span class="n">I1_I2</span>  <span class="o">=</span> <span class="n">I1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">I2</span><span class="p">);</span>        <span class="c1">// I1 * I2</span>
+
+    <span class="cm">/*************************** END INITS **********************************/</span>
+
+    <span class="n">Mat</span> <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">;</span>   <span class="c1">// PRELIMINARY COMPUTING</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+
+    <span class="n">Mat</span> <span class="n">mu1_2</span>   <span class="o">=</span>   <span class="n">mu1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">mu1</span><span class="p">);</span>
+    <span class="n">Mat</span> <span class="n">mu2_2</span>   <span class="o">=</span>   <span class="n">mu2</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">mu2</span><span class="p">);</span>
+    <span class="n">Mat</span> <span class="n">mu1_mu2</span> <span class="o">=</span>   <span class="n">mu1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">mu2</span><span class="p">);</span>
+
+    <span class="n">Mat</span> <span class="n">sigma1_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1_2</span><span class="p">,</span> <span class="n">sigma1_2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <span class="n">sigma1_2</span> <span class="o">-=</span> <span class="n">mu1_2</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I2_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <span class="n">sigma2_2</span> <span class="o">-=</span> <span class="n">mu2_2</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span><span class="n">I1_I2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+    <span class="n">sigma12</span> <span class="o">-=</span> <span class="n">mu1_mu2</span><span class="p">;</span>
+
+    <span class="n">Mat</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">;</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu1_mu2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma12</span> <span class="o">+</span> <span class="n">C2</span><span class="p">;</span>
+    <span class="n">t3</span> <span class="o">=</span> <span class="n">t1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>              <span class="c1">// t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">mu1_2</span> <span class="o">+</span> <span class="n">mu2_2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">sigma1_2</span> <span class="o">+</span> <span class="n">sigma2_2</span> <span class="o">+</span> <span class="n">C2</span><span class="p">;</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">t1</span><span class="p">.</span><span class="n">mul</span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>               <span class="c1">// t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))</span>
+
+    <span class="n">Mat</span> <span class="n">ssim_map</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6db555d30115642fedae0cda05604874"><span class="std std-ref">divide</span></a><span></span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ssim_map</span><span class="p">);</span>      <span class="c1">// ssim_map =  t3./t1;</span>
+
+    <span class="n">Scalar</span> <span class="n">mssim</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga191389f8a0e58180bb13a727782cd461"><span class="std std-ref">mean</span></a><span></span><span class="p">(</span> <span class="n">ssim_map</span> <span class="p">);</span> <span class="c1">// mssim = average of ssim map</span>
+    <span class="k">return</span> <span class="n">mssim</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Scalar</span> <span class="nf">getMSSIM_CUDA</span><span class="p">(</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">float</span> <span class="n">C1</span> <span class="o">=</span> <span class="mf">6.5025f</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="mf">58.5225f</span><span class="p">;</span>
+    <span class="cm">/***************************** INITS **********************************/</span>
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">gI1</span><span class="p">,</span> <span class="n">gI2</span><span class="p">,</span> <span class="n">gs1</span><span class="p">,</span> <span class="n">tmp1</span><span class="p">,</span><span class="n">tmp2</span><span class="p">;</span>
+
+    <span class="n">gI1</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">i1</span><span class="p">);</span>
+    <span class="n">gI2</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">i2</span><span class="p">);</span>
+
+    <span class="n">gI1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">tmp1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1gac0f2281e91c4e610de4f450eb0a39993"><span class="std std-ref">CV_MAKE_TYPE</span></a><span></span><span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">,</span> <span class="n">gI1</span><span class="p">.</span><span class="n">channels</span><span class="p">()));</span>
+    <span class="n">gI2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">tmp2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1gac0f2281e91c4e610de4f450eb0a39993"><span class="std std-ref">CV_MAKE_TYPE</span></a><span></span><span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">,</span> <span class="n">gI2</span><span class="p">.</span><span class="n">channels</span><span class="p">()));</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="o">&gt;</span> <span class="n">vI1</span><span class="p">,</span> <span class="n">vI2</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cuda::split</span></a><span></span><span class="p">(</span><span class="n">tmp1</span><span class="p">,</span> <span class="n">vI1</span><span class="p">);</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cuda::split</span></a><span></span><span class="p">(</span><span class="n">tmp2</span><span class="p">,</span> <span class="n">vI2</span><span class="p">);</span>
+    <span class="n">Scalar</span> <span class="n">mssim</span><span class="p">;</span>
+
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">Filter</span><span class="o">&gt;</span> <span class="n">gauss</span> <span class="o">=</span> <a class="reference internal" href="group_cudafilters.html#doxid-dc-d66-group-cudafilters-1gaa4df286369114cfd4b144ae211f6a6c8"><span class="std std-ref">cuda::createGaussianFilter</span></a><span></span><span class="p">(</span><span class="n">vI2</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">type</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">gI1</span><span class="p">.</span><span class="n">channels</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">I2_2</span><span class="p">,</span> <span class="n">I1_2</span><span class="p">,</span> <span class="n">I1_I2</span><span class="p">;</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">I2_2</span><span class="p">);</span>        <span class="c1">// I2^2</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">I1_2</span><span class="p">);</span>        <span class="c1">// I1^2</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">I1_I2</span><span class="p">);</span>       <span class="c1">// I1 * I2</span>
+
+        <span class="cm">/*************************** END INITS **********************************/</span>
+        <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">;</span>   <span class="c1">// PRELIMINARY COMPUTING</span>
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mu1</span><span class="p">);</span>
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mu2</span><span class="p">);</span>
+
+        <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">mu1_2</span><span class="p">,</span> <span class="n">mu2_2</span><span class="p">,</span> <span class="n">mu1_mu2</span><span class="p">;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <span class="n">mu1_2</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">mu2</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <span class="n">mu2_2</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">,</span> <span class="n">mu1_mu2</span><span class="p">);</span>
+
+        <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">sigma1_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">;</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">I1_2</span><span class="p">,</span> <span class="n">sigma1_2</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa0f00d98b4b5edeaeb7b8333b2de353b"><span class="std std-ref">cuda::subtract</span></a><span></span><span class="p">(</span><span class="n">sigma1_2</span><span class="p">,</span> <span class="n">mu1_2</span><span class="p">,</span> <span class="n">sigma1_2</span><span class="p">);</span> <span class="c1">// sigma1_2 -= mu1_2;</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">I2_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa0f00d98b4b5edeaeb7b8333b2de353b"><span class="std std-ref">cuda::subtract</span></a><span></span><span class="p">(</span><span class="n">sigma2_2</span><span class="p">,</span> <span class="n">mu2_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">);</span> <span class="c1">// sigma2_2 -= mu2_2;</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">I1_I2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa0f00d98b4b5edeaeb7b8333b2de353b"><span class="std std-ref">cuda::subtract</span></a><span></span><span class="p">(</span><span class="n">sigma12</span><span class="p">,</span> <span class="n">mu1_mu2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">);</span> <span class="c1">// sigma12 -= mu1_mu2;</span>
+
+        <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">;</span>
+
+        <span class="n">mu1_mu2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">C1</span><span class="p">);</span> <span class="c1">// t1 = 2 * mu1_mu2 + C1;</span>
+        <span class="n">sigma12</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">C2</span><span class="p">);</span> <span class="c1">// t2 = 2 * sigma12 + C2;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">);</span>        <span class="c1">// t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cuda::addWeighted</span></a><span></span><span class="p">(</span><span class="n">mu1_2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">mu2_2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">t1</span><span class="p">);</span>       <span class="c1">// t1 = mu1_2 + mu2_2 + C1;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">cuda::addWeighted</span></a><span></span><span class="p">(</span><span class="n">sigma1_2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">t2</span><span class="p">);</span> <span class="c1">// t2 = sigma1_2 + sigma2_2 + C2;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t1</span><span class="p">);</span>                              <span class="c1">// t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))</span>
+
+        <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">ssim_map</span><span class="p">;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6db555d30115642fedae0cda05604874"><span class="std std-ref">cuda::divide</span></a><span></span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ssim_map</span><span class="p">);</span>      <span class="c1">// ssim_map =  t3./t1;</span>
+
+        <span class="n">Scalar</span> <span class="n">s</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">cuda::sum</span></a><span></span><span class="p">(</span><span class="n">ssim_map</span><span class="p">);</span>
+        <span class="n">mssim</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">ssim_map</span><span class="p">.</span><span class="n">rows</span> <span class="o">*</span> <span class="n">ssim_map</span><span class="p">.</span><span class="n">cols</span><span class="p">);</span>
+
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">mssim</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="k">struct</span> <span class="n">BufferMSSIM</span>                                     <span class="c1">// Optimized CUDA versions</span>
+<span class="p">{</span>   <span class="c1">// Data allocations are very expensive on CUDA. Use a buffer to solve: allocate once reuse later.</span>
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">gI1</span><span class="p">,</span> <span class="n">gI2</span><span class="p">,</span> <span class="n">gs</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">;</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">I1_2</span><span class="p">,</span> <span class="n">I2_2</span><span class="p">,</span> <span class="n">I1_I2</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="o">&gt;</span> <span class="n">vI1</span><span class="p">,</span> <span class="n">vI2</span><span class="p">;</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span><span class="p">;</span>
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">mu1_2</span><span class="p">,</span> <span class="n">mu2_2</span><span class="p">,</span> <span class="n">mu1_mu2</span><span class="p">;</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">sigma1_2</span><span class="p">,</span> <span class="n">sigma2_2</span><span class="p">,</span> <span class="n">sigma12</span><span class="p">;</span>
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">t3</span><span class="p">;</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">ssim_map</span><span class="p">;</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">buf</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<pre class="highlight literal-block">
+<span></span><span class="n">Scalar</span> <span class="nf">getMSSIM_CUDA_optimized</span><span class="p">(</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">i2</span><span class="p">,</span> <span class="n">BufferMSSIM</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">float</span> <span class="n">C1</span> <span class="o">=</span> <span class="mf">6.5025f</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="mf">58.5225f</span><span class="p">;</span>
+    <span class="cm">/***************************** INITS **********************************/</span>
+
+    <span class="n">b</span><span class="p">.</span><span class="n">gI1</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">i1</span><span class="p">);</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">gI2</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">i2</span><span class="p">);</span>
+
+    <span class="n">cuda</span><span class="o">::</span><span class="n">Stream</span> <span class="n">stream</span><span class="p">;</span>
+
+    <span class="n">b</span><span class="p">.</span><span class="n">gI1</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">gI2</span><span class="p">.</span><span class="n">convertTo</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cuda::split</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cuda::split</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">vI2</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+    <span class="n">Scalar</span> <span class="n">mssim</span><span class="p">;</span>
+
+    <span class="n">Ptr</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">Filter</span><span class="o">&gt;</span> <span class="n">gauss</span> <span class="o">=</span> <a class="reference internal" href="group_cudafilters.html#doxid-dc-d66-group-cudafilters-1gaa4df286369114cfd4b144ae211f6a6c8"><span class="std std-ref">cuda::createGaussianFilter</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">type</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">);</span>
+
+    <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">gI1</span><span class="p">.</span><span class="n">channels</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">I2_2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>        <span class="c1">// I2^2</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">I1_2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>        <span class="c1">// I1^2</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">I1_I2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>       <span class="c1">// I1 * I2</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">mu2</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1_2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">mu2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu2_2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1_mu2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">I1_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma1_2</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa0f00d98b4b5edeaeb7b8333b2de353b"><span class="std std-ref">cuda::subtract</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">sigma1_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma1_2</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <span class="c1">//b.sigma1_2 -= b.mu1_2;  - This would result in an extra data transfer operation</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">I2_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma2_2</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa0f00d98b4b5edeaeb7b8333b2de353b"><span class="std std-ref">cuda::subtract</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">sigma2_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu2_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma2_2</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <span class="c1">//b.sigma2_2 -= b.mu2_2;</span>
+
+        <span class="n">gauss</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">I1_I2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma12</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaa0f00d98b4b5edeaeb7b8333b2de353b"><span class="std std-ref">cuda::subtract</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">sigma12</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1_mu2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma12</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <span class="c1">//b.sigma12 -= b.mu1_mu2;</span>
+
+        <span class="c1">//here too it would be an extra data transfer due to call of operator*(Scalar, Mat)</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">mu1_mu2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span> <span class="c1">//b.t1 = 2 * b.mu1_mu2 + C1;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cuda::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">sigma12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span> <span class="c1">//b.t2 = 2 * b.sigma12 + C2;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cuda::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>     <span class="c1">// t3 = ((2*mu1_mu2 + C1).*(2*sigma12 + C2))</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cuda::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">mu1_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">mu2_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cuda::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cuda::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">sigma1_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">sigma2_2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">cuda::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">cuda</span><span class="o">::</span><span class="n">GpuMat</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>
+
+
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">cuda::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>     <span class="c1">// t1 =((mu1_2 + mu2_2 + C1).*(sigma1_2 + sigma2_2 + C2))</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga6db555d30115642fedae0cda05604874"><span class="std std-ref">cuda::divide</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t3</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">ssim_map</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>      <span class="c1">// ssim_map =  t3./t1;</span>
+
+        <span class="n">stream</span><span class="p">.</span><span class="n">waitForCompletion</span><span class="p">();</span>
+
+        <span class="n">Scalar</span> <span class="n">s</span> <span class="o">=</span> <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga716e10a2dd9e228e4d3c95818f106722"><span class="std std-ref">cuda::sum</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">ssim_map</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">buf</span><span class="p">);</span>
+        <span class="n">mssim</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">ssim_map</span><span class="p">.</span><span class="n">rows</span> <span class="o">*</span> <span class="n">b</span><span class="p">.</span><span class="n">ssim_map</span><span class="p">.</span><span class="n">cols</span><span class="p">);</span>
+
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">mssim</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">How to do it? - The GPU</p>
+<p>As see above, we have three types of functions for each operation. One for the CPU and two for the GPU. The reason I made two for the GPU is too illustrate that often simple porting your CPU to GPU will actually make it slower. If you want some performance gain you will need to remember a few rules, for which I will go into detail later on.</p>
+<p>The development of the GPU module was made so that it resembles as much as possible its CPU counterpart. This makes the porting process easier. The first thing you need to do before writing any code is to link the GPU module to your project, and include the header file for the module. All the functions and data structures of the GPU are in a <em>gpu</em> sub namespace of the <em>cv</em> namespace. You may add this to the default one via the <em>use namespace</em> keyword, or mark it everywhere explicitly via the cv:: to avoid confusion. I’ll do the later.</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/gpu.hpp&gt;        // GPU structures and methods</span>
+</pre>
+<p>GPU stands for “graphics processing unit”. It was originally built to render graphical scenes. These scenes somehow build on a lot of data. Nevertheless, these aren’t all dependent one from another in a sequential way and as it is possible a parallel processing of them. Due to this a GPU will contain multiple smaller processing units. These aren’t the state of the art processors and on a one on one test with a CPU it will fall behind. However, its strength lies in its numbers. In the last years there has been an increasing trend to harvest these massive parallel powers of the GPU in non-graphical scenes; rendering as well. This gave birth to the general-purpose computation on graphics processing units (GPGPU).</p>
+<p>The GPU has its own memory. When you read data from the hard drive with OpenCV into a <em>Mat</em> object that takes place in your systems memory. The CPU works somehow directly on this (via its cache), however the GPU cannot. It has to transfer the information required for calculations from the system memory to its own. This is done via an upload process and is time consuming. In the end the result will have to be downloaded back to your system memory for your CPU to see and use it. Porting small functions to GPU is not recommended as the upload/download time will be larger than the amount you gain by a parallel execution.</p>
+<p>Mat objects are stored only in the system memory (or the CPU cache). For getting an OpenCV matrix to the GPU you’ll need to use its GPU counterpart <a class="reference internal" href="class_cv_cuda_GpuMat.html#doxid-d5-da3-classcv-1-1cuda-1-1-gpu-mat"><span class="std std-ref">cv::cuda::GpuMat</span></a>. It works similar to the Mat with a 2D only limitation and no reference returning for its functions (cannot mix GPU references with CPU ones). To upload a Mat object to the GPU you need to call the upload function after creating an instance of the class. To download you may use simple assignment to a Mat object or use the download function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">I1</span><span class="p">;</span>         <span class="c1">// Main memory item - read image into with imread for example</span>
+<span class="n">gpu</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">gI</span><span class="p">;</span> <span class="c1">// GPU matrix - for now empty</span>
+<span class="n">gI1</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span><span class="n">I1</span><span class="p">);</span> <span class="c1">// Upload a data from the system memory to the GPU memory</span>
+
+<span class="n">I1</span> <span class="o">=</span> <span class="n">gI1</span><span class="p">;</span>       <span class="c1">// Download, gI1.download(I1) will work too</span>
+</pre>
+<p>Once you have your data up in the GPU memory you may call GPU enabled functions of OpenCV. Most of the functions keep the same name just as on the CPU, with the difference that they only accept <em>GpuMat</em> inputs. A full list of these you will find in the documentation: <a class="reference external" href="http://docs.opencv.org/modules/gpu/doc/gpu.html">online here</a> or the OpenCV reference manual that comes with the source code.</p>
+<p>Another thing to keep in mind is that not for all channel numbers you can make efficient algorithms on the GPU. Generally, I found that the input images for the GPU images need to be either one or four channel ones and one of the char or float type for the item sizes. No double support on the GPU, sorry. Passing other types of objects for some functions will result in an exception throw, and an error message on the error output. The documentation details in most of the places the types accepted for the inputs. If you have three channel images as an input you can do two things: either add a new channel (and use char elements) or split up the image and call the function for each image. The first one isn’t really recommended as this wastes memory.</p>
+<p>For some functions, where the position of the elements (neighbor items) doesn’t matter, the quick solution is to reshape it into a single channel image. This is the case for the PSNR implementation where for the <em>absdiff</em> method the value of the neighbors is not important. However, for the <em>GaussianBlur</em> this isn’t an option and such need to use the split method for the SSIM. With this knowledge you can make a GPU viable code (like mine GPU one) and run it. You’ll be surprised to see that it might turn out slower than your CPU implementation.</p>
+<p class="rubric">Optimization</p>
+<p>The reason for this is that you’re throwing out on the window the price for memory allocation and data transfer. And on the GPU this is damn high. Another possibility for optimization is to introduce asynchronous OpenCV GPU calls too with the help of the <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">cv::cuda::Stream</span></a>.</p>
+<ol class="arabic">
+<li><p class="first">Memory allocation on the GPU is considerable. Therefore, if it’s possible allocate new memory as few times as possible. If you create a function what you intend to call multiple times it is a good idea to allocate any local parameters for the function only once, during the first call. To do this you create a data structure containing all the local variables you will use. For instance in case of the PSNR these are:</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">struct</span> <span class="n">BufferPSNR</span>                                     <span class="c1">// Optimized GPU versions</span>
+  <span class="p">{</span>   <span class="c1">// Data allocations are very expensive on GPU. Use a buffer to solve: allocate once reuse later.</span>
+  <span class="n">gpu</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">gI1</span><span class="p">,</span> <span class="n">gI2</span><span class="p">,</span> <span class="n">gs</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">;</span>
+
+  <span class="n">gpu</span><span class="o">::</span><span class="n">GpuMat</span> <span class="n">buf</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+<p>Then create an instance of this in the main program:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">BufferPSNR</span> <span class="n">bufferPSNR</span><span class="p">;</span>
+</pre>
+<p>And finally pass this to the function each time you call it:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">double</span> <span class="n">getPSNR_GPU_optimized</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I1</span><span class="p">,</span> <span class="k">const</span> <span class="n">Mat</span><span class="o">&amp;</span> <span class="n">I2</span><span class="p">,</span> <span class="n">BufferPSNR</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
+</pre>
+<p>Now you access these local parameters as: <em>b.gI1</em>, <em>b.buf</em> and so on. The GpuMat will only reallocate itself on a new call if the new matrix size is different from the previous one.</p>
+</li>
+<li><p class="first">Avoid unnecessary function data transfers. Any small data transfer will be significant once you go to the GPU. Therefore, if possible, make all calculations in-place (in other words do not create new memory objects - for reasons explained at the previous point). For example, although expressing arithmetical operations may be easier to express in one line formulas, it will be slower. In case of the SSIM at one point I need to calculate:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">b</span><span class="p">.</span><span class="n">t1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">b</span><span class="p">.</span><span class="n">mu1_mu2</span> <span class="o">+</span> <span class="n">C1</span><span class="p">;</span>
+</pre>
+<p>Although the upper call will succeed, observe that there is a hidden data transfer present. Before it makes the addition it needs to store somewhere the multiplication. Therefore, it will create a local matrix in the background, add to that the <em>C1</em> value and finally assign that to <em>t1</em>. To avoid this we use the gpu functions, instead of the arithmetic operators:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">gpu::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">mu1_mu2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">);</span> <span class="c1">//b.t1 = 2 * b.mu1_mu2 + C1;</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga10ac1bfb180e2cfda1701d06c24fdbd6"><span class="std std-ref">gpu::add</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Use asynchronous calls (the <a class="reference internal" href="class_cv_cuda_Stream.html#doxid-d1-d04-classcv-1-1cuda-1-1-stream"><span class="std std-ref">cv::cuda::Stream</span></a>). By default whenever you call a GPU function it will wait for the call to finish and return with the result afterwards. However, it is possible to make asynchronous calls, meaning it will call for the operation execution, making the costly data allocations for the algorithm and return back right away. Now you can call another function, if you wish. For the MSSIM this is a small optimization point. In our default implementation we split up the image into channels and call them for each channel the GPU functions. A small degree of parallelization is possible with the stream. By using a stream we can make the data allocation, upload operations while the GPU is already executing a given method. For example, we need to upload two images. We queue these one after another and call the function that processes it. The functions will wait for the upload to finish, however while this happens it makes the output buffer allocations for the function to be executed next.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">gpu</span><span class="o">::</span><span class="n">Stream</span> <span class="n">stream</span><span class="p">;</span>
+
+<span class="n">stream</span><span class="p">.</span><span class="n">enqueueConvert</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">gI1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>    <span class="c1">// Upload</span>
+
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">gpu::split</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">t1</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>              <span class="c1">// Methods (pass the stream as final parameter).</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga979d898a58d7f61c53003e162e7ad89f"><span class="std std-ref">gpu::multiply</span></a><span></span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">vI1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">I1_2</span><span class="p">,</span> <span class="n">stream</span><span class="p">);</span>        <span class="c1">// I1^2</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Result and conclusion</p>
+<p>On an Intel P8700 laptop CPU paired with a low end NVidia GT220M, here are the performance numbers:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Time</span> <span class="n">of</span> <span class="n">PSNR</span> <span class="n">CPU</span> <span class="p">(</span><span class="n">averaged</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">runs</span><span class="p">)</span><span class="o">:</span> <span class="mf">41.4122</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="nl">of</span><span class="p">:</span> <span class="mf">19.2506</span>
+<span class="n">Time</span> <span class="n">of</span> <span class="n">PSNR</span> <span class="n">GPU</span> <span class="p">(</span><span class="n">averaged</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">runs</span><span class="p">)</span><span class="o">:</span> <span class="mf">158.977</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="nl">of</span><span class="p">:</span> <span class="mf">19.2506</span>
+<span class="n">Initial</span> <span class="n">call</span> <span class="n">GPU</span> <span class="nl">optimized</span><span class="p">:</span>              <span class="mf">31.3418</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="nl">of</span><span class="p">:</span> <span class="mf">19.2506</span>
+<span class="n">Time</span> <span class="n">of</span> <span class="n">PSNR</span> <span class="n">GPU</span> <span class="n">OPTIMIZED</span> <span class="p">(</span> <span class="o">/</span> <span class="mi">10</span> <span class="n">runs</span><span class="p">)</span><span class="o">:</span> <span class="mf">24.8171</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="nl">of</span><span class="p">:</span> <span class="mf">19.2506</span>
+
+<span class="n">Time</span> <span class="n">of</span> <span class="n">MSSIM</span> <span class="n">CPU</span> <span class="p">(</span><span class="n">averaged</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">runs</span><span class="p">)</span><span class="o">:</span> <span class="mf">484.343</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="n">of</span> <span class="n">B0</span><span class="mf">.890964</span> <span class="n">G0</span><span class="mf">.903845</span> <span class="n">R0</span><span class="mf">.936934</span>
+<span class="n">Time</span> <span class="n">of</span> <span class="n">MSSIM</span> <span class="n">GPU</span> <span class="p">(</span><span class="n">averaged</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">runs</span><span class="p">)</span><span class="o">:</span> <span class="mf">745.105</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="n">of</span> <span class="n">B0</span><span class="mf">.89922</span> <span class="n">G0</span><span class="mf">.909051</span> <span class="n">R0</span><span class="mf">.968223</span>
+<span class="n">Time</span> <span class="n">of</span> <span class="n">MSSIM</span> <span class="n">GPU</span> <span class="n">Initial</span> <span class="n">Call</span>            <span class="mf">357.746</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="n">of</span> <span class="n">B0</span><span class="mf">.890964</span> <span class="n">G0</span><span class="mf">.903845</span> <span class="n">R0</span><span class="mf">.936934</span>
+<span class="n">Time</span> <span class="n">of</span> <span class="n">MSSIM</span> <span class="n">GPU</span> <span class="n">OPTIMIZED</span> <span class="p">(</span> <span class="o">/</span> <span class="mi">10</span> <span class="n">runs</span><span class="p">)</span><span class="o">:</span> <span class="mf">203.091</span> <span class="n">milliseconds</span><span class="p">.</span> <span class="n">With</span> <span class="n">result</span> <span class="n">of</span> <span class="n">B0</span><span class="mf">.890964</span> <span class="n">G0</span><span class="mf">.903845</span> <span class="n">R0</span><span class="mf">.936934</span>
+</pre>
+<p>In both cases we managed a performance increase of almost 100% compared to the CPU implementation. It may be just the improvement needed for your application to work. You may observe a runtime instance of this on the <a class="reference external" href="https://www.youtube.com/watch?v=3_ESXmFlnvY">YouTube here</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_gpu_thrust_interop.html" title="Using a cv::cuda::GpuMat with thrust"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_gpu.html" title="GPU-Accelerated Computer Vision (cuda module)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_gpu.html" >GPU-Accelerated Computer Vision (cuda module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

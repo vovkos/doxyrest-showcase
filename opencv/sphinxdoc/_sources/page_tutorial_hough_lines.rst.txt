@@ -1,0 +1,298 @@
+.. index:: pair: page; Hough Line Transform
+.. _doxid-d9/db0/tutorial_hough_lines:
+
+Hough Line Transform
+====================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV functions :ref:`cv::HoughLines <doxid-dd/d1a/group__imgproc__feature_1ga46b4e588934f6c8dfd509cc6e0e4545a>` and :ref:`cv::HoughLinesP <doxid-dd/d1a/group__imgproc__feature_1ga8618180a5948286384e3b7ca02f6feeb>` to detect lines in an image.
+
+.. rubric:: Theory
+
+The explanation below belongs to the book **Learning OpenCV** by Bradski and Kaehler.
+
+
+
+.. rubric:: Hough Line Transform
+
+#. The Hough Line Transform is a transform used to detect straight lines.
+
+#. To apply the Transform, first an edge detection pre-processing is desirable.
+
+.. rubric:: How does it work?
+
+#. As you know, a line in the image space can be expressed with two variables. For example:
+   
+   #. In the **Cartesian coordinate system:** Parameters: :math:`(m,b)`.
+   
+   #. In the **Polar coordinate system:** Parameters: :math:`(r,\theta)`
+   
+   .. image:: Hough_Lines_Tutorial_Theory_0.jpg
+   
+   For Hough Transforms, we will express lines in the *Polar system*. Hence, a line equation can be written as:
+   
+   .. math::
+   
+   	y = \left ( -\dfrac{\cos \theta}{\sin \theta} \right ) x + \left ( \dfrac{r}{\sin \theta} \right )
+
+Arranging the terms: :math:`r = x \cos \theta + y \sin \theta`
+
+#. In general for each point :math:`(x_{0}, y_{0})`, we can define the family of lines that goes through that point as:
+   
+   .. math::
+   
+   	r_{\theta} = x_{0} \cdot \cos \theta + y_{0} \cdot \sin \theta
+   
+   Meaning that each pair :math:`(r_{\theta},\theta)` represents each line that passes by :math:`(x_{0}, y_{0})`.
+
+#. If for a given :math:`(x_{0}, y_{0})` we plot the family of lines that goes through it, we get a sinusoid. For instance, for :math:`x_{0} = 8` and :math:`y_{0} = 6` we get the following plot (in a plane :math:`\theta` - :math:`r`):
+   
+   .. image:: Hough_Lines_Tutorial_Theory_1.jpg
+   
+   We consider only points such that :math:`r > 0` and :math:`0< \theta < 2 \pi`.
+
+#. We can do the same operation above for all the points in an image. If the curves of two different points intersect in the plane :math:`\theta` - :math:`r`, that means that both points belong to a same line. For instance, following with the example above and drawing the plot for two more points: :math:`x_{1} = 4`, :math:`y_{1} = 9` and :math:`x_{2} = 12`, :math:`y_{2} = 3`, we get:
+   
+   .. image:: Hough_Lines_Tutorial_Theory_2.jpg
+   
+   The three plots intersect in one single point :math:`(0.925, 9.6)`, these coordinates are the parameters (:math:`\theta, r`) or the line in which :math:`(x_{0}, y_{0})`, :math:`(x_{1}, y_{1})` and :math:`(x_{2}, y_{2})` lay.
+
+#. What does all the stuff above mean? It means that in general, a line can be *detected* by finding the number of intersections between curves.The more curves intersecting means that the line represented by that intersection have more points. In general, we can define a *threshold* of the minimum number of intersections needed to *detect* a line.
+
+#. This is what the Hough Line Transform does. It keeps track of the intersection between curves of every point in the image. If the number of intersections is above some *threshold*, then it declares it as a line with the parameters :math:`(\theta, r_{\theta})` of the intersection point.
+
+.. rubric:: Standard and Probabilistic Hough Line Transform
+
+OpenCV implements two kind of Hough Line Transforms:
+
+a. **The Standard Hough Transform**
+
+* It consists in pretty much what we just explained in the previous section. It gives you as result a vector of couples :math:`(\theta, r_{\theta})`
+
+* In OpenCV it is implemented with the function :ref:`cv::HoughLines <doxid-dd/d1a/group__imgproc__feature_1ga46b4e588934f6c8dfd509cc6e0e4545a>`
+
+b. **The Probabilistic Hough Line Transform**
+
+* A more efficient implementation of the Hough Line Transform. It gives as output the extremes of the detected lines :math:`(x_{0}, y_{0}, x_{1}, y_{1})`
+
+* In OpenCV it is implemented with the function :ref:`cv::HoughLinesP <doxid-dd/d1a/group__imgproc__feature_1ga8618180a5948286384e3b7ca02f6feeb>`
+
+.. rubric:: Code
+
+#. **What does this program do?**
+   
+   * Loads an image
+   
+   * Applies either a *Standard Hough Line Transform* or a *Probabilistic Line Transform*.
+   
+   * Display the original image and the detected line in two windows.
+
+#. The sample code that we will explain can be downloaded from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/houghlines.cpp>`__. A slightly fancier version (which shows both Hough standard and probabilistic with trackbars for changing the threshold values) can be found `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/HoughLines_Demo.cpp>`__.
+   
+   .. ref-code-block:: cpp
+   
+   	#include "opencv2/imgcodecs.hpp"
+   	#include "opencv2/highgui.hpp"
+   	#include "opencv2/imgproc.hpp"
+   	
+   	#include <iostream>
+   	
+   	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+   	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+   	
+   	static void help()
+   	{
+   	    cout << "\nThis program demonstrates line finding with the Hough transform.\n"
+   	            "Usage:\n"
+   	            "./houghlines <image_name>, Default is ../data/pic1.png\n" << endl;
+   	}
+   	
+   	int main(int argc, char** argv)
+   	{
+   	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv,
+   	        "{help h||}{@image|../data/pic1.png|}"
+   	    );
+   	    if (parser.has("help"))
+   	    {
+   	        help();
+   	        return 0;
+   	    }
+   	    string filename = parser.get<string>("@image");
+   	    if (filename.empty())
+   	    {
+   	        help();
+   	        cout << "no image_name provided" << endl;
+   	        return -1;
+   	    }
+   	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, 0);
+   	    if(src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`())
+   	    {
+   	        help();
+   	        cout << "can not open " << filename << endl;
+   	        return -1;
+   	    }
+   	
+   	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dst, cdst;
+   	    :ref:`Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`(src, dst, 50, 200, 3);
+   	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(dst, cdst, :ref:`COLOR_GRAY2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a869da65c045477f2f17d39395df65b2d>`);
+   	
+   	#if 0
+   	    vector<Vec2f> lines;
+   	    :ref:`HoughLines <doxid-dd/d1a/group__imgproc__feature_1ga46b4e588934f6c8dfd509cc6e0e4545a>`(dst, lines, 1, CV_PI/180, 100, 0, 0 );
+   	
+   	    for( size_t i = 0; i < lines.size(); i++ )
+   	    {
+   	        float rho = lines[i][0], theta = lines[i][1];
+   	        Point pt1, pt2;
+   	        double a = :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(theta), b = :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(theta);
+   	        double x0 = a*rho, y0 = b*rho;
+   	        pt1.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(x0 + 1000*(-b));
+   	        pt1.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(y0 + 1000*(a));
+   	        pt2.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(x0 - 1000*(-b));
+   	        pt2.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(y0 - 1000*(a));
+   	        :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( cdst, pt1, pt2, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,0,255), 3, :ref:`CV_AA <doxid-df/d4e/group__imgproc__c_1ga32a38de93cb76391d98a1545d587a8ff>`);
+   	    }
+   	#else
+   	    vector<Vec4i> lines;
+   	    :ref:`HoughLinesP <doxid-dd/d1a/group__imgproc__feature_1ga8618180a5948286384e3b7ca02f6feeb>`(dst, lines, 1, CV_PI/180, 50, 50, 10 );
+   	    for( size_t i = 0; i < lines.size(); i++ )
+   	    {
+   	        :ref:`Vec4i <doxid-db/d93/classcv_1_1_vec>` l = lines[i];
+   	        :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( cdst, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[0], l[1]), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[2], l[3]), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,0,255), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+   	    }
+   	#endif
+   	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("source", src);
+   	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("detected lines", cdst);
+   	
+   	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+   	
+   	    return 0;
+   	}
+
+.. rubric:: Explanation
+
+#. Load an image
+   
+   .. ref-code-block:: cpp
+   
+   	Mat src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, 0);
+   	if(src.empty())
+   	{
+   	  help();
+   	  cout << "can not open " << filename << endl;
+   	  return -1;
+   	}
+
+#. Detect the edges of the image by using a Canny detector
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`(src, dst, 50, 200, 3);
+   
+   Now we will apply the Hough Line Transform. We will explain how to use both OpenCV functions available for this purpose:
+
+#. **Standard Hough Line Transform**
+   
+   #. First, you apply the Transform:
+      
+      .. ref-code-block:: cpp
+      
+      	vector<Vec2f> lines;
+      	:ref:`HoughLines <doxid-dd/d1a/group__imgproc__feature_1ga46b4e588934f6c8dfd509cc6e0e4545a>`(dst, lines, 1, CV_PI/180, 100, 0, 0 );
+      
+      with the following arguments:
+      
+      * *dst* : Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
+      
+      * *lines* : A vector that will store the parameters :math:`(r,\theta)` of the detected lines
+      
+      * *rho* : The resolution of the parameter :math:`r` in pixels. We use **1** pixel.
+      
+      * *theta* : The resolution of the parameter :math:`\theta` in radians. We use **1 degree** (CV_PI/180)
+      
+      * *threshold* : The minimum number of intersections to "\*detect\*" a line
+      
+      * *srn* and *stn* : Default parameters to zero. Check OpenCV reference for more info.
+   
+   #. And then you display the result by drawing the lines.
+      
+      .. ref-code-block:: cpp
+      
+      	for( size_t i = 0; i < lines.size(); i++ )
+      	{
+      	  float rho = lines[i][0], theta = lines[i][1];
+      	  Point pt1, pt2;
+      	  double a = :ref:`cos <doxid-df/dfc/group__cudev_1ga2591489e47c1cb227d235872e4b5e433>`(theta), b = :ref:`sin <doxid-df/dfc/group__cudev_1gaa65ebb1958aa6daaacb7e0b94810ff87>`(theta);
+      	  double x0 = a*rho, y0 = b*rho;
+      	  pt1.x = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(x0 + 1000*(-b));
+      	  pt1.y = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(y0 + 1000*(a));
+      	  pt2.x = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(x0 - 1000*(-b));
+      	  pt2.y = :ref:`cvRound <doxid-db/de0/group__core__utils_1ga085eca238176984a0b72df2818598d85>`(y0 - 1000*(a));
+      	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( cdst, pt1, pt2, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,0,255), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+      	}
+
+#. **Probabilistic Hough Line Transform**
+   
+   #. First you apply the transform:
+      
+      .. ref-code-block:: cpp
+      
+      	vector<Vec4i> lines;
+      	:ref:`HoughLinesP <doxid-dd/d1a/group__imgproc__feature_1ga8618180a5948286384e3b7ca02f6feeb>`(dst, lines, 1, CV_PI/180, 50, 50, 10 );
+      
+      with the arguments:
+      
+      * *dst* : Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
+      
+      * *lines* : A vector that will store the parameters :math:`(x_{start}, y_{start}, x_{end}, y_{end})` of the detected lines
+      
+      * *rho* : The resolution of the parameter :math:`r` in pixels. We use **1** pixel.
+      
+      * *theta* : The resolution of the parameter :math:`\theta` in radians. We use **1 degree** (CV_PI/180)
+      
+      * *threshold* : The minimum number of intersections to "\*detect\*" a line
+      
+      * *minLinLength* : The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
+      
+      * *maxLineGap* : The maximum gap between two points to be considered in the same line.
+   
+   #. And then you display the result by drawing the lines.
+      
+      .. ref-code-block:: cpp
+      
+      	for( size_t i = 0; i < lines.size(); i++ )
+      	{
+      	  :ref:`Vec4i <doxid-dc/d84/group__core__basic_1ga94ce799099ae6cdd66685e3fd0cad7d7>` l = lines[i];
+      	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( cdst, :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[0], l[1]), :ref:`Point <doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`(l[2], l[3]), :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0,0,255), 3, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+      	}
+
+#. Display the original image and the detected lines:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("source", src);
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("detected lines", cdst);
+
+#. Wait until the user exits the program
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+
+.. rubric:: Result
+
+The results below are obtained using the slightly fancier version we mentioned in the *Code* section. It still implements the same stuff as above, only adding the Trackbar for the Threshold.
+
+Using an input image such as:
+
+.. image:: Hough_Lines_Tutorial_Original_Image.jpg
+
+We get the following result by using the Probabilistic Hough Line Transform:
+
+.. image:: Hough_Lines_Tutorial_Result.jpg
+
+You may observe that the number of lines detected vary while you change the *threshold*. The explanation is sort of evident: If you establish a higher threshold, fewer lines will be detected (since you will need more points to declare a line detected).
+

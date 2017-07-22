@@ -1,0 +1,505 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sobel Derivatives &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Template Matching" href="page_tutorial_template_matching.html" />
+    <link rel="prev" title="Smoothing Images" href="page_tutorial_gausian_median_blur_bilateral_filter.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_copyMakeBorder.html">Adding borders to your images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_warp_affine.html">Affine Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_back_projection.html">Back Projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold.html">Basic Thresholding Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_canny_detector.html">Canny Edge Detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hull.html">Convex Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html">Creating Bounding boxes and circles for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html">Creating Bounding rotated boxes and ellipses for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_erosion_dilatation.html">Eroding and Dilating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html">Extract horizontal and vertical lines by using morphological operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_find_contours.html">Finding contours in your image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_calculation.html">Histogram Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_comparison.html">Histogram Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_equalization.html">Histogram Equalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hitOrMiss.html">Hit-or-Miss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_circle.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_lines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moments.html">Image Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_distance_transform.html">Image Segmentation with Distance Transform and Watershed Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_laplace_operator.html">Laplace Operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_filter_2d.html">Making your own linear filters!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_opening_closing_hats.html">More Morphology Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_point_polygon_test.html">Point Polygon Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_remap.html">Remapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html">Smoothing Images</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sobel Derivatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_template_matching.html">Template Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold_inRange.html">Thresholding Operations using inRange</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a> &raquo;</li>
+        
+      <li>Sobel Derivatives</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sobel-derivatives">
+<span id="doxid-d2-d2c-tutorial-sobel-derivatives"></span><span id="index-0"></span><h1>Sobel Derivatives</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">cv::Sobel</span></a> to calculate the derivatives from an image.</li>
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaa13106761eedf14798f37aa2d60404c9"><span class="std std-ref">cv::Scharr</span></a> to calculate a more accurate derivative for a kernel of size <span class="math notranslate nohighlight">\(3 \cdot 3\)</span></li>
+</ul>
+<p class="rubric">Theory</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler.</p>
+<ol class="arabic">
+<li><p class="first">In the last two tutorials we have seen applicative examples of convolutions. One of the most important convolutions is the computation of derivatives in an image (or an approximation to them).</p>
+</li>
+<li><p class="first">Why may be important the calculus of the derivatives in an image? Let’s imagine we want to detect the <em>edges</em> present in the image. For instance:</p>
+<img alt="_images/Sobel_Derivatives_Tutorial_Theory_0.jpg" src="_images/Sobel_Derivatives_Tutorial_Theory_0.jpg" />
+<p>You can easily notice that in an <em>edge</em>, the pixel intensity <em>changes</em> in a notorious way. A good way to express <em>changes</em> is by using <em>derivatives</em>. A high change in gradient indicates a major change in the image.</p>
+</li>
+<li><p class="first">To be more graphical, let’s assume we have a 1D-image. An edge is shown by the “jump” in intensity in the plot below:</p>
+<img alt="_images/Sobel_Derivatives_Tutorial_Theory_Intensity_Function.jpg" src="_images/Sobel_Derivatives_Tutorial_Theory_Intensity_Function.jpg" />
+</li>
+<li><p class="first">The edge “jump” can be seen more easily if we take the first derivative (actually, here appears as a maximum)</p>
+<img alt="_images/Sobel_Derivatives_Tutorial_Theory_dIntensity_Function.jpg" src="_images/Sobel_Derivatives_Tutorial_Theory_dIntensity_Function.jpg" />
+</li>
+<li><p class="first">So, from the explanation above, we can deduce that a method to detect edges in an image can be performed by locating pixel locations where the gradient is higher than its neighbors (or to generalize, higher than a threshold).</p>
+</li>
+<li><p class="first">More detailed explanation, please refer to <strong>Learning OpenCV</strong> by Bradski and Kaehler</p>
+</li>
+</ol>
+<p class="rubric">Sobel Operator</p>
+<ol class="arabic simple">
+<li>The Sobel Operator is a discrete differentiation operator. It computes an approximation of the gradient of an image intensity function.</li>
+<li>The Sobel Operator combines Gaussian smoothing and differentiation.</li>
+</ol>
+<p class="rubric">Formulation</p>
+<p>Assuming that the image to be operated is <span class="math notranslate nohighlight">\(I\)</span> :</p>
+<ol class="arabic">
+<li><p class="first">We calculate two derivatives:</p>
+<ol class="arabic simple">
+<li><strong>Horizontal changes</strong> : This is computed by convolving <span class="math notranslate nohighlight">\(I\)</span> with a kernel <span class="math notranslate nohighlight">\(G_{x}\)</span> with odd size. For example for a kernel size of 3, <span class="math notranslate nohighlight">\(G_{x}\)</span> would be computed as:</li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}G_{x} = \begin{bmatrix} -1 &amp; 0 &amp; +1 \\ -2 &amp; 0 &amp; +2 \\ -1 &amp; 0 &amp; +1 \end{bmatrix} * I\end{split}\]</div>
+<ol class="arabic simple">
+<li><strong>Vertical changes</strong> : This is computed by convolving <span class="math notranslate nohighlight">\(I\)</span> with a kernel <span class="math notranslate nohighlight">\(G_{y}\)</span> with odd size. For example for a kernel size of 3, <span class="math notranslate nohighlight">\(G_{y}\)</span> would be computed as:</li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}G_{y} = \begin{bmatrix} -1 &amp; -2 &amp; -1 \\ 0 &amp; 0 &amp; 0 \\ +1 &amp; +2 &amp; +1 \end{bmatrix} * I\end{split}\]</div>
+</li>
+<li><p class="first">At each point of the image we calculate an approximation of the <em>gradient</em> in that point by combining both results above:</p>
+<div class="math notranslate nohighlight">
+\[G = \sqrt{ G_{x}^{2} + G_{y}^{2} }\]</div>
+<p>Although sometimes the following simpler equation is used:</p>
+<div class="math notranslate nohighlight">
+\[G = |G_{x}| + |G_{y}|\]</div>
+</li>
+</ol>
+<p>When the size of the kernel is <code class="docutils literal notranslate"><span class="pre">3</span></code>, the Sobel kernel shown above may produce noticeable inaccuracies (after all, Sobel is only an approximation of the derivative). OpenCV addresses this inaccuracy for kernels of size 3 by using the <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaa13106761eedf14798f37aa2d60404c9"><span class="std std-ref">cv::Scharr</span></a> function. This is as fast but more accurate than the standar Sobel function. It implements the following kernels:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}G_{x} = \begin{bmatrix} -3 &amp; 0 &amp; +3 \\ -10 &amp; 0 &amp; +10 \\ -3 &amp; 0 &amp; +3 \end{bmatrix}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}G_{y} = \begin{bmatrix} -3 &amp; -10 &amp; -3 \\ 0 &amp; 0 &amp; 0 \\ +3 &amp; +10 &amp; +3 \end{bmatrix}\end{split}\]</div>
+<p>You can check out more information of this function in the OpenCV reference (<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaa13106761eedf14798f37aa2d60404c9"><span class="std std-ref">cv::Scharr</span></a>). Also, in the sample code below, you will notice that above the code for <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">cv::Sobel</span></a> function there is also code for the <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaa13106761eedf14798f37aa2d60404c9"><span class="std std-ref">cv::Scharr</span></a> function commented. Uncommenting it (and obviously commenting the Sobel stuff) should give you an idea of how this function works.</p>
+<p class="rubric">Code</p>
+<ol class="arabic">
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Applies the <em>Sobel Operator</em> and generates as output an image with the detected <em>edges</em> bright on a darker background.</li>
+</ul>
+</li>
+<li><p class="first">The tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgTrans/Sobel_Demo.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">;</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">grad</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;Sobel Demo - Simple Edge Detector&quot;</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">ddepth</span> <span class="o">=</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga9d2ee1a8334733dea7482a47a88e0f87"><span class="std std-ref">CV_16S</span></a><span></span><span class="p">;</span>
+
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">grad_x</span><span class="p">,</span> <span class="n">grad_y</span><span class="p">;</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">abs_grad_x</span><span class="p">,</span> <span class="n">abs_grad_y</span><span class="p">;</span>
+
+  <span class="c1">//Scharr( src_gray, grad_x, ddepth, 1, 0, scale, delta, BORDER_DEFAULT );</span>
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">Sobel</span></a><span></span><span class="p">(</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">grad_x</span><span class="p">,</span> <span class="n">ddepth</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+
+  <span class="c1">//Scharr( src_gray, grad_y, ddepth, 0, 1, scale, delta, BORDER_DEFAULT );</span>
+  <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">Sobel</span></a><span></span><span class="p">(</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">grad_y</span><span class="p">,</span> <span class="n">ddepth</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga3460e9c9f37b563ab9dd550c4d8c4e7d"><span class="std std-ref">convertScaleAbs</span></a><span></span><span class="p">(</span> <span class="n">grad_x</span><span class="p">,</span> <span class="n">abs_grad_x</span> <span class="p">);</span>
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga3460e9c9f37b563ab9dd550c4d8c4e7d"><span class="std std-ref">convertScaleAbs</span></a><span></span><span class="p">(</span> <span class="n">grad_y</span><span class="p">,</span> <span class="n">abs_grad_y</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">addWeighted</span></a><span></span><span class="p">(</span> <span class="n">abs_grad_x</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">abs_grad_y</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">grad</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">grad</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">First we declare the variables we are going to use:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">;</span>
+<span class="n">Mat</span> <span class="n">grad</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;Sobel Demo - Simple Edge Detector&quot;</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">ddepth</span> <span class="o">=</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga9d2ee1a8334733dea7482a47a88e0f87"><span class="std std-ref">CV_16S</span></a><span></span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">As usual we load our source image <em>src</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+<span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">First, we apply a <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">cv::GaussianBlur</span></a> to our image to reduce the noise ( kernel size = 3 )</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gaabe8c836e97159a9193fb0b11ac52cf1"><span class="std std-ref">GaussianBlur</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Now we convert our filtered image to grayscale:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Second, we calculate the “*derivatives*” in <em>x</em> and <em>y</em> directions. For this, we use the function <a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">cv::Sobel</span></a> as shown below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">grad_x</span><span class="p">,</span> <span class="n">grad_y</span><span class="p">;</span>
+<span class="n">Mat</span> <span class="n">abs_grad_x</span><span class="p">,</span> <span class="n">abs_grad_y</span><span class="p">;</span>
+
+<span class="c1">//Scharr( src_gray, grad_x, ddepth, 1, 0, scale, delta, BORDER_DEFAULT );</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">Sobel</span></a><span></span><span class="p">(</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">grad_x</span><span class="p">,</span> <span class="n">ddepth</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+
+<span class="c1">//Scharr( src_gray, grad_y, ddepth, 0, 1, scale, delta, BORDER_DEFAULT );</span>
+<a class="reference internal" href="group_imgproc_filter.html#doxid-d4-d86-group-imgproc-filter-1gacea54f142e81b6758cb6f375ce782c8d"><span class="std std-ref">Sobel</span></a><span></span><span class="p">(</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">grad_y</span><span class="p">,</span> <span class="n">ddepth</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span> <span class="p">);</span>
+</pre>
+<p>The function takes the following arguments:</p>
+<ul class="simple">
+<li><em>src_gray</em> : In our example, the input image. Here it is <em>CV_8U</em></li>
+<li><em>grad_x</em> /*grad_y*: The output image.</li>
+<li><em>ddepth</em> : The depth of the output image. We set it to <em>CV_16S</em> to avoid overflow.</li>
+<li><em>x_order</em> : The order of the derivative in <strong>x</strong> direction.</li>
+<li><em>y_order</em> : The order of the derivative in <strong>y</strong> direction.</li>
+<li><em>scale</em>, <em>delta</em> and <em>BORDER_DEFAULT</em> : We use default values.</li>
+</ul>
+<p>Notice that to calculate the gradient in <em>x</em> direction we use: <span class="math notranslate nohighlight">\(x_{order}= 1\)</span> and <span class="math notranslate nohighlight">\(y_{order} = 0\)</span>. We do analogously for the <em>y</em> direction.</p>
+</li>
+<li><p class="first">We convert our partial results back to <em>CV_8U</em> :</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga3460e9c9f37b563ab9dd550c4d8c4e7d"><span class="std std-ref">convertScaleAbs</span></a><span></span><span class="p">(</span> <span class="n">grad_x</span><span class="p">,</span> <span class="n">abs_grad_x</span> <span class="p">);</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga3460e9c9f37b563ab9dd550c4d8c4e7d"><span class="std std-ref">convertScaleAbs</span></a><span></span><span class="p">(</span> <span class="n">grad_y</span><span class="p">,</span> <span class="n">abs_grad_y</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Finally, we try to approximate the <em>gradient</em> by adding both directional gradients (note that this is not an exact calculation at all! but it is good for our purposes).</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gafafb2513349db3bcff51f54ee5592a19"><span class="std std-ref">addWeighted</span></a><span></span><span class="p">(</span> <span class="n">abs_grad_x</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">abs_grad_y</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">grad</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Finally, we show our result:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">grad</span> <span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre>
+<p class="rubric">Results</p>
+</li>
+<li><p class="first">Here is the output of applying our basic detector to <em>lena.jpg</em> :</p>
+<img alt="_images/Sobel_Derivatives_Tutorial_Result.jpg" src="_images/Sobel_Derivatives_Tutorial_Result.jpg" />
+</li>
+</ol>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_template_matching.html" class="btn btn-neutral float-right" title="Template Matching" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_gausian_median_blur_bilateral_filter.html" class="btn btn-neutral float-left" title="Smoothing Images" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

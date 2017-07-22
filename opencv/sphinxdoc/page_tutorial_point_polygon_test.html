@@ -1,0 +1,180 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Point Polygon Test &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Remapping" href="page_tutorial_remap.html" />
+    <link rel="prev" title="More Morphology Transformations" href="page_tutorial_opening_closing_hats.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_remap.html" title="Remapping"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_opening_closing_hats.html" title="More Morphology Transformations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_opening_closing_hats.html"
+                        title="previous chapter">More Morphology Transformations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_remap.html"
+                        title="next chapter">Remapping</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="point-polygon-test">
+<span id="doxid-dc-d48-tutorial-point-polygon-test"></span><span id="index-0"></span><h1>Point Polygon Test</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1ga1a539e8db2135af2566103705d7a5722"><span class="std std-ref">cv::pointPolygonTest</span></a></li>
+</ul>
+<p class="rubric">Theory</p>
+<p class="rubric">Code</p>
+<p>This tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ShapeDescriptors/pointPolygonTest_demo.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">void</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">const</span> <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">Mat::zeros</span></a><span></span><span class="p">(</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="mi">4</span><span class="o">*</span><span class="n">r</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">r</span> <span class="p">),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span> <span class="p">);</span>
+
+  <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">vert</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+
+  <span class="n">vert</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">1.34</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">);</span>
+  <span class="n">vert</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">1</span><span class="o">*</span><span class="n">r</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">r</span> <span class="p">);</span>
+  <span class="n">vert</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">2.866</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">);</span>
+  <span class="n">vert</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">5</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">2.866</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">);</span>
+  <span class="n">vert</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">r</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">r</span> <span class="p">);</span>
+  <span class="n">vert</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">5</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">1.34</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span> <span class="p">)</span>
+     <span class="p">{</span> <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">vert</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>  <span class="n">vert</span><span class="p">[(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">6</span><span class="p">],</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span> <span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span> <span class="p">);</span> <span class="p">}</span>
+
+  <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">contours</span><span class="p">;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec4i</span><span class="o">&gt;</span> <span class="n">hierarchy</span><span class="p">;</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src_copy</span> <span class="o">=</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+
+  <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1ga17ed9f5d79ae97bd4c7cf18403e1689a"><span class="std std-ref">findContours</span></a><span></span><span class="p">(</span> <span class="n">src_copy</span><span class="p">,</span> <span class="n">contours</span><span class="p">,</span> <span class="n">hierarchy</span><span class="p">,</span> <a class="reference internal" href="enum_cv_RetrievalModes.html#doxid-d3-dc0-group-imgproc-shape-1gga819779b9857cc2f8601e6526a3a5bc71ab10df56aed56c89a026580adc9431f58"><span class="std std-ref">RETR_TREE</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_ContourApproximationModes.html#doxid-d3-dc0-group-imgproc-shape-1gga4303f45752694956374734a03c54d5ffa5f2883048e654999209f88ba04c302f5"><span class="std std-ref">CHAIN_APPROX_SIMPLE</span></a><span></span><span class="p">);</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">raw_dist</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga32ec76240e43e4c9c7b2e2785180a7e6"><span class="std std-ref">CV_32FC1</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="n">j</span><span class="o">++</span> <span class="p">)</span>
+     <span class="p">{</span> <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+          <span class="p">{</span> <span class="n">raw_dist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1ga1a539e8db2135af2566103705d7a5722"><span class="std std-ref">pointPolygonTest</span></a><span></span><span class="p">(</span> <span class="n">contours</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga7d080aa40de011e4410bca63385ffe2a"><span class="std std-ref">Point2f</span></a><span></span><span class="p">((</span><span class="kt">float</span><span class="p">)</span><span class="n">i</span><span class="p">,(</span><span class="kt">float</span><span class="p">)</span><span class="n">j</span><span class="p">),</span> <span class="nb">true</span> <span class="p">);</span> <span class="p">}</span>
+     <span class="p">}</span>
+
+  <span class="kt">double</span> <span class="n">minVal</span><span class="p">;</span> <span class="kt">double</span> <span class="n">maxVal</span><span class="p">;</span>
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gab473bf2eb6d14ff97e89b355dac20707"><span class="std std-ref">minMaxLoc</span></a><span></span><span class="p">(</span> <span class="n">raw_dist</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minVal</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxVal</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+  <span class="n">minVal</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1af6df65b17fb11af6d34634b6dfa44683"><span class="std std-ref">abs</span></a><span></span><span class="p">(</span><span class="n">minVal</span><span class="p">);</span> <span class="n">maxVal</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1af6df65b17fb11af6d34634b6dfa44683"><span class="std std-ref">abs</span></a><span></span><span class="p">(</span><span class="n">maxVal</span><span class="p">);</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">drawing</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">Mat::zeros</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">;</span> <span class="n">j</span><span class="o">++</span> <span class="p">)</span>
+     <span class="p">{</span> <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+          <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">raw_dist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span>
+              <span class="p">{</span> <span class="n">drawing</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)(</span><span class="mi">255</span> <span class="o">-</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1af6df65b17fb11af6d34634b6dfa44683"><span class="std std-ref">abs</span></a><span></span><span class="p">(</span><span class="n">raw_dist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">))</span><span class="o">*</span><span class="mi">255</span><span class="o">/</span><span class="n">minVal</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">raw_dist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+              <span class="p">{</span> <span class="n">drawing</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="p">)(</span><span class="mi">255</span> <span class="o">-</span> <span class="n">raw_dist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="mi">255</span><span class="o">/</span><span class="n">maxVal</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">else</span>
+              <span class="p">{</span> <span class="n">drawing</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="n">drawing</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="n">drawing</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_Vec.html#doxid-db-d93-classcv-1-1-vec"><span class="std std-ref">Vec3b</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="p">}</span>
+          <span class="p">}</span>
+     <span class="p">}</span>
+
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">source_window</span> <span class="o">=</span> <span class="s">&quot;Source&quot;</span><span class="p">;</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">source_window</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">source_window</span><span class="p">,</span> <span class="n">src</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Distance&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="s">&quot;Distance&quot;</span><span class="p">,</span> <span class="n">drawing</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p class="rubric">Result</p>
+<p>Here it is:</p>
+<img alt="_images/Point_Polygon_Test_Source_Image.png" src="_images/Point_Polygon_Test_Source_Image.png" />
+<img alt="_images/Point_Polygon_Test_Result.jpg" src="_images/Point_Polygon_Test_Result.jpg" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_remap.html" title="Remapping"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_opening_closing_hats.html" title="More Morphology Transformations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

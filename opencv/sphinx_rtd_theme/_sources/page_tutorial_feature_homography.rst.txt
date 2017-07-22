@@ -1,0 +1,137 @@
+.. index:: pair: page; Features2D + Homography to find a known object
+.. _doxid-d7/dff/tutorial_feature_homography:
+
+Features2D + Homography to find a known object
+==============================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the function :ref:`cv::findHomography <doxid-d9/d0c/group__calib3d_1ga4abc2ece9fab9398f2e560d53c8c9780>` to find the transform between matched keypoints.
+
+* Use the function :ref:`cv::perspectiveTransform <doxid-d2/de8/group__core__array_1gad327659ac03e5fd6894b90025e6900a7>` to map the points.
+
+.. rubric:: Theory
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below.
+
+.. ref-code-block:: cpp
+
+	#include <stdio.h>
+	#include <iostream>
+	#include "opencv2/core.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/features2d.hpp"
+	#include "opencv2/highgui.hpp"
+	#include "opencv2/calib3d.hpp"
+	#include "opencv2/xfeatures2d.hpp"
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace cv::xfeatures2d;
+	
+	void readme();
+	
+	/* @function main */
+	int main( int argc, char** argv )
+	{
+	  if( argc != 3 )
+	  { readme(); return -1; }
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_object = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[1], :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>` );
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_scene = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( argv[2], :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>` );
+	
+	  if( !img_object.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` || !img_scene.:ref:`data <doxid-db/de6/classcv_1_1_mat_1a4d33bed1c850265370d2af0ff02e1564>` )
+	  { std::cout<< " --(!) Error reading images " << std::endl; return -1; }
+	
+	  //-- Step 1: Detect the keypoints and extract descriptors using SURF
+	  int minHessian = 400;
+	
+	  :ref:`Ptr\<SURF> <doxid-d2/d56/structcv_1_1_ptr>` detector = SURF::create( minHessian );
+	
+	  std::vector<KeyPoint> keypoints_object, keypoints_scene;
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` descriptors_object, descriptors_scene;
+	
+	  detector->detectAndCompute( img_object, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), keypoints_object, descriptors_object );
+	  detector->detectAndCompute( img_scene, :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(), keypoints_scene, descriptors_scene );
+	
+	  //-- Step 2: Matching descriptor vectors using FLANN matcher
+	  :ref:`FlannBasedMatcher <doxid-de/d48/classcv_1_1_flann_based_matcher>` matcher;
+	  std::vector< DMatch > matches;
+	  matcher.:ref:`match <doxid-d4/d64/classcv_1_1_descriptor_matcher_1a0f046f47b68ec7074391e1e85c750cba>`( descriptors_object, descriptors_scene, matches );
+	
+	  double max_dist = 0; double min_dist = 100;
+	
+	  //-- Quick calculation of max and min distances between keypoints
+	  for( int i = 0; i < descriptors_object.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; i++ )
+	  { double dist = matches[i].distance;
+	    if( dist < min_dist ) min_dist = dist;
+	    if( dist > max_dist ) max_dist = dist;
+	  }
+	
+	  printf("-- Max dist : %f \n", max_dist );
+	  printf("-- Min dist : %f \n", min_dist );
+	
+	  //-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
+	  std::vector< DMatch > good_matches;
+	
+	  for( int i = 0; i < descriptors_object.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`; i++ )
+	  { if( matches[i].distance <= 3*min_dist )
+	     { good_matches.push_back( matches[i]); }
+	  }
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img_matches;
+	  :ref:`drawMatches <doxid-d4/d5d/group__features2d__draw_1ga7421b3941617d7267e3f2311582f49e1>`( img_object, keypoints_object, img_scene, keypoints_scene,
+	               good_matches, img_matches, :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(-1), :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(-1),
+	               std::vector<char>(), :ref:`DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS <doxid-d6/d1c/structcv_1_1_draw_matches_flags_1aa2ceb55f7161cc82164e358609453647a846e25aca57b8bddd219d83cef3a06ac>` );
+	
+	  //-- Localize the object
+	  std::vector<Point2f> obj;
+	  std::vector<Point2f> scene;
+	
+	  for( size_t i = 0; i < good_matches.size(); i++ )
+	  {
+	    //-- Get the keypoints from the good matches
+	    obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
+	    scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+	  }
+	
+	  :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` H = :ref:`findHomography <doxid-d9/d0c/group__calib3d_1ga4abc2ece9fab9398f2e560d53c8c9780>`( obj, scene, :ref:`RANSAC <doxid-d9/d0c/group__calib3d_1gga96ccbb3198badce31862120414bc0d2da724159df258a5d7e29410a6a2f4e6c87>` );
+	
+	  //-- Get the corners from the image_1 ( the object to be "detected" )
+	  std::vector<Point2f> obj_corners(4);
+	  obj_corners[0] = :ref:`cvPoint <doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`(0,0); obj_corners[1] = :ref:`cvPoint <doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0 );
+	  obj_corners[2] = :ref:`cvPoint <doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, img_object.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` ); obj_corners[3] = :ref:`cvPoint <doxid-d2/df8/group__core__c_1ga8ccfebde83fdc77f06ad6cab82ab3e4f>`( 0, img_object.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` );
+	  std::vector<Point2f> scene_corners(4);
+	
+	  :ref:`perspectiveTransform <doxid-d2/de8/group__core__array_1gad327659ac03e5fd6894b90025e6900a7>`( obj_corners, scene_corners, H);
+	
+	  //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( img_matches, scene_corners[0] + :ref:`Point2f <doxid-dc/d84/group__core__basic_1ga7d080aa40de011e4410bca63385ffe2a>`( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), scene_corners[1] + Point2f( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), Scalar(0, 255, 0), 4 );
+	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( img_matches, scene_corners[1] + :ref:`Point2f <doxid-dc/d84/group__core__basic_1ga7d080aa40de011e4410bca63385ffe2a>`( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), scene_corners[2] + Point2f( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), Scalar( 0, 255, 0), 4 );
+	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( img_matches, scene_corners[2] + :ref:`Point2f <doxid-dc/d84/group__core__basic_1ga7d080aa40de011e4410bca63385ffe2a>`( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), scene_corners[3] + Point2f( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), Scalar( 0, 255, 0), 4 );
+	  :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`( img_matches, scene_corners[3] + :ref:`Point2f <doxid-dc/d84/group__core__basic_1ga7d080aa40de011e4410bca63385ffe2a>`( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), scene_corners[0] + Point2f( img_object.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, 0), Scalar( 0, 255, 0), 4 );
+	
+	  //-- Show detected matches
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Good Matches & Object detection", img_matches );
+	
+	  :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	  return 0;
+	  }
+	
+	  /* @function readme */
+	  void readme()
+	  { std::cout << " Usage: ./SURF_descriptor <img1> <img2>" << std::endl; }
+
+
+
+.. rubric:: Explanation
+
+.. rubric:: Result
+
+#. And here is the result for the detected object (highlighted in green)
+   
+   .. image:: Feature_Homography_Result.jpg
+

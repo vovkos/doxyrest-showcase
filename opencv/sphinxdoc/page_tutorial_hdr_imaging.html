@@ -1,0 +1,228 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>High Dynamic Range Imaging &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GPU-Accelerated Computer Vision (cuda module)" href="page_tutorial_table_of_content_gpu.html" />
+    <link rel="prev" title="Computational photography (photo module)" href="page_tutorial_table_of_content_photo.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_gpu.html" title="GPU-Accelerated Computer Vision (cuda module)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_photo.html" title="Computational photography (photo module)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_photo.html" accesskey="U">Computational photography (photo module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_photo.html"
+                        title="previous chapter">Computational photography (photo module)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_table_of_content_gpu.html"
+                        title="next chapter">GPU-Accelerated Computer Vision (cuda module)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="high-dynamic-range-imaging">
+<span id="doxid-d3-db7-tutorial-hdr-imaging"></span><span id="index-0"></span><h1>High Dynamic Range Imaging</h1>
+<p class="rubric">Introduction</p>
+<p>Today most digital images and imaging devices use 8 bits per channel thus limiting the dynamic range of the device to two orders of magnitude (actually 256 levels), while human eye can adapt to lighting conditions varying by ten orders of magnitude. When we take photographs of a real world scene bright regions may be overexposed, while the dark ones may be underexposed, so we can’t capture all details using a single exposure. HDR imaging works with images that use more that 8 bits per channel (usually 32-bit float values), allowing much wider dynamic range.</p>
+<p>There are different ways to obtain HDR images, but the most common one is to use photographs of the scene taken with different exposure values. To combine this exposures it is useful to know your camera’s response function and there are algorithms to estimate it. After the HDR image has been blended it has to be converted back to 8-bit to view it on usual displays. This process is called tonemapping. Additional complexities arise when objects of the scene or camera move between shots, since images with different exposures should be registered and aligned.</p>
+<p>In this tutorial we show how to generate and display HDR image from an exposure sequence. In our case images are already aligned and there are no moving objects. We also demonstrate an alternative approach called exposure fusion that produces low dynamic range image. Each step of HDR pipeline can be implemented using different algorithms so take a look at the reference manual to see them all.</p>
+<p class="rubric">Exposure sequence</p>
+<img alt="_images/memorial.png" src="_images/memorial.png" />
+<p class="rubric">Source Code</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/photo.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="n">loadExposureSeq</span><span class="p">(</span><a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;&amp;</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">images</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">times</span><span class="p">;</span>
+    <span class="n">loadExposureSeq</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">images</span><span class="p">,</span> <span class="n">times</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">response</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;CalibrateDebevec&gt;</span></a><span></span> <a class="reference internal" href="group_calib3d_fisheye.html#doxid-db-d58-group-calib3d-fisheye-1gad626a78de2b1dae7489e152a5a5a89e1"><span class="std std-ref">calibrate</span></a><span></span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1ga7fed9707ad5f2cc0e633888867109f90"><span class="std std-ref">createCalibrateDebevec</span></a><span></span><span class="p">();</span>
+    <span class="n">calibrate</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_CalibrateCRF.html#doxid-d6-d43-classcv-1-1-calibrate-c-r-f-1a7bd220808762094e0b48819f63437196"><span class="std std-ref">process</span></a><span></span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">times</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">hdr</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;MergeDebevec&gt;</span></a><span></span> <span class="n">merge_debevec</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1gaa8eab36bc764abb2a225db7c945f87f9"><span class="std std-ref">createMergeDebevec</span></a><span></span><span class="p">();</span>
+    <span class="n">merge_debevec</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_MergeDebevec.html#doxid-df-d17-classcv-1-1-merge-debevec-1ae5bb2bef786549e1a1db8c2bbcee2e13"><span class="std std-ref">process</span></a><span></span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">response</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">ldr</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;TonemapDurand&gt;</span></a><span></span> <span class="n">tonemap</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1ga19150c9a4b670437e374e51a3e865654"><span class="std std-ref">createTonemapDurand</span></a><span></span><span class="p">(</span><span class="mf">2.2f</span><span class="p">);</span>
+    <span class="n">tonemap</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_Tonemap.html#doxid-d0-dd3-classcv-1-1-tonemap-1aa705c3b7226f7028a5c117dffab60fe4"><span class="std std-ref">process</span></a><span></span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span> <span class="n">ldr</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">fusion</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;MergeMertens&gt;</span></a><span></span> <span class="n">merge_mertens</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1ga79d59aa3cb3a7c664e59a4b5acc1ccb6"><span class="std std-ref">createMergeMertens</span></a><span></span><span class="p">();</span>
+    <span class="n">merge_mertens</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_MergeMertens.html#doxid-df-d3e-classcv-1-1-merge-mertens-1a3b5ae3fe6c15bd7db83f213903858ea0"><span class="std std-ref">process</span></a><span></span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">fusion</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;fusion.png&quot;</span><span class="p">,</span> <span class="n">fusion</span> <span class="o">*</span> <span class="mi">255</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;ldr.png&quot;</span><span class="p">,</span> <span class="n">ldr</span> <span class="o">*</span> <span class="mi">255</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;hdr.hdr&quot;</span><span class="p">,</span> <span class="n">hdr</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">loadExposureSeq</span><span class="p">(</span><a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span> <span class="n">path</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;&amp;</span> <span class="n">images</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;&amp;</span> <span class="n">times</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">);</span>
+    <span class="n">ifstream</span> <span class="nf">list_file</span><span class="p">((</span><span class="n">path</span> <span class="o">+</span> <span class="s">&quot;list.txt&quot;</span><span class="p">).</span><span class="n">c_str</span><span class="p">());</span>
+    <span class="n">string</span> <span class="n">name</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">val</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">list_file</span> <span class="o">&gt;&gt;</span> <span class="n">name</span> <span class="o">&gt;&gt;</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="n">name</span><span class="p">);</span>
+        <span class="n">images</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">img</span><span class="p">);</span>
+        <span class="n">times</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">val</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">list_file</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first"><strong>Load images and exposure times</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">images</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">times</span><span class="p">;</span>
+<span class="n">loadExposureSeq</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">images</span><span class="p">,</span> <span class="n">times</span><span class="p">);</span>
+</pre>
+<p>Firstly we load input images and exposure times from user-defined folder. The folder should contain images and <em>list.txt</em> - file that contains file names and inverse exposure times.</p>
+<p>For our image sequence the list is following:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">memorial00</span><span class="p">.</span><span class="n">png</span> <span class="mf">0.03125</span>
+<span class="n">memorial01</span><span class="p">.</span><span class="n">png</span> <span class="mf">0.0625</span>
+<span class="p">...</span>
+<span class="n">memorial15</span><span class="p">.</span><span class="n">png</span> <span class="mi">1024</span>
+</pre>
+</li>
+<li><p class="first"><strong>Estimate camera response</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">response</span><span class="p">;</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">CalibrateDebevec</span><span class="o">&gt;</span> <span class="n">calibrate</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1ga7fed9707ad5f2cc0e633888867109f90"><span class="std std-ref">createCalibrateDebevec</span></a><span></span><span class="p">();</span>
+<span class="n">calibrate</span><span class="o">-&gt;</span><span class="n">process</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">times</span><span class="p">);</span>
+</pre>
+<p>It is necessary to know camera response function (CRF) for a lot of HDR construction algorithms. We use one of the calibration algorithms to estimate inverse CRF for all 256 pixel values.</p>
+</li>
+<li><p class="first"><strong>Make HDR image</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">hdr</span><span class="p">;</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">MergeDebevec</span><span class="o">&gt;</span> <span class="n">merge_debevec</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1gaa8eab36bc764abb2a225db7c945f87f9"><span class="std std-ref">createMergeDebevec</span></a><span></span><span class="p">();</span>
+<span class="n">merge_debevec</span><span class="o">-&gt;</span><span class="n">process</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">response</span><span class="p">);</span>
+</pre>
+<p>We use Debevec’s weighting scheme to construct HDR image using response calculated in the previous item.</p>
+</li>
+<li><p class="first"><strong>Tonemap HDR image</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">ldr</span><span class="p">;</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">TonemapDurand</span><span class="o">&gt;</span> <span class="n">tonemap</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1ga19150c9a4b670437e374e51a3e865654"><span class="std std-ref">createTonemapDurand</span></a><span></span><span class="p">(</span><span class="mf">2.2f</span><span class="p">);</span>
+<span class="n">tonemap</span><span class="o">-&gt;</span><span class="n">process</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span> <span class="n">ldr</span><span class="p">);</span>
+</pre>
+<p>Since we want to see our results on common LDR display we have to map our HDR image to 8-bit range preserving most details. It is the main goal of tonemapping methods. We use tonemapper with bilateral filtering and set 2.2 as the value for gamma correction.</p>
+</li>
+<li><p class="first"><strong>Perform exposure fusion</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">fusion</span><span class="p">;</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">MergeMertens</span><span class="o">&gt;</span> <span class="n">merge_mertens</span> <span class="o">=</span> <a class="reference internal" href="group_photo_hdr.html#doxid-d6-df5-group-photo-hdr-1ga79d59aa3cb3a7c664e59a4b5acc1ccb6"><span class="std std-ref">createMergeMertens</span></a><span></span><span class="p">();</span>
+<span class="n">merge_mertens</span><span class="o">-&gt;</span><span class="n">process</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">fusion</span><span class="p">);</span>
+</pre>
+<p>There is an alternative way to merge our exposures in case when we don’t need HDR image. This process is called exposure fusion and produces LDR image that doesn’t require gamma correction. It also doesn’t use exposure values of the photographs.</p>
+</li>
+<li><p class="first"><strong>Write results</strong></p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;fusion.png&quot;</span><span class="p">,</span> <span class="n">fusion</span> <span class="o">*</span> <span class="mi">255</span><span class="p">);</span>
+<a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;ldr.png&quot;</span><span class="p">,</span> <span class="n">ldr</span> <span class="o">*</span> <span class="mi">255</span><span class="p">);</span>
+<a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="s">&quot;hdr.hdr&quot;</span><span class="p">,</span> <span class="n">hdr</span><span class="p">);</span>
+</pre>
+<p>Now it’s time to look at the results. Note that HDR image can’t be stored in one of common image formats, so we save it to Radiance image (.hdr). Also all HDR imaging functions return results in [0, 1] range so we should multiply result by 255.</p>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<p class="rubric">Tonemapped image</p>
+<img alt="_images/ldr.png" src="_images/ldr.png" />
+<p class="rubric">Exposure fusion</p>
+<img alt="_images/fusion.png" src="_images/fusion.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_gpu.html" title="GPU-Accelerated Computer Vision (cuda module)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_table_of_content_photo.html" title="Computational photography (photo module)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_photo.html" >Computational photography (photo module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

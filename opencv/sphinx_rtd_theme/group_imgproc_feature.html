@@ -1,0 +1,1098 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Feature Detection &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="enum cv::LineSegmentDetectorModes" href="enum_cv_LineSegmentDetectorModes.html" />
+    <link rel="prev" title="class cv::LineIterator" href="class_cv_LineIterator.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_imgproc.html">Image processing</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_c.html">C API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_colormap.html">ColorMaps in OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_draw.html">Drawing Functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Feature Detection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html">enum cv::LineSegmentDetectorModes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_cv_LineSegmentDetector.html">class cv::LineSegmentDetector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_transform.html">Geometric Image Transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_hist.html">Histograms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_filter.html">Image Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_misc.html">Miscellaneous Image Transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_motion.html">Motion Analysis and Object Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_object.html">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_subdiv2d.html">Planar Subdivision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc_shape.html">Structural Analysis and Shape Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HoughModes.html">enum cv::HoughModes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_CLAHE.html">class cv::CLAHE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_GeneralizedHough.html">class cv::GeneralizedHough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_GeneralizedHoughBallard.html">class cv::GeneralizedHoughBallard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_GeneralizedHoughGuil.html">class cv::GeneralizedHoughGuil</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_imgproc.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_imgproc.html">Image processing</a> &raquo;</li>
+        
+      <li>Feature Detection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="feature-detection">
+<span id="doxid-dd-d1a-group-imgproc-feature"></span><span id="index-0"></span><h1>Feature Detection</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// enums</span>
+
+<span class="k">enum</span> <a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html#doxid-dd-d1a-group-imgproc-feature-1gad092a7362b8afb8a905238a41898d98c"><span class="std std-ref">cv::LineSegmentDetectorModes</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// classes</span>
+
+<span class="k">class</span> <a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector"><span class="std std-ref">cv::LineSegmentDetector</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// global functions</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">cv::Canny</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">edges</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold1</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold2</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">apertureSize</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">L2gradient</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga2a671611e104c093843d7b7fc46d24af"><span class="std std-ref">cv::Canny</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">dx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">dy</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">edges</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold1</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold2</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">L2gradient</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga4055896d9ef77dd3cacf2c5f60e13f1c"><span class="std std-ref">cv::cornerEigenValsAndVecs</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cv::cornerHarris</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">k</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga3dbce297c1feb859ee36707e1003e0a8"><span class="std std-ref">cv::cornerMinEigenVal</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga354e0d7c86d0d9da75de9b9701a9a87e"><span class="std std-ref">cv::cornerSubPix</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">corners</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">zeroZone</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector"><span class="std std-ref">LineSegmentDetector</span></a><span></span><span class="o">&gt;</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga6b2ad2353c337c42551b521a73eeae7d"><span class="std std-ref">cv::createLineSegmentDetector</span></a><span></span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">_refine</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html#doxid-dd-d1a-group-imgproc-feature-1ggad092a7362b8afb8a905238a41898d98cade4b0da3a52bc9765f08255f041facb4"><span class="std std-ref">LSD_REFINE_STD</span></a><span></span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_scale</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_sigma_scale</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_quant</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_ang_th</span> <span class="o">=</span> <span class="mf">22.5</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_log_eps</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_density_th</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">_n_bins</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga1d6bb77486c8f92d79c8793ad995d541"><span class="std std-ref">cv::goodFeaturesToTrack</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">corners</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxCorners</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">qualityLevel</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minDistance</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <span class="kt">int</span> <span class="n">blockSize</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">useHarrisDetector</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.04</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga47849c3be0d0406ad3ca45db65a25d2d"><span class="std std-ref">cv::HoughCircles</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">circles</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">method</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">dp</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minDist</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">param1</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">param2</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">minRadius</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxRadius</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga46b4e588934f6c8dfd509cc6e0e4545a"><span class="std std-ref">cv::HoughLines</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">lines</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">threshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">srn</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">stn</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">min_theta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">max_theta</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga677b89fae9308b340ddaebf0dba8455f"><span class="std std-ref">CV_PI</span></a><span></span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga8618180a5948286384e3b7ca02f6feeb"><span class="std std-ref">cv::HoughLinesP</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">lines</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">threshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minLineLength</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">maxLineGap</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">);</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1gaa819f39b5c994871774081803ae22586"><span class="std std-ref">cv::preCornerDetect</span></a><span></span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-dd-d1a-group-imgproc-feature"></span><h2>Detailed Documentation</h2>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de">
+<span id="index-1"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">Canny</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">edges</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold1</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold2</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">apertureSize</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">L2gradient</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds edges in an image using the Canny algorithm <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-canny86"><span class="std std-ref">[14]</span></a>.</p>
+<p>The function finds edges in the input image image and marks them in the output map edges using the Canny algorithm. The smallest value between threshold1 and threshold2 is used for edge linking. The largest value is used to find initial segments of strong edges. See <a class="reference external" href="http://en.wikipedia.org/wiki/Canny_edge_detector">http://en.wikipedia.org/wiki/Canny_edge_detector</a></p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>image</td>
+<td>8-bit input image.</td>
+</tr>
+<tr class="row-even"><td>edges</td>
+<td>output edge map; single channels 8-bit image, which has the same size as image .</td>
+</tr>
+<tr class="row-odd"><td>threshold1</td>
+<td>first threshold for the hysteresis procedure.</td>
+</tr>
+<tr class="row-even"><td>threshold2</td>
+<td>second threshold for the hysteresis procedure.</td>
+</tr>
+<tr class="row-odd"><td>apertureSize</td>
+<td>aperture size for the Sobel operator.</td>
+</tr>
+<tr class="row-even"><td>L2gradient</td>
+<td>a flag, indicating whether a more accurate <span class="math notranslate nohighlight">\(L_2\)</span> norm <span class="math notranslate nohighlight">\(=\sqrt{(dI/dx)^2 + (dI/dy)^2}\)</span> should be used to calculate the image gradient magnitude ( L2gradient=true ), or whether the default <span class="math notranslate nohighlight">\(L_1\)</span> norm <span class="math notranslate nohighlight">\(=|dI/dx|+|dI/dy|\)</span> is enough ( L2gradient=false ).</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga2a671611e104c093843d7b7fc46d24af">
+<span id="index-2"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">Canny</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">dx</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">dy</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">edges</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold1</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">threshold2</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">L2gradient</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="p">)</span>
+</pre>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<p>Finds edges in an image using the Canny algorithm with custom image gradient.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>dx</td>
+<td>16-bit x derivative of input image (CV_16SC1 or CV_16SC3).</td>
+</tr>
+<tr class="row-even"><td>dy</td>
+<td>16-bit y derivative of input image (same type as dx).</td>
+</tr>
+<tr class="row-odd"><td>edges</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>threshold1</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>threshold2</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>L2gradient</td>
+<td>See <a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga04723e007ed888ddf11d9ba04e2232de"><span class="std std-ref">cv::Canny</span></a></td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga4055896d9ef77dd3cacf2c5f60e13f1c">
+<span id="index-3"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cornerEigenValsAndVecs</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates eigenvalues and eigenvectors of image blocks for corner detection.</p>
+<p>For every pixel <span class="math notranslate nohighlight">\(p\)</span>, the function cornerEigenValsAndVecs considers a blockSize <span class="math notranslate nohighlight">\(\times\)</span> blockSize neighborhood <span class="math notranslate nohighlight">\(S(p)\)</span>. It calculates the covariation matrix of derivatives over the neighborhood as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}M = \begin{bmatrix} \sum _{S(p)}(dI/dx)^2 &amp; \sum _{S(p)}dI/dx dI/dy \\ \sum _{S(p)}dI/dx dI/dy &amp; \sum _{S(p)}(dI/dy)^2 \end{bmatrix}\end{split}\]</div>
+<p>where the derivatives are computed using the Sobel operator.</p>
+<p>After that, it finds eigenvectors and eigenvalues of <span class="math notranslate nohighlight">\(M\)</span> and stores them in the destination image as <span class="math notranslate nohighlight">\((\lambda_1, \lambda_2, x_1, y_1, x_2, y_2)\)</span> where</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(\lambda_1, \lambda_2\)</span> are the non-sorted eigenvalues of <span class="math notranslate nohighlight">\(M\)</span></li>
+<li><span class="math notranslate nohighlight">\(x_1, y_1\)</span> are the eigenvectors corresponding to <span class="math notranslate nohighlight">\(\lambda_1\)</span></li>
+<li><span class="math notranslate nohighlight">\(x_2, y_2\)</span> are the eigenvectors corresponding to <span class="math notranslate nohighlight">\(\lambda_2\)</span></li>
+</ul>
+<p>The output of the function can be used for robust edge or corner detection.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input single-channel 8-bit or floating-point image.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Image to store the results. It has the same size as src and the type <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga56e67b727727f2f9b73a4b62f0c4b2b5"><span class="std std-ref">CV_32FC(6)</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>blockSize</td>
+<td>Neighborhood size (see details below).</td>
+</tr>
+<tr class="row-even"><td>ksize</td>
+<td>Aperture parameter for the Sobel operator.</td>
+</tr>
+<tr class="row-odd"><td>borderType</td>
+<td>Pixel extrapolation method. See <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1ga209f2f4869e304c82d07739337eae7c5"><span class="std std-ref">cv::BorderTypes</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga3dbce297c1feb859ee36707e1003e0a8"><span class="std std-ref">cornerMinEigenVal</span></a>, <a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cornerHarris</span></a>, <a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1gaa819f39b5c994871774081803ae22586"><span class="std std-ref">preCornerDetect</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345">
+<span id="index-4"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cornerHarris</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">k</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Harris corner detector.</p>
+<p>The function runs the Harris corner detector on the image. Similarly to cornerMinEigenVal and cornerEigenValsAndVecs , for each pixel <span class="math notranslate nohighlight">\((x, y)\)</span> it calculates a <span class="math notranslate nohighlight">\(2\times2\)</span> gradient covariance matrix <span class="math notranslate nohighlight">\(M^{(x,y)}\)</span> over a <span class="math notranslate nohighlight">\(\texttt{blockSize} \times \texttt{blockSize}\)</span> neighborhood. Then, it computes the following characteristic:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) = \mathrm{det} M^{(x,y)} - k \cdot \left ( \mathrm{tr} M^{(x,y)} \right )^2\]</div>
+<p>Corners in the image can be found as the local maxima of this response map.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input single-channel 8-bit or floating-point image.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Image to store the Harris detector responses. It has the type CV_32FC1 and the same size as src .</td>
+</tr>
+<tr class="row-odd"><td>blockSize</td>
+<td>Neighborhood size (see the details on cornerEigenValsAndVecs ).</td>
+</tr>
+<tr class="row-even"><td>ksize</td>
+<td>Aperture parameter for the Sobel operator.</td>
+</tr>
+<tr class="row-odd"><td>k</td>
+<td>Harris detector free parameter. See the formula below.</td>
+</tr>
+<tr class="row-even"><td>borderType</td>
+<td>Pixel extrapolation method. See <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1ga209f2f4869e304c82d07739337eae7c5"><span class="std std-ref">cv::BorderTypes</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga3dbce297c1feb859ee36707e1003e0a8">
+<span id="index-5"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cornerMinEigenVal</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">blockSize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates the minimal eigenvalue of gradient matrices for corner detection.</p>
+<p>The function is similar to cornerEigenValsAndVecs but it calculates and stores only the minimal eigenvalue of the covariance matrix of derivatives, that is, <span class="math notranslate nohighlight">\(\min(\lambda_1, \lambda_2)\)</span> in terms of the formulae in the cornerEigenValsAndVecs description.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Input single-channel 8-bit or floating-point image.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Image to store the minimal eigenvalues. It has the type CV_32FC1 and the same size as src .</td>
+</tr>
+<tr class="row-odd"><td>blockSize</td>
+<td>Neighborhood size (see the details on cornerEigenValsAndVecs ).</td>
+</tr>
+<tr class="row-even"><td>ksize</td>
+<td>Aperture parameter for the Sobel operator.</td>
+</tr>
+<tr class="row-odd"><td>borderType</td>
+<td>Pixel extrapolation method. See <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1ga209f2f4869e304c82d07739337eae7c5"><span class="std std-ref">cv::BorderTypes</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga354e0d7c86d0d9da75de9b9701a9a87e">
+<span id="index-6"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">cornerSubPix</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaf77c9a14ef956c50c1efd4547f444e63"><span class="std std-ref">InputOutputArray</span></a><span></span> <span class="n">corners</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">winSize</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span> <span class="n">zeroZone</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_TermCriteria.html#doxid-df-d8a-classcv-1-1-term-criteria"><span class="std std-ref">TermCriteria</span></a><span></span> <span class="n">criteria</span>
+    <span class="p">)</span>
+</pre>
+<p>Refines the corner locations.</p>
+<p>The function iterates to find the sub-pixel accurate location of corners or radial saddle points, as shown on the figure below.</p>
+<img alt="image" src="_images/cornersubpix.png" />
+<p>Sub-pixel accurate corner locator is based on the observation that every vector from the center <span class="math notranslate nohighlight">\(q\)</span> to a point <span class="math notranslate nohighlight">\(p\)</span> located within a neighborhood of <span class="math notranslate nohighlight">\(q\)</span> is orthogonal to the image gradient at <span class="math notranslate nohighlight">\(p\)</span> subject to image and measurement noise. Consider the expression:</p>
+<div class="math notranslate nohighlight">
+\[\epsilon _i = {DI_{p_i}}^T \cdot (q - p_i)\]</div>
+<p>where <span class="math notranslate nohighlight">\({DI_{p_i}}\)</span> is an image gradient at one of the points <span class="math notranslate nohighlight">\(p_i\)</span> in a neighborhood of <span class="math notranslate nohighlight">\(q\)</span>. The value of <span class="math notranslate nohighlight">\(q\)</span> is to be found so that <span class="math notranslate nohighlight">\(\epsilon_i\)</span> is minimized. A system of equations may be set up with <span class="math notranslate nohighlight">\(\epsilon_i\)</span> set to zero:</p>
+<div class="math notranslate nohighlight">
+\[\sum _i(DI_{p_i} \cdot {DI_{p_i}}^T) - \sum _i(DI_{p_i} \cdot {DI_{p_i}}^T \cdot p_i)\]</div>
+<p>where the gradients are summed within a neighborhood (“search window”) of <span class="math notranslate nohighlight">\(q\)</span>. Calling the first gradient term <span class="math notranslate nohighlight">\(G\)</span> and the second gradient term <span class="math notranslate nohighlight">\(b\)</span> gives:</p>
+<div class="math notranslate nohighlight">
+\[q = G^{-1} \cdot b\]</div>
+<p>The algorithm sets the center of the neighborhood window at this new center <span class="math notranslate nohighlight">\(q\)</span> and then iterates until the center stays within a set threshold.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>image</td>
+<td>Input image.</td>
+</tr>
+<tr class="row-even"><td>corners</td>
+<td>Initial coordinates of the input corners and refined coordinates provided for output.</td>
+</tr>
+<tr class="row-odd"><td>winSize</td>
+<td>Half of the side length of the search window. For example, if winSize=Size(5,5) , then a <span class="math notranslate nohighlight">\(5*2+1 \times 5*2+1 = 11 \times 11\)</span> search window is used.</td>
+</tr>
+<tr class="row-even"><td>zeroZone</td>
+<td>Half of the size of the dead region in the middle of the search zone over which the summation in the formula below is not done. It is used sometimes to avoid possible singularities of the autocorrelation matrix. The value of (-1,-1) indicates that there is no such a size.</td>
+</tr>
+<tr class="row-odd"><td>criteria</td>
+<td>Criteria for termination of the iterative process of corner refinement. That is, the process of corner position refinement stops either after criteria.maxCount iterations or when the corner position moves by less than criteria.epsilon on some iteration.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga6b2ad2353c337c42551b521a73eeae7d">
+<span id="index-7"></span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector"><span class="std std-ref">LineSegmentDetector</span></a><span></span><span class="o">&gt;</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">createLineSegmentDetector</span><span class="p">(</span>
+    <span class="kt">int</span> <span class="n">_refine</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html#doxid-dd-d1a-group-imgproc-feature-1ggad092a7362b8afb8a905238a41898d98cade4b0da3a52bc9765f08255f041facb4"><span class="std std-ref">LSD_REFINE_STD</span></a><span></span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_scale</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_sigma_scale</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_quant</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_ang_th</span> <span class="o">=</span> <span class="mf">22.5</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_log_eps</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">_density_th</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">_n_bins</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="p">)</span>
+</pre>
+<p>Creates a smart pointer to a <a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector"><span class="std std-ref">LineSegmentDetector</span></a> object and initializes it.</p>
+<p>The <a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector"><span class="std std-ref">LineSegmentDetector</span></a> algorithm is defined using the standard values. Only advanced users may want to edit those, as to tailor it for their own application.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>_refine</td>
+<td>The way found lines will be refined, see <a class="reference internal" href="enum_cv_LineSegmentDetectorModes.html#doxid-dd-d1a-group-imgproc-feature-1gad092a7362b8afb8a905238a41898d98c"><span class="std std-ref">cv::LineSegmentDetectorModes</span></a></td>
+</tr>
+<tr class="row-even"><td>_scale</td>
+<td>The scale of the image that will be used to find the lines. <a class="reference internal" href="class_cv_Range.html#doxid-d7-d65-classcv-1-1-range"><span class="std std-ref">Range</span></a> (0..1].</td>
+</tr>
+<tr class="row-odd"><td>_sigma_scale</td>
+<td>Sigma for Gaussian filter. It is computed as sigma = _sigma_scale/_scale.</td>
+</tr>
+<tr class="row-even"><td>_quant</td>
+<td>Bound to the quantization error on the gradient norm.</td>
+</tr>
+<tr class="row-odd"><td>_ang_th</td>
+<td>Gradient angle tolerance in degrees.</td>
+</tr>
+<tr class="row-even"><td>_log_eps</td>
+<td>Detection threshold: -log10(NFA) &gt; log_eps. Used only when advancent refinement is chosen.</td>
+</tr>
+<tr class="row-odd"><td>_density_th</td>
+<td>Minimal density of aligned region points in the enclosing rectangle.</td>
+</tr>
+<tr class="row-even"><td>_n_bins</td>
+<td>Number of bins in pseudo-ordering of gradient modulus.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga1d6bb77486c8f92d79c8793ad995d541">
+<span id="index-8"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">goodFeaturesToTrack</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">corners</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxCorners</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">qualityLevel</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minDistance</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">mask</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span>
+    <span class="kt">int</span> <span class="n">blockSize</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="kt">bool</span> <span class="n">useHarrisDetector</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">0.04</span>
+    <span class="p">)</span>
+</pre>
+<p>Determines strong corners on an image.</p>
+<p>The function finds the most prominent corners in the image or in the specified image region, as described in <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-shi94"><span class="std std-ref">[76]</span></a></p>
+<ul class="simple">
+<li>Function calculates the corner quality measure at every source image pixel using the cornerMinEigenVal or cornerHarris .</li>
+<li>Function performs a non-maximum suppression (the local maximums in <em>3 x 3</em> neighborhood are retained).</li>
+<li>The corners with the minimal eigenvalue less than <span class="math notranslate nohighlight">\(\texttt{qualityLevel} \cdot \max_{x,y} qualityMeasureMap(x,y)\)</span> are rejected.</li>
+<li>The remaining corners are sorted by the quality measure in the descending order.</li>
+<li>Function throws away each corner for which there is a stronger corner at a distance less than maxDistance.</li>
+</ul>
+<p>The function can be used to initialize a point-based tracker of an object.</p>
+<p>If the function is called with different values A and B of the parameter qualityLevel , and A &gt; B, the vector of returned corners with qualityLevel=A will be the prefix of the output vector with qualityLevel=B .</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>image</td>
+<td>Input 8-bit or floating-point 32-bit, single-channel image.</td>
+</tr>
+<tr class="row-even"><td>corners</td>
+<td>Output vector of detected corners.</td>
+</tr>
+<tr class="row-odd"><td>maxCorners</td>
+<td>Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned. <code class="docutils literal notranslate"><span class="pre">maxCorners</span> <span class="pre">&lt;=</span> <span class="pre">0</span></code> implies that no limit on the maximum is set and all detected corners are returned.</td>
+</tr>
+<tr class="row-even"><td>qualityLevel</td>
+<td>Parameter characterizing the minimal accepted quality of image corners. The parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue (see cornerMinEigenVal ) or the Harris function response (see cornerHarris ). The corners with the quality measure less than the product are rejected. For example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.</td>
+</tr>
+<tr class="row-odd"><td>minDistance</td>
+<td>Minimum possible Euclidean distance between the returned corners.</td>
+</tr>
+<tr class="row-even"><td>mask</td>
+<td>Optional region of interest. If the image is not empty (it needs to have the type CV_8UC1 and the same size as image ), it specifies the region in which the corners are detected.</td>
+</tr>
+<tr class="row-odd"><td>blockSize</td>
+<td>Size of an average block for computing a derivative covariation matrix over each pixel neighborhood. See cornerEigenValsAndVecs .</td>
+</tr>
+<tr class="row-even"><td>useHarrisDetector</td>
+<td>Parameter indicating whether to use a Harris detector (see cornerHarris) or cornerMinEigenVal.</td>
+</tr>
+<tr class="row-odd"><td>k</td>
+<td>Free parameter of the Harris detector.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1ga3dbce297c1feb859ee36707e1003e0a8"><span class="std std-ref">cornerMinEigenVal</span></a>, <a class="reference internal" href="#doxid-dd-d1a-group-imgproc-feature-1gac1fc3598018010880e370e2f709b4345"><span class="std std-ref">cornerHarris</span></a>, <a class="reference internal" href="group_video_track.html#doxid-dc-d6b-group-video-track-1ga473e4b886d0bcc6b65831eb88ed93323"><span class="std std-ref">calcOpticalFlowPyrLK</span></a>, <a class="reference internal" href="group_video_track.html#doxid-dc-d6b-group-video-track-1ga762cbe5efd52cf078950196f3c616d48"><span class="std std-ref">estimateRigidTransform</span></a>,</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga47849c3be0d0406ad3ca45db65a25d2d">
+<span id="index-9"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">HoughCircles</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">circles</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">method</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">dp</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minDist</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">param1</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">param2</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">minRadius</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">maxRadius</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds circles in a grayscale image using the Hough transform.</p>
+<p>The function finds circles in a grayscale image using a modification of the Hough transform.</p>
+<p>Example: :</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgproc.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">cv</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Mat</span> <span class="n">img</span><span class="p">,</span> <span class="n">gray</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">!=</span> <span class="mi">2</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">imread</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)).</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">COLOR_BGR2GRAY</span><span class="p">);</span>
+    <span class="c1">// smooth it, otherwise a lot of false circles may be detected</span>
+    <span class="n">GaussianBlur</span><span class="p">(</span> <span class="n">gray</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">Size</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="p">);</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec3f</span><span class="o">&gt;</span> <span class="n">circles</span><span class="p">;</span>
+    <span class="n">HoughCircles</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">circles</span><span class="p">,</span> <span class="n">HOUGH_GRADIENT</span><span class="p">,</span>
+                 <span class="mi">2</span><span class="p">,</span> <span class="n">gray</span><span class="p">.</span><span class="n">rows</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">100</span> <span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">circles</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+    <span class="p">{</span>
+         <span class="n">Point</span> <span class="n">center</span><span class="p">(</span><span class="n">cvRound</span><span class="p">(</span><span class="n">circles</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">cvRound</span><span class="p">(</span><span class="n">circles</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]));</span>
+         <span class="kt">int</span> <span class="n">radius</span> <span class="o">=</span> <span class="n">cvRound</span><span class="p">(</span><span class="n">circles</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]);</span>
+         <span class="c1">// draw the circle center</span>
+         <span class="n">circle</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">Scalar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+         <span class="c1">// draw the circle outline</span>
+         <span class="n">circle</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">Scalar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">namedWindow</span><span class="p">(</span> <span class="s">&quot;circles&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="n">imshow</span><span class="p">(</span> <span class="s">&quot;circles&quot;</span><span class="p">,</span> <span class="n">img</span> <span class="p">);</span>
+
+    <span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>Usually the function detects the centers of circles well. However, it may fail to find correct radii. You can assist to the function by specifying the radius range ( minRadius and maxRadius ) if you know it. Or, you may ignore the returned radius, use only the center, and find the correct radius using an additional procedure.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>image</td>
+<td>8-bit, single-channel, grayscale input image.</td>
+</tr>
+<tr class="row-even"><td>circles</td>
+<td>Output vector of found circles. Each vector is encoded as a 3-element floating-point vector <span class="math notranslate nohighlight">\((x, y, radius)\)</span>.</td>
+</tr>
+<tr class="row-odd"><td>method</td>
+<td>Detection method, see <a class="reference internal" href="enum_cv_HoughModes.html#doxid-d7-dbd-group-imgproc-1ga073687a5b96ac7a3ab5802eb5510fe65"><span class="std std-ref">cv::HoughModes</span></a>. Currently, the only implemented method is HOUGH_GRADIENT</td>
+</tr>
+<tr class="row-even"><td>dp</td>
+<td>Inverse ratio of the accumulator resolution to the image resolution. For example, if dp=1 , the accumulator has the same resolution as the input image. If dp=2 , the accumulator has half as big width and height.</td>
+</tr>
+<tr class="row-odd"><td>minDist</td>
+<td>Minimum distance between the centers of the detected circles. If the parameter is too small, multiple neighbor circles may be falsely detected in addition to a true one. If it is too large, some circles may be missed.</td>
+</tr>
+<tr class="row-even"><td>param1</td>
+<td>First method-specific parameter. In case of CV_HOUGH_GRADIENT , it is the higher threshold of the two passed to the Canny edge detector (the lower one is twice smaller).</td>
+</tr>
+<tr class="row-odd"><td>param2</td>
+<td>Second method-specific parameter. In case of CV_HOUGH_GRADIENT , it is the accumulator threshold for the circle centers at the detection stage. The smaller it is, the more false circles may be detected. Circles, corresponding to the larger accumulator values, will be returned first.</td>
+</tr>
+<tr class="row-even"><td>minRadius</td>
+<td>Minimum circle radius.</td>
+</tr>
+<tr class="row-odd"><td>maxRadius</td>
+<td>Maximum circle radius.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1gaf259efaad93098103d6c27b9e4900ffa"><span class="std std-ref">fitEllipse</span></a>, <a class="reference internal" href="group_imgproc_shape.html#doxid-d3-dc0-group-imgproc-shape-1ga8ce13c24081bbc7151e9326f412190f1"><span class="std std-ref">minEnclosingCircle</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga46b4e588934f6c8dfd509cc6e0e4545a">
+<span id="index-10"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">HoughLines</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">lines</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">threshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">srn</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">stn</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">min_theta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">max_theta</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga677b89fae9308b340ddaebf0dba8455f"><span class="std std-ref">CV_PI</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Finds lines in a binary image using the standard Hough transform.</p>
+<p>The function implements the standard or standard multi-scale Hough transform algorithm for line detection. See <a class="reference external" href="http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm">http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm</a> for a good explanation of Hough transform.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>image</td>
+<td>8-bit, single-channel binary source image. The image may be modified by the function.</td>
+</tr>
+<tr class="row-even"><td>lines</td>
+<td>Output vector of lines. Each line is represented by a two-element vector <span class="math notranslate nohighlight">\((\rho, \theta)\)</span>. <span class="math notranslate nohighlight">\(\rho\)</span> is the distance from the coordinate origin <span class="math notranslate nohighlight">\((0,0)\)</span> (top-left corner of the image). <span class="math notranslate nohighlight">\(\theta\)</span> is the line rotation angle in radians (<span class="math notranslate nohighlight">\(0 \sim \textrm{vertical line}, \pi/2 \sim \textrm{horizontal line}\)</span>).</td>
+</tr>
+<tr class="row-odd"><td>rho</td>
+<td>Distance resolution of the accumulator in pixels.</td>
+</tr>
+<tr class="row-even"><td>theta</td>
+<td>Angle resolution of the accumulator in radians.</td>
+</tr>
+<tr class="row-odd"><td>threshold</td>
+<td><a class="reference internal" href="struct_cv_Accumulator.html#doxid-de-dee-structcv-1-1-accumulator"><span class="std std-ref">Accumulator</span></a> threshold parameter. Only those lines are returned that get enough votes (<span class="math notranslate nohighlight">\(&gt;\texttt{threshold}\)</span>).</td>
+</tr>
+<tr class="row-even"><td>srn</td>
+<td>For the multi-scale Hough transform, it is a divisor for the distance resolution rho . The coarse accumulator distance resolution is rho and the accurate accumulator resolution is rho/srn . If both srn=0 and stn=0 , the classical Hough transform is used. Otherwise, both these parameters should be positive.</td>
+</tr>
+<tr class="row-odd"><td>stn</td>
+<td>For the multi-scale Hough transform, it is a divisor for the distance resolution theta.</td>
+</tr>
+<tr class="row-even"><td>min_theta</td>
+<td>For standard and multi-scale Hough transform, minimum angle to check for lines. Must fall between 0 and max_theta.</td>
+</tr>
+<tr class="row-odd"><td>max_theta</td>
+<td>For standard and multi-scale Hough transform, maximum angle to check for lines. Must fall between min_theta and CV_PI.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1ga8618180a5948286384e3b7ca02f6feeb">
+<span id="index-11"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">HoughLinesP</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">image</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">lines</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">rho</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">theta</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">threshold</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">minLineLength</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="kt">double</span> <span class="n">maxLineGap</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span>
+</pre>
+<p>Finds line segments in a binary image using the probabilistic Hough transform.</p>
+<p>The function implements the probabilistic Hough transform algorithm for line detection, described in <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-matas00"><span class="std std-ref">[55]</span></a></p>
+<p>See the line detection example below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgproc.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">cv</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Mat</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">color_dst</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">argc</span> <span class="o">!=</span> <span class="mi">2</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">imread</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)).</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">Canny</span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">3</span> <span class="p">);</span>
+    <span class="n">cvtColor</span><span class="p">(</span> <span class="n">dst</span><span class="p">,</span> <span class="n">color_dst</span><span class="p">,</span> <span class="n">COLOR_GRAY2BGR</span> <span class="p">);</span>
+
+<span class="cp">#if 0</span><span class="c"></span>
+<span class="c">    vector&lt;Vec2f&gt; lines;</span>
+<span class="c">    HoughLines( dst, lines, 1, CV_PI/180, 100 );</span>
+
+<span class="c">    for( size_t i = 0; i &lt; lines.size(); i++ )</span>
+<span class="c">    {</span>
+<span class="c">        float rho = lines[i][0];</span>
+<span class="c">        float theta = lines[i][1];</span>
+<span class="c">        double a = cos(theta), b = sin(theta);</span>
+<span class="c">        double x0 = a*rho, y0 = b*rho;</span>
+<span class="c">        Point pt1(cvRound(x0 + 1000*(-b)),</span>
+<span class="c">                  cvRound(y0 + 1000*(a)));</span>
+<span class="c">        Point pt2(cvRound(x0 - 1000*(-b)),</span>
+<span class="c">                  cvRound(y0 - 1000*(a)));</span>
+<span class="c">        line( color_dst, pt1, pt2, Scalar(0,0,255), 3, 8 );</span>
+<span class="c">    }</span>
+<span class="cp">#else</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Vec4i</span><span class="o">&gt;</span> <span class="n">lines</span><span class="p">;</span>
+    <span class="n">HoughLinesP</span><span class="p">(</span> <span class="n">dst</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">CV_PI</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span> <span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span> <span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">lines</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">line</span><span class="p">(</span> <span class="n">color_dst</span><span class="p">,</span> <span class="n">Point</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Scalar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span> <span class="p">);</span>
+    <span class="p">}</span>
+<span class="cp">#endif</span>
+    <span class="n">namedWindow</span><span class="p">(</span> <span class="s">&quot;Source&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="n">imshow</span><span class="p">(</span> <span class="s">&quot;Source&quot;</span><span class="p">,</span> <span class="n">src</span> <span class="p">);</span>
+
+    <span class="n">namedWindow</span><span class="p">(</span> <span class="s">&quot;Detected Lines&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="n">imshow</span><span class="p">(</span> <span class="s">&quot;Detected Lines&quot;</span><span class="p">,</span> <span class="n">color_dst</span> <span class="p">);</span>
+
+    <span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>This is a sample picture the function parameters have been tuned for:</p>
+<img alt="image" src="_images/building.jpg" />
+<p>And this is the output of the above program in case of the probabilistic Hough transform:</p>
+<img alt="image" src="_images/houghp.png" />
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>image</td>
+<td>8-bit, single-channel binary source image. The image may be modified by the function.</td>
+</tr>
+<tr class="row-even"><td>lines</td>
+<td>Output vector of lines. Each line is represented by a 4-element vector <span class="math notranslate nohighlight">\((x_1, y_1, x_2, y_2)\)</span>, where <span class="math notranslate nohighlight">\((x_1,y_1)\)</span> and <span class="math notranslate nohighlight">\((x_2, y_2)\)</span> are the ending points of each detected line segment.</td>
+</tr>
+<tr class="row-odd"><td>rho</td>
+<td>Distance resolution of the accumulator in pixels.</td>
+</tr>
+<tr class="row-even"><td>theta</td>
+<td>Angle resolution of the accumulator in radians.</td>
+</tr>
+<tr class="row-odd"><td>threshold</td>
+<td><a class="reference internal" href="struct_cv_Accumulator.html#doxid-de-dee-structcv-1-1-accumulator"><span class="std std-ref">Accumulator</span></a> threshold parameter. Only those lines are returned that get enough votes (<span class="math notranslate nohighlight">\(&gt;\texttt{threshold}\)</span>).</td>
+</tr>
+<tr class="row-even"><td>minLineLength</td>
+<td>Minimum line length. Line segments shorter than that are rejected.</td>
+</tr>
+<tr class="row-odd"><td>maxLineGap</td>
+<td>Maximum allowed gap between points on the same line to link them.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p><a class="reference internal" href="class_cv_LineSegmentDetector.html#doxid-dc-d72-classcv-1-1-line-segment-detector"><span class="std std-ref">LineSegmentDetector</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-dd-d1a-group-imgproc-feature-1gaa819f39b5c994871774081803ae22586">
+<span id="index-12"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">preCornerDetect</span><span class="p">(</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga353a9de602fe76c709e12074a6f362ba"><span class="std std-ref">InputArray</span></a><span></span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gaad17fda1d0f0d1ee069aebb1df2913c0"><span class="std std-ref">OutputArray</span></a><span></span> <span class="n">dst</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">ksize</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">borderType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01"><span class="std std-ref">BORDER_DEFAULT</span></a><span></span>
+    <span class="p">)</span>
+</pre>
+<p>Calculates a feature map for corner detection.</p>
+<p>The function calculates the complex spatial derivative-based function of the source image</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} = (D_x \texttt{src} )^2 \cdot D_{yy} \texttt{src} + (D_y \texttt{src} )^2 \cdot D_{xx} \texttt{src} - 2 D_x \texttt{src} \cdot D_y \texttt{src} \cdot D_{xy} \texttt{src}\]</div>
+<p>where <span class="math notranslate nohighlight">\(D_x\)</span>, <span class="math notranslate nohighlight">\(D_y\)</span> are the first image derivatives, <span class="math notranslate nohighlight">\(D_{xx}\)</span>, <span class="math notranslate nohighlight">\(D_{yy}\)</span> are the second image derivatives, and <span class="math notranslate nohighlight">\(D_{xy}\)</span> is the mixed derivative.</p>
+<p>The corners can be found as local maximums of the functions, as shown below:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">corners</span><span class="p">,</span> <span class="n">dilated_corners</span><span class="p">;</span>
+<span class="n">preCornerDetect</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">corners</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="c1">// dilation with 3x3 rectangular structuring element</span>
+<span class="n">dilate</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="n">dilated_corners</span><span class="p">,</span> <span class="n">Mat</span><span class="p">(),</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">Mat</span> <span class="n">corner_mask</span> <span class="o">=</span> <span class="n">corners</span> <span class="o">==</span> <span class="n">dilated_corners</span><span class="p">;</span>
+</pre>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>Source single-channel 8-bit of floating-point image.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>Output image that has the type CV_32F and the same size as src .</td>
+</tr>
+<tr class="row-odd"><td>ksize</td>
+<td>Aperture size of the Sobel .</td>
+</tr>
+<tr class="row-even"><td>borderType</td>
+<td>Pixel extrapolation method. See <a class="reference internal" href="enum_cv_BorderTypes.html#doxid-d2-de8-group-core-array-1ga209f2f4869e304c82d07739337eae7c5"><span class="std std-ref">cv::BorderTypes</span></a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="enum_cv_LineSegmentDetectorModes.html" class="btn btn-neutral float-right" title="enum cv::LineSegmentDetectorModes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="class_cv_LineIterator.html" class="btn btn-neutral float-left" title="class cv::LineIterator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

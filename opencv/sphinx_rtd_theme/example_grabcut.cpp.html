@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>grabcut.cpp &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="houghcircles.cpp" href="example_houghcircles.cpp.html" />
+    <link rel="prev" title="fitellipse.cpp" href="example_fitellipse.cpp.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>grabcut.cpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="grabcut-cpp">
+<span id="doxid-de-dd0-grabcut-8cpp-example"></span><span id="index-0"></span><h1>grabcut.cpp</h1>
+<p>An example using the GrabCut algorithm</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">This program demonstrates GrabCut segmentation -- select an object in a region</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;and then grabcut will attempt to segment it out.</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;Call:</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="s">&quot;./grabcut &lt;image_name&gt;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\n</span><span class="s">Select a rectangular area around the object you want to segment</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span>
+        <span class="s">&quot;</span><span class="se">\n</span><span class="s">Hot keys: </span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">ESC - quit the program</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">r - restore the original image</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">n - next iteration</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">left mouse button - set rectangle</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">CTRL+left mouse button - set GC_BGD pixels</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">SHIFT+left mouse button - set GC_FGD pixels</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">CTRL+right mouse button - set GC_PR_BGD pixels</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;</span><span class="se">\t</span><span class="s">SHIFT+right mouse button - set GC_PR_FGD pixels</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="n">Scalar</span> <span class="n">RED</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">);</span>
+<span class="k">const</span> <span class="n">Scalar</span> <span class="n">PINK</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">230</span><span class="p">,</span><span class="mi">130</span><span class="p">,</span><span class="mi">255</span><span class="p">);</span>
+<span class="k">const</span> <span class="n">Scalar</span> <span class="n">BLUE</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">const</span> <span class="n">Scalar</span> <span class="n">LIGHTBLUE</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">160</span><span class="p">);</span>
+<span class="k">const</span> <span class="n">Scalar</span> <span class="n">GREEN</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">BGD_KEY</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MouseEventFlags.html#doxid-d7-dfc-group-highgui-1ggaab4dc057947f70058c80626c9f1c25cea5876848aeb4e7cc282d461f94e45a07f"><span class="std std-ref">EVENT_FLAG_CTRLKEY</span></a><span></span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">FGD_KEY</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_MouseEventFlags.html#doxid-d7-dfc-group-highgui-1ggaab4dc057947f70058c80626c9f1c25cea61da926b22fd4fd3aa226ef1d2893102"><span class="std std-ref">EVENT_FLAG_SHIFTKEY</span></a><span></span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="n">getBinMask</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">comMask</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">binMask</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">comMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="o">||</span> <span class="n">comMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1af2d2652e552d7de635988f18a84b53e5"><span class="std std-ref">type</span></a><span></span><span class="p">()</span><span class="o">!=</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span> <span class="p">)</span>
+        <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga5b48c333c777666e076bd7052799f891"><span class="std std-ref">CV_Error</span></a><span></span><span class="p">(</span> <a class="reference internal" href="enum_cv_Error_Code.html#doxid-d6-d43-namespacecv-1-1-error-1a759fa1af92f7aa7377c76ffb142abccaaf587497af64537041ee62c04a92b755d"><span class="std std-ref">Error::StsBadArg</span></a><span></span><span class="p">,</span> <span class="s">&quot;comMask is empty or has incorrect type (not CV_8UC1)&quot;</span> <span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">binMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="o">||</span> <span class="n">binMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="o">!=</span><span class="n">comMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span> <span class="o">||</span> <span class="n">binMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span><span class="o">!=</span><span class="n">comMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa3e5a47585c9ef6a0842556739155e3e"><span class="std std-ref">cols</span></a><span></span> <span class="p">)</span>
+        <span class="n">binMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a55ced2c8d844d683ea9a725c60037ad0"><span class="std std-ref">create</span></a><span></span><span class="p">(</span> <span class="n">comMask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span> <span class="p">);</span>
+    <span class="n">binMask</span> <span class="o">=</span> <span class="n">comMask</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="n">GCApplication</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">enum</span><span class="p">{</span> <span class="n">NOT_SET</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">IN_PROCESS</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">SET</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">};</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">radius</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">thickness</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="kt">void</span> <span class="nf">reset</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="n">setImageAndWinName</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">_image</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">_winName</span> <span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">showImage</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="nf">mouseClick</span><span class="p">(</span> <span class="kt">int</span> <span class="n">event</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">param</span> <span class="p">);</span>
+    <span class="kt">int</span> <span class="nf">nextIter</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="nf">getIterCount</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">iterCount</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">setRectInMask</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">setLblsInMask</span><span class="p">(</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="n">Point</span> <span class="n">p</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">isPr</span> <span class="p">);</span>
+
+    <span class="k">const</span> <span class="n">string</span><span class="o">*</span> <span class="n">winName</span><span class="p">;</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">*</span> <span class="n">image</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">mask</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">bgdModel</span><span class="p">,</span> <span class="n">fgdModel</span><span class="p">;</span>
+
+    <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span> <span class="n">rectState</span><span class="p">,</span> <span class="n">lblsState</span><span class="p">,</span> <span class="n">prLblsState</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">isInitialized</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect"><span class="std std-ref">Rect</span></a><span></span> <span class="n">rect</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">fgdPxls</span><span class="p">,</span> <span class="n">bgdPxls</span><span class="p">,</span> <span class="n">prFgdPxls</span><span class="p">,</span> <span class="n">prBgdPxls</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">iterCount</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">reset</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0440e2a164c0b0d8462fb1e487be9876"><span class="std std-ref">setTo</span></a><span></span><span class="p">(</span><span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38a889f1ce109543e8aed80a7abbc6dcb39"><span class="std std-ref">GC_BGD</span></a><span></span><span class="p">));</span>
+    <span class="n">bgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span> <span class="n">fgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="n">prBgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>  <span class="n">prFgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+
+    <span class="n">isInitialized</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="n">rectState</span> <span class="o">=</span> <span class="n">NOT_SET</span><span class="p">;</span>
+    <span class="n">lblsState</span> <span class="o">=</span> <span class="n">NOT_SET</span><span class="p">;</span>
+    <span class="n">prLblsState</span> <span class="o">=</span> <span class="n">NOT_SET</span><span class="p">;</span>
+    <span class="n">iterCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">setImageAndWinName</span><span class="p">(</span> <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">_image</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">_winName</span>  <span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">_image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="o">||</span> <span class="n">_winName</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">_image</span><span class="p">;</span>
+    <span class="n">winName</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">_winName</span><span class="p">;</span>
+    <span class="n">mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a55ced2c8d844d683ea9a725c60037ad0"><span class="std std-ref">create</span></a><span></span><span class="p">(</span> <span class="n">image</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span><span class="p">);</span>
+    <span class="n">reset</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">showImage</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">image</span><span class="o">-&gt;</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">winName</span><span class="o">-&gt;</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">res</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">binMask</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">isInitialized</span> <span class="p">)</span>
+        <span class="n">image</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a33fd5d125b4c302b0c9aa86980791a77"><span class="std std-ref">copyTo</span></a><span></span><span class="p">(</span> <span class="n">res</span> <span class="p">);</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">getBinMask</span><span class="p">(</span> <span class="n">mask</span><span class="p">,</span> <span class="n">binMask</span> <span class="p">);</span>
+        <span class="n">image</span><span class="o">-&gt;</span><span class="n">copyTo</span><span class="p">(</span> <span class="n">res</span><span class="p">,</span> <span class="n">binMask</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;::</span><span class="n">const_iterator</span> <span class="n">it</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="n">it</span> <span class="o">=</span> <span class="n">bgdPxls</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">bgdPxls</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">res</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">,</span> <span class="n">thickness</span> <span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span> <span class="n">it</span> <span class="o">=</span> <span class="n">fgdPxls</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">fgdPxls</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">res</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">RED</span><span class="p">,</span> <span class="n">thickness</span> <span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span> <span class="n">it</span> <span class="o">=</span> <span class="n">prBgdPxls</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">prBgdPxls</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">res</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">LIGHTBLUE</span><span class="p">,</span> <span class="n">thickness</span> <span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span> <span class="n">it</span> <span class="o">=</span> <span class="n">prFgdPxls</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">prFgdPxls</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">res</span><span class="p">,</span> <span class="o">*</span><span class="n">it</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">PINK</span><span class="p">,</span> <span class="n">thickness</span> <span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="o">||</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">SET</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">res</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">rect</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rect</span><span class="p">.</span><span class="n">y</span> <span class="p">),</span> <span class="n">Point</span><span class="p">(</span><span class="n">rect</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">rect</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">rect</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">rect</span><span class="p">.</span><span class="n">height</span> <span class="p">),</span> <span class="n">GREEN</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="o">*</span><span class="n">winName</span><span class="p">,</span> <span class="n">res</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">setRectInMask</span><span class="p">()</span>
+<span class="p">{</span>
+    <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span> <span class="o">!</span><span class="n">mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+    <span class="n">mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0440e2a164c0b0d8462fb1e487be9876"><span class="std std-ref">setTo</span></a><span></span><span class="p">(</span> <a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38a889f1ce109543e8aed80a7abbc6dcb39"><span class="std std-ref">GC_BGD</span></a><span></span> <span class="p">);</span>
+    <span class="n">rect</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a78f988f6cfa6223610298cbd4f86ec66"><span class="std std-ref">max</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rect</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+    <span class="n">rect</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1a78f988f6cfa6223610298cbd4f86ec66"><span class="std std-ref">max</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rect</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="n">rect</span><span class="p">.</span><span class="n">width</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1ac48df53b8fd34b87e7b121fa8fd4c379"><span class="std std-ref">min</span></a><span></span><span class="p">(</span><span class="n">rect</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">image</span><span class="o">-&gt;</span><span class="n">cols</span><span class="o">-</span><span class="n">rect</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+    <span class="n">rect</span><span class="p">.</span><span class="n">height</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv-1ac48df53b8fd34b87e7b121fa8fd4c379"><span class="std std-ref">min</span></a><span></span><span class="p">(</span><span class="n">rect</span><span class="p">.</span><span class="n">height</span><span class="p">,</span> <span class="n">image</span><span class="o">-&gt;</span><span class="n">rows</span><span class="o">-</span><span class="n">rect</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="p">(</span><span class="n">mask</span><span class="p">(</span><span class="n">rect</span><span class="p">)).</span><span class="n">setTo</span><span class="p">(</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38ad33184b73cb87e08d29e0a3411b7c863"><span class="std std-ref">GC_PR_FGD</span></a><span></span><span class="p">)</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">setLblsInMask</span><span class="p">(</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="n">Point</span> <span class="n">p</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">isPr</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">bpxls</span><span class="p">,</span> <span class="o">*</span><span class="n">fpxls</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span> <span class="n">bvalue</span><span class="p">,</span> <span class="n">fvalue</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">isPr</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">bpxls</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">bgdPxls</span><span class="p">;</span>
+        <span class="n">fpxls</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">fgdPxls</span><span class="p">;</span>
+        <span class="n">bvalue</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38a889f1ce109543e8aed80a7abbc6dcb39"><span class="std std-ref">GC_BGD</span></a><span></span><span class="p">;</span>
+        <span class="n">fvalue</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38a4757c1f0587bcf6e53e86dee7689a649"><span class="std std-ref">GC_FGD</span></a><span></span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">bpxls</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">prBgdPxls</span><span class="p">;</span>
+        <span class="n">fpxls</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">prFgdPxls</span><span class="p">;</span>
+        <span class="n">bvalue</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38af748414821c7f39fab3493f9eed1eedf"><span class="std std-ref">GC_PR_BGD</span></a><span></span><span class="p">;</span>
+        <span class="n">fvalue</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_GrabCutClasses.html#doxid-d7-d1b-group-imgproc-misc-1ggad43d3e4208d3cf025d8304156b02ba38ad33184b73cb87e08d29e0a3411b7c863"><span class="std std-ref">GC_PR_FGD</span></a><span></span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">flags</span> <span class="o">&amp;</span> <span class="n">BGD_KEY</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">bpxls</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">mask</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">bvalue</span><span class="p">,</span> <span class="n">thickness</span> <span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">flags</span> <span class="o">&amp;</span> <span class="n">FGD_KEY</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">fpxls</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">mask</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">fvalue</span><span class="p">,</span> <span class="n">thickness</span> <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">mouseClick</span><span class="p">(</span> <span class="kt">int</span> <span class="n">event</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// TODO add bad args check</span>
+    <span class="k">switch</span><span class="p">(</span> <span class="n">event</span> <span class="p">)</span>
+    <span class="p">{</span>
+    <span class="k">case</span> <a class="reference internal" href="enum_cv_MouseEventTypes.html#doxid-d7-dfc-group-highgui-1gga927593befdddc7e7013602bca9b079b0ad3419100fc2d7688c6dbe3da030fbfd9"><span class="std std-ref">EVENT_LBUTTONDOWN</span></a><span></span><span class="o">:</span> <span class="c1">// set rect or GC_BGD(GC_FGD) labels</span>
+        <span class="p">{</span>
+            <span class="kt">bool</span> <span class="n">isb</span> <span class="o">=</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">BGD_KEY</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">isf</span> <span class="o">=</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">FGD_KEY</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">NOT_SET</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">isb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">isf</span> <span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">rectState</span> <span class="o">=</span> <span class="n">IN_PROCESS</span><span class="p">;</span>
+                <span class="n">rect</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="p">(</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="n">isb</span> <span class="o">||</span> <span class="n">isf</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">SET</span> <span class="p">)</span>
+                <span class="n">lblsState</span> <span class="o">=</span> <span class="n">IN_PROCESS</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <a class="reference internal" href="enum_cv_MouseEventTypes.html#doxid-d7-dfc-group-highgui-1gga927593befdddc7e7013602bca9b079b0aa3536f83b6f48da5121041f58fc7a683"><span class="std std-ref">EVENT_RBUTTONDOWN</span></a><span></span><span class="o">:</span> <span class="c1">// set GC_PR_BGD(GC_PR_FGD) labels</span>
+        <span class="p">{</span>
+            <span class="kt">bool</span> <span class="n">isb</span> <span class="o">=</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">BGD_KEY</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">isf</span> <span class="o">=</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">FGD_KEY</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="n">isb</span> <span class="o">||</span> <span class="n">isf</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">SET</span> <span class="p">)</span>
+                <span class="n">prLblsState</span> <span class="o">=</span> <span class="n">IN_PROCESS</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <a class="reference internal" href="enum_cv_MouseEventTypes.html#doxid-d7-dfc-group-highgui-1gga927593befdddc7e7013602bca9b079b0a59cad7ffe959adf2782a110196d47bf6"><span class="std std-ref">EVENT_LBUTTONUP</span></a><span></span><span class="o">:</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">rect</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="p">(</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">rect</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rect</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="p">);</span>
+            <span class="n">rectState</span> <span class="o">=</span> <span class="n">SET</span><span class="p">;</span>
+            <span class="n">setRectInMask</span><span class="p">();</span>
+            <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span> <span class="n">bgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">fgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">prBgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">prFgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">);</span>
+            <span class="n">showImage</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">lblsState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">setLblsInMask</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="nb">false</span><span class="p">);</span>
+            <span class="n">lblsState</span> <span class="o">=</span> <span class="n">SET</span><span class="p">;</span>
+            <span class="n">showImage</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <a class="reference internal" href="enum_cv_MouseEventTypes.html#doxid-d7-dfc-group-highgui-1gga927593befdddc7e7013602bca9b079b0aacdda7d94278928c34b61a7bd8be9f62"><span class="std std-ref">EVENT_RBUTTONUP</span></a><span></span><span class="o">:</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">prLblsState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">setLblsInMask</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="nb">true</span><span class="p">);</span>
+            <span class="n">prLblsState</span> <span class="o">=</span> <span class="n">SET</span><span class="p">;</span>
+            <span class="n">showImage</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <a class="reference internal" href="enum_cv_MouseEventTypes.html#doxid-d7-dfc-group-highgui-1gga927593befdddc7e7013602bca9b079b0a8f2ec5fd35fe3f4b696518b146dcf675"><span class="std std-ref">EVENT_MOUSEMOVE</span></a><span></span><span class="o">:</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">rectState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">rect</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga11d95de507098e90bad732b9345402e8"><span class="std std-ref">Rect</span></a><span></span><span class="p">(</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">rect</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rect</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="p">);</span>
+            <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1gaf62bcd90f70e275191ab95136d85906b"><span class="std std-ref">CV_Assert</span></a><span></span><span class="p">(</span> <span class="n">bgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">fgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">prBgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">prFgdPxls</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">);</span>
+            <span class="n">showImage</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">lblsState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">setLblsInMask</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="nb">false</span><span class="p">);</span>
+            <span class="n">showImage</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">prLblsState</span> <span class="o">==</span> <span class="n">IN_PROCESS</span> <span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">setLblsInMask</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="nb">true</span><span class="p">);</span>
+            <span class="n">showImage</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">GCApplication</span><span class="o">::</span><span class="n">nextIter</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">isInitialized</span> <span class="p">)</span>
+        <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga909c1dda50efcbeaa3ce126be862b37f"><span class="std std-ref">grabCut</span></a><span></span><span class="p">(</span> <span class="o">*</span><span class="n">image</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">bgdModel</span><span class="p">,</span> <span class="n">fgdModel</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">rectState</span> <span class="o">!=</span> <span class="n">SET</span> <span class="p">)</span>
+            <span class="k">return</span> <span class="n">iterCount</span><span class="p">;</span>
+
+        <span class="k">if</span><span class="p">(</span> <span class="n">lblsState</span> <span class="o">==</span> <span class="n">SET</span> <span class="o">||</span> <span class="n">prLblsState</span> <span class="o">==</span> <span class="n">SET</span> <span class="p">)</span>
+            <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga909c1dda50efcbeaa3ce126be862b37f"><span class="std std-ref">grabCut</span></a><span></span><span class="p">(</span> <span class="o">*</span><span class="n">image</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">bgdModel</span><span class="p">,</span> <span class="n">fgdModel</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="enum_cv_GrabCutModes.html#doxid-d7-d1b-group-imgproc-misc-1ggaf8b5832ba85e59fc7a98a2afd034e558ab01527c7effb50fd1c54d8c4e671ed22"><span class="std std-ref">GC_INIT_WITH_MASK</span></a><span></span> <span class="p">);</span>
+        <span class="k">else</span>
+            <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga909c1dda50efcbeaa3ce126be862b37f"><span class="std std-ref">grabCut</span></a><span></span><span class="p">(</span> <span class="o">*</span><span class="n">image</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">bgdModel</span><span class="p">,</span> <span class="n">fgdModel</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="enum_cv_GrabCutModes.html#doxid-d7-d1b-group-imgproc-misc-1ggaf8b5832ba85e59fc7a98a2afd034e558a5f8853c1e5a89c4aa2687d1f78a7e550"><span class="std std-ref">GC_INIT_WITH_RECT</span></a><span></span> <span class="p">);</span>
+
+        <span class="n">isInitialized</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">iterCount</span><span class="o">++</span><span class="p">;</span>
+
+    <span class="n">bgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span> <span class="n">fgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="n">prBgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span> <span class="n">prFgdPxls</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">iterCount</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">GCApplication</span> <span class="n">gcapp</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">on_mouse</span><span class="p">(</span> <span class="kt">int</span> <span class="n">event</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">param</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">gcapp</span><span class="p">.</span><span class="n">mouseClick</span><span class="p">(</span> <span class="n">event</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">param</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">cv::CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="s">&quot;{help h||}{@input||}&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">help</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;@input&quot;</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">filename</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Durn, empty filename&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">filename</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">image</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s"> Durn, couldn&#39;t read image filename &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">help</span><span class="p">();</span>
+
+    <span class="k">const</span> <span class="n">string</span> <span class="n">winName</span> <span class="o">=</span> <span class="s">&quot;image&quot;</span><span class="p">;</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">winName</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga89e7806b0a616f6f1d502bd8c183ad3e"><span class="std std-ref">setMouseCallback</span></a><span></span><span class="p">(</span> <span class="n">winName</span><span class="p">,</span> <span class="n">on_mouse</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+
+    <span class="n">gcapp</span><span class="p">.</span><span class="n">setImageAndWinName</span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <span class="n">winName</span> <span class="p">);</span>
+    <span class="n">gcapp</span><span class="p">.</span><span class="n">showImage</span><span class="p">();</span>
+
+    <span class="k">for</span><span class="p">(;;)</span>
+    <span class="p">{</span>
+        <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">switch</span><span class="p">(</span> <span class="n">c</span> <span class="p">)</span>
+        <span class="p">{</span>
+        <span class="k">case</span> <span class="sc">&#39;</span><span class="se">\x1b</span><span class="sc">&#39;</span><span class="o">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Exiting ...&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">goto</span> <span class="n">exit_main</span><span class="p">;</span>
+        <span class="k">case</span> <span class="sc">&#39;r&#39;</span><span class="o">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">gcapp</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span>
+            <span class="n">gcapp</span><span class="p">.</span><span class="n">showImage</span><span class="p">();</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="sc">&#39;n&#39;</span><span class="o">:</span>
+            <span class="kt">int</span> <span class="n">iterCount</span> <span class="o">=</span> <span class="n">gcapp</span><span class="p">.</span><span class="n">getIterCount</span><span class="p">();</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">iterCount</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;... &quot;</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">newIterCount</span> <span class="o">=</span> <span class="n">gcapp</span><span class="p">.</span><span class="n">nextIter</span><span class="p">();</span>
+            <span class="k">if</span><span class="p">(</span> <span class="n">newIterCount</span> <span class="o">&gt;</span> <span class="n">iterCount</span> <span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">gcapp</span><span class="p">.</span><span class="n">showImage</span><span class="p">();</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">iterCount</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;&gt;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;rect must be determined&gt;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="nl">exit_main</span><span class="p">:</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga851ccdd6961022d1d5b4c4f255dbab34"><span class="std std-ref">destroyWindow</span></a><span></span><span class="p">(</span> <span class="n">winName</span> <span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="example_houghcircles.cpp.html" class="btn btn-neutral float-right" title="houghcircles.cpp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="example_fitellipse.cpp.html" class="btn btn-neutral float-left" title="fitellipse.cpp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

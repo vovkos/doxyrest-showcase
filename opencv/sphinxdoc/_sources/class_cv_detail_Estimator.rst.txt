@@ -1,0 +1,150 @@
+.. index:: pair: class; cv::detail::Estimator
+.. _doxid-dc/dc4/classcv_1_1detail_1_1_estimator:
+
+class cv::detail::Estimator
+===========================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Rotation estimator base class. :ref:`More...<details-dc/dc4/classcv_1_1detail_1_1_estimator>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <motion_estimators.hpp>
+	
+	class Estimator
+	{
+	public:
+		// methods
+	
+		bool
+		:ref:`operator()<doxid-dc/dc4/classcv_1_1detail_1_1_estimator_1a0924447fc99df3360b6f005a7c0aa437>`(
+			const std::vector<:ref:`ImageFeatures<doxid-d4/dbe/structcv_1_1detail_1_1_image_features>`>& features,
+			const std::vector<:ref:`MatchesInfo<doxid-d2/d99/structcv_1_1detail_1_1_matches_info>`>& pairwise_matches,
+			std::vector<:ref:`CameraParams<doxid-da/d60/structcv_1_1detail_1_1_camera_params>`>& cameras
+			);
+
+	protected:
+		// methods
+	
+		virtual
+		bool
+		:ref:`estimate<doxid-dc/dc4/classcv_1_1detail_1_1_estimator_1ab65ae24f4d6b53554dcc04121e6cbc47>`(
+			const std::vector<:ref:`ImageFeatures<doxid-d4/dbe/structcv_1_1detail_1_1_image_features>`>& features,
+			const std::vector<:ref:`MatchesInfo<doxid-d2/d99/structcv_1_1detail_1_1_matches_info>`>& pairwise_matches,
+			std::vector<:ref:`CameraParams<doxid-da/d60/structcv_1_1detail_1_1_camera_params>`>& cameras
+			) = 0;
+	};
+
+	// direct descendants
+
+	class :ref:`AffineBasedEstimator<doxid-d1/da3/classcv_1_1detail_1_1_affine_based_estimator>`;
+	class :ref:`BundleAdjusterBase<doxid-da/d90/classcv_1_1detail_1_1_bundle_adjuster_base>`;
+	class :ref:`HomographyBasedEstimator<doxid-da/d96/classcv_1_1detail_1_1_homography_based_estimator>`;
+.. _details-dc/dc4/classcv_1_1detail_1_1_estimator:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Rotation estimator base class.
+
+It takes features of all images, pairwise matches between all images and estimates rotations of all cameras.
+
+The coordinate system origin is implementation-dependent, but you can always normalize the rotations in respect to the first camera, for instance. :
+
+Methods
+-------
+
+.. index:: pair: function; operator()
+.. _doxid-dc/dc4/classcv_1_1detail_1_1_estimator_1a0924447fc99df3360b6f005a7c0aa437:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	operator()(
+		const std::vector<:ref:`ImageFeatures<doxid-d4/dbe/structcv_1_1detail_1_1_image_features>`>& features,
+		const std::vector<:ref:`MatchesInfo<doxid-d2/d99/structcv_1_1detail_1_1_matches_info>`>& pairwise_matches,
+		std::vector<:ref:`CameraParams<doxid-da/d60/structcv_1_1detail_1_1_camera_params>`>& cameras
+		)
+
+Estimates camera parameters.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- features
+
+		- Features of images
+
+	*
+		- pairwise_matches
+
+		- Pairwise matches of images
+
+	*
+		- cameras
+
+		- Estimated camera parameters
+
+
+
+.. rubric:: Returns:
+
+True in case of success, false otherwise
+
+.. index:: pair: function; estimate
+.. _doxid-dc/dc4/classcv_1_1detail_1_1_estimator_1ab65ae24f4d6b53554dcc04121e6cbc47:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	virtual
+	bool
+	estimate(
+		const std::vector<:ref:`ImageFeatures<doxid-d4/dbe/structcv_1_1detail_1_1_image_features>`>& features,
+		const std::vector<:ref:`MatchesInfo<doxid-d2/d99/structcv_1_1detail_1_1_matches_info>`>& pairwise_matches,
+		std::vector<:ref:`CameraParams<doxid-da/d60/structcv_1_1detail_1_1_camera_params>`>& cameras
+		) = 0
+
+This method must implement camera parameters estimation logic in order to make the wrapper detail::Estimator::operator()\_ work.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- features
+
+		- Features of images
+
+	*
+		- pairwise_matches
+
+		- Pairwise matches of images
+
+	*
+		- cameras
+
+		- Estimated camera parameters
+
+
+
+.. rubric:: Returns:
+
+True in case of success, false otherwise
+

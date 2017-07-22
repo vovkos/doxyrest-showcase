@@ -1,0 +1,97 @@
+.. index:: pair: example; edge.cpp
+.. _doxid-d3/d63/edge_8cpp-example:
+
+edge.cpp
+========
+
+An example on using the canny edge detector
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/core/utility.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	#include <stdio.h>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	int edgeThresh = 1;
+	int edgeThreshScharr=1;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image, gray, blurImage, edge1, edge2, cedge;
+	
+	const char* window_name1 = "Edge map : Canny default (Sobel gradient)";
+	const char* window_name2 = "Edge map : Canny with custom gradient (Scharr)";
+	
+	// define a trackbar callback
+	static void onTrackbar(int, void*)
+	{
+	    :ref:`blur <doxid-d4/d86/group__imgproc__filter_1ga8c45db9afe636703801b0b2e440fce37>`(gray, blurImage, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(3,3));
+	
+	    // Run the edge detector on grayscale
+	    :ref:`Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`(blurImage, edge1, edgeThresh, edgeThresh*3, 3);
+	    cedge = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	
+	    image.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(cedge, edge1);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`(window_name1, cedge);
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` dx,dy;
+	    :ref:`Scharr <doxid-d4/d86/group__imgproc__filter_1gaa13106761eedf14798f37aa2d60404c9>`(blurImage,dx,:ref:`CV_16S <doxid-d1/d1b/group__core__hal__interface_1ga9d2ee1a8334733dea7482a47a88e0f87>`,1,0);
+	    :ref:`Scharr <doxid-d4/d86/group__imgproc__filter_1gaa13106761eedf14798f37aa2d60404c9>`(blurImage,dy,:ref:`CV_16S <doxid-d1/d1b/group__core__hal__interface_1ga9d2ee1a8334733dea7482a47a88e0f87>`,0,1);
+	    :ref:`Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`( dx,dy, edge2, edgeThreshScharr, edgeThreshScharr*3 );
+	    cedge = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	    image.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(cedge, edge2);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`(window_name2, cedge);
+	}
+	
+	static void help()
+	{
+	    printf("\nThis sample demonstrates Canny edge detection\n"
+	           "Call:\n"
+	           "    /.edge [image_name -- Default is ../data/fruits.jpg]\n\n");
+	}
+	
+	const char* keys =
+	{
+	    "{help h||}{@image |../data/fruits.jpg|input image name}"
+	};
+	
+	int main( int argc, const char** argv )
+	{
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, keys);
+	    if (parser.has("help"))
+	    {
+	        help();
+	        return 0;
+	    }
+	    string filename = parser.get<string>(0);
+	
+	    image = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, 1);
+	    if(image.empty())
+	    {
+	        printf("Cannot read image file: %s\n", filename.c_str());
+	        help();
+	        return -1;
+	    }
+	    cedge.:ref:`create <doxid-db/de6/classcv_1_1_mat_1a55ced2c8d844d683ea9a725c60037ad0>`(image.size(), image.type());
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(image, gray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+	
+	    // Create a window
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`(window_name1, 1);
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`(window_name2, 1);
+	
+	    // create a toolbar
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("Canny threshold default", window_name1, &edgeThresh, 100, onTrackbar);
+	    :ref:`createTrackbar <doxid-d7/dfc/group__highgui_1gaf78d2155d30b728fc413803745b67a9b>`("Canny threshold Scharr", window_name2, &edgeThreshScharr, 400, onTrackbar);
+	
+	    // Show the image
+	    onTrackbar(0, 0);
+	
+	    // Wait for a key stroke; the same function arranges events processing
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	    return 0;
+	}

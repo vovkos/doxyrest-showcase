@@ -1,0 +1,290 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pca.cpp &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="polar_transforms.cpp" href="example_polar_transforms.cpp.html" />
+    <link rel="prev" title="morphology2.cpp" href="example_morphology2.cpp.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example_polar_transforms.cpp.html" title="polar_transforms.cpp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="example_morphology2.cpp.html" title="morphology2.cpp"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example_morphology2.cpp.html"
+                        title="previous chapter">morphology2.cpp</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example_polar_transforms.cpp.html"
+                        title="next chapter">polar_transforms.cpp</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pca-cpp">
+<span id="doxid-d2-dc0-pca-8cpp-example"></span><span id="index-0"></span><h1>pca.cpp</h1>
+<p>An example using PCA for dimensionality reduction while maintaining an amount of variance</p>
+<pre class="highlight literal-block">
+<span></span><span class="cm">/*</span>
+<span class="cm">* pca.cpp</span>
+<span class="cm">*</span>
+<span class="cm">*  Author:</span>
+<span class="cm">*  Kevin Hughes &lt;kevinhughes27[at]gmail[dot]com&gt;</span>
+<span class="cm">*</span>
+<span class="cm">*  Special Thanks to:</span>
+<span class="cm">*  Philipp Wagner &lt;bytefish[at]gmx[dot]de&gt;</span>
+<span class="cm">*</span>
+<span class="cm">* This program demonstrates how to use OpenCV PCA with a</span>
+<span class="cm">* specified amount of variance to retain. The effect</span>
+<span class="cm">* is illustrated further by using a trackbar to</span>
+<span class="cm">* change the value for retained varaince.</span>
+<span class="cm">*</span>
+<span class="cm">* The program takes as input a text file with each line</span>
+<span class="cm">* begin the full path to an image. PCA will be performed</span>
+<span class="cm">* on this list of images. The author recommends using</span>
+<span class="cm">* the first 15 faces of the AT&amp;T face data set:</span>
+<span class="cm">* http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html</span>
+<span class="cm">*</span>
+<span class="cm">* so for example your input text file would look like this:</span>
+<span class="cm">*</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s1/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s2/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s3/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s4/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s5/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s6/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s7/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s8/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s9/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s10/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s11/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s12/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s13/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s14/1.pgm</span>
+<span class="cm">*        &lt;path_to_at&amp;t_faces&gt;/orl_faces/s15/1.pgm</span>
+<span class="cm">*</span>
+<span class="cm">*/</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sstream&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// Functions</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">read_imgList</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">filename</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;&amp;</span> <span class="n">images</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">ifstream</span> <span class="n">file</span><span class="p">(</span><span class="n">filename</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">ifstream</span><span class="o">::</span><span class="n">in</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">string</span> <span class="n">error_message</span> <span class="o">=</span> <span class="s">&quot;No valid input file was given, please check the given filename.&quot;</span><span class="p">;</span>
+        <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga5b48c333c777666e076bd7052799f891"><span class="std std-ref">CV_Error</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_Error_Code.html#doxid-d6-d43-namespacecv-1-1-error-1a759fa1af92f7aa7377c76ffb142abccaaf587497af64537041ee62c04a92b755d"><span class="std std-ref">Error::StsBadArg</span></a><span></span><span class="p">,</span> <span class="n">error_message</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">string</span> <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">getline</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">images</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">static</span>  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">formatImagesForPCA</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">dst</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">()),</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">rows</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">cols</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">image_row</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">clone</span><span class="p">().</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">row_i</span> <span class="o">=</span> <span class="n">dst</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4b22e1c23af7a7f2eef8fa478cfa7434"><span class="std std-ref">row</span></a><span></span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">image_row</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1adf88c60c5b4980e05bb556080916978b"><span class="std std-ref">convertTo</span></a><span></span><span class="p">(</span><span class="n">row_i</span><span class="p">,</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga4a3def5d72b74bed31f5f8ab7676099c"><span class="std std-ref">CV_32F</span></a><span></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dst</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">toGrayscale</span><span class="p">(</span><span class="n">InputArray</span> <span class="n">_src</span><span class="p">)</span> <span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span> <span class="o">=</span> <span class="n">_src</span><span class="p">.</span><a class="reference internal" href="class_cv__InputArray.html#doxid-d6-d3a-classcv-1-1-input-array-1a9c09739ca3e0ce212e2ab8374aa2f195"><span class="std std-ref">getMat</span></a><span></span><span class="p">();</span>
+    <span class="c1">// only allow one channel</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa11336b9ac538e0475d840657ce164be"><span class="std std-ref">channels</span></a><span></span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga5b48c333c777666e076bd7052799f891"><span class="std std-ref">CV_Error</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_Error_Code.html#doxid-d6-d43-namespacecv-1-1-error-1a759fa1af92f7aa7377c76ffb142abccaaf587497af64537041ee62c04a92b755d"><span class="std std-ref">Error::StsBadArg</span></a><span></span><span class="p">,</span> <span class="s">&quot;Only Matrices with one channel are supported&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// create and return normalized image</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">dst</span><span class="p">;</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">cv::normalize</span></a><span></span><span class="p">(</span><span class="n">_src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">dst</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">struct</span> <span class="n">params</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">data</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">rows</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_PCA.html#doxid-d3-d39-classcv-1-1-p-c-a"><span class="std std-ref">PCA</span></a><span></span> <span class="n">pca</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">winName</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">onTrackbar</span><span class="p">(</span><span class="kt">int</span> <span class="n">pos</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Retained Variance = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">pos</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;%   &quot;</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;re-calculating PCA...&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">flush</span><span class="p">;</span>
+
+    <span class="kt">double</span> <span class="n">var</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">;</span>
+
+    <span class="k">struct</span> <span class="n">params</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">params</span> <span class="o">*</span><span class="p">)</span><span class="n">ptr</span><span class="p">;</span>
+
+    <span class="n">p</span><span class="o">-&gt;</span><span class="n">pca</span> <span class="o">=</span> <a class="reference internal" href="class_cv_PCA.html#doxid-d3-d39-classcv-1-1-p-c-a"><span class="std std-ref">PCA</span></a><span></span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="enum_cv_PCA_Flags.html#doxid-d3-d39-classcv-1-1-p-c-a-1ae8a94a2add0555b0414e85c08ff67f50a159399e962048f705645483ca16e9fd6"><span class="std std-ref">PCA::DATA_AS_ROW</span></a><span></span><span class="p">,</span> <span class="n">var</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">point</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">pca</span><span class="p">.</span><span class="n">project</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">reconstruction</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">pca</span><span class="p">.</span><span class="n">backProject</span><span class="p">(</span><span class="n">point</span><span class="p">);</span>
+    <span class="n">reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4eb96e3251417fa88b78e2abd6cfd7d8"><span class="std std-ref">reshape</span></a><span></span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">ch</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">rows</span><span class="p">);</span>
+    <span class="n">reconstruction</span> <span class="o">=</span> <span class="n">toGrayscale</span><span class="p">(</span><span class="n">reconstruction</span><span class="p">);</span>
+
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">winName</span><span class="p">,</span> <span class="n">reconstruction</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;done!   # of principal components: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">pca</span><span class="p">.</span><span class="n">eigenvectors</span><span class="p">.</span><span class="n">rows</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="c1">// Main</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_CommandLineParser.html#doxid-da-dd8-classcv-1-1-command-line-parser"><span class="std std-ref">cv::CommandLineParser</span></a><span></span> <span class="n">parser</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="s">&quot;{@input||image list}{help h||show help message}&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">has</span><span class="p">(</span><span class="s">&quot;help&quot;</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">parser</span><span class="p">.</span><span class="n">printMessage</span><span class="p">();</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// Get the path to your CSV.</span>
+    <span class="n">string</span> <span class="n">imgList</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;@input&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">imgList</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">parser</span><span class="p">.</span><span class="n">printMessage</span><span class="p">();</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// vector to hold the images</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">images</span><span class="p">;</span>
+
+    <span class="c1">// Read in the data. This can fail if not valid</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="n">read_imgList</span><span class="p">(</span><span class="n">imgList</span><span class="p">,</span> <span class="n">images</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><a class="reference internal" href="class_cv_Exception.html#doxid-d7-d6f-classcv-1-1-exception"><span class="std std-ref">cv::Exception</span></a><span></span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Error opening file </span><span class="se">\&quot;</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">imgList</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">. Reason: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><a class="reference internal" href="class_cv_Exception.html#doxid-d7-d6f-classcv-1-1-exception-1a7ead458b4fc88ebca20b231383c49845"><span class="std std-ref">msg</span></a><span></span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Quit if there are not enough images for this demo.</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">images</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">string</span> <span class="n">error_message</span> <span class="o">=</span> <span class="s">&quot;This demo needs at least 2 images to work. Please add more images to your data set!&quot;</span><span class="p">;</span>
+        <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga5b48c333c777666e076bd7052799f891"><span class="std std-ref">CV_Error</span></a><span></span><span class="p">(</span><a class="reference internal" href="enum_cv_Error_Code.html#doxid-d6-d43-namespacecv-1-1-error-1a759fa1af92f7aa7377c76ffb142abccaacf93e97abba2e7defa74fe5b99e122ac"><span class="std std-ref">Error::StsError</span></a><span></span><span class="p">,</span> <span class="n">error_message</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Reshape and stack images into a rowMatrix</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">data</span> <span class="o">=</span> <span class="n">formatImagesForPCA</span><span class="p">(</span><span class="n">images</span><span class="p">);</span>
+
+    <span class="c1">// perform PCA</span>
+    <a class="reference internal" href="class_cv_PCA.html#doxid-d3-d39-classcv-1-1-p-c-a"><span class="std std-ref">PCA</span></a><span></span> <span class="n">pca</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="enum_cv_PCA_Flags.html#doxid-d3-d39-classcv-1-1-p-c-a-1ae8a94a2add0555b0414e85c08ff67f50a159399e962048f705645483ca16e9fd6"><span class="std std-ref">PCA::DATA_AS_ROW</span></a><span></span><span class="p">,</span> <span class="mf">0.95</span><span class="p">);</span> <span class="c1">// trackbar is initially set here, also this is a common value for retainedVariance</span>
+
+    <span class="c1">// Demonstration of the effect of retainedVariance on the first image</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">point</span> <span class="o">=</span> <span class="n">pca</span><span class="p">.</span><span class="n">project</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4b22e1c23af7a7f2eef8fa478cfa7434"><span class="std std-ref">row</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">));</span> <span class="c1">// project into the eigenspace, thus the image becomes a &quot;point&quot;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">reconstruction</span> <span class="o">=</span> <span class="n">pca</span><span class="p">.</span><span class="n">backProject</span><span class="p">(</span><span class="n">point</span><span class="p">);</span> <span class="c1">// re-create the image from the &quot;point&quot;</span>
+    <span class="n">reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a4eb96e3251417fa88b78e2abd6cfd7d8"><span class="std std-ref">reshape</span></a><span></span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">channels</span><span class="p">(),</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">rows</span><span class="p">);</span> <span class="c1">// reshape from a row vector into image shape</span>
+    <span class="n">reconstruction</span> <span class="o">=</span> <span class="n">toGrayscale</span><span class="p">(</span><span class="n">reconstruction</span><span class="p">);</span> <span class="c1">// re-scale for displaying purposes</span>
+
+    <span class="c1">// init highgui window</span>
+    <span class="n">string</span> <span class="n">winName</span> <span class="o">=</span> <span class="s">&quot;Reconstruction | press &#39;q&#39; to quit&quot;</span><span class="p">;</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="n">winName</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3a29e45c5af696f73ce5e153601e5ca0f1"><span class="std std-ref">WINDOW_NORMAL</span></a><span></span><span class="p">);</span>
+
+    <span class="c1">// params struct to pass to the trackbar handler</span>
+    <span class="n">params</span> <span class="n">p</span><span class="p">;</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">;</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">ch</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">channels</span><span class="p">();</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">rows</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">rows</span><span class="p">;</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">pca</span> <span class="o">=</span> <span class="n">pca</span><span class="p">;</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">winName</span> <span class="o">=</span> <span class="n">winName</span><span class="p">;</span>
+
+    <span class="c1">// create the tracbar</span>
+    <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">95</span><span class="p">;</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span><span class="s">&quot;Retained Variance (%)&quot;</span><span class="p">,</span> <span class="n">winName</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">onTrackbar</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">p</span><span class="p">);</span>
+
+    <span class="c1">// display until user presses q</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="n">winName</span><span class="p">,</span> <span class="n">reconstruction</span><span class="p">);</span>
+
+    <span class="kt">char</span> <span class="n">key</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">key</span> <span class="o">!=</span> <span class="sc">&#39;q&#39;</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">();</span>
+
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example_polar_transforms.cpp.html" title="polar_transforms.cpp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="example_morphology2.cpp.html" title="morphology2.cpp"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

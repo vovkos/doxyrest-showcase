@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to Use Background Subtraction Methods &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OpenCV modules" href="page_index.html" />
+    <link rel="prev" title="Video analysis (video module)" href="page_tutorial_table_of_content_video.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">How to Use Background Subtraction Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a> &raquo;</li>
+        
+      <li>How to Use Background Subtraction Methods</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-use-background-subtraction-methods">
+<span id="doxid-d1-dc5-tutorial-background-subtraction"></span><span id="index-0"></span><h1>How to Use Background Subtraction Methods</h1>
+<ul>
+<li><p class="first">Background subtraction (BS) is a common and widely used technique for generating a foreground mask (namely, a binary image containing the pixels belonging to moving objects in the scene) by using static cameras.</p>
+</li>
+<li><p class="first">As the name suggests, BS calculates the foreground mask performing a subtraction between the current frame and a background model, containing the static part of the scene or, more in general, everything that can be considered as background given the characteristics of the observed scene.</p>
+<img alt="_images/Background_Subtraction_Tutorial_Scheme.png" src="_images/Background_Subtraction_Tutorial_Scheme.png" />
+</li>
+<li><p class="first">Background modeling consists of two main steps:</p>
+<ol class="arabic simple">
+<li>Background Initialization;</li>
+<li>Background Update.</li>
+</ol>
+<p>In the first step, an initial model of the background is computed, while in the second step that model is updated in order to adapt to possible changes in the scene.</p>
+</li>
+<li><p class="first">In this tutorial we will learn how to perform BS by using OpenCV. As input, we will use data coming from the publicly available data set <a class="reference external" href="http://bmc.univ-bpclermont.fr/">Background Models Challenge (BMC)</a>.</p>
+</li>
+</ul>
+<p class="rubric">Goals</p>
+<p>In this tutorial you will learn how to:</p>
+<ol class="arabic simple">
+<li>Read data from videos by using <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> or image sequences by using <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a>;</li>
+<li>Create and update the background model by using <a class="reference internal" href="class_cv_BackgroundSubtractor.html#doxid-d5-d6d-classcv-1-1-background-subtractor"><span class="std std-ref">cv::BackgroundSubtractor</span></a> class;</li>
+<li>Get and show the foreground mask by using <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">cv::imshow</span></a>;</li>
+<li>Save the output by using <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a> to quantitatively evaluate the results.</li>
+</ol>
+<p class="rubric">Code</p>
+<p>In the following you can find the source code. We will let the user chose to process either a video file or a sequence of images.</p>
+<p>Two different methods are used to generate two foreground masks:</p>
+<ol class="arabic simple">
+<li>cv::bgsegm::BackgroundSubtractorMOG</li>
+<li><a class="reference internal" href="class_cv_BackgroundSubtractorMOG2.html#doxid-d6-d6d-classcv-1-1-background-subtractor-m-o-g2"><span class="std std-ref">cv::BackgroundSubtractorMOG2</span></a></li>
+</ol>
+<p>The results as well as the input data are shown on the screen. The source file can be downloaded <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/video/bg_sub.cpp">here</a>.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//opencv</span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/videoio.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/video.hpp&gt;</span><span class="cp"></span>
+<span class="c1">//C</span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="c1">//C++</span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sstream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+
+<span class="c1">// Global variables</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">;</span> <span class="c1">//current frame</span>
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">fgMaskMOG2</span><span class="p">;</span> <span class="c1">//fg mask fg mask generated by MOG2 method</span>
+<a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;BackgroundSubtractor&gt;</span></a><span></span> <span class="n">pMOG2</span><span class="p">;</span> <span class="c1">//MOG2 Background subtractor</span>
+<span class="kt">char</span> <span class="n">keyboard</span><span class="p">;</span> <span class="c1">//input from keyboard</span>
+
+<span class="kt">void</span> <span class="nf">help</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">processVideo</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">videoFilename</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">processImages</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">firstFrameFilename</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">help</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;--------------------------------------------------------------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;This program shows how to use background subtraction methods provided by &quot;</span>  <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot; OpenCV. You can process both videos (-vid) and images (-img).&quot;</span>             <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+                                                                                    <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage:&quot;</span>                                                                     <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;./bg_sub {-vid &lt;video filename&gt;|-img &lt;image filename&gt;}&quot;</span>                     <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;for example: ./bg_sub -vid video.avi&quot;</span>                                       <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;or: ./bg_sub -img /data/images/1.png&quot;</span>                                       <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="s">&quot;--------------------------------------------------------------------------&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+    <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="c1">//print help information</span>
+    <span class="n">help</span><span class="p">();</span>
+
+    <span class="c1">//check for the input parameter correctness</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span><span class="s">&quot;Incorret input list&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span><span class="s">&quot;exiting...&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//create GUI windows</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="s">&quot;Frame&quot;</span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="s">&quot;FG Mask MOG 2&quot;</span><span class="p">);</span>
+
+    <span class="c1">//create Background Subtractor objects</span>
+    <span class="n">pMOG2</span> <span class="o">=</span> <a class="reference internal" href="group_video_motion.html#doxid-de-de1-group-video-motion-1ga2beb2dee7a073809ccec60f145b6b29c"><span class="std std-ref">createBackgroundSubtractorMOG2</span></a><span></span><span class="p">();</span> <span class="c1">//MOG2 approach</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;-vid&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//input data coming from a video</span>
+        <span class="n">processVideo</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;-img&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//input data coming from a sequence of images</span>
+        <span class="n">processImages</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//error in reading input parameters</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span><span class="s">&quot;Please, check the input parameters.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span><span class="s">&quot;Exiting...&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//destroy GUI windows</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga6b7fc1c1a8960438156912027b38f481"><span class="std std-ref">destroyAllWindows</span></a><span></span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">processVideo</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">videoFilename</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//create the capture object</span>
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">capture</span><span class="p">(</span><span class="n">videoFilename</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">capture</span><span class="p">.</span><span class="n">isOpened</span><span class="p">()){</span>
+        <span class="c1">//error in opening the video input</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to open video file: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">videoFilename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//read input data. ESC or &#39;q&#39; for quitting</span>
+    <span class="n">keyboard</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span> <span class="n">keyboard</span> <span class="o">!=</span> <span class="sc">&#39;q&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">keyboard</span> <span class="o">!=</span> <span class="mi">27</span> <span class="p">){</span>
+        <span class="c1">//read the current frame</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">capture</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to read next frame.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Exiting...&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">//update the background model</span>
+        <span class="n">pMOG2</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_BackgroundSubtractor.html#doxid-d5-d6d-classcv-1-1-background-subtractor-1aa735e76f7069b3fa9c3f32395f9ccd21"><span class="std std-ref">apply</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">fgMaskMOG2</span><span class="p">);</span>
+        <span class="c1">//get the frame number and write it on the current frame</span>
+        <span class="n">stringstream</span> <span class="n">ss</span><span class="p">;</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span>
+                  <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar"><span class="std std-ref">cv::Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="n">capture</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068"><span class="std std-ref">CAP_PROP_POS_FRAMES</span></a><span></span><span class="p">);</span>
+        <span class="n">string</span> <span class="n">frameNumberString</span> <span class="o">=</span> <span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">putText</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">frameNumberString</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+                <a class="reference internal" href="enum_cv_HersheyFonts.html#doxid-d0-de1-group-core-1gga0f9314ea6e35f99bb23f29567fc16e11afff8b973668df2e4028dddc5274310c9"><span class="std std-ref">FONT_HERSHEY_SIMPLEX</span></a><span></span><span class="p">,</span> <span class="mf">0.5</span> <span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">cv::Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+        <span class="c1">//show the current frame and the fg masks</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Frame&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="p">);</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;FG Mask MOG 2&quot;</span><span class="p">,</span> <span class="n">fgMaskMOG2</span><span class="p">);</span>
+        <span class="c1">//get the input from the keyboard</span>
+        <span class="n">keyboard</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span> <span class="mi">30</span> <span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//delete capture object</span>
+    <span class="n">capture</span><span class="p">.</span><span class="n">release</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">processImages</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">fistFrameFilename</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//read the first file of the sequence</span>
+    <span class="n">frame</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">fistFrameFilename</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()){</span>
+        <span class="c1">//error in opening the first image</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to open first image frame: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">fistFrameFilename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//current image filename</span>
+    <span class="n">string</span> <span class="n">fn</span><span class="p">(</span><span class="n">fistFrameFilename</span><span class="p">);</span>
+    <span class="c1">//read input data. ESC or &#39;q&#39; for quitting</span>
+    <span class="n">keyboard</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span> <span class="n">keyboard</span> <span class="o">!=</span> <span class="sc">&#39;q&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">keyboard</span> <span class="o">!=</span> <span class="mi">27</span> <span class="p">){</span>
+        <span class="c1">//update the background model</span>
+        <span class="n">pMOG2</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_BackgroundSubtractor.html#doxid-d5-d6d-classcv-1-1-background-subtractor-1aa735e76f7069b3fa9c3f32395f9ccd21"><span class="std std-ref">apply</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">fgMaskMOG2</span><span class="p">);</span>
+        <span class="c1">//get the frame number and write it on the current frame</span>
+        <span class="kt">size_t</span> <span class="n">index</span> <span class="o">=</span> <span class="n">fn</span><span class="p">.</span><span class="n">find_last_of</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">fn</span><span class="p">.</span><span class="n">find_last_of</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kt">size_t</span> <span class="n">index2</span> <span class="o">=</span> <span class="n">fn</span><span class="p">.</span><span class="n">find_last_of</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">);</span>
+        <span class="n">string</span> <span class="n">prefix</span> <span class="o">=</span> <span class="n">fn</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">string</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">fn</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">index2</span><span class="p">);</span>
+        <span class="n">string</span> <span class="n">frameNumberString</span> <span class="o">=</span> <span class="n">fn</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">index2</span><span class="o">-</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">istringstream</span> <span class="nf">iss</span><span class="p">(</span><span class="n">frameNumberString</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">frameNumber</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">iss</span> <span class="o">&gt;&gt;</span> <span class="n">frameNumber</span><span class="p">;</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span>
+                  <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar"><span class="std std-ref">cv::Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">putText</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">frameNumberString</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+                <a class="reference internal" href="enum_cv_HersheyFonts.html#doxid-d0-de1-group-core-1gga0f9314ea6e35f99bb23f29567fc16e11afff8b973668df2e4028dddc5274310c9"><span class="std std-ref">FONT_HERSHEY_SIMPLEX</span></a><span></span><span class="p">,</span> <span class="mf">0.5</span> <span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">cv::Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+        <span class="c1">//show the current frame and the fg masks</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Frame&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="p">);</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;FG Mask MOG 2&quot;</span><span class="p">,</span> <span class="n">fgMaskMOG2</span><span class="p">);</span>
+        <span class="c1">//get the input from the keyboard</span>
+        <span class="n">keyboard</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span> <span class="mi">30</span> <span class="p">);</span>
+        <span class="c1">//search for the next image in the sequence</span>
+        <span class="n">ostringstream</span> <span class="n">oss</span><span class="p">;</span>
+        <span class="n">oss</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">frameNumber</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">string</span> <span class="n">nextFrameNumberString</span> <span class="o">=</span> <span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+        <span class="n">string</span> <span class="n">nextFrameFilename</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">nextFrameNumberString</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">;</span>
+        <span class="c1">//read the next frame</span>
+        <span class="n">frame</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">nextFrameFilename</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()){</span>
+            <span class="c1">//error in opening the next image in the sequence</span>
+            <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to open image frame: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">nextFrameFilename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">//update the path of the current frame</span>
+        <span class="n">fn</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">nextFrameFilename</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p>We discuss the main parts of the above code:</p>
+<ol class="arabic">
+<li><p class="first">First, three Mat objects are allocated to store the current frame and two foreground masks, obtained by using two different BS algorithms.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">frame</span><span class="p">;</span> <span class="c1">//current frame</span>
+<span class="n">Mat</span> <span class="n">fgMaskMOG</span><span class="p">;</span> <span class="c1">//fg mask generated by MOG method</span>
+<span class="n">Mat</span> <span class="n">fgMaskMOG2</span><span class="p">;</span> <span class="c1">//fg mask fg mask generated by MOG2 method</span>
+</pre>
+</li>
+<li><p class="first">Two <a class="reference internal" href="class_cv_BackgroundSubtractor.html#doxid-d5-d6d-classcv-1-1-background-subtractor"><span class="std std-ref">cv::BackgroundSubtractor</span></a> objects will be used to generate the foreground masks. In this example, default parameters are used, but it is also possible to declare specific parameters in the create function.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BackgroundSubtractor</span><span class="o">&gt;</span> <span class="n">pMOG</span><span class="p">;</span> <span class="c1">//MOG Background subtractor</span>
+<span class="n">Ptr</span><span class="o">&lt;</span><span class="n">BackgroundSubtractor</span><span class="o">&gt;</span> <span class="n">pMOG2</span><span class="p">;</span> <span class="c1">//MOG2 Background subtractor</span>
+<span class="p">...</span>
+<span class="c1">//create Background Subtractor objects</span>
+<span class="n">pMOG</span> <span class="o">=</span> <a class="reference internal" href="group_cudabgsegm.html#doxid-d6-d17-group-cudabgsegm-1ga6742648a654585013544eaa300f77b57"><span class="std std-ref">createBackgroundSubtractorMOG</span></a><span></span><span class="p">();</span> <span class="c1">//MOG approach</span>
+<span class="n">pMOG2</span> <span class="o">=</span> <a class="reference internal" href="group_video_motion.html#doxid-de-de1-group-video-motion-1ga2beb2dee7a073809ccec60f145b6b29c"><span class="std std-ref">createBackgroundSubtractorMOG2</span></a><span></span><span class="p">();</span> <span class="c1">//MOG2 approach</span>
+</pre>
+</li>
+<li><p class="first">The command line arguments are analysed. The user can chose between two options:</p>
+<ul>
+<li><p class="first">video files (by choosing the option -vid);</p>
+</li>
+<li><p class="first">image sequences (by choosing the option -img).</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;-vid&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//input data coming from a video</span>
+  <span class="n">processVideo</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;-img&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//input data coming from a sequence of images</span>
+  <span class="n">processImages</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ul>
+</li>
+<li><p class="first">Suppose you want to process a video file. The video is read until the end is reached or the user presses the button ‘q’ or the button ‘ESC’.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">while</span><span class="p">(</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="n">keyboard</span> <span class="o">!=</span> <span class="sc">&#39;q&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="n">keyboard</span> <span class="o">!=</span> <span class="mi">27</span> <span class="p">){</span>
+  <span class="c1">//read the current frame</span>
+  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">capture</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to read next frame.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Exiting...&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+  <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Every frame is used both for calculating the foreground mask and for updating the background. If you want to change the learning rate used for updating the background model, it is possible to set a specific learning rate by passing a third parameter to the ‘apply’ method.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//update the background model</span>
+<span class="n">pMOG</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">fgMaskMOG</span><span class="p">);</span>
+<span class="n">pMOG2</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">fgMaskMOG2</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">The current frame number can be extracted from the <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> object and stamped in the top left corner of the current frame. A white rectangle is used to highlight the black colored frame number.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//get the frame number and write it on the current frame</span>
+<span class="n">stringstream</span> <span class="n">ss</span><span class="p">;</span>
+<a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span>
+          <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar"><span class="std std-ref">cv::Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="n">capture</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><a class="reference internal" href="enum_cv_VideoCaptureProperties.html#doxid-d4-d15-group-videoio-flags-base-1ggaeb8dd9c89c10a5c63c139bf7c4f5704da6223452891755166a4fd5173ea257068"><span class="std std-ref">CAP_PROP_POS_FRAMES</span></a><span></span><span class="p">);</span>
+<span class="n">string</span> <span class="n">frameNumberString</span> <span class="o">=</span> <span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">putText</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">frameNumberString</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+        <a class="reference internal" href="enum_cv_HersheyFonts.html#doxid-d0-de1-group-core-1gga0f9314ea6e35f99bb23f29567fc16e11afff8b973668df2e4028dddc5274310c9"><span class="std std-ref">FONT_HERSHEY_SIMPLEX</span></a><span></span><span class="p">,</span> <span class="mf">0.5</span> <span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">cv::Scalar</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+</pre>
+</li>
+<li><p class="first">We are ready to show the current input frame and the results.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//show the current frame and the fg masks</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;Frame&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;FG Mask MOG&quot;</span><span class="p">,</span> <span class="n">fgMaskMOG</span><span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;FG Mask MOG 2&quot;</span><span class="p">,</span> <span class="n">fgMaskMOG2</span><span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">The same operations listed above can be performed using a sequence of images as input. The processImage function is called and, instead of using a <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">cv::VideoCapture</span></a> object, the images are read by using <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">cv::imread</span></a>, after individuating the correct path for the next frame to read.</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">//read the first file of the sequence</span>
+<span class="n">frame</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">fistFrameFilename</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">frame</span><span class="p">.</span><span class="n">data</span><span class="p">){</span>
+  <span class="c1">//error in opening the first image</span>
+  <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to open first image frame: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">fistFrameFilename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="c1">//search for the next image in the sequence</span>
+<span class="n">ostringstream</span> <span class="n">oss</span><span class="p">;</span>
+<span class="n">oss</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">frameNumber</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">string</span> <span class="n">nextFrameNumberString</span> <span class="o">=</span> <span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="n">string</span> <span class="n">nextFrameFilename</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">nextFrameNumberString</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">;</span>
+<span class="c1">//read the next frame</span>
+<span class="n">frame</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span><span class="n">nextFrameFilename</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">frame</span><span class="p">.</span><span class="n">data</span><span class="p">){</span>
+  <span class="c1">//error in opening the next image in the sequence</span>
+  <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to open image frame: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">nextFrameFilename</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//update the path of the current frame</span>
+<span class="n">fn</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">nextFrameFilename</span><span class="p">);</span>
+</pre>
+<p>Note that this example works only on image sequences in which the filename format is &lt;n&gt;.png, where n is the frame number (e.g., 7.png).</p>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<ul>
+<li><p class="first">Given the following input parameters:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span><span class="n">vid</span> <span class="n">Video_001</span><span class="p">.</span><span class="n">avi</span>
+</pre>
+<p>The output of the program will look as the following:</p>
+<img alt="_images/Background_Subtraction_Tutorial_Result_1.png" src="_images/Background_Subtraction_Tutorial_Result_1.png" />
+</li>
+<li><p class="first">The video file Video_001.avi is part of the <a class="reference external" href="http://bmc.univ-bpclermont.fr/">Background Models Challenge (BMC)</a> data set and it can be downloaded from the following link <a class="reference external" href="http://bmc.univ-bpclermont.fr/sites/default/files/videos/evaluation/Video_001.zip">Video_001</a> (about 32 MB).</p>
+</li>
+<li><p class="first">If you want to process a sequence of images, then the ‘-img’ option has to be chosen:</p>
+<pre class="highlight literal-block">
+<span></span><span class="o">-</span><span class="n">img</span> <span class="mi">111</span><span class="n">_png</span><span class="o">/</span><span class="n">input</span><span class="o">/</span><span class="mf">1.</span><span class="n">png</span>
+</pre>
+<p>The output of the program will look as the following:</p>
+<img alt="_images/Background_Subtraction_Tutorial_Result_2.png" src="_images/Background_Subtraction_Tutorial_Result_2.png" />
+</li>
+<li><p class="first">The sequence of images used in this example is part of the <a class="reference external" href="http://bmc.univ-bpclermont.fr/">Background Models Challenge (BMC)</a> dataset and it can be downloaded from the following link <a class="reference external" href="http://bmc.univ-bpclermont.fr/sites/default/files/videos/learning/111_png.zip">sequence 111</a> (about 708 MB). Please, note that this example works only on sequences in which the filename format is &lt;n&gt;.png, where n is the frame number (e.g., 7.png).</p>
+</li>
+</ul>
+<p class="rubric">Evaluation</p>
+<p>To quantitatively evaluate the results obtained, we need to:</p>
+<ul class="simple">
+<li>Save the output images;</li>
+<li>Have the ground truth images for the chosen sequence.</li>
+</ul>
+<p>In order to save the output images, we can use <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">cv::imwrite</span></a>. Adding the following code allows for saving the foreground masks.</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">string</span> <span class="n">imageToSave</span> <span class="o">=</span> <span class="s">&quot;output_MOG_&quot;</span> <span class="o">+</span> <span class="n">frameNumberString</span> <span class="o">+</span> <span class="s">&quot;.png&quot;</span><span class="p">;</span>
+<span class="kt">bool</span> <span class="n">saved</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1gabbc7ef1aa2edfaa87772f1202d67e0ce"><span class="std std-ref">imwrite</span></a><span></span><span class="p">(</span><span class="n">imageToSave</span><span class="p">,</span> <span class="n">fgMaskMOG</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">saved</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Unable to save &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">imageToSave</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>Once we have collected the result images, we can compare them with the ground truth data. There exist several publicly available sequences for background subtraction that come with ground truth data. If you decide to use the <a class="reference external" href="http://bmc.univ-bpclermont.fr/">Background Models Challenge (BMC)</a>, then the result images can be used as input for the <a class="reference external" href="http://bmc.univ-bpclermont.fr/?q=node/7">BMC Wizard</a>. The wizard can compute different measures about the accuracy of the results.</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><a class="reference external" href="http://bmc.univ-bpclermont.fr/">Background Models Challenge (BMC) website</a></li>
+<li>A Benchmark Dataset for Foreground/Background Extraction <a class="reference internal" href="page_citelist.html#doxid-d0-de3-citelist-1citeref-vacavant2013benchmark"><span class="std std-ref">[85]</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_index.html" class="btn btn-neutral float-right" title="OpenCV modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_table_of_content_video.html" class="btn btn-neutral float-left" title="Video analysis (video module)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

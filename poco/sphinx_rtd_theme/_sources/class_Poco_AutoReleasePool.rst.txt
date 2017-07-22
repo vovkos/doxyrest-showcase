@@ -1,0 +1,88 @@
+.. index:: pair: class; Poco::AutoReleasePool
+.. _doxid-class_poco_1_1_auto_release_pool:
+
+template class Poco::AutoReleasePool
+====================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+An :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>` implements simple garbage collection for reference-counted objects. :ref:`More...<details-class_poco_1_1_auto_release_pool>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <AutoReleasePool.h>
+	
+	template <class C>
+	class AutoReleasePool
+	{
+	public:
+		// methods
+	
+		void
+		:ref:`add<doxid-class_poco_1_1_auto_release_pool_1a89b7052913d6a5a46255c080a218f833>`(C* pObject);
+	
+		void
+		:ref:`release<doxid-class_poco_1_1_auto_release_pool_1ae372d685187c00e6f15a9c7d91c11d29>`();
+	};
+.. _details-class_poco_1_1_auto_release_pool:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+An :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>` implements simple garbage collection for reference-counted objects.
+
+It temporarily takes ownwership of reference-counted objects that nobody else wants to take ownership of and releases them at a later, appropriate point in time.
+
+Note: The correct way to add an object hold by an AutoPtr<> to an :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>` is by invoking the :ref:`AutoPtr <doxid-class_poco_1_1_auto_ptr>` 's duplicate() method. Example:
+
+.. ref-code-block:: cpp
+
+	AutoReleasePool<C> arp;
+	AutoPtr<C> ptr = new C;
+	...
+	arp.add(ptr.duplicate());
+
+Construction
+------------
+
+.. _doxid-class_poco_1_1_auto_release_pool_1a1b0f0da963f854b459ae3bae3e1a1a31:
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	~AutoReleasePool()
+
+Destroys the :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>` and releases all objects it currently holds.
+
+Methods
+-------
+
+.. index:: pair: function; add
+.. _doxid-class_poco_1_1_auto_release_pool_1a89b7052913d6a5a46255c080a218f833:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	add(C* pObject)
+
+Adds the given object to the :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>`.
+
+The object's reference count is not modified
+
+.. index:: pair: function; release
+.. _doxid-class_poco_1_1_auto_release_pool_1ae372d685187c00e6f15a9c7d91c11d29:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	release()
+
+Releases all objects the :ref:`AutoReleasePool <doxid-class_poco_1_1_auto_release_pool>` currently holds by calling each object's :ref:`release() <doxid-class_poco_1_1_auto_release_pool_1ae372d685187c00e6f15a9c7d91c11d29>` method.
+

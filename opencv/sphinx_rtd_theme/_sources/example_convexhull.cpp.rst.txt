@@ -1,0 +1,76 @@
+.. index:: pair: example; convexhull.cpp
+.. _doxid-d0/d7a/convexhull_8cpp-example:
+
+convexhull.cpp
+==============
+
+An example using the convexHull functionality
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/highgui.hpp"
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help()
+	{
+	    cout << "\nThis sample program demonstrates the use of the convexHull() function\n"
+	         << "Call:\n"
+	         << "./convexhull\n" << endl;
+	}
+	
+	int main( int argc, char** argv )
+	{
+	    :ref:`CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{help h||}");
+	    if (parser.has("help"))
+	    {
+	        help();
+	        return 0;
+	    }
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` img(500, 500, :ref:`CV_8UC3 <doxid-d1/d1b/group__core__hal__interface_1ga88c4cd9de76f678f33928ef1e3f96047>`);
+	    :ref:`RNG <doxid-d3/df8/classcv_1_1_r_n_g>`& rng = :ref:`theRNG <doxid-d2/de8/group__core__array_1ga75843061d150ad6564b5447e38e57722>`();
+	
+	    for(;;)
+	    {
+	        int i, count = (unsigned)rng%100 + 1;
+	
+	        vector<Point> points;
+	
+	        for( i = 0; i < count; i++ )
+	        {
+	            Point pt;
+	            pt.:ref:`x <doxid-d9/d87/classcv_1_1_point___1a4c96fa7bdbfe390be5ed356edb274ff3>` = rng.:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(img.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`/4, img.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`*3/4);
+	            pt.:ref:`y <doxid-d9/d87/classcv_1_1_point___1a157337197338ff199e5df1a393022f15>` = rng.:ref:`uniform <doxid-d3/df8/classcv_1_1_r_n_g_1acde197860cea91e5aa896be8719457ae>`(img.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`/4, img.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`*3/4);
+	
+	            points.push_back(pt);
+	        }
+	
+	        vector<int> hull;
+	        :ref:`convexHull <doxid-d3/dc0/group__imgproc__shape_1ga014b28e56cb8854c0de4a211cb2be656>`(:ref:`Mat <doxid-db/de6/classcv_1_1_mat>`(points), hull, true);
+	
+	        img = :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0);
+	        for( i = 0; i < count; i++ )
+	            :ref:`circle <doxid-d6/d6e/group__imgproc__draw_1gaf10604b069374903dbd0f0488cb43670>`(img, points[i], 3, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 0, 255), :ref:`FILLED <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e>`, :ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	
+	        int hullcount = (int)hull.size();
+	        Point pt0 = points[hull[hullcount-1]];
+	
+	        for( i = 0; i < hullcount; i++ )
+	        {
+	            Point pt = points[hull[i]];
+	            :ref:`line <doxid-d6/d6e/group__imgproc__draw_1ga7078a9fae8c7e7d13d24dac2520ae4a2>`(img, pt0, pt, :ref:`Scalar <doxid-dc/d84/group__core__basic_1ga599fe92e910c027be274233eccad7beb>`(0, 255, 0), 1,:ref:`LINE_AA <doxid-d0/de1/group__core_1ggaf076ef45de481ac96e0ab3dc2c29a777a85fdabe5335c9e6656563dfd7c94fb4f>`);
+	            pt0 = pt;
+	        }
+	
+	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("hull", img);
+	
+	        char key = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	        if( key == 27 || key == 'q' || key == 'Q' ) // 'ESC'
+	            break;
+	    }
+	
+	    return 0;
+	}

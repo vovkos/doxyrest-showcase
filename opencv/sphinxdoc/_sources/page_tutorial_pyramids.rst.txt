@@ -1,0 +1,241 @@
+.. index:: pair: page; Image Pyramids
+.. _doxid-d4/d1f/tutorial_pyramids:
+
+Image Pyramids
+==============
+
+.. rubric:: Goal
+
+In this tutorial you will learn how to:
+
+* Use the OpenCV functions :ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>` and :ref:`cv::pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>` to downsample or upsample a given image.
+
+.. rubric:: Theory
+
+The explanation below belongs to the book **Learning OpenCV** by Bradski and Kaehler.
+
+
+
+* Usually we need to convert an image to a size different than its original. For this, there are two possible options:
+  
+  #. *Upsize* the image (zoom in) or
+  
+  #. *Downsize* it (zoom out).
+
+* Although there is a *geometric transformation* function in OpenCV that -literally- resize an image (:ref:`cv::resize <doxid-da/d54/group__imgproc__transform_1ga47a974309e9102f5f08231edc7e7529d>`, which we will show in a future tutorial), in this section we analyze first the use of **Image Pyramids**, which are widely applied in a huge range of vision applications.
+
+.. rubric:: Image Pyramid
+
+* An image pyramid is a collection of images - all arising from a single original image - that are successively downsampled until some desired stopping point is reached.
+
+* There are two common kinds of image pyramids:
+  
+  * **Gaussian pyramid:** Used to downsample images
+  
+  * **Laplacian pyramid:** Used to reconstruct an upsampled image from an image lower in the pyramid (with less resolution)
+
+* In this tutorial we'll use the *Gaussian pyramid*.
+
+.. rubric:: Gaussian Pyramid
+
+* Imagine the pyramid as a set of layers in which the higher the layer, the smaller the size.
+  
+  .. image:: Pyramids_Tutorial_Pyramid_Theory.png
+
+* Every layer is numbered from bottom to top, so layer :math:`(i+1)` (denoted as :math:`G_{i+1}` is smaller than layer :math:`i` (:math:`G_{i}`).
+
+* To produce layer :math:`(i+1)` in the Gaussian pyramid, we do the following:
+  
+  * Convolve :math:`G_{i}` with a Gaussian kernel:
+  
+  .. math::
+  
+  	\frac{1}{16} \begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\ 4 & 16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1 \end{bmatrix}
+  
+  
+  
+  * Remove every even-numbered row and column.
+
+* You can easily notice that the resulting image will be exactly one-quarter the area of its predecessor. Iterating this process on the input image :math:`G_{0}` (original image) produces the entire pyramid.
+
+* The procedure above was useful to downsample an image. What if we want to make it bigger?: columns filled with zeros (:math:`0`)
+  
+  * First, upsize the image to twice the original in each dimension, wit the new even rows and
+  
+  * Perform a convolution with the same kernel shown above (multiplied by 4) to approximate the values of the "missing pixels"
+
+* These two procedures (downsampling and upsampling as explained above) are implemented by the OpenCV functions :ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>` and :ref:`cv::pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>`, as we will see in an example with the code below:
+
+When we reduce the size of an image, we are actually *losing* information of the image.
+
+
+
+.. rubric:: Code
+
+This tutorial code's is shown lines below. You can also download it from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Pyramids.cpp>`__
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	:ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src, dst, tmp;
+	
+	const char* window_name = "Pyramids Demo";
+	
+	
+	int main( void )
+	{
+	  printf( "\n Zoom In-Out demo  \n " );
+	  printf( "------------------ \n" );
+	  printf( " * [u] -> Zoom in  \n" );
+	  printf( " * [d] -> Zoom out \n" );
+	  printf( " * [ESC] -> Close program \n \n" );
+	
+	  src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/chicky_512.png" ); // Loads the test image
+	  if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+	    { printf(" No data! -- Exiting the program \n");
+	      return -1; }
+	
+	  tmp = src;
+	  dst = tmp;
+	
+	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+	
+	  for(;;)
+	  {
+	    char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	    if( c == 27 )
+	      { break; }
+	    if( c == 'u' )
+	      { :ref:`pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>`( tmp, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( tmp.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`*2, tmp.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`*2 ) );
+	        printf( "** Zoom In: Image x 2 \n" );
+	      }
+	    else if( c == 'd' )
+	      { :ref:`pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>`( tmp, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( tmp.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`/2, tmp.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`/2 ) );
+	        printf( "** Zoom Out: Image / 2 \n" );
+	      }
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+	
+	    tmp = dst;
+	   }
+	
+	   return 0;
+	}
+
+.. rubric:: Explanation
+
+Let's check the general structure of the program:
+
+* Load an image (in this case it is defined in the program, the user does not have to enter it as an argument)
+  
+  .. ref-code-block:: cpp
+  
+  	src = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/chicky_512.png" ); // Loads the test image
+  	if( src.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() )
+  	  { printf(" No data! -- Exiting the program \n");
+  	    return -1; }
+
+* Create a Mat object to store the result of the operations (*dst*) and one to save temporal results (*tmp*).
+  
+  .. ref-code-block:: cpp
+  
+  	Mat src, dst, tmp;
+  	/* ... */
+  	tmp = src;
+  	dst = tmp;
+
+* Create a window to display the result
+  
+  .. ref-code-block:: cpp
+  
+  	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+
+* Perform an infinite loop waiting for user input.
+  
+  .. ref-code-block:: cpp
+  
+  	for(;;)
+  	{
+  	  char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+  
+  	  if( c == 27 )
+  	    { break; }
+  	  if( c == 'u' )
+  	    { :ref:`pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>`( tmp, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( tmp.cols*2, tmp.rows*2 ) );
+  	      printf( "** Zoom In: Image x 2 \n" );
+  	    }
+  	  else if( c == 'd' )
+  	    { :ref:`pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>`( tmp, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( tmp.cols/2, tmp.rows/2 ) );
+  	      printf( "** Zoom Out: Image / 2 \n" );
+  	    }
+  	  :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( window_name, dst );
+  
+  	  tmp = dst;
+  	 }
+  
+  Our program exits if the user presses *ESC*. Besides, it has two options:
+  
+  * **Perform upsampling (after pressing 'u')**
+    
+    .. ref-code-block:: cpp
+    
+    	if( c == 'u' )
+    	  { :ref:`pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>`( tmp, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( tmp.cols*2, tmp.rows*2 ) );
+    	    printf( "** Zoom In: Image x 2 \n" );
+    	  }
+    
+    We use the function :ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>` with three arguments:
+    
+    * *tmp* : The current image, it is initialized with the *src* original image.
+    
+    * *dst* : The destination image (to be shown on screen, supposedly the double of the input image)
+    
+    * \*Size( tmp.cols\*2, tmp.rows\*2 )\* : The destination size. Since we are upsampling, :ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>` expects a size double than the input image (in this case *tmp*).
+  
+  * **Perform downsampling (after pressing 'd')**
+    
+    .. ref-code-block:: cpp
+    
+    	else if( c == 'd' )
+    	  { :ref:`pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>`( tmp, dst, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`( tmp.cols/2, tmp.rows/2 ) );
+    	    printf( "** Zoom Out: Image / 2 \n" );
+    	  }
+    
+    Similarly as with :ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>`, we use the function :ref:`cv::pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>` with three arguments:
+    
+    * *tmp* : The current image, it is initialized with the *src* original image.
+    
+    * *dst* : The destination image (to be shown on screen, supposedly half the input image)
+    
+    * *Size( tmp.cols/2, tmp.rows/2 )* : The destination size. Since we are upsampling, :ref:`cv::pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>` expects half the size the input image (in this case *tmp*).
+  
+  * Notice that it is important that the input image can be divided by a factor of two (in both dimensions). Otherwise, an error will be shown.
+  
+  * Finally, we update the input image **tmp** with the current image displayed, so the subsequent operations are performed on it.
+    
+    .. ref-code-block:: cpp
+    
+    	tmp = dst;
+    
+    
+    
+    .. rubric:: Results
+
+* After compiling the code above we can test it. The program calls an image **chicky_512.jpg** that comes in the *samples/data* folder. Notice that this image is :math:`512 \times 512`, hence a downsample won't generate any error (:math:`512 = 2^{9}`). The original image is shown below:
+  
+  .. image:: Pyramids_Tutorial_Original_Image.jpg
+
+* First we apply two successive :ref:`cv::pyrDown <doxid-d4/d86/group__imgproc__filter_1gaf9bba239dfca11654cb7f50f889fc2ff>` operations by pressing 'd'. Our output is:
+  
+  .. image:: Pyramids_Tutorial_PyrDown_Result.jpg
+
+* Note that we should have lost some resolution due to the fact that we are diminishing the size of the image. This is evident after we apply :ref:`cv::pyrUp <doxid-d4/d86/group__imgproc__filter_1gada75b59bdaaca411ed6fee10085eb784>` twice (by pressing 'u'). Our output is now:
+  
+  .. image:: Pyramids_Tutorial_PyrUp_Result.jpg
+

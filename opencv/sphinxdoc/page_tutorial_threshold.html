@@ -1,0 +1,328 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Basic Thresholding Operations &#8212; OpenCV Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/doxyrest-sphinxdoc.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/target-highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Canny Edge Detector" href="page_tutorial_canny_detector.html" />
+    <link rel="prev" title="Back Projection" href="page_tutorial_back_projection.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_canny_detector.html" title="Canny Edge Detector"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_back_projection.html" title="Back Projection"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" accesskey="U">Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="page_tutorial_back_projection.html"
+                        title="previous chapter">Back Projection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="page_tutorial_canny_detector.html"
+                        title="next chapter">Canny Edge Detector</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="basic-thresholding-operations">
+<span id="doxid-db-d8e-tutorial-threshold"></span><span id="index-0"></span><h1>Basic Thresholding Operations</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Perform basic thresholding operations using OpenCV function <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">cv::threshold</span></a></li>
+</ul>
+<p class="rubric">Cool Theory</p>
+<p>The explanation below belongs to the book <strong>Learning OpenCV</strong> by Bradski and Kaehler. What is</p>
+<p class="rubric">Thresholding?</p>
+<ul>
+<li><p class="first">The simplest segmentation method</p>
+</li>
+<li><p class="first">Application example: Separate out regions of an image corresponding to objects which we want to analyze. This separation is based on the variation of intensity between the object pixels and the background pixels.</p>
+</li>
+<li><p class="first">To differentiate the pixels we are interested in from the rest (which will eventually be rejected), we perform a comparison of each pixel intensity value with respect to a <em>threshold</em> (determined according to the problem to solve).</p>
+</li>
+<li><p class="first">Once we have separated properly the important pixels, we can set them with a determined value to identify them (i.e. we can assign them a value of <span class="math notranslate nohighlight">\(0\)</span> (black), <span class="math notranslate nohighlight">\(255\)</span> (white) or any value that suits your needs).</p>
+<img alt="_images/Threshold_Tutorial_Theory_Example.jpg" src="_images/Threshold_Tutorial_Theory_Example.jpg" />
+</li>
+</ul>
+<p class="rubric">Types of Thresholding</p>
+<ul>
+<li><p class="first">OpenCV offers the function <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">cv::threshold</span></a> to perform thresholding operations.</p>
+</li>
+<li><p class="first">We can effectuate <span class="math notranslate nohighlight">\(5\)</span> types of Thresholding operations with this function. We will explain them in the following subsections.</p>
+</li>
+<li><p class="first">To illustrate how these thresholding processes work, let’s consider that we have a source image with pixels with intensity values <span class="math notranslate nohighlight">\(src(x,y)\)</span>. The plot below depicts this. The horizontal blue line represents the threshold <span class="math notranslate nohighlight">\(thresh\)</span> (fixed).</p>
+<img alt="_images/Threshold_Tutorial_Theory_Base_Figure.png" src="_images/Threshold_Tutorial_Theory_Base_Figure.png" />
+</li>
+</ul>
+<p class="rubric">Threshold Binary</p>
+<ul>
+<li><p class="first">This thresholding operation can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) = \fork{\texttt{maxVal}}{if \(\texttt{src}(x,y) &gt; \texttt{thresh}\)}{0}{otherwise}\]</div>
+</li>
+<li><p class="first">So, if the intensity of the pixel <span class="math notranslate nohighlight">\(src(x,y)\)</span> is higher than <span class="math notranslate nohighlight">\(thresh\)</span>, then the new pixel intensity is set to a <span class="math notranslate nohighlight">\(MaxVal\)</span>. Otherwise, the pixels are set to <span class="math notranslate nohighlight">\(0\)</span>.</p>
+<img alt="_images/Threshold_Tutorial_Theory_Binary.png" src="_images/Threshold_Tutorial_Theory_Binary.png" />
+</li>
+</ul>
+<p class="rubric">Threshold Binary, Inverted</p>
+<ul>
+<li><p class="first">This thresholding operation can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) = \fork{0}{if \(\texttt{src}(x,y) &gt; \texttt{thresh}\)}{\texttt{maxVal}}{otherwise}\]</div>
+</li>
+<li><p class="first">If the intensity of the pixel <span class="math notranslate nohighlight">\(src(x,y)\)</span> is higher than <span class="math notranslate nohighlight">\(thresh\)</span>, then the new pixel intensity is set to a <span class="math notranslate nohighlight">\(0\)</span>. Otherwise, it is set to <span class="math notranslate nohighlight">\(MaxVal\)</span>.</p>
+<img alt="_images/Threshold_Tutorial_Theory_Binary_Inverted.png" src="_images/Threshold_Tutorial_Theory_Binary_Inverted.png" />
+</li>
+</ul>
+<p class="rubric">Truncate</p>
+<ul>
+<li><p class="first">This thresholding operation can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) = \fork{\texttt{threshold}}{if \(\texttt{src}(x,y) &gt; \texttt{thresh}\)}{\texttt{src}(x,y)}{otherwise}\]</div>
+</li>
+<li><p class="first">The maximum intensity value for the pixels is <span class="math notranslate nohighlight">\(thresh\)</span>, if <span class="math notranslate nohighlight">\(src(x,y)\)</span> is greater, then its value is <em>truncated</em>. See figure below:</p>
+<img alt="_images/Threshold_Tutorial_Theory_Truncate.png" src="_images/Threshold_Tutorial_Theory_Truncate.png" />
+</li>
+</ul>
+<p class="rubric">Threshold to Zero</p>
+<ul>
+<li><p class="first">This operation can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) = \fork{\texttt{src}(x,y)}{if \(\texttt{src}(x,y) &gt; \texttt{thresh}\)}{0}{otherwise}\]</div>
+</li>
+<li><p class="first">If <span class="math notranslate nohighlight">\(src(x,y)\)</span> is lower than <span class="math notranslate nohighlight">\(thresh\)</span>, the new pixel value will be set to <span class="math notranslate nohighlight">\(0\)</span>.</p>
+<img alt="_images/Threshold_Tutorial_Theory_Zero.png" src="_images/Threshold_Tutorial_Theory_Zero.png" />
+</li>
+</ul>
+<p class="rubric">Threshold to Zero, Inverted</p>
+<ul>
+<li><p class="first">This operation can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{dst} (x,y) = \fork{0}{if \(\texttt{src}(x,y) &gt; \texttt{thresh}\)}{\texttt{src}(x,y)}{otherwise}\]</div>
+</li>
+<li><p class="first">If <span class="math notranslate nohighlight">\(src(x,y)\)</span> is greater than <span class="math notranslate nohighlight">\(thresh\)</span>, the new pixel value will be set to <span class="math notranslate nohighlight">\(0\)</span>.</p>
+<img alt="_images/Threshold_Tutorial_Theory_Zero_Inverted.png" src="_images/Threshold_Tutorial_Theory_Zero_Inverted.png" />
+</li>
+</ul>
+<p class="rubric">Code</p>
+<p>The tutorial code’s is shown lines below. You can also download it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/ImgProc/Threshold.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+
+<span class="kt">int</span> <span class="n">threshold_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">threshold_type</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_value</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_type</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="kt">int</span> <span class="k">const</span> <span class="n">max_BINARY_value</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">window_name</span> <span class="o">=</span> <span class="s">&quot;Threshold Demo&quot;</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">trackbar_type</span> <span class="o">=</span> <span class="s">&quot;Type: </span><span class="se">\n</span><span class="s"> 0: Binary </span><span class="se">\n</span><span class="s"> 1: Binary Inverted </span><span class="se">\n</span><span class="s"> 2: Truncate </span><span class="se">\n</span><span class="s"> 3: To Zero </span><span class="se">\n</span><span class="s"> 4: To Zero Inverted&quot;</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">trackbar_value</span> <span class="o">=</span> <span class="s">&quot;Value&quot;</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">Threshold_Demo</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span> <span class="c1">// Convert the image to Gray</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span> <span class="c1">// Create a window to display results</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="n">trackbar_type</span><span class="p">,</span>
+                  <span class="n">window_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">threshold_type</span><span class="p">,</span>
+                  <span class="n">max_type</span><span class="p">,</span> <span class="n">Threshold_Demo</span> <span class="p">);</span> <span class="c1">// Create Trackbar to choose type of Threshold</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="n">trackbar_value</span><span class="p">,</span>
+                  <span class="n">window_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">threshold_value</span><span class="p">,</span>
+                  <span class="n">max_value</span><span class="p">,</span> <span class="n">Threshold_Demo</span> <span class="p">);</span> <span class="c1">// Create Trackbar to choose Threshold value</span>
+
+  <span class="n">Threshold_Demo</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span> <span class="c1">// Call the function to initialize</span>
+
+  <span class="k">for</span><span class="p">(;;)</span>
+    <span class="p">{</span>
+      <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span> <span class="mi">20</span> <span class="p">);</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">27</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">Threshold_Demo</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="cm">/* 0: Binary</span>
+<span class="cm">     1: Binary Inverted</span>
+<span class="cm">     2: Threshold Truncated</span>
+<span class="cm">     3: Threshold to Zero</span>
+<span class="cm">     4: Threshold to Zero Inverted</span>
+<span class="cm">   */</span>
+
+  <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">threshold</span></a><span></span><span class="p">(</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="n">max_BINARY_value</span><span class="p">,</span><span class="n">threshold_type</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Let’s check the general structure of the program:</p>
+<ul>
+<li><p class="first">Load an image. If it is BGR we convert it to Grayscale. For this, remember that we can use the function <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cv::cvtColor</span></a> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span> <span class="c1">// Load an image</span>
+
+<span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+<a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1ga397ae87e1288a81d2363b61574eb8cab"><span class="std std-ref">cvtColor</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_gray</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ColorConversionCodes.html#doxid-d7-d1b-group-imgproc-misc-1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea"><span class="std std-ref">COLOR_BGR2GRAY</span></a><span></span> <span class="p">);</span> <span class="c1">// Convert the image to Gray</span>
+</pre>
+</li>
+<li><p class="first">Create a window to display the result</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span> <span class="c1">// Create a window to display results</span>
+</pre>
+</li>
+<li><p class="first">Create <span class="math notranslate nohighlight">\(2\)</span> trackbars for the user to enter user input:</p>
+<ul>
+<li><p class="first"><strong>Type of thresholding</strong> : Binary, To Zero, etc…</p>
+</li>
+<li><p class="first"><strong>Threshold value</strong></p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="n">trackbar_type</span><span class="p">,</span>
+                <span class="n">window_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">threshold_type</span><span class="p">,</span>
+                <span class="n">max_type</span><span class="p">,</span> <span class="n">Threshold_Demo</span> <span class="p">);</span> <span class="c1">// Create Trackbar to choose type of Threshold</span>
+
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1gaf78d2155d30b728fc413803745b67a9b"><span class="std std-ref">createTrackbar</span></a><span></span><span class="p">(</span> <span class="n">trackbar_value</span><span class="p">,</span>
+                <span class="n">window_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">threshold_value</span><span class="p">,</span>
+                <span class="n">max_value</span><span class="p">,</span> <span class="n">Threshold_Demo</span> <span class="p">);</span> <span class="c1">// Create Trackbar to choose Threshold value</span>
+</pre>
+</li>
+</ul>
+</li>
+<li><p class="first">Wait until the user enters the threshold value, the type of thresholding (or until the program exits)</p>
+</li>
+<li><p class="first">Whenever the user changes the value of any of the Trackbars, the function <em>Threshold_Demo</em> is called:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">Threshold_Demo</span><span class="p">(</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="cm">/* 0: Binary</span>
+<span class="cm">     1: Binary Inverted</span>
+<span class="cm">     2: Threshold Truncated</span>
+<span class="cm">     3: Threshold to Zero</span>
+<span class="cm">     4: Threshold to Zero Inverted</span>
+<span class="cm">   */</span>
+
+  <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">threshold</span></a><span></span><span class="p">(</span> <span class="n">src_gray</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="n">max_BINARY_value</span><span class="p">,</span><span class="n">threshold_type</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">window_name</span><span class="p">,</span> <span class="n">dst</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>As you can see, the function <a class="reference internal" href="group_imgproc_misc.html#doxid-d7-d1b-group-imgproc-misc-1gae8a4a146d1ca78c626a53577199e9c57"><span class="std std-ref">cv::threshold</span></a> is invoked. We give <span class="math notranslate nohighlight">\(5\)</span> parameters:</p>
+<ul class="simple">
+<li><em>src_gray</em> : Our input image</li>
+<li><em>dst</em> : Destination (output) image</li>
+<li><em>threshold_value</em> : The <span class="math notranslate nohighlight">\(thresh\)</span> value with respect to which the thresholding operation is made</li>
+<li><em>max_BINARY_value</em> : The value used with the Binary thresholding operations (to set the chosen pixels)</li>
+<li><em>threshold_type</em> : One of the <span class="math notranslate nohighlight">\(5\)</span> thresholding operations. They are listed in the comment section of the function above.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p class="rubric">Results</p>
+<ol class="arabic">
+<li><p class="first">After compiling this program, run it giving a path to an image as argument. For instance, for an input image as:</p>
+<img alt="_images/Threshold_Tutorial_Original_Image.jpg" src="_images/Threshold_Tutorial_Original_Image.jpg" />
+</li>
+<li><p class="first">First, we try to threshold our image with a <em>binary threhold inverted</em>. We expect that the pixels brighter than the <span class="math notranslate nohighlight">\(thresh\)</span> will turn dark, which is what actually happens, as we can see in the snapshot below (notice from the original image, that the doggie’s tongue and eyes are particularly bright in comparison with the image, this is reflected in the output image).</p>
+<img alt="_images/Threshold_Tutorial_Result_Binary_Inverted.jpg" src="_images/Threshold_Tutorial_Result_Binary_Inverted.jpg" />
+</li>
+<li><p class="first">Now we try with the <em>threshold to zero</em>. With this, we expect that the darkest pixels (below the threshold) will become completely black, whereas the pixels with value greater than the threshold will keep its original value. This is verified by the following snapshot of the output image:</p>
+<img alt="_images/Threshold_Tutorial_Result_Zero.jpg" src="_images/Threshold_Tutorial_Result_Zero.jpg" />
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="page_tutorial_canny_detector.html" title="Canny Edge Detector"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="page_tutorial_back_projection.html" title="Back Projection"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">OpenCV Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="page_tutorial_root.html" >OpenCV Tutorials</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="page_tutorial_table_of_content_imgproc.html" >Image Processing (imgproc module)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 1999-2017, OpenCV Maintainers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

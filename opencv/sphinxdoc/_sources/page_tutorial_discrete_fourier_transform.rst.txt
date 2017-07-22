@@ -1,0 +1,217 @@
+.. index:: pair: page; Discrete Fourier Transform
+.. _doxid-d8/d01/tutorial_discrete_fourier_transform:
+
+Discrete Fourier Transform
+==========================
+
+.. rubric:: Goal
+
+We'll seek answers for the following questions:
+
+* What is a Fourier transform and why use it?
+
+* How to do it in OpenCV?
+
+* Usage of functions such as: :ref:`cv::copyMakeBorder() <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>`, :ref:`cv::merge() <doxid-d2/de8/group__core__array_1ga7d7b4d6c6ee504b30a20b1680029c7b4>`, :ref:`cv::dft() <doxid-d2/de8/group__core__array_1gadd6cf9baf2b8b704a11b5f04aaf4f39d>`, :ref:`cv::getOptimalDFTSize() <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>`, :ref:`cv::log() <doxid-d2/d75/namespacecv_1ae5de78ee278fe88405c6dbc38502f7c1>` and :ref:`cv::normalize() <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`.
+
+.. rubric:: Source code
+
+You can `download this from here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/discrete_fourier_transform/discrete_fourier_transform.cpp>`__ or find it in the ``samples/cpp/tutorial_code/core/discrete_fourier_transform/discrete_fourier_transform.cpp`` of the OpenCV source code library.
+
+Here's a sample usage of :ref:`cv::dft() <doxid-d2/de8/group__core__array_1gadd6cf9baf2b8b704a11b5f04aaf4f39d>` :
+
+.. ref-code-block:: cpp
+
+	#include "opencv2/core.hpp"
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	static void help(char* progName)
+	{
+	    cout << endl
+	        <<  "This program demonstrated the use of the discrete Fourier transform (DFT). " << endl
+	        <<  "The dft of an image is taken and it's power spectrum is displayed."          << endl
+	        <<  "Usage:"                                                                      << endl
+	        << progName << " [image_name -- default ../data/lena.jpg] "               << endl << endl;
+	}
+	
+	int main(int argc, char ** argv)
+	{
+	    help(argv[0]);
+	
+	    const char* filename = argc >=2 ? argv[1] : "../data/lena.jpg";
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` I = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(filename, :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>`);
+	    if( I.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`())
+	        return -1;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` padded;                            //expand input image to optimal size
+	    int m = :ref:`getOptimalDFTSize <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>`( I.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` );
+	    int n = :ref:`getOptimalDFTSize <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>`( I.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` ); // on the border add zero values
+	    :ref:`copyMakeBorder <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>`(I, padded, 0, m - I.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`, 0, n - I.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, :ref:`BORDER_CONSTANT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838>`, :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(0));
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` planes[] = {:ref:`Mat_\<float> <doxid-d9/de0/classcv_1_1_mat__>`(padded), :ref:`Mat::zeros <doxid-db/de6/classcv_1_1_mat_1a0b57b6a326c8876d944d188a46e0f556>`(padded.:ref:`size <doxid-db/de6/classcv_1_1_mat_1a146f8e8dda07d1365a575ab83d9828d1>`(), :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`)};
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` complexI;
+	    :ref:`merge <doxid-d2/de8/group__core__array_1ga7d7b4d6c6ee504b30a20b1680029c7b4>`(planes, 2, complexI);         // Add to the expanded another plane with zeros
+	
+	    :ref:`dft <doxid-d2/de8/group__core__array_1gadd6cf9baf2b8b704a11b5f04aaf4f39d>`(complexI, complexI);            // this way the result may fit in the source matrix
+	
+	    // compute the magnitude and switch to logarithmic scale
+	    // => log(1 + sqrt(Re(DFT(I))^2 + Im(DFT(I))^2))
+	    :ref:`split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
+	    :ref:`magnitude <doxid-d2/de8/group__core__array_1ga6d3b097586bca4409873d64a90fe64c3>`(planes[0], planes[1], planes[0]);// planes[0] = magnitude
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` magI = planes[0];
+	
+	    magI += :ref:`Scalar::all <doxid-d7/d13/classcv_1_1_scalar___1ac1509a4b8454fe7fe29db069e13a2e6f>`(1);                    // switch to logarithmic scale
+	    :ref:`log <doxid-d2/d75/namespacecv_1ae5de78ee278fe88405c6dbc38502f7c1>`(magI, magI);
+	
+	    // crop the spectrum, if it has an odd number of rows or columns
+	    magI = magI(:ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(0, 0, magI.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` & -2, magI.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` & -2));
+	
+	    // rearrange the quadrants of Fourier image  so that the origin is at the image center
+	    int cx = magI.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`/2;
+	    int cy = magI.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`/2;
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` q0(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` q1(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(cx, 0, cx, cy));  // Top-Right
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` q2(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(0, cy, cx, cy));  // Bottom-Left
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` q3(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(cx, cy, cx, cy)); // Bottom-Right
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` tmp;                           // swap quadrants (Top-Left with Bottom-Right)
+	    q0.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(tmp);
+	    q3.copyTo(q0);
+	    tmp.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(q3);
+	
+	    q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
+	    q2.copyTo(q1);
+	    tmp.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(q2);
+	
+	    :ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(magI, magI, 0, 1, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`); // Transform the matrix with float values into a
+	                                            // viewable image form (float between values 0 and 1).
+	
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Input Image"       , I   );    // Show the result
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("spectrum magnitude", magI);
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	
+	    return 0;
+	}
+
+.. rubric:: Explanation
+
+The Fourier Transform will decompose an image into its sinus and cosines components. In other words, it will transform an image from its spatial domain to its frequency domain. The idea is that any function may be approximated exactly with the sum of infinite sinus and cosines functions. The Fourier Transform is a way how to do this. Mathematically a two dimensional images Fourier transform is:
+
+.. math::
+
+	F(k,l) = \displaystyle\sum\limits_{i=0}^{N-1}\sum\limits_{j=0}^{N-1} f(i,j)e^{-i2\pi(\frac{ki}{N}+\frac{lj}{N})}
+
+
+
+.. math::
+
+	e^{ix} = \cos{x} + i\sin {x}
+
+Here f is the image value in its spatial domain and F in its frequency domain. The result of the transformation is complex numbers. Displaying this is possible either via a *real* image and a *complex* image or via a *magnitude* and a *phase* image. However, throughout the image processing algorithms only the *magnitude* image is interesting as this contains all the information we need about the images geometric structure. Nevertheless, if you intend to make some modifications of the image in these forms and then you need to retransform it you'll need to preserve both of these.
+
+In this sample I'll show how to calculate and show the *magnitude* image of a Fourier Transform. In case of digital images are discrete. This means they may take up a value from a given domain value. For example in a basic gray scale image values usually are between zero and 255. Therefore the Fourier Transform too needs to be of a discrete type resulting in a Discrete Fourier Transform (*DFT*). You'll want to use this whenever you need to determine the structure of an image from a geometrical point of view. Here are the steps to follow (in case of a gray scale input image *I*):
+
+#. **Expand the image to an optimal size**. The performance of a DFT is dependent of the image size. It tends to be the fastest for image sizes that are multiple of the numbers two, three and five. Therefore, to achieve maximal performance it is generally a good idea to pad border values to the image to get a size with such traits. The :ref:`cv::getOptimalDFTSize() <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>` returns this optimal size and we can use the :ref:`cv::copyMakeBorder() <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>` function to expand the borders of an image:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat padded;                            //expand input image to optimal size
+   	int m = :ref:`getOptimalDFTSize <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>`( I.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>` );
+   	int n = :ref:`getOptimalDFTSize <doxid-d2/de8/group__core__array_1ga6577a2e59968936ae02eb2edde5de299>`( I.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>` ); // on the border add zero pixels
+   	:ref:`copyMakeBorder <doxid-d2/de8/group__core__array_1ga2ac1049c2c3dd25c2b41bffe17658a36>`(I, padded, 0, m - I.:ref:`rows <doxid-db/de6/classcv_1_1_mat_1abed816466c45234254d25bc59c31245e>`, 0, n - I.:ref:`cols <doxid-db/de6/classcv_1_1_mat_1aa3e5a47585c9ef6a0842556739155e3e>`, :ref:`BORDER_CONSTANT <doxid-d2/de8/group__core__array_1gga209f2f4869e304c82d07739337eae7c5aed2e4346047e265c8c5a6d0276dcd838>`, Scalar::all(0));
+   
+   The appended pixels are initialized with zero.
+
+#. **Make place for both the complex and the real values**. The result of a Fourier Transform is complex. This implies that for each image value the result is two image values (one per component). Moreover, the frequency domains range is much larger than its spatial counterpart. Therefore, we store these usually at least in a *float* format. Therefore we'll convert our input image to this type and expand it with another channel to hold the complex values:
+   
+   .. ref-code-block:: cpp
+   
+   	Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), :ref:`CV_32F <doxid-d1/d1b/group__core__hal__interface_1ga4a3def5d72b74bed31f5f8ab7676099c>`)};
+   	Mat complexI;
+   	:ref:`merge <doxid-d2/de8/group__core__array_1ga7d7b4d6c6ee504b30a20b1680029c7b4>`(planes, 2, complexI);         // Add to the expanded another plane with zeros
+
+#. **Make the Discrete Fourier Transform**. It's possible an in-place calculation (same input as output):
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`dft <doxid-d2/de8/group__core__array_1gadd6cf9baf2b8b704a11b5f04aaf4f39d>`(complexI, complexI);            // this way the result may fit in the source matrix
+
+#. **Transform the real and complex values to magnitude**. A complex number has a real (*Re*) and a complex (imaginary - *Im*) part. The results of a DFT are complex numbers. The magnitude of a DFT is:
+   
+   .. math::
+   
+   	M = \sqrt[2]{ {Re(DFT(I))}^2 + {Im(DFT(I))}^2}
+   
+   Translated to OpenCV code:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
+   	:ref:`magnitude <doxid-d2/de8/group__core__array_1ga6d3b097586bca4409873d64a90fe64c3>`(planes[0], planes[1], planes[0]);// planes[0] = magnitude
+   	Mat magI = planes[0];
+
+#. **Switch to a logarithmic scale**. It turns out that the dynamic range of the Fourier coefficients is too large to be displayed on the screen. We have some small and some high changing values that we can't observe like this. Therefore the high values will all turn out as white points, while the small ones as black. To use the gray scale values to for visualization we can transform our linear scale to a logarithmic one:
+   
+   .. math::
+   
+   	M_1 = \log{(1 + M)}
+   
+   Translated to OpenCV code:
+   
+   .. ref-code-block:: cpp
+   
+   	magI += Scalar::all(1);                    // switch to logarithmic scale
+   	:ref:`log <doxid-d2/d75/namespacecv_1ae5de78ee278fe88405c6dbc38502f7c1>`(magI, magI);
+
+#. **Crop and rearrange**. Remember, that at the first step, we expanded the image? Well, it's time to throw away the newly introduced values. For visualization purposes we may also rearrange the quadrants of the result, so that the origin (zero, zero) corresponds with the image center.
+   
+   .. ref-code-block:: cpp
+   
+   	magI = magI(:ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(0, 0, magI.cols & -2, magI.rows & -2));
+   	int cx = magI.cols/2;
+   	int cy = magI.rows/2;
+   	
+   	Mat q0(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
+   	Mat q1(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(cx, 0, cx, cy));  // Top-Right
+   	Mat q2(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(0, cy, cx, cy));  // Bottom-Left
+   	Mat q3(magI, :ref:`Rect <doxid-dc/d84/group__core__basic_1ga11d95de507098e90bad732b9345402e8>`(cx, cy, cx, cy)); // Bottom-Right
+   	
+   	Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
+   	q0.:ref:`copyTo <doxid-db/de6/classcv_1_1_mat_1a33fd5d125b4c302b0c9aa86980791a77>`(tmp);
+   	q3.copyTo(q0);
+   	tmp.copyTo(q3);
+   	
+   	q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
+   	q2.copyTo(q1);
+   	tmp.copyTo(q2);
+
+#. **Normalize**. This is done again for visualization purposes. We now have the magnitudes, however this are still out of our image display range of zero to one. We normalize our values to this range using the :ref:`cv::normalize() <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>` function.
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`normalize <doxid-dc/d84/group__core__basic_1ga1b6a396a456c8b6c6e4afd8591560d80>`(magI, magI, 0, 1, :ref:`NORM_MINMAX <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e>`); // Transform the matrix with float values into a
+   	                                          // viewable image form (float between values 0 and 1).
+
+.. rubric:: Result
+
+An application idea would be to determine the geometrical orientation present in the image. For example, let us find out if a text is horizontal or not? Looking at some text you'll notice that the text lines sort of form also horizontal lines and the letters form sort of vertical lines. These two main components of a text snippet may be also seen in case of the Fourier transform. Let us use `this horizontal <https://github.com/opencv/opencv/tree/master/samples/data/imageTextN.png>`__ and `this rotated <https://github.com/opencv/opencv/tree/master/samples/data/imageTextR.png>`__ image about a text.
+
+In case of the horizontal text:
+
+.. image:: result_normal.jpg
+
+In case of a rotated text:
+
+.. image:: result_rotated.jpg
+
+You can see that the most influential components of the frequency domain (brightest dots on the magnitude image) follow the geometric rotation of objects on the image. From this we may calculate the offset and perform an image rotation to correct eventual miss alignments.
+

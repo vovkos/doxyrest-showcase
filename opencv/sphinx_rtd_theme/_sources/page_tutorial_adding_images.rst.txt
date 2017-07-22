@@ -1,0 +1,117 @@
+.. index:: pair: page; Adding (blending) two images using OpenCV
+.. _doxid-d5/dc4/tutorial_adding_images:
+
+Adding (blending) two images using OpenCV
+=========================================
+
+.. rubric:: Goal
+
+In this tutorial you will learn:
+
+* what is *linear blending* and why it is useful;
+
+* how to add two images using :ref:`cv::addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`
+
+.. rubric:: Theory
+
+The explanation below belongs to the book `Computer Vision: Algorithms and Applications <http://szeliski.org/Book/>`__ by Richard Szeliski
+
+From our previous tutorial, we know already a bit of *Pixel operators*. An interesting dyadic (two-input) operator is the *linear blend operator* :
+
+.. math::
+
+	g(x) = (1 - \alpha)f_{0}(x) + \alpha f_{1}(x)
+
+By varying :math:`\alpha` from :math:`0 \rightarrow 1` this operator can be used to perform a temporal *cross-dissolve* between two images or videos, as seen in slide shows and film productions (cool, eh?)
+
+.. rubric:: Source Code
+
+Download the source code from `here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/AddingImages/AddingImages.cpp>`__.
+
+.. ref-code-block:: cpp
+
+	
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	#include <iostream>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	
+	int main( void )
+	{
+	   double alpha = 0.5; double beta; double input;
+	
+	   :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` src1, src2, dst;
+	
+	   cout << " Simple Linear Blender " << endl;
+	   cout << "-----------------------" << endl;
+	   cout << "* Enter alpha [0-1]: ";
+	   cin >> input;
+	
+	   // We use the alpha provided by the user if it is between 0 and 1
+	   if( input >= 0 && input <= 1 )
+	     { alpha = input; }
+	
+	   src1 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/LinuxLogo.jpg" );
+	   src2 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/WindowsLogo.jpg" );
+	
+	   if( src1.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() ) { cout << "Error loading src1" << endl; return -1; }
+	   if( src2.:ref:`empty <doxid-db/de6/classcv_1_1_mat_1abbec3525a852e77998aba034813fded4>`() ) { cout << "Error loading src2" << endl; return -1; }
+	
+	   beta = ( 1.0 - alpha );
+	   :ref:`addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`( src1, alpha, src2, beta, 0.0, dst);
+	
+	   :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Linear Blend", dst );
+	   :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+	
+	   return 0;
+	}
+
+.. rubric:: Explanation
+
+#. Since we are going to perform:
+   
+   .. math::
+   
+   	g(x) = (1 - \alpha)f_{0}(x) + \alpha f_{1}(x)
+   
+   We need two source images (:math:`f_{0}(x)` and :math:`f_{1}(x)`). So, we load them in the usual way:
+   
+   .. ref-code-block:: cpp
+   
+   	src1 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/LinuxLogo.jpg" );
+   	src2 = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`( "../data/WindowsLogo.jpg" );
+   
+   **warning**
+   
+   Since we are *adding* *src1* and *src2*, they both have to be of the same size (width and height) and type.
+
+#. Now we need to generate the ``g(x)`` image. For this, the function :ref:`cv::addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>` comes quite handy:
+   
+   .. ref-code-block:: cpp
+   
+   	beta = ( 1.0 - alpha );
+   	:ref:`addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`( src1, alpha, src2, beta, 0.0, dst);
+   
+   since :ref:`cv::addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>` produces:
+   
+   .. math::
+   
+   	dst = \alpha \cdot src1 + \beta \cdot src2 + \gamma
+   
+   In this case, ``gamma`` is the argument :math:`0.0` in the code above.
+
+#. Create windows, show the images and wait for the user to end the program.
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`( "Linear Blend", dst );
+   	:ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(0);
+   
+   
+   
+   .. rubric:: Result
+
+.. image:: Adding_Images_Tutorial_Result_Big.jpg
+

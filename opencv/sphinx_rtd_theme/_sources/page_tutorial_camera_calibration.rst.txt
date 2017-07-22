@@ -1,0 +1,465 @@
+.. index:: pair: page; Camera calibration With OpenCV
+.. _doxid-d4/d94/tutorial_camera_calibration:
+
+Camera calibration With OpenCV
+==============================
+
+Cameras have been around for a long-long time. However, with the introduction of the cheap *pinhole* cameras in the late 20th century, they became a common occurrence in our everyday life. Unfortunately, this cheapness comes with its price: significant distortion. Luckily, these are constants and with a calibration and some remapping we can correct this. Furthermore, with calibration you may also determine the relation between the camera's natural units (pixels) and the real world units (for example millimeters).
+
+.. rubric:: Theory
+
+For the distortion OpenCV takes into account the radial and tangential factors. For the radial factor one uses the following formula:
+
+.. math::
+
+	x_{distorted} = x( 1 + k_1 r^2 + k_2 r^4 + k_3 r^6) \\ y_{distorted} = y( 1 + k_1 r^2 + k_2 r^4 + k_3 r^6)
+
+So for an undistorted pixel point at :math:`(x,y)` coordinates, its position on the distorted image will be :math:`(x_{distorted} y_{distorted})`. The presence of the radial distortion manifests in form of the "barrel" or "fish-eye" effect.
+
+Tangential distortion occurs because the image taking lenses are not perfectly parallel to the imaging plane. It can be represented via the formulas:
+
+.. math::
+
+	x_{distorted} = x + [ 2p_1xy + p_2(r^2+2x^2)] \\ y_{distorted} = y + [ p_1(r^2+ 2y^2)+ 2p_2xy]
+
+So we have five distortion parameters which in OpenCV are presented as one row matrix with 5 columns:
+
+.. math::
+
+	distortion\_coefficients=(k_1 \hspace{10pt} k_2 \hspace{10pt} p_1 \hspace{10pt} p_2 \hspace{10pt} k_3)
+
+Now for the unit conversion we use the following formula:
+
+.. math::
+
+	\left [ \begin{matrix} x \\ y \\ w \end{matrix} \right ] = \left [ \begin{matrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{matrix} \right ] \left [ \begin{matrix} X \\ Y \\ Z \end{matrix} \right ]
+
+Here the presence of :math:`w` is explained by the use of homography coordinate system (and :math:`w=Z`). The unknown parameters are :math:`f_x` and :math:`f_y` (camera focal lengths) and :math:`(c_x, c_y)` which are the optical centers expressed in pixels coordinates. If for both axes a common focal length is used with a given :math:`a` aspect ratio (usually 1), then :math:`f_y=f_x*a` and in the upper formula we will have a single focal length :math:`f`. The matrix containing these four parameters is referred to as the *camera matrix*. While the distortion coefficients are the same regardless of the camera resolutions used, these should be scaled along with the current resolution from the calibrated resolution.
+
+The process of determining these two matrices is the calibration. Calculation of these parameters is done through basic geometrical equations. The equations used depend on the chosen calibrating objects. Currently OpenCV supports three types of objects for calibration:
+
+* Classical black-white chessboard
+
+* Symmetrical circle pattern
+
+* Asymmetrical circle pattern
+
+Basically, you need to take snapshots of these patterns with your camera and let OpenCV find them. Each found pattern results in a new equation. To solve the equation you need at least a predetermined number of pattern snapshots to form a well-posed equation system. This number is higher for the chessboard pattern and less for the circle ones. For example, in theory the chessboard pattern requires at least two snapshots. However, in practice we have a good amount of noise present in our input images, so for good results you will probably need at least 10 good snapshots of the input pattern in different positions.
+
+.. rubric:: Goal
+
+The sample application will:
+
+* Determine the distortion matrix
+
+* Determine the camera matrix
+
+* Take input from Camera, Video and Image file list
+
+* Read configuration from XML/YAML file
+
+* Save the results into XML/YAML file
+
+* Calculate re-projection error
+
+.. rubric:: Source code
+
+You may also find the source code in the ``samples/cpp/tutorial_code/calib3d/camera_calibration/`` folder of the OpenCV source library or `download it from here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/calib3d/camera_calibration/camera_calibration.cpp>`__. The program has a single argument: the name of its configuration file. If none is given then it will try to open the one named "default.xml". `Here's a sample configuration file <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/calib3d/camera_calibration/in_VID5.xml>`__ in XML format. In the configuration file you may choose to use camera as an input, a video file or an image list. If you opt for the last one, you will need to create a configuration file where you enumerate the images to use. Here's `an example of this <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/calib3d/camera_calibration/VID5.xml>`__. The important part to remember is that the images need to be specified using the absolute path or the relative one from your application's working directory. You may find all this in the samples directory mentioned above.
+
+The application starts up with reading the settings from the configuration file. Although, this is an important part of it, it has nothing to do with the subject of this tutorial: *camera calibration*. Therefore, I've chosen not to post the code for that part here. Technical background on how to do this you can find in the :ref:`File Input and Output using XML and YAML files <doxid-dd/d74/tutorial_file_input_output_with_xml_yml>` tutorial.
+
+.. rubric:: Explanation
+
+#. **Read the settings**
+   
+   .. ref-code-block:: cpp
+   
+   	Settings s;
+   	const string inputSettingsFile = argc > 1 ? argv[1] : "default.xml";
+   	FileStorage fs(inputSettingsFile, FileStorage::READ); // Read the settings
+   	if (!fs.isOpened())
+   	{
+   	    cout << "Could not open the configuration file: \"" << inputSettingsFile << "\"" << endl;
+   	    return -1;
+   	}
+   	fs["Settings"] >> s;
+   	fs.release();                                         // close Settings file
+   
+   For this I've used simple OpenCV class input operation. After reading the file I've an additional post-processing function that checks validity of the input. Only if all inputs are good then *goodInput* variable will be true.
+
+#. **Get next input, if it fails or we have enough of them - calibrate**
+   
+   After this we have a big loop where we do the following operations: get the next image from the image list, camera or video file. If this fails or we have enough images then we run the calibration process. In case of image we step out of the loop and otherwise the remaining frames will be undistorted (if the option is set) via changing from *DETECTION* mode to the *CALIBRATED* one.
+   
+   .. ref-code-block:: cpp
+   
+   	for(;;)
+   	{
+   	    Mat view;
+   	    bool blinkOutput = false;
+   
+   	    view = s.nextImage();
+   
+   	    //-----  If no more image, or got enough, then stop calibration and show result -------------
+   	    if( mode == CAPTURING && imagePoints.size() >= (:ref:`size_t <doxid-da/d06/autogenerated_2opencl__core_8hpp_1a6ff403ead16f7faa1f7228274eb6b01d>`)s.nrFrames )
+   	    {
+   	      if( runCalibrationAndSave(s, imageSize,  cameraMatrix, distCoeffs, imagePoints))
+   	          mode = CALIBRATED;
+   	      else
+   	          mode = DETECTION;
+   	    }
+   	    if(view.empty())          // If there are no more images stop the loop
+   	    {
+   	        // if calibration threshold was not reached yet, calibrate now
+   	        if( mode != CALIBRATED && !imagePoints.empty() )
+   	            runCalibrationAndSave(s, imageSize,  cameraMatrix, distCoeffs, imagePoints);
+   	        break;
+   	    }
+   
+   For some cameras we may need to flip the input image. Here we do this too.
+
+#. **Find the pattern in the current input**
+   
+   The formation of the equations I mentioned above aims to finding major patterns in the input: in case of the chessboard this are corners of the squares and for the circles, well, the circles themselves. The position of these will form the result which will be written into the *pointBuf* vector.
+   
+   .. ref-code-block:: cpp
+   
+   	vector<Point2f> pointBuf;
+   
+   	bool found;
+   
+   	int chessBoardFlags = :ref:`CALIB_CB_ADAPTIVE_THRESH <doxid-d9/d0c/group__calib3d_1gga80a507de0875ee8ac3028ee60071f64ba9e296b20df217b62e581c56ad9359db5>` | :ref:`CALIB_CB_NORMALIZE_IMAGE <doxid-d9/d0c/group__calib3d_1gga80a507de0875ee8ac3028ee60071f64baf54c37b53d4375f95e9b1a3d9846c97a>`;
+   
+   	if(!s.useFisheye) {
+   	    // fast check erroneously fails with high distortions like fisheye
+   	    chessBoardFlags |= :ref:`CALIB_CB_FAST_CHECK <doxid-d9/d0c/group__calib3d_1gga80a507de0875ee8ac3028ee60071f64ba5b5ef5178c5c5d50cc15719aecc5fd25>`;
+   	}
+   
+   	switch( s.calibrationPattern ) // Find feature points on the input format
+   	{
+   	case Settings::CHESSBOARD:
+   	    found = :ref:`findChessboardCorners <doxid-d9/d0c/group__calib3d_1ga93efa9b0aa890de240ca32b11253dd4a>`( view, s.boardSize, pointBuf, chessBoardFlags);
+   	    break;
+   	case Settings::CIRCLES_GRID:
+   	    found = :ref:`findCirclesGrid <doxid-d9/d0c/group__calib3d_1gad1205c4b803a21597c7d6035f5efd775>`( view, s.boardSize, pointBuf );
+   	    break;
+   	case Settings::ASYMMETRIC_CIRCLES_GRID:
+   	    found = :ref:`findCirclesGrid <doxid-d9/d0c/group__calib3d_1gad1205c4b803a21597c7d6035f5efd775>`( view, s.boardSize, pointBuf, :ref:`CALIB_CB_ASYMMETRIC_GRID <doxid-d9/d0c/group__calib3d_1gga7041b2a9c8f9f8ee93a2796981bc5546a2ef9eceaffccf6a70aea8cd9006bd235>` );
+   	    break;
+   	default:
+   	    found = false;
+   	    break;
+   	}
+   
+   Depending on the type of the input pattern you use either the :ref:`cv::findChessboardCorners <doxid-d9/d0c/group__calib3d_1ga93efa9b0aa890de240ca32b11253dd4a>` or the :ref:`cv::findCirclesGrid <doxid-d9/d0c/group__calib3d_1gad1205c4b803a21597c7d6035f5efd775>` function. For both of them you pass the current image and the size of the board and you'll get the positions of the patterns. Furthermore, they return a boolean variable which states if the pattern was found in the input (we only need to take into account those images where this is true!).
+   
+   Then again in case of cameras we only take camera images when an input delay time is passed. This is done in order to allow user moving the chessboard around and getting different images. Similar images result in similar equations, and similar equations at the calibration step will form an ill-posed problem, so the calibration will fail. For square images the positions of the corners are only approximate. We may improve this by calling the :ref:`cv::cornerSubPix <doxid-dd/d1a/group__imgproc__feature_1ga354e0d7c86d0d9da75de9b9701a9a87e>` function. It will produce better calibration result. After this we add a valid inputs result to the *imagePoints* vector to collect all of the equations into a single container. Finally, for visualization feedback purposes we will draw the found points on the input image using :ref:`cv::findChessboardCorners <doxid-d9/d0c/group__calib3d_1ga93efa9b0aa890de240ca32b11253dd4a>` function.
+   
+   .. ref-code-block:: cpp
+   
+   	if ( found)                // If done with success,
+   	{
+   	      // improve the found corners' coordinate accuracy for chessboard
+   	        if( s.calibrationPattern == Settings::CHESSBOARD)
+   	        {
+   	            Mat viewGray;
+   	            :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(view, viewGray, :ref:`COLOR_BGR2GRAY <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea>`);
+   	            :ref:`cornerSubPix <doxid-dd/d1a/group__imgproc__feature_1ga354e0d7c86d0d9da75de9b9701a9a87e>`( viewGray, pointBuf, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(11,11),
+   	                :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(-1,-1), TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 30, 0.1 ));
+   	        }
+   
+   	        if( mode == CAPTURING &&  // For camera only take new samples after delay time
+   	            (!s.inputCapture.isOpened() || clock() - prevTimestamp > s.delay*1e-3*CLOCKS_PER_SEC) )
+   	        {
+   	            imagePoints.push_back(pointBuf);
+   	            prevTimestamp = clock();
+   	            blinkOutput = s.inputCapture.isOpened();
+   	        }
+   
+   	        // Draw the corners.
+   	        :ref:`drawChessboardCorners <doxid-d9/d0c/group__calib3d_1ga6a10b0bb120c4907e5eabbcd22319022>`( view, s.boardSize, Mat(pointBuf), found );
+   	}
+
+#. **Show state and result to the user, plus command line control of the application**
+   
+   This part shows text output on the image.
+   
+   .. ref-code-block:: cpp
+   
+   	string msg = (mode == CAPTURING) ? "100/100" :
+   	              mode == CALIBRATED ? "Calibrated" : "Press 'g' to start";
+   	int baseLine = 0;
+   	Size textSize = :ref:`getTextSize <doxid-d6/d6e/group__imgproc__draw_1ga3d2abfcb995fd2db908c8288199dba82>`(msg, 1, 1, 1, &baseLine);
+   	Point textOrigin(view.cols - 2*textSize.width - 10, view.rows - 2*baseLine - 10);
+   
+   	if( mode == CAPTURING )
+   	{
+   	    if(s.showUndistorsed)
+   	        msg = :ref:`format <doxid-db/de0/group__core__utils_1ga0cccdb2f73859309b0611cf70b1b9409>`( "%d/%d Undist", (int)imagePoints.size(), s.nrFrames );
+   	    else
+   	        msg = :ref:`format <doxid-db/de0/group__core__utils_1ga0cccdb2f73859309b0611cf70b1b9409>`( "%d/%d", (int)imagePoints.size(), s.nrFrames );
+   	}
+   
+   	:ref:`putText <doxid-d6/d6e/group__imgproc__draw_1ga5126f47f883d730f633d74f07456c576>`( view, msg, textOrigin, 1, 1, mode == CALIBRATED ?  GREEN : RED);
+   
+   	if( blinkOutput )
+   	    :ref:`bitwise_not <doxid-d2/de8/group__core__array_1ga0002cf8b418479f4cb49a75442baee2f>`(view, view);
+   
+   If we ran calibration and got camera's matrix with the distortion coefficients we may want to correct the image using :ref:`cv::undistort <doxid-da/d54/group__imgproc__transform_1ga69f2545a8b62a6b0fc2ee060dc30559d>` function:
+   
+   .. ref-code-block:: cpp
+   
+   	if( mode == CALIBRATED && s.showUndistorsed )
+   	{
+   	    Mat temp = view.clone();
+   	    if (s.useFisheye)
+   	      :ref:`cv::fisheye::undistortImage <doxid-db/d58/group__calib3d__fisheye_1ga167df4b00a6fd55287ba829fbf9913b9>`(temp, view, cameraMatrix, distCoeffs);
+   	    else
+   	      :ref:`undistort <doxid-da/d54/group__imgproc__transform_1ga69f2545a8b62a6b0fc2ee060dc30559d>`(temp, view, cameraMatrix, distCoeffs);
+   	}
+   
+   Then we show the image and wait for an input key and if this is *u* we toggle the distortion removal, if it is *g* we start again the detection process, and finally for the *ESC* key we quit the application:
+   
+   .. ref-code-block:: cpp
+   
+   	:ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Image View", view);
+   	char key = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`(s.inputCapture.isOpened() ? 50 : s.delay);
+   
+   	if( key  == ESC_KEY )
+   	    break;
+   
+   	if( key == 'u' && mode == CALIBRATED )
+   	   s.showUndistorsed = !s.showUndistorsed;
+   
+   	if( s.inputCapture.isOpened() && key == 'g' )
+   	{
+   	    mode = CAPTURING;
+   	    imagePoints.clear();
+   	}
+
+#. **Show the distortion removal for the images too**
+   
+   When you work with an image list it is not possible to remove the distortion inside the loop. Therefore, you must do this after the loop. Taking advantage of this now I'll expand the :ref:`cv::undistort <doxid-da/d54/group__imgproc__transform_1ga69f2545a8b62a6b0fc2ee060dc30559d>` function, which is in fact first calls :ref:`cv::initUndistortRectifyMap <doxid-da/d54/group__imgproc__transform_1ga7dfb72c9cf9780a347fbe3d1c47e5d5a>` to find transformation matrices and then performs transformation using :ref:`cv::remap <doxid-da/d54/group__imgproc__transform_1gab75ef31ce5cdfb5c44b6da5f3b908ea4>` function. Because, after successful calibration map calculation needs to be done only once, by using this expanded form you may speed up your application:
+   
+   .. ref-code-block:: cpp
+   
+   	if( s.inputType == Settings::IMAGE_LIST && s.showUndistorsed )
+   	{
+   	    Mat view, rview, map1, map2;
+   
+   	    if (s.useFisheye)
+   	    {
+   	        Mat newCamMat;
+   	        :ref:`fisheye::estimateNewCameraMatrixForUndistortRectify <doxid-db/d58/group__calib3d__fisheye_1ga384940fdf04c03e362e94b6eb9b673c9>`(cameraMatrix, distCoeffs, imageSize,
+   	                                                            Matx33d::eye(), newCamMat, 1);
+   	        :ref:`fisheye::initUndistortRectifyMap <doxid-da/d54/group__imgproc__transform_1ga7dfb72c9cf9780a347fbe3d1c47e5d5a>`(cameraMatrix, distCoeffs, Matx33d::eye(), newCamMat, imageSize,
+   	                                         :ref:`CV_16SC2 <doxid-d1/d1b/group__core__hal__interface_1ga50ed0965d0ae7fcd8ee04ec170551ce1>`, map1, map2);
+   	    }
+   	    else
+   	    {
+   	        :ref:`initUndistortRectifyMap <doxid-da/d54/group__imgproc__transform_1ga7dfb72c9cf9780a347fbe3d1c47e5d5a>`(
+   	            cameraMatrix, distCoeffs, Mat(),
+   	            :ref:`getOptimalNewCameraMatrix <doxid-d9/d0c/group__calib3d_1ga7a6c4e032c97f03ba747966e6ad862b1>`(cameraMatrix, distCoeffs, imageSize, 1, imageSize, 0), imageSize,
+   	            :ref:`CV_16SC2 <doxid-d1/d1b/group__core__hal__interface_1ga50ed0965d0ae7fcd8ee04ec170551ce1>`, map1, map2);
+   	    }
+   
+   	    for(size_t i = 0; i < s.imageList.size(); i++ )
+   	    {
+   	        view = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(s.imageList[i], :ref:`IMREAD_COLOR <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822>`);
+   	        if(view.empty())
+   	            continue;
+   	        :ref:`remap <doxid-da/d54/group__imgproc__transform_1gab75ef31ce5cdfb5c44b6da5f3b908ea4>`(view, rview, map1, map2, :ref:`INTER_LINEAR <doxid-da/d54/group__imgproc__transform_1gga5bb5a1fea74ea38e1a5445ca803ff121ac97d8e4880d8b5d509e96825c7522deb>`);
+   	        :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Image View", rview);
+   	        char c = (char):ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+   	        if( c  == ESC_KEY || c == 'q' || c == 'Q' )
+   	            break;
+   	    }
+   	}
+   
+   
+   
+   .. rubric:: The calibration and save
+
+Because the calibration needs to be done only once per camera, it makes sense to save it after a successful calibration. This way later on you can just load these values into your program. Due to this we first make the calibration, and if it succeeds we save the result into an OpenCV style XML or YAML file, depending on the extension you give in the configuration file.
+
+Therefore in the first function we just split up these two processes. Because we want to save many of the calibration variables we'll create these variables here and pass on both of them to the calibration and saving function. Again, I'll not show the saving part as that has little in common with the calibration. Explore the source file in order to find out how and what:
+
+.. ref-code-block:: cpp
+
+	bool runCalibrationAndSave(Settings& s, Size imageSize, Mat& cameraMatrix, Mat& distCoeffs,
+	                           vector<vector<Point2f> > imagePoints)
+	{
+	    vector<Mat> rvecs, tvecs;
+	    vector<float> reprojErrs;
+	    double totalAvgErr = 0;
+	
+	    bool ok = runCalibration(s, imageSize, cameraMatrix, distCoeffs, imagePoints, rvecs, tvecs, reprojErrs,
+	                             totalAvgErr);
+	    cout << (ok ? "Calibration succeeded" : "Calibration failed")
+	         << ". avg re projection error = " << totalAvgErr << endl;
+	
+	    if (ok)
+	        saveCameraParams(s, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, reprojErrs, imagePoints,
+	                         totalAvgErr);
+	    return ok;
+	}
+
+We do the calibration with the help of the :ref:`cv::calibrateCamera <doxid-d9/d0c/group__calib3d_1ga3207604e4b1a1758aa66acb6ed5aa65d>` function. It has the following parameters:
+
+* The object points. This is a vector of *Point3f* vector that for each input image describes how should the pattern look. If we have a planar pattern (like a chessboard) then we can simply set all Z coordinates to zero. This is a collection of the points where these important points are present. Because, we use a single pattern for all the input images we can calculate this just once and multiply it for all the other input views. We calculate the corner points with the *calcBoardCornerPositions* function as:
+  
+  .. ref-code-block:: cpp
+  
+  	static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Point3f>& corners,
+  	                                     Settings::Pattern patternType /*= Settings::CHESSBOARD*/)
+  	{
+  	    corners.clear();
+  	
+  	    switch(patternType)
+  	    {
+  	    case Settings::CHESSBOARD:
+  	    case Settings::CIRCLES_GRID:
+  	        for( int i = 0; i < boardSize.height; ++i )
+  	            for( int j = 0; j < boardSize.width; ++j )
+  	                corners.push_back(Point3f(j*squareSize, i*squareSize, 0));
+  	        break;
+  	
+  	    case Settings::ASYMMETRIC_CIRCLES_GRID:
+  	        for( int i = 0; i < boardSize.height; i++ )
+  	            for( int j = 0; j < boardSize.width; j++ )
+  	                corners.push_back(Point3f((2*j + i % 2)*squareSize, i*squareSize, 0));
+  	        break;
+  	    default:
+  	        break;
+  	    }
+  	}
+  
+  And then multiply it as:
+  
+  .. ref-code-block:: cpp
+  
+  	vector<vector<Point3f> > objectPoints(1);
+  	calcBoardCornerPositions(s.boardSize, s.squareSize, objectPoints[0], s.calibrationPattern);
+  	objectPoints.resize(imagePoints.size(),objectPoints[0]);
+
+* The image points. This is a vector of *Point2f* vector which for each input image contains coordinates of the important points (corners for chessboard and centers of the circles for the circle pattern). We have already collected this from :ref:`cv::findChessboardCorners <doxid-d9/d0c/group__calib3d_1ga93efa9b0aa890de240ca32b11253dd4a>` or :ref:`cv::findCirclesGrid <doxid-d9/d0c/group__calib3d_1gad1205c4b803a21597c7d6035f5efd775>` function. We just need to pass it on.
+
+* The size of the image acquired from the camera, video file or the images.
+
+* The camera matrix. If we used the fixed aspect ratio option we need to set :math:`f_x` :
+  
+  .. ref-code-block:: cpp
+  
+  	cameraMatrix = Mat::eye(3, 3, :ref:`CV_64F <doxid-d1/d1b/group__core__hal__interface_1ga30a562691cc5987bc88eb7bb7a8faf2b>`);
+  	if( s.flag & :ref:`CALIB_FIX_ASPECT_RATIO <doxid-d9/d0c/group__calib3d_1gga46db002545a3b6c1904b7a0a8694b66aa131c3576ad5c96991adea3a133b6ce65>` )
+  	    cameraMatrix.at<double>(0,0) = s.aspectRatio;
+
+* The distortion coefficient matrix. Initialize with zero.
+  
+  .. ref-code-block:: cpp
+  
+  	distCoeffs = Mat::zeros(8, 1, :ref:`CV_64F <doxid-d1/d1b/group__core__hal__interface_1ga30a562691cc5987bc88eb7bb7a8faf2b>`);
+
+* For all the views the function will calculate rotation and translation vectors which transform the object points (given in the model coordinate space) to the image points (given in the world coordinate space). The 7-th and 8-th parameters are the output vector of matrices containing in the i-th position the rotation and translation vector for the i-th object point to the i-th image point.
+
+* The final argument is the flag. You need to specify here options like fix the aspect ratio for the focal length, assume zero tangential distortion or to fix the principal point.
+  
+  .. ref-code-block:: cpp
+  
+  	double rms = :ref:`calibrateCamera <doxid-d9/d0c/group__calib3d_1ga3207604e4b1a1758aa66acb6ed5aa65d>`(objectPoints, imagePoints, imageSize, cameraMatrix,
+  	                            distCoeffs, rvecs, tvecs, s.flag|:ref:`CV_CALIB_FIX_K4 <doxid-d5/db8/group__calib3d__c_1ga39d224b0ce447b4f3dd360a2d9aae906>`|:ref:`CV_CALIB_FIX_K5 <doxid-d5/db8/group__calib3d__c_1gaca023f78c814739894b85446847df06a>`);
+
+* The function returns the average re-projection error. This number gives a good estimation of precision of the found parameters. This should be as close to zero as possible. Given the intrinsic, distortion, rotation and translation matrices we may calculate the error for one view by using the :ref:`cv::projectPoints <doxid-d9/d0c/group__calib3d_1ga1019495a2c8d1743ed5cc23fa0daff8c>` to first transform the object point to image point. Then we calculate the absolute norm between what we got with our transformation and the corner/circle finding algorithm. To find the average error we calculate the arithmetical mean of the errors calculated for all the calibration images.
+  
+  .. ref-code-block:: cpp
+  
+  	static double computeReprojectionErrors( const vector<vector<Point3f> >& objectPoints,
+  	                                         const vector<vector<Point2f> >& imagePoints,
+  	                                         const vector<Mat>& rvecs, const vector<Mat>& tvecs,
+  	                                         const Mat& cameraMatrix , const Mat& distCoeffs,
+  	                                         vector<float>& perViewErrors, bool fisheye)
+  	{
+  	    vector<Point2f> imagePoints2;
+  	    size_t totalPoints = 0;
+  	    double totalErr = 0, err;
+  	    perViewErrors.resize(objectPoints.size());
+  	
+  	    for(size_t i = 0; i < objectPoints.size(); ++i )
+  	    {
+  	        if (fisheye)
+  	        {
+  	            :ref:`fisheye::projectPoints <doxid-d9/d0c/group__calib3d_1ga1019495a2c8d1743ed5cc23fa0daff8c>`(objectPoints[i], imagePoints2, rvecs[i], tvecs[i], cameraMatrix,
+  	                                   distCoeffs);
+  	        }
+  	        else
+  	        {
+  	            :ref:`projectPoints <doxid-d9/d0c/group__calib3d_1ga1019495a2c8d1743ed5cc23fa0daff8c>`(objectPoints[i], rvecs[i], tvecs[i], cameraMatrix, distCoeffs, imagePoints2);
+  	        }
+  	        err = :ref:`norm <doxid-dc/d84/group__core__basic_1ga4e556cb8ad35a643a1ea66e035711bb9>`(imagePoints[i], imagePoints2, :ref:`NORM_L2 <doxid-d2/de8/group__core__array_1ggad12cefbcb5291cf958a85b4b67b6149fa7bacbe84d400336a8f26297d8e80e3a2>`);
+  	
+  	        size_t n = objectPoints[i].size();
+  	        perViewErrors[i] = (float) :ref:`std::sqrt <doxid-d2/d75/namespacecv_1a682082a1892db64a2856403ec17ba297>`(err*err/n);
+  	        totalErr        += err*err;
+  	        totalPoints     += n;
+  	    }
+  	
+  	    return :ref:`std::sqrt <doxid-d2/d75/namespacecv_1a682082a1892db64a2856403ec17ba297>`(totalErr/totalPoints);
+  	}
+  
+  
+  
+  .. rubric:: Results
+
+Let there be `this input chessboard pattern <pattern.png>`__ which has a size of 9 X 6. I've used an AXIS IP camera to create a couple of snapshots of the board and saved it into VID5 directory. I've put this inside the ``images/CameraCalibration`` folder of my working directory and created the following ``VID5.XML`` file that describes which images to use:
+
+.. ref-code-block:: cpp
+
+	<?xml version="1.0"?>
+	<opencv_storage>
+	<images>
+	images/CameraCalibration/VID5/xx1.jpg
+	images/CameraCalibration/VID5/xx2.jpg
+	images/CameraCalibration/VID5/xx3.jpg
+	images/CameraCalibration/VID5/xx4.jpg
+	images/CameraCalibration/VID5/xx5.jpg
+	images/CameraCalibration/VID5/xx6.jpg
+	images/CameraCalibration/VID5/xx7.jpg
+	images/CameraCalibration/VID5/xx8.jpg
+	</images>
+	</opencv_storage>
+
+Then passed ``images/CameraCalibration/VID5/VID5.XML`` as an input in the configuration file. Here's a chessboard pattern found during the runtime of the application:
+
+.. image:: fileListImage.jpg
+
+After applying the distortion removal we get:
+
+.. image:: fileListImageUnDist.jpg
+
+The same works for `this asymmetrical circle pattern <acircles_pattern.png>`__ by setting the input width to 4 and height to 11. This time I've used a live camera feed by specifying its ID ("1") for the input. Here's, how a detected pattern should look:
+
+.. image:: asymetricalPattern.jpg
+
+In both cases in the specified output XML/YAML file you'll find the camera and distortion coefficients matrices:
+
+.. ref-code-block:: cpp
+
+	<camera_matrix type_id="opencv-matrix">
+	<rows>3</rows>
+	<cols>3</cols>
+	<dt>d</dt>
+	<data>
+	 6.5746697944293521e+002 0. 3.1950000000000000e+002 0.
+	 6.5746697944293521e+002 2.3950000000000000e+002 0. 0. 1.</data></camera_matrix>
+	<distortion_coefficients type_id="opencv-matrix">
+	<rows>5</rows>
+	<cols>1</cols>
+	<dt>d</dt>
+	<data>
+	 -4.1802327176423804e-001 5.0715244063187526e-001 0. 0.
+	 -5.7843597214487474e-001</data></distortion_coefficients>
+
+Add these values as constants to your program, call the :ref:`cv::initUndistortRectifyMap <doxid-da/d54/group__imgproc__transform_1ga7dfb72c9cf9780a347fbe3d1c47e5d5a>` and the :ref:`cv::remap <doxid-da/d54/group__imgproc__transform_1gab75ef31ce5cdfb5c44b6da5f3b908ea4>` function to remove distortion and enjoy distortion free inputs for cheap and low quality cameras.
+
+You may observe a runtime instance of this on the `YouTube here <https://www.youtube.com/watch?v=ViPN810E0SU>`__.
+

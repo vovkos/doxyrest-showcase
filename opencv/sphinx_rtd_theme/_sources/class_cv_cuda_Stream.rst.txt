@@ -1,0 +1,184 @@
+.. index:: pair: class; cv::cuda::Stream
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream:
+
+class cv::cuda::Stream
+======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This class encapsulates a queue of asynchronous calls. :ref:`More...<details-d1/d04/classcv_1_1cuda_1_1_stream>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <cuda.hpp>
+	
+	class Stream
+	{
+	public:
+		// typedefs
+	
+		typedef void (*:target:`StreamCallback<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9a27b645eaf4c8bf8c73dd7125712b13>`)(
+			int status,
+			void *userData
+			);
+
+		// construction
+	
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1aa6434e2f5f29bd81406732b39951c246>`();
+		:ref:`Stream<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a3da3061ab4b0c737fcb092494b54cec8>`(const :ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`GpuMat::Allocator<doxid-d0/dbb/classcv_1_1cuda_1_1_gpu_mat_1_1_allocator>`>& allocator);
+
+		// methods
+	
+		void
+		:ref:`enqueueHostCallback<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1aaad28e33e26b9c19c8d0c87c1d6f733d>`(
+			:ref:`StreamCallback<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9a27b645eaf4c8bf8c73dd7125712b13>` callback,
+			void* userData
+			);
+	
+		:ref:`operator bool_type<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a056a9195ab28d22a0278b092901a2ced>`() const;
+	
+		bool
+		:ref:`queryIfComplete<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9fab618395d42fa31987506e42fab1b4>`() const;
+	
+		void
+		:ref:`waitEvent<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9e8a713f312a15ba00702d6f46867987>`(const :ref:`Event<doxid-d6/d04/classcv_1_1cuda_1_1_event>`& event);
+	
+		void
+		:ref:`waitForCompletion<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a0e1d939503e8faad741ab584b720bca6>`();
+	
+		static
+		Stream&
+		:ref:`Null<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>`();
+	};
+.. _details-d1/d04/classcv_1_1cuda_1_1_stream:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This class encapsulates a queue of asynchronous calls.
+
+Currently, you may face problems if an operation is enqueued twice with different data. Some functions use the constant GPU memory, and next call may update the memory before the previous one has been finished. But calling different operations asynchronously is safe because each operation has its own constant buffer. Memory copy/upload/download/set operations to the buffers you hold are also safe.
+
+The :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` class is not thread-safe. Please use different :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` objects for different CPU threads.
+
+
+
+.. ref-code-block:: cpp
+
+	void thread1()
+	{
+	    cv::cuda::Stream stream1;
+	    cv::cuda::func1(..., stream1);
+	}
+	
+	void thread2()
+	{
+	    cv::cuda::Stream stream2;
+	    cv::cuda::func2(..., stream2);
+	}
+
+By default all CUDA routines are launched in :ref:`Stream::Null() <doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131>` object, if the stream is not specified by user. In multi-threading environment the stream objects must be passed explicitly (see previous note).
+
+Construction
+------------
+
+.. index:: pair: function; Stream
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1aa6434e2f5f29bd81406732b39951c246:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Stream()
+
+creates a new asynchronous stream
+
+.. index:: pair: function; Stream
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a3da3061ab4b0c737fcb092494b54cec8:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	Stream(const :ref:`Ptr<doxid-d2/d56/structcv_1_1_ptr>`<:ref:`GpuMat::Allocator<doxid-d0/dbb/classcv_1_1cuda_1_1_gpu_mat_1_1_allocator>`>& allocator)
+
+creates a new asynchronous stream with custom allocator
+
+Methods
+-------
+
+.. index:: pair: function; enqueueHostCallback
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1aaad28e33e26b9c19c8d0c87c1d6f733d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	enqueueHostCallback(
+		:ref:`StreamCallback<doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9a27b645eaf4c8bf8c73dd7125712b13>` callback,
+		void* userData
+		)
+
+Adds a callback to be called on the host after all currently enqueued items in the stream have completed.
+
+Callbacks must not make any CUDA API calls. Callbacks must not perform any synchronization that may depend on outstanding device work or other callbacks that are not mandated to run earlier. Callbacks without a mandated order (in independent streams) execute in undefined order and may be serialized.
+
+.. index:: pair: function; operator bool_type
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a056a9195ab28d22a0278b092901a2ced:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	operator bool_type() const
+
+returns true if stream object is not default (!= 0)
+
+.. index:: pair: function; queryIfComplete
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9fab618395d42fa31987506e42fab1b4:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	bool
+	queryIfComplete() const
+
+Returns true if the current stream queue is finished. Otherwise, it returns false.
+
+.. index:: pair: function; waitEvent
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a9e8a713f312a15ba00702d6f46867987:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	waitEvent(const :ref:`Event<doxid-d6/d04/classcv_1_1cuda_1_1_event>`& event)
+
+Makes a compute stream wait on an event.
+
+.. index:: pair: function; waitForCompletion
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a0e1d939503e8faad741ab584b720bca6:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	waitForCompletion()
+
+Blocks the current CPU thread until all operations in the stream are complete.
+
+.. index:: pair: function; Null
+.. _doxid-d1/d04/classcv_1_1cuda_1_1_stream_1a680af5adfeeb1cdaa5b7b13f680c0131:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	static
+	Stream&
+	Null()
+
+return :ref:`Stream <doxid-d1/d04/classcv_1_1cuda_1_1_stream>` object for default CUDA stream
+

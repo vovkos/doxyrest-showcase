@@ -1,0 +1,218 @@
+.. index:: pair: page; Interoperability with OpenCV 1
+.. _doxid-dd/d90/tutorial_interoperability_with__open_c_v_1:
+
+Interoperability with OpenCV 1
+==============================
+
+.. rubric:: Goal
+
+For the OpenCV developer team it's important to constantly improve the library. We are constantly thinking about methods that will ease your work process, while still maintain the libraries flexibility. The new C++ interface is a development of us that serves this goal. Nevertheless, backward compatibility remains important. We do not want to break your code written for earlier version of the OpenCV library. Therefore, we made sure that we add some functions that deal with this. In the following you'll learn:
+
+* What changed with the version 2 of OpenCV in the way you use the library compared to its first version
+
+* How to add some Gaussian noise to an image
+
+* What are lookup tables and why use them?
+
+.. rubric:: General
+
+When making the switch you first need to learn some about the new data structure for images: :ref:`Mat - The Basic Image Container <doxid-d6/d6d/tutorial_mat_the_basic_image_container>`, this replaces the old :ref:`CvMat <doxid-d6/dda/struct_cv_mat>` and :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` ones. Switching to the new functions is easier. You just need to remember a couple of new things.
+
+OpenCV 2 received reorganization. No longer are all the functions crammed into a single library. We have many modules, each of them containing data structures and functions relevant to certain tasks. This way you do not need to ship a large library if you use just a subset of OpenCV. This means that you should also include only those headers you will use. For example:
+
+.. ref-code-block:: cpp
+
+	#include <opencv2/core.hpp>
+	#include <opencv2/imgproc.hpp>
+	#include <opencv2/highgui.hpp>
+
+All the OpenCV related stuff is put into the *cv* namespace to avoid name conflicts with other libraries data structures and functions. Therefore, either you need to prepend the *cv::* keyword before everything that comes from OpenCV or after the includes, you just add a directive to use this:
+
+.. ref-code-block:: cpp
+
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;  // The new C++ interface API is inside this namespace. Import it.
+
+Because the functions are already in a namespace there is no need for them to contain the *cv* prefix in their name. As such all the new C++ compatible functions don't have this and they follow the camel case naming rule. This means the first letter is small (unless it's a name, like Canny) and the subsequent words start with a capital letter (like *copyMakeBorder*).
+
+Now, remember that you need to link to your application all the modules you use, and in case you are on Windows using the *DLL* system you will need to add, again, to the path all the binaries. For more in-depth information if you're on Windows read :ref:`How to build applications with OpenCV inside the "Microsoft Visual Studio" <doxid-d6/d81/tutorial_windows_visual_studio__opencv>` and for Linux an example usage is explained in :ref:`Using OpenCV with Eclipse (plugin CDT) <doxid-d7/d16/tutorial_linux_eclipse>`.
+
+Now for converting the *Mat* object you can use either the :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` or the :ref:`CvMat <doxid-d6/dda/struct_cv_mat>` operators. While in the C interface you used to work with pointers here it's no longer the case. In the C++ interface we have mostly *Mat* objects. These objects may be freely converted to both :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` and :ref:`CvMat <doxid-d6/dda/struct_cv_mat>` with simple assignment. For example:
+
+.. ref-code-block:: cpp
+
+	Mat I;
+	:ref:`IplImage <doxid-dd/d51/struct_ipl_image>` pI = I;
+	:ref:`CvMat <doxid-d6/dda/struct_cv_mat>`    mI = I;
+
+Now if you want pointers the conversion gets just a little more complicated. The compilers can no longer automatically determinate what you want and as you need to explicitly specify your goal. This is to call the :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` and :ref:`CvMat <doxid-d6/dda/struct_cv_mat>` operators and then get their pointers. For getting the pointer we use the & sign:
+
+.. ref-code-block:: cpp
+
+	Mat I;
+	:ref:`IplImage <doxid-dd/d51/struct_ipl_image>`* pI     = &I.operator :ref:`IplImage <doxid-dd/d51/struct_ipl_image>`();
+	:ref:`CvMat <doxid-d6/dda/struct_cv_mat>`* mI        =  &I.operator :ref:`CvMat <doxid-d6/dda/struct_cv_mat>`();
+
+One of the biggest complaints of the C interface is that it leaves all the memory management to you. You need to figure out when it is safe to release your unused objects and make sure you do so before the program finishes or you could have troublesome memory leeks. To work around this issue in OpenCV there is introduced a sort of smart pointer. This will automatically release the object when it's no longer in use. To use this declare the pointers as a specialization of the *Ptr* :
+
+.. ref-code-block:: cpp
+
+	Ptr<IplImage> piI = &I.operator :ref:`IplImage <doxid-dd/d51/struct_ipl_image>`();
+
+Converting from the C data structures to the *Mat* is done by passing these inside its constructor. For example:
+
+.. ref-code-block:: cpp
+
+	Mat K(piL), L;
+	L = Mat(pI);
+
+.. rubric:: A case study
+
+Now that you have the basics done `here's <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/interoperability_with_OpenCV_1/interoperability_with_OpenCV_1.cpp>`__ an example that mixes the usage of the C interface with the C++ one. You will also find it in the sample directory of the OpenCV source code library at the ``samples/cpp/tutorial_code/core/interoperability_with_OpenCV_1/interoperability_with_OpenCV_1.cpp``. To further help on seeing the difference the programs supports two modes: one mixed C and C++ and one pure C++. If you define the *DEMO_MIXED_API_USE* you'll end up using the first. The program separates the color planes, does some modifications on them and in the end merge them back together.
+
+.. ref-code-block:: cpp
+
+	#include <iostream>
+	
+	#include <opencv2/imgproc.hpp>
+	#include "opencv2/imgcodecs.hpp"
+	#include <opencv2/highgui.hpp>
+	
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;  // The new C++ interface API is inside this namespace. Import it.
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+
+
+
+.. ref-code-block:: cpp
+
+	// comment out the define to use only the latest C++ API
+	#define DEMO_MIXED_API_USE
+	
+	#ifdef DEMO_MIXED_API_USE
+	#  include <opencv2/highgui/highgui_c.h>
+	#  include <opencv2/imgcodecs/imgcodecs_c.h>
+	#endif
+	
+	int main( int argc, char** argv )
+	{
+	    help(argv[0]);
+	    const char* imagename = argc > 1 ? argv[1] : "../data/lena.jpg";
+	
+	#ifdef DEMO_MIXED_API_USE
+	    Ptr<IplImage> IplI(:ref:`cvLoadImage <doxid-da/d0a/group__imgcodecs__c_1ga93b9ddb9fbd8978d27f5a19c6751edcf>`(imagename));      // Ptr<T> is a safe ref-counting pointer class
+	    if(!IplI)
+	    {
+	        cerr << "Can not load image " <<  imagename << endl;
+	        return -1;
+	    }
+	    Mat I = :ref:`cv::cvarrToMat <doxid-d8/dd7/group__core__c__glue_1gafa8ade391d84ed9278c336fd0a58f4e1>`(IplI); // Convert to the new style container. Only header created. Image not copied.
+	#else
+	    Mat I = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(imagename);        // the newer cvLoadImage alternative, MATLAB-style function
+	    if( I.empty() )                   // same as if( !I.data )
+	    {
+	        cerr << "Can not load image " <<  imagename << endl;
+	        return -1;
+	    }
+	#endif
+
+Here you can observe that with the new structure we have no pointer problems, although it is possible to use the old functions and in the end just transform the result to a *Mat* object.
+
+.. ref-code-block:: cpp
+
+	// convert image to YUV color space. The output image will be created automatically.
+	Mat I_YUV;
+	:ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(I, I_YUV, :ref:`COLOR_BGR2YCrCb <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0a63f063ef276a066c4e122997cfd55d6e>`);
+
+	vector<Mat> planes;    // Use the STL's vector structure to store multiple Mat objects
+	:ref:`split <doxid-d2/de8/group__core__array_1ga0547c7fed86152d7e9d0096029c8518a>`(I_YUV, planes);  // split the image into separate color planes (Y U V)
+
+Because, we want to mess around with the images luma component we first convert from the default BGR to the YUV color space and then split the result up into separate planes. Here the program splits: in the first example it processes each plane using one of the three major image scanning algorithms in OpenCV (C [] operator, iterator, individual element access). In a second variant we add to the image some Gaussian noise and then mix together the channels according to some formula.
+
+The scanning version looks like:
+
+.. ref-code-block:: cpp
+
+	// Mat scanning
+	// Method 1. process Y plane using an iterator
+	MatIterator_<uchar> it = planes[0].begin<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(), it_end = planes[0].end<uchar>();
+	for(; it != it_end; ++it)
+	{
+	    double v = *it * 1.7 + :ref:`rand <doxid-dc/d8c/namespacecvflann_1a3518d4d5ff61789af64c0a5b12e9f44e>`()%21 - 10;
+	    *it = :ref:`saturate_cast <doxid-db/de0/group__core__utils_1gab93126370b85fda2c8bfaf8c811faeaf>`<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(v*v/255);
+	}
+
+	for( int y = 0; y < I_YUV.rows; y++ )
+	{
+	    // Method 2. process the first chroma plane using pre-stored row pointer.
+	    :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`* Uptr = planes[1].ptr<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(y);
+	    for( int x = 0; x < I_YUV.cols; x++ )
+	    {
+	        Uptr[x] = :ref:`saturate_cast <doxid-db/de0/group__core__utils_1gab93126370b85fda2c8bfaf8c811faeaf>`<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>((Uptr[x]-128)/2 + 128);
+
+	        // Method 3. process the second chroma plane using individual element access
+	        :ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`& Vxy = planes[2].at<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>(y, x);
+	        Vxy =        :ref:`saturate_cast <doxid-db/de0/group__core__utils_1gab93126370b85fda2c8bfaf8c811faeaf>`<:ref:`uchar <doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`>((Vxy-128)/2 + 128);
+	    }
+	}
+
+Here you can observe that we may go through all the pixels of an image in three fashions: an iterator, a C pointer and an individual element access style. You can read a more in-depth description of these in the :ref:`How to scan images, lookup tables and time measurement with OpenCV <doxid-db/da5/tutorial_how_to_scan_images>` tutorial. Converting from the old function names is easy. Just remove the cv prefix and use the new *Mat* data structure. Here's an example of this by using the weighted addition function:
+
+.. ref-code-block:: cpp
+
+	    Mat noisyI(I.size(), :ref:`CV_8U <doxid-d1/d1b/group__core__hal__interface_1ga32b18d904ee2b1731a9416a8eef67d06>`);           // Create a matrix of the specified size and type
+	
+	    // Fills the matrix with normally distributed random values (around number with deviation off).
+	    // There is also randu() for uniformly distributed random number generation
+	    :ref:`randn <doxid-d2/de8/group__core__array_1gaeff1f61e972d133a04ce3a5f81cf6808>`(noisyI, Scalar::all(128), Scalar::all(20));
+	
+	    // blur the noisyI a bit, kernel size is 3x3 and both sigma's are set to 0.5
+	    :ref:`GaussianBlur <doxid-d4/d86/group__imgproc__filter_1gaabe8c836e97159a9193fb0b11ac52cf1>`(noisyI, noisyI, :ref:`Size <doxid-dc/d84/group__core__basic_1ga346f563897249351a34549137c8532a0>`(3, 3), 0.5, 0.5);
+	
+	    const double brightness_gain = 0;
+	    const double contrast_gain = 1.7;
+	
+	#ifdef DEMO_MIXED_API_USE
+	    // To pass the new matrices to the functions that only work with IplImage or CvMat do:
+	    // step 1) Convert the headers (tip: data will not be copied).
+	    // step 2) call the function   (tip: to pass a pointer do not forget unary "&" to form pointers)
+	
+	    :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` cv_planes_0 = planes[0], cv_noise = noisyI;
+	    :ref:`cvAddWeighted <doxid-d2/df8/group__core__c_1ga2681d8c88c806553824b6338a4c26790>`(&cv_planes_0, contrast_gain, &cv_noise, 1, -128 + brightness_gain, &cv_planes_0);
+	#else
+	    :ref:`addWeighted <doxid-d2/de8/group__core__array_1gafafb2513349db3bcff51f54ee5592a19>`(planes[0], contrast_gain, noisyI, 1, -128 + brightness_gain, planes[0]);
+	#endif
+	
+	    const double color_scale = 0.5;
+	    // Mat::convertTo() replaces cvConvertScale.
+	    // One must explicitly specify the output matrix type (we keep it intact - planes[1].type())
+	    planes[1].convertTo(planes[1], planes[1].type(), color_scale, 128*(1-color_scale));
+	
+	    // alternative form of cv::convertScale if we know the datatype at compile time ("uchar" here).
+	    // This expression will not create any temporary arrays ( so should be almost as fast as above)
+	    planes[2] = Mat_<uchar>(planes[2]*color_scale + 128*(1-color_scale));
+	
+	    // Mat::mul replaces cvMul(). Again, no temporary arrays are created in case of simple expressions.
+	    planes[0] = planes[0].mul(planes[0], 1./255);
+
+As you may observe the *planes* variable is of type *Mat*. However, converting from *Mat* to :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` is easy and made automatically with a simple assignment operator.
+
+.. ref-code-block:: cpp
+
+	    :ref:`merge <doxid-d2/de8/group__core__array_1ga7d7b4d6c6ee504b30a20b1680029c7b4>`(planes, I_YUV);                // now merge the results back
+	    :ref:`cvtColor <doxid-d7/d1b/group__imgproc__misc_1ga397ae87e1288a81d2363b61574eb8cab>`(I_YUV, I, :ref:`COLOR_YCrCb2BGR <doxid-d7/d1b/group__imgproc__misc_1gga4e0972be5de079fed4e3a10e24ef5ef0aa6d4108b0f3d5e21dc246a0c59592b38>`);  // and produce the output RGB image
+	
+	    :ref:`namedWindow <doxid-d7/dfc/group__highgui_1ga5afdf8410934fd099df85c75b2e0888b>`("image with grain", :ref:`WINDOW_AUTOSIZE <doxid-d7/dfc/group__highgui_1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f>`);   // use this to create images
+	
+	#ifdef DEMO_MIXED_API_USE
+	    // this is to demonstrate that I and IplI really share the data - the result of the above
+	    // processing is stored in I and thus in IplI too.
+	    :ref:`cvShowImage <doxid-d0/d28/group__highgui__c_1gaaf04b3191c92b242f53940ec447facea>`("image with grain", IplI);
+	#else
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("image with grain", I); // the new MATLAB style function show
+	#endif
+
+The new *imshow* highgui function accepts both the *Mat* and :ref:`IplImage <doxid-dd/d51/struct_ipl_image>` data structures. Compile and run the program and if the first image below is your input you may get either the first or second as output:
+
+.. image:: outputInteropOpenCV1.jpg
+
+You may observe a runtime instance of this on the `YouTube here <https://www.youtube.com/watch?v=qckm-zvo31w>`__ and you can `download the source code from here <https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/interoperability_with_OpenCV_1/interoperability_with_OpenCV_1.cpp>`__ or find it in the ``samples/cpp/tutorial_code/core/interoperability_with_OpenCV_1/interoperability_with_OpenCV_1.cpp`` of the OpenCV source code library.
+

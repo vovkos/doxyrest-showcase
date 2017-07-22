@@ -1,0 +1,63 @@
+.. index:: pair: example; lsd_lines.cpp
+.. _doxid-d8/dd4/lsd_lines_8cpp-example:
+
+lsd_lines.cpp
+=============
+
+An example using the LineSegmentDetector
+
+.. ref-code-block:: cpp
+
+	#include <iostream>
+	
+	#include "opencv2/imgproc.hpp"
+	#include "opencv2/imgcodecs.hpp"
+	#include "opencv2/highgui.hpp"
+	
+	using namespace :ref:`std <doxid-d8/dcc/namespacestd>`;
+	using namespace :ref:`cv <doxid-d2/d75/namespacecv>`;
+	
+	int main(int argc, char** argv)
+	{
+	    std::string in;
+	    :ref:`cv::CommandLineParser <doxid-da/dd8/classcv_1_1_command_line_parser>` parser(argc, argv, "{@input|../data/building.jpg|input image}{help h||show help message}");
+	    if (parser.has("help"))
+	    {
+	        parser.printMessage();
+	        return 0;
+	    }
+	    in = parser.get<string>("@input");
+	
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` image = :ref:`imread <doxid-d4/da8/group__imgcodecs_1ga288b8b3da0892bd651fce07b3bbd3a56>`(in, :ref:`IMREAD_GRAYSCALE <doxid-d4/da8/group__imgcodecs_1gga61d9b0126a3e57d9277ac48327799c80ae29981cfc153d3b0cef5c0daeedd2125>`);
+	
+	    if( image.empty() )
+	    { return -1; }
+	
+	#if 0
+	    :ref:`Canny <doxid-dd/d1a/group__imgproc__feature_1ga04723e007ed888ddf11d9ba04e2232de>`(image, image, 50, 200, 3); // Apply canny edge
+	#endif
+	
+	    // Create and LSD detector with standard or no refinement.
+	#if 1
+	    :ref:`Ptr\<LineSegmentDetector> <doxid-d2/d56/structcv_1_1_ptr>` ls = :ref:`createLineSegmentDetector <doxid-dd/d1a/group__imgproc__feature_1ga6b2ad2353c337c42551b521a73eeae7d>`(:ref:`LSD_REFINE_STD <doxid-dd/d1a/group__imgproc__feature_1ggad092a7362b8afb8a905238a41898d98cade4b0da3a52bc9765f08255f041facb4>`);
+	#else
+	    :ref:`Ptr\<LineSegmentDetector> <doxid-d2/d56/structcv_1_1_ptr>` ls = :ref:`createLineSegmentDetector <doxid-dd/d1a/group__imgproc__feature_1ga6b2ad2353c337c42551b521a73eeae7d>`(:ref:`LSD_REFINE_NONE <doxid-dd/d1a/group__imgproc__feature_1ggad092a7362b8afb8a905238a41898d98ca0114485ddcbb3d913b6d899a8697e30e>`);
+	#endif
+	
+	    double start = double(:ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`());
+	    vector<Vec4f> lines_std;
+	
+	    // Detect the lines
+	    ls->:ref:`detect <doxid-dc/d72/classcv_1_1_line_segment_detector_1a1bbd8f90f6feb4d673d1a1bc614a667c>`(image, lines_std);
+	
+	    double duration_ms = (double(:ref:`getTickCount <doxid-db/de0/group__core__utils_1gae73f58000611a1af25dd36d496bf4487>`()) - start) * 1000 / :ref:`getTickFrequency <doxid-db/de0/group__core__utils_1ga705441a9ef01f47acdc55d87fbe5090c>`();
+	    std::cout << "It took " << duration_ms << " ms." << std::endl;
+	
+	    // Show found lines
+	    :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` drawnLines(image);
+	    ls->:ref:`drawSegments <doxid-dc/d72/classcv_1_1_line_segment_detector_1a1816a3c27f7c9b8d8acffec14451d4c4>`(drawnLines, lines_std);
+	    :ref:`imshow <doxid-d7/dfc/group__highgui_1ga453d42fe4cb60e5723281a89973ee563>`("Standard refinement", drawnLines);
+	
+	    :ref:`waitKey <doxid-d7/dfc/group__highgui_1ga5628525ad33f52eab17feebcfba38bd7>`();
+	    return 0;
+	}

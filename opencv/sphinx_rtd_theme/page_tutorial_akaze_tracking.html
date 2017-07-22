@@ -1,0 +1,614 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>AKAZE and ORB planar tracking &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="AKAZE local features matching" href="page_tutorial_akaze_matching.html" />
+    <link rel="prev" title="2D Features framework (feature2d module)" href="page_tutorial_table_of_content_features2d.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">AKAZE and ORB planar tracking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_akaze_matching.html">AKAZE local features matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_generic_corner_detector.html">Creating yor own corner detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_corner_subpixeles.html">Detecting corners location in subpixeles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_detection_of_planar_objects.html">Detection of planar objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_feature_description.html">Feature Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_feature_detection.html">Feature Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_feature_flann_matcher.html">Feature Matching with FLANN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_feature_homography.html">Features2D + Homography to find a known object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_harris_detector.html">Harris corner detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_good_features_to_track.html">Shi-Tomasi corner detector</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a> &raquo;</li>
+        
+      <li>AKAZE and ORB planar tracking</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="akaze-and-orb-planar-tracking">
+<span id="doxid-dc-d16-tutorial-akaze-tracking"></span><span id="index-0"></span><h1>AKAZE and ORB planar tracking</h1>
+<p class="rubric">Introduction</p>
+<p>In this tutorial we will compare <em>AKAZE</em> and <em>ORB</em> local features using them to find matches between video frames and track object movements.</p>
+<p>The algorithm is as follows:</p>
+<ul class="simple">
+<li>Detect and describe keypoints on the first frame, manually set object boundaries</li>
+<li>For every next frame:<ol class="arabic">
+<li>Detect and describe keypoints</li>
+<li>Match them using bruteforce matcher</li>
+<li>Estimate homography transformation using RANSAC</li>
+<li>Filter inliers from all the matches</li>
+<li>Apply homography transformation to the bounding box to find the object</li>
+<li>Draw bounding box and inliers, compute inlier ratio as evaluation metric</li>
+</ol>
+</li>
+</ul>
+<img alt="_images/frame.png" src="_images/frame.png" />
+<p class="rubric">Data</p>
+<p>To do the tracking we need a video and object position on the first frame.</p>
+<p>You can download our example video and data from <a class="reference external" href="https://docs.google.com/file/d/0B72G7D4snftJandBb0taLVJHMFk">here</a>.</p>
+<p>To run the code you have to specify input (camera id or video_file). Then, select a bounding box with the mouse, and press any key to start tracking</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">.</span><span class="o">/</span><span class="n">planar_tracking</span> <span class="n">blais</span><span class="p">.</span><span class="n">mp4</span>
+</pre>
+<p class="rubric">Source Code</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/features2d.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/videoio.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/opencv.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;      //for imshow</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iomanip&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;stats.h&quot; // Stats structure definition</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils.h&quot; // Drawing and printing functions</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">double</span> <span class="n">akaze_thresh</span> <span class="o">=</span> <span class="mf">3e-4</span><span class="p">;</span> <span class="c1">// AKAZE detection threshold set to locate about 1000 keypoints</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">ransac_thresh</span> <span class="o">=</span> <span class="mf">2.5f</span><span class="p">;</span> <span class="c1">// RANSAC inlier threshold</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">nn_match_ratio</span> <span class="o">=</span> <span class="mf">0.8f</span><span class="p">;</span> <span class="c1">// Nearest-neighbour matching ratio</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">bb_min_inliers</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="c1">// Minimal number of inliers to draw bounding box</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">stats_update_period</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">// On-screen statistics are updated every 10 frames</span>
+
+<span class="k">namespace</span> <span class="n">example</span> <span class="p">{</span>
+<span class="k">class</span> <span class="n">Tracker</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Tracker</span><span class="p">(</span><a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;Feature2D&gt;</span></a><span></span> <span class="n">_detector</span><span class="p">,</span> <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;DescriptorMatcher&gt;</span></a><span></span> <span class="n">_matcher</span><span class="p">)</span> <span class="o">:</span>
+        <span class="n">detector</span><span class="p">(</span><span class="n">_detector</span><span class="p">),</span>
+        <span class="n">matcher</span><span class="p">(</span><span class="n">_matcher</span><span class="p">)</span>
+    <span class="p">{}</span>
+
+    <span class="kt">void</span> <span class="n">setFirstFrame</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">bb</span><span class="p">,</span> <span class="n">string</span> <span class="n">title</span><span class="p">,</span> <span class="n">Stats</span><span class="o">&amp;</span> <span class="n">stats</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">process</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">,</span> <span class="n">Stats</span><span class="o">&amp;</span> <span class="n">stats</span><span class="p">);</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;Feature2D&gt;</span></a><span></span> <span class="n">getDetector</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">detector</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="k">protected</span><span class="o">:</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;Feature2D&gt;</span></a><span></span> <span class="n">detector</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;DescriptorMatcher&gt;</span></a><span></span> <span class="n">matcher</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">first_frame</span><span class="p">,</span> <span class="n">first_desc</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">first_kp</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">object_bb</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="n">Tracker</span><span class="o">::</span><span class="n">setFirstFrame</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">bb</span><span class="p">,</span> <span class="n">string</span> <span class="n">title</span><span class="p">,</span> <span class="n">Stats</span><span class="o">&amp;</span> <span class="n">stats</span><span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span> <span class="o">*</span><span class="n">ptMask</span> <span class="o">=</span> <span class="k">new</span> <a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point</span></a><span></span><span class="p">[</span><span class="n">bb</span><span class="p">.</span><span class="n">size</span><span class="p">()];</span>
+    <span class="k">const</span> <span class="n">Point</span><span class="o">*</span> <span class="n">ptContain</span> <span class="o">=</span> <span class="p">{</span> <span class="o">&amp;</span><span class="n">ptMask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">};</span>
+    <span class="kt">int</span> <span class="n">iSize</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bb</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">bb</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ptMask</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a4c96fa7bdbfe390be5ed356edb274ff3"><span class="std std-ref">x</span></a><span></span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">);</span>
+        <span class="n">ptMask</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point-1a157337197338ff199e5df1a393022f15"><span class="std std-ref">y</span></a><span></span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bb</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">first_frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">cv::Mat</span></a><span></span> <span class="n">matMask</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">cv::Mat::zeros</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a146f8e8dda07d1365a575ab83d9828d1"><span class="std std-ref">size</span></a><span></span><span class="p">(),</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga81df635441b21f532fdace401e04f588"><span class="std std-ref">CV_8UC1</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf30888828337aa4c6b56782b5dfbd4b7"><span class="std std-ref">cv::fillPoly</span></a><span></span><span class="p">(</span><span class="n">matMask</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ptContain</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">iSize</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Scalar_.html#doxid-d7-d13-classcv-1-1-scalar-1ac1509a4b8454fe7fe29db069e13a2e6f"><span class="std std-ref">cv::Scalar::all</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">));</span>
+    <span class="n">detector</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_Feature2D.html#doxid-d9-d9f-classcv-1-1-feature2-d-1a8be0d1c20b08eb867184b8d74c15a677"><span class="std std-ref">detectAndCompute</span></a><span></span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">matMask</span><span class="p">,</span> <span class="n">first_kp</span><span class="p">,</span> <span class="n">first_desc</span><span class="p">);</span>
+    <span class="n">stats</span><span class="p">.</span><span class="n">keypoints</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">first_kp</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">drawBoundingBox</span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">bb</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">putText</span></a><span></span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <a class="reference internal" href="enum_cv_HersheyFonts.html#doxid-d0-de1-group-core-1gga0f9314ea6e35f99bb23f29567fc16e11a08cf3b0a37729fbb62a3007d499cbd8b"><span class="std std-ref">FONT_HERSHEY_PLAIN</span></a><span></span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="n">object_bb</span> <span class="o">=</span> <span class="n">bb</span><span class="p">;</span>
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">ptMask</span><span class="p">;</span>
+<span class="p">}</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">Tracker</span><span class="o">::</span><span class="n">process</span><span class="p">(</span><span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">,</span> <span class="n">Stats</span><span class="o">&amp;</span> <span class="n">stats</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">kp</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">desc</span><span class="p">;</span>
+    <span class="n">detector</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_Feature2D.html#doxid-d9-d9f-classcv-1-1-feature2-d-1a8be0d1c20b08eb867184b8d74c15a677"><span class="std std-ref">detectAndCompute</span></a><span></span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span> <span class="n">kp</span><span class="p">,</span> <span class="n">desc</span><span class="p">);</span>
+    <span class="n">stats</span><span class="p">.</span><span class="n">keypoints</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">kp</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">DMatch</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">matches</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">matched1</span><span class="p">,</span> <span class="n">matched2</span><span class="p">;</span>
+    <span class="n">matcher</span><span class="o">-&gt;</span><span class="n">knnMatch</span><span class="p">(</span><span class="n">first_desc</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">matches</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matches</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">nn_match_ratio</span> <span class="o">*</span> <span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">].</span><span class="n">distance</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">matched1</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">first_kp</span><span class="p">[</span><span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">queryIdx</span><span class="p">]);</span>
+            <span class="n">matched2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span>      <span class="n">kp</span><span class="p">[</span><span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">trainIdx</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">stats</span><span class="p">.</span><span class="n">matches</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">matched1</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">inlier_mask</span><span class="p">,</span> <span class="n">homography</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">KeyPoint</span><span class="o">&gt;</span> <span class="n">inliers1</span><span class="p">,</span> <span class="n">inliers2</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">DMatch</span><span class="o">&gt;</span> <span class="n">inlier_matches</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">matched1</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">homography</span> <span class="o">=</span> <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga4abc2ece9fab9398f2e560d53c8c9780"><span class="std std-ref">findHomography</span></a><span></span><span class="p">(</span><span class="n">Points</span><span class="p">(</span><span class="n">matched1</span><span class="p">),</span> <span class="n">Points</span><span class="p">(</span><span class="n">matched2</span><span class="p">),</span>
+                                    <a class="reference internal" href="namespace_cv.html#doxid-d9-d0c-group-calib3d-1gga96ccbb3198badce31862120414bc0d2da724159df258a5d7e29410a6a2f4e6c87"><span class="std std-ref">RANSAC</span></a><span></span><span class="p">,</span> <span class="n">ransac_thresh</span><span class="p">,</span> <span class="n">inlier_mask</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">matched1</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">||</span> <span class="n">homography</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">())</span> <span class="p">{</span>
+        <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">res</span><span class="p">;</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gaf9771c991763233866bf76b5b5d1776f"><span class="std std-ref">hconcat</span></a><span></span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">res</span><span class="p">);</span>
+        <span class="n">stats</span><span class="p">.</span><span class="n">inliers</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">stats</span><span class="p">.</span><span class="n">ratio</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matched1</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">inlier_mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">new_i</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">inliers1</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+            <span class="n">inliers1</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">matched1</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="n">inliers2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">matched2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="n">inlier_matches</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><a class="reference internal" href="class_cv_DMatch.html#doxid-d9-db0-classcv-1-1-d-match"><span class="std std-ref">DMatch</span></a><span></span><span class="p">(</span><span class="n">new_i</span><span class="p">,</span> <span class="n">new_i</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">stats</span><span class="p">.</span><span class="n">inliers</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">inliers1</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">stats</span><span class="p">.</span><span class="n">ratio</span> <span class="o">=</span> <span class="n">stats</span><span class="p">.</span><span class="n">inliers</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">stats</span><span class="p">.</span><span class="n">matches</span><span class="p">;</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">new_bb</span><span class="p">;</span>
+    <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gad327659ac03e5fd6894b90025e6900a7"><span class="std std-ref">perspectiveTransform</span></a><span></span><span class="p">(</span><span class="n">object_bb</span><span class="p">,</span> <span class="n">new_bb</span><span class="p">,</span> <span class="n">homography</span><span class="p">);</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame_with_bb</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1ad1c9cc37d66c4e5bd05fae36f62d1cb4"><span class="std std-ref">clone</span></a><span></span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">stats</span><span class="p">.</span><span class="n">inliers</span> <span class="o">&gt;=</span> <span class="n">bb_min_inliers</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">drawBoundingBox</span><span class="p">(</span><span class="n">frame_with_bb</span><span class="p">,</span> <span class="n">new_bb</span><span class="p">);</span>
+    <span class="p">}</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">res</span><span class="p">;</span>
+    <a class="reference internal" href="group_features2d_draw.html#doxid-d4-d5d-group-features2d-draw-1ga7421b3941617d7267e3f2311582f49e1"><span class="std std-ref">drawMatches</span></a><span></span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">inliers1</span><span class="p">,</span> <span class="n">frame_with_bb</span><span class="p">,</span> <span class="n">inliers2</span><span class="p">,</span>
+                <span class="n">inlier_matches</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span>
+                <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Usage: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+             <span class="o">&lt;&lt;</span> <span class="s">&quot;akaze_track input_path&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+             <span class="o">&lt;&lt;</span> <span class="s">&quot;  (input_path can be a camera id, like 0,1,2 or a video filename)&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">video_name</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">stringstream</span> <span class="n">ssFormat</span><span class="p">;</span>
+    <span class="n">ssFormat</span> <span class="o">&lt;&lt;</span> <span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+
+    <a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture"><span class="std std-ref">VideoCapture</span></a><span></span> <span class="n">video_in</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">video_name</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="n">ssFormat</span><span class="p">.</span><span class="n">str</span><span class="p">())</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>    <span class="c1">//test str==str(num)</span>
+        <span class="n">video_in</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="n">video_in</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1ab5b7391cd5ec50e7237e575a758f6f05"><span class="std std-ref">open</span></a><span></span><span class="p">(</span><span class="n">video_name</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">video_in</span><span class="p">.</span><a class="reference internal" href="class_cv_VideoCapture.html#doxid-df-dcb-classcv-1-1-video-capture-1a9d2ca36789e7fcfe7a7be3b328038585"><span class="std std-ref">isOpened</span></a><span></span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Couldn&#39;t open &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Stats</span> <span class="n">stats</span><span class="p">,</span> <span class="n">akaze_stats</span><span class="p">,</span> <span class="n">orb_stats</span><span class="p">;</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;AKAZE&gt;</span></a><span></span> <span class="n">akaze</span> <span class="o">=</span> <span class="n">AKAZE</span><span class="o">::</span><span class="n">create</span><span class="p">();</span>
+    <span class="n">akaze</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_AKAZE.html#doxid-d4-df2-classcv-1-1-a-k-a-z-e-1aaeec869ae038190ffac3f38174058b25"><span class="std std-ref">setThreshold</span></a><span></span><span class="p">(</span><span class="n">akaze_thresh</span><span class="p">);</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;ORB&gt;</span></a><span></span> <span class="n">orb</span> <span class="o">=</span> <span class="n">ORB</span><span class="o">::</span><span class="n">create</span><span class="p">();</span>
+    <a class="reference internal" href="struct_cv_Ptr.html#doxid-d2-d56-structcv-1-1-ptr"><span class="std std-ref">Ptr&lt;DescriptorMatcher&gt;</span></a><span></span> <span class="n">matcher</span> <span class="o">=</span> <span class="n">DescriptorMatcher</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;BruteForce-Hamming&quot;</span><span class="p">);</span>
+    <span class="n">example</span><span class="o">::</span><span class="n">Tracker</span> <span class="n">akaze_tracker</span><span class="p">(</span><span class="n">akaze</span><span class="p">,</span> <span class="n">matcher</span><span class="p">);</span>
+    <span class="n">example</span><span class="o">::</span><span class="n">Tracker</span> <span class="n">orb_tracker</span><span class="p">(</span><span class="n">orb</span><span class="p">,</span> <span class="n">matcher</span><span class="p">);</span>
+
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">frame</span><span class="p">;</span>
+    <span class="n">video_in</span> <span class="o">&gt;&gt;</span> <span class="n">frame</span><span class="p">;</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="n">video_name</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3a29e45c5af696f73ce5e153601e5ca0f1"><span class="std std-ref">WINDOW_NORMAL</span></a><span></span><span class="p">);</span>
+    <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga9e80e080f7ef33f897e415358aee7f7e"><span class="std std-ref">cv::resizeWindow</span></a><span></span><span class="p">(</span><span class="n">video_name</span><span class="p">,</span> <span class="n">frame</span><span class="p">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">frame</span><span class="p">.</span><span class="n">rows</span><span class="p">);</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Please select a bounding box, and press any key to continue.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">bb</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect"><span class="std std-ref">cv::Rect</span></a><span></span> <span class="n">uBox</span> <span class="o">=</span> <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga8daf4730d3adf7035b6de9be4c469af5"><span class="std std-ref">cv::selectROI</span></a><span></span><span class="p">(</span><span class="n">video_name</span><span class="p">,</span> <span class="n">frame</span><span class="p">);</span>
+    <span class="n">bb</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a2cadfdc3b4b7dbf8085622b27e044572"><span class="std std-ref">x</span></a><span></span><span class="p">),</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6a4860e984df1752623b6ce2a8bde73a"><span class="std std-ref">y</span></a><span></span><span class="p">)));</span>
+    <span class="n">bb</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a2cadfdc3b4b7dbf8085622b27e044572"><span class="std std-ref">x</span></a><span></span><span class="o">+</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6c16a3bce912faa4fe5be42d7f1b53fe"><span class="std std-ref">width</span></a><span></span><span class="p">),</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6a4860e984df1752623b6ce2a8bde73a"><span class="std std-ref">y</span></a><span></span><span class="p">)));</span>
+    <span class="n">bb</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a2cadfdc3b4b7dbf8085622b27e044572"><span class="std std-ref">x</span></a><span></span><span class="o">+</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6c16a3bce912faa4fe5be42d7f1b53fe"><span class="std std-ref">width</span></a><span></span><span class="p">),</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6a4860e984df1752623b6ce2a8bde73a"><span class="std std-ref">y</span></a><span></span><span class="o">+</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6fed06513cedd76652389e38c7b1222e"><span class="std std-ref">height</span></a><span></span><span class="p">)));</span>
+    <span class="n">bb</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><a class="reference internal" href="class_cv_Point_.html#doxid-d9-d87-classcv-1-1-point"><span class="std std-ref">cv::Point2f</span></a><span></span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a2cadfdc3b4b7dbf8085622b27e044572"><span class="std std-ref">x</span></a><span></span><span class="p">),</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6a4860e984df1752623b6ce2a8bde73a"><span class="std std-ref">y</span></a><span></span><span class="o">+</span><span class="n">uBox</span><span class="p">.</span><a class="reference internal" href="class_cv_Rect_.html#doxid-d6-db0-classcv-1-1-rect-1a6fed06513cedd76652389e38c7b1222e"><span class="std std-ref">height</span></a><span></span><span class="p">)));</span>
+
+    <span class="n">akaze_tracker</span><span class="p">.</span><span class="n">setFirstFrame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="s">&quot;AKAZE&quot;</span><span class="p">,</span> <span class="n">stats</span><span class="p">);</span>
+    <span class="n">orb_tracker</span><span class="p">.</span><span class="n">setFirstFrame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="s">&quot;ORB&quot;</span><span class="p">,</span> <span class="n">stats</span><span class="p">);</span>
+
+    <span class="n">Stats</span> <span class="n">akaze_draw_stats</span><span class="p">,</span> <span class="n">orb_draw_stats</span><span class="p">;</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">akaze_res</span><span class="p">,</span> <span class="n">orb_res</span><span class="p">,</span> <span class="n">res_frame</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(;;)</span> <span class="p">{</span>
+        <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+        <span class="kt">bool</span> <span class="n">update_stats</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">stats_update_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">video_in</span> <span class="o">&gt;&gt;</span> <span class="n">frame</span><span class="p">;</span>
+        <span class="c1">// stop the program if no more images</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="k">break</span><span class="p">;</span>
+
+        <span class="n">akaze_res</span> <span class="o">=</span> <span class="n">akaze_tracker</span><span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">stats</span><span class="p">);</span>
+        <span class="n">akaze_stats</span> <span class="o">+=</span> <span class="n">stats</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">update_stats</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">akaze_draw_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">orb</span><span class="o">-&gt;</span><a class="reference internal" href="class_cv_ORB.html#doxid-dc-dca-classcv-1-1-o-r-b-1aca471cb82c03b14d3e824e4dcccf90b7"><span class="std std-ref">setMaxFeatures</span></a><span></span><span class="p">(</span><span class="n">stats</span><span class="p">.</span><span class="n">keypoints</span><span class="p">);</span>
+        <span class="n">orb_res</span> <span class="o">=</span> <span class="n">orb_tracker</span><span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">stats</span><span class="p">);</span>
+        <span class="n">orb_stats</span> <span class="o">+=</span> <span class="n">stats</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">update_stats</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">orb_draw_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">drawStatistics</span><span class="p">(</span><span class="n">akaze_res</span><span class="p">,</span> <span class="n">akaze_draw_stats</span><span class="p">);</span>
+        <span class="n">drawStatistics</span><span class="p">(</span><span class="n">orb_res</span><span class="p">,</span> <span class="n">orb_draw_stats</span><span class="p">);</span>
+        <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga744f53b69f6e4f12156cdde4e76aed27"><span class="std std-ref">vconcat</span></a><span></span><span class="p">(</span><span class="n">akaze_res</span><span class="p">,</span> <span class="n">orb_res</span><span class="p">,</span> <span class="n">res_frame</span><span class="p">);</span>
+        <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">cv::imshow</span></a><span></span><span class="p">(</span><span class="n">video_name</span><span class="p">,</span> <span class="n">res_frame</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">27</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span> <span class="c1">//quit on ESC button</span>
+    <span class="p">}</span>
+    <span class="n">akaze_stats</span> <span class="o">/=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">orb_stats</span> <span class="o">/=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">printStatistics</span><span class="p">(</span><span class="s">&quot;AKAZE&quot;</span><span class="p">,</span> <span class="n">akaze_stats</span><span class="p">);</span>
+    <span class="n">printStatistics</span><span class="p">(</span><span class="s">&quot;ORB&quot;</span><span class="p">,</span> <span class="n">orb_stats</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p class="rubric">Explanation</p>
+<p class="rubric">Tracker class</p>
+<p>This class implements algorithm described abobve using given feature detector and descriptor matcher.</p>
+<ul>
+<li><p class="first"><strong>Setting up the first frame</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="n">Tracker</span><span class="o">::</span><span class="n">setFirstFrame</span><span class="p">(</span><span class="k">const</span> <span class="n">Mat</span> <span class="n">frame</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point2f</span><span class="o">&gt;</span> <span class="n">bb</span><span class="p">,</span> <span class="n">string</span> <span class="n">title</span><span class="p">,</span> <span class="n">Stats</span><span class="o">&amp;</span> <span class="n">stats</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">first_frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">clone</span><span class="p">();</span>
+    <span class="p">(</span><span class="o">*</span><span class="n">detector</span><span class="p">)(</span><span class="n">first_frame</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span> <span class="n">first_kp</span><span class="p">,</span> <span class="n">first_desc</span><span class="p">);</span>
+    <span class="n">stats</span><span class="p">.</span><span class="n">keypoints</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">first_kp</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">drawBoundingBox</span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">bb</span><span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga5126f47f883d730f633d74f07456c576"><span class="std std-ref">putText</span></a><span></span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <a class="reference internal" href="enum_cv_HersheyFonts.html#doxid-d0-de1-group-core-1gga0f9314ea6e35f99bb23f29567fc16e11a08cf3b0a37729fbb62a3007d499cbd8b"><span class="std std-ref">FONT_HERSHEY_PLAIN</span></a><span></span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">Scalar</span><span class="o">::</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="n">object_bb</span> <span class="o">=</span> <span class="n">bb</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>We compute and store keypoints and descriptors from the first frame and prepare it for the output.</p>
+<p>We need to save number of detected keypoints to make sure both detectors locate roughly the same number of those.</p>
+</li>
+<li><p class="first"><strong>Processing frames</strong></p>
+<ol class="arabic">
+<li><p class="first">Locate keypoints and compute descriptors</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">(</span><span class="o">*</span><span class="n">detector</span><span class="p">)(</span><span class="n">frame</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1gad9287b23bba2fed753b36ef561ae7346"><span class="std std-ref">noArray</span></a><span></span><span class="p">(),</span> <span class="n">kp</span><span class="p">,</span> <span class="n">desc</span><span class="p">);</span>
+</pre>
+<p>To find matches between frames we have to locate the keypoints first.</p>
+<p>In this tutorial detectors are set up to find about 1000 keypoints on each frame.</p>
+</li>
+<li><p class="first">Use 2-nn matcher to find correspondences</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">matcher</span><span class="o">-&gt;</span><span class="n">knnMatch</span><span class="p">(</span><span class="n">first_desc</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">matches</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matches</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">nn_match_ratio</span> <span class="o">*</span> <span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">].</span><span class="n">distance</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">matched1</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">first_kp</span><span class="p">[</span><span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">queryIdx</span><span class="p">]);</span>
+        <span class="n">matched2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span>      <span class="n">kp</span><span class="p">[</span><span class="n">matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="n">trainIdx</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>If the closest match is <em>nn_match_ratio</em> closer than the second closest one, then it’s a match.</p>
+</li>
+<li><p class="first">Use <em>RANSAC</em> to estimate homography transformation</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">homography</span> <span class="o">=</span> <a class="reference internal" href="group_calib3d.html#doxid-d9-d0c-group-calib3d-1ga4abc2ece9fab9398f2e560d53c8c9780"><span class="std std-ref">findHomography</span></a><span></span><span class="p">(</span><span class="n">Points</span><span class="p">(</span><span class="n">matched1</span><span class="p">),</span> <span class="n">Points</span><span class="p">(</span><span class="n">matched2</span><span class="p">),</span>
+                            <a class="reference internal" href="namespace_cv.html#doxid-d9-d0c-group-calib3d-1gga96ccbb3198badce31862120414bc0d2da724159df258a5d7e29410a6a2f4e6c87"><span class="std std-ref">RANSAC</span></a><span></span><span class="p">,</span> <span class="n">ransac_thresh</span><span class="p">,</span> <span class="n">inlier_mask</span><span class="p">);</span>
+</pre>
+<p>If there are at least 4 matches we can use random sample consensus to estimate image transformation.</p>
+</li>
+<li><p class="first">Save the inliers</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matched1</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">inlier_mask</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga65f85814a8290f9797005d3b28e7e5fc"><span class="std std-ref">uchar</span></a><span></span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">new_i</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">inliers1</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+        <span class="n">inliers1</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">matched1</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">inliers2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">matched2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">inlier_matches</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">DMatch</span><span class="p">(</span><span class="n">new_i</span><span class="p">,</span> <span class="n">new_i</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>Since <em>findHomography</em> computes the inliers we only have to save the chosen points and matches.</p>
+</li>
+<li><p class="first">Project object bounding box</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1gad327659ac03e5fd6894b90025e6900a7"><span class="std std-ref">perspectiveTransform</span></a><span></span><span class="p">(</span><span class="n">object_bb</span><span class="p">,</span> <span class="n">new_bb</span><span class="p">,</span> <span class="n">homography</span><span class="p">);</span>
+</pre>
+<p>If there is a reasonable number of inliers we can use estimated transformation to locate the object.</p>
+</li>
+</ol>
+</li>
+</ul>
+<p class="rubric">Results</p>
+<p>You can watch the resulting <a class="reference external" href="http://www.youtube.com/watch?v=LWY-w8AGGhE">video on youtube</a>.</p>
+<p><em>AKAZE</em> statistics:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Matches</span>      <span class="mi">626</span>
+<span class="n">Inliers</span>      <span class="mi">410</span>
+<span class="n">Inlier</span> <span class="n">ratio</span> <span class="mf">0.58</span>
+<span class="n">Keypoints</span>    <span class="mi">1117</span>
+</pre>
+<p><em>ORB</em> statistics:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Matches</span>      <span class="mi">504</span>
+<span class="n">Inliers</span>      <span class="mi">319</span>
+<span class="n">Inlier</span> <span class="n">ratio</span> <span class="mf">0.56</span>
+<span class="n">Keypoints</span>    <span class="mi">1112</span>
+</pre>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_akaze_matching.html" class="btn btn-neutral float-right" title="AKAZE local features matching" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_table_of_content_features2d.html" class="btn btn-neutral float-left" title="2D Features framework (feature2d module)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

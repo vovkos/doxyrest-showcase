@@ -1,0 +1,576 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Histogram Calculation &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Histogram Comparison" href="page_tutorial_histogram_comparison.html" />
+    <link rel="prev" title="Finding contours in your image" href="page_tutorial_find_contours.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_copyMakeBorder.html">Adding borders to your images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_warp_affine.html">Affine Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_back_projection.html">Back Projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold.html">Basic Thresholding Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_canny_detector.html">Canny Edge Detector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hull.html">Convex Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rects_circles.html">Creating Bounding boxes and circles for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_bounding_rotated_ellipses.html">Creating Bounding rotated boxes and ellipses for contours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_erosion_dilatation.html">Eroding and Dilating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moprh_lines_detection.html">Extract horizontal and vertical lines by using morphological operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_find_contours.html">Finding contours in your image</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Histogram Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_comparison.html">Histogram Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_histogram_equalization.html">Histogram Equalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hitOrMiss.html">Hit-or-Miss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_circle.html">Hough Circle Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_hough_lines.html">Hough Line Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_moments.html">Image Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_pyramids.html">Image Pyramids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_distance_transform.html">Image Segmentation with Distance Transform and Watershed Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_laplace_operator.html">Laplace Operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_filter_2d.html">Making your own linear filters!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_opening_closing_hats.html">More Morphology Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_point_polygon_test.html">Point Polygon Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_remap.html">Remapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_gausian_median_blur_bilateral_filter.html">Smoothing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_sobel_derivatives.html">Sobel Derivatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_template_matching.html">Template Matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_threshold_inRange.html">Thresholding Operations using inRange</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a> &raquo;</li>
+        
+      <li>Histogram Calculation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="histogram-calculation">
+<span id="doxid-d8-dbc-tutorial-histogram-calculation"></span><span id="index-0"></span><h1>Histogram Calculation</h1>
+<p class="rubric">Goal</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use the OpenCV function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cv::split</span></a> to divide an image into its correspondent planes.</li>
+<li>To calculate histograms of arrays of images by using the OpenCV function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">cv::calcHist</span></a></li>
+<li>To normalize an array by using the function <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">cv::normalize</span></a></li>
+</ul>
+<p>In the last tutorial (<a class="reference internal" href="page_tutorial_histogram_equalization.html#doxid-d4-d1b-tutorial-histogram-equalization"><span class="std std-ref">Histogram Equalization</span></a>) we talked about a particular kind of histogram called <em>Image histogram</em>. Now we will considerate it in its more general concept. Read on!</p>
+<p class="rubric">What are histograms?</p>
+<ul>
+<li><p class="first">Histograms are collected <em>counts</em> of data organized into a set of predefined <em>bins</em></p>
+</li>
+<li><p class="first">When we say <em>data</em> we are not restricting it to be intensity values (as we saw in the previous Tutorial). The data collected can be whatever feature you find useful to describe your image.</p>
+</li>
+<li><p class="first">Let’s see an example. Imagine that a Matrix contains information of an image (i.e. intensity in the range <span class="math notranslate nohighlight">\(0-255\)</span>):</p>
+<img alt="_images/Histogram_Calculation_Theory_Hist0.jpg" src="_images/Histogram_Calculation_Theory_Hist0.jpg" />
+</li>
+<li><p class="first">What happens if we want to <em>count</em> this data in an organized way? Since we know that the <em>range</em> of information value for this case is 256 values, we can segment our range in subparts (called <strong>bins</strong>) like:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{l} [0, 255] = { [0, 15] \cup [16, 31] \cup ....\cup [240,255] } \\ range = { bin_{1} \cup bin_{2} \cup ....\cup bin_{n = 15} } \end{array}\end{split}\]</div>
+<p>and we can keep count of the number of pixels that fall in the range of each <span class="math notranslate nohighlight">\(bin_{i}\)</span>. Applying this to the example above we get the image below ( axis x represents the bins and axis y the number of pixels in each of them).</p>
+<img alt="_images/Histogram_Calculation_Theory_Hist1.jpg" src="_images/Histogram_Calculation_Theory_Hist1.jpg" />
+</li>
+<li><p class="first">This was just a simple example of how an histogram works and why it is useful. An histogram can keep count not only of color intensities, but of whatever image features that we want to measure (i.e. gradients, directions, etc).</p>
+</li>
+<li><p class="first">Let’s identify some parts of the histogram:</p>
+<ol class="arabic simple">
+<li><strong>dims</strong> : The number of parameters you want to collect data of. In our example, <strong>dims = 1</strong> because we are only counting the intensity values of each pixel (in a greyscale image).</li>
+<li><strong>bins</strong> : It is the number of <strong>subdivisions</strong> in each dim. In our example, <strong>bins = 16</strong></li>
+<li><strong>range</strong> : The limits for the values to be measured. In this case: <strong>range = [0,255]</strong></li>
+</ol>
+</li>
+<li><p class="first">What if you want to count two features? In this case your resulting histogram would be a 3D plot (in which x and y would be <span class="math notranslate nohighlight">\(bin_{x}\)</span> and <span class="math notranslate nohighlight">\(bin_{y}\)</span> for each feature and z would be the number of counts for each combination of <span class="math notranslate nohighlight">\((bin_{x}, bin_{y})\)</span>. The same would apply for more features (of course it gets trickier).</p>
+</li>
+</ul>
+<p class="rubric">What OpenCV offers you</p>
+<p>For simple purposes, OpenCV implements the function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">cv::calcHist</span></a>, which calculates the histogram of a set of arrays (usually images or image planes). It can operate with up to 32 dimensions. We will see it in the code below!</p>
+<p class="rubric">Code</p>
+<ul>
+<li><p class="first"><strong>What does this program do?</strong></p>
+<ul class="simple">
+<li>Loads an image</li>
+<li>Splits the image into its R, G and B planes using the function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cv::split</span></a></li>
+<li>Calculate the Histogram of each 1-channel plane by calling the function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">cv::calcHist</span></a></li>
+<li>Plot the three histograms in a window</li>
+</ul>
+</li>
+<li><p class="first"><strong>Downloadable code</strong> : Click <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/Histograms_Matching/calcHist_Demo.cpp">here</a></p>
+</li>
+<li><p class="first"><strong>Code at glance:</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;opencv2/highgui.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgcodecs.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;opencv2/imgproc.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_std.html#doxid-d8-dcc-namespacestd"><span class="std std-ref">std</span></a><span></span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_String.html#doxid-dc-d0e-classcv-1-1-string"><span class="std std-ref">String</span></a><span></span> <span class="n">imageName</span><span class="p">(</span> <span class="s">&quot;../data/lena.jpg&quot;</span> <span class="p">);</span> <span class="c1">// by default</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">{</span>
+      <span class="n">imageName</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">imageName</span><span class="p">,</span> <a class="reference internal" href="enum_cv_ImreadModes.html#doxid-d4-da8-group-imgcodecs-1gga61d9b0126a3e57d9277ac48327799c80af660544735200cbe942eea09232eb822"><span class="std std-ref">IMREAD_COLOR</span></a><span></span> <span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span> <span class="n">src</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abbec3525a852e77998aba034813fded4"><span class="std std-ref">empty</span></a><span></span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">bgr_planes</span><span class="p">;</span>
+  <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">split</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">bgr_planes</span> <span class="p">);</span>
+
+  <span class="kt">int</span> <span class="n">histSize</span> <span class="o">=</span> <span class="mi">256</span><span class="p">;</span>
+
+  <span class="kt">float</span> <span class="n">range</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span> <span class="p">}</span> <span class="p">;</span>
+  <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <a class="reference internal" href="group_cudaimgproc_hist.html#doxid-d8-d0e-group-cudaimgproc-hist-1ga87819085c1059186d9cdeacd92cea783"><span class="std std-ref">histRange</span></a><span></span> <span class="o">=</span> <span class="p">{</span> <span class="n">range</span> <span class="p">};</span>
+
+  <span class="kt">bool</span> <span class="n">uniform</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="kt">bool</span> <a class="reference internal" href="group_imgproc_motion.html#doxid-d7-df3-group-imgproc-motion-1ga1a567a79901513811ff3b9976923b199"><span class="std std-ref">accumulate</span></a><span></span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">b_hist</span><span class="p">,</span> <span class="n">g_hist</span><span class="p">,</span> <span class="n">r_hist</span><span class="p">;</span>
+
+  <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">bgr_planes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">(),</span> <span class="n">b_hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histRange</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">accumulate</span> <span class="p">);</span>
+  <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">bgr_planes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">(),</span> <span class="n">g_hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histRange</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">accumulate</span> <span class="p">);</span>
+  <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">bgr_planes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">(),</span> <span class="n">r_hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histRange</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">accumulate</span> <span class="p">);</span>
+
+  <span class="c1">// Draw the histograms for B, G and R</span>
+  <span class="kt">int</span> <span class="n">hist_w</span> <span class="o">=</span> <span class="mi">512</span><span class="p">;</span> <span class="kt">int</span> <span class="n">hist_h</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">bin_w</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">hist_w</span><span class="o">/</span><span class="n">histSize</span> <span class="p">);</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">histImage</span><span class="p">(</span> <span class="n">hist_h</span><span class="p">,</span> <span class="n">hist_w</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span><span class="n">b_hist</span><span class="p">,</span> <span class="n">b_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">histImage</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span><span class="n">g_hist</span><span class="p">,</span> <span class="n">g_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">histImage</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span><span class="n">r_hist</span><span class="p">,</span> <span class="n">r_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">histImage</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1abed816466c45234254d25bc59c31245e"><span class="std std-ref">rows</span></a><span></span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="p">()</span> <span class="p">);</span>
+
+  <span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">histSize</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+  <span class="p">{</span>
+      <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">histImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">b_hist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span> <span class="p">,</span>
+                       <span class="n">Point</span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">b_hist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">),</span>
+                       <span class="n">Scalar</span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>  <span class="p">);</span>
+      <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">histImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">g_hist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span> <span class="p">,</span>
+                       <span class="n">Point</span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">g_hist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">),</span>
+                       <span class="n">Scalar</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>  <span class="p">);</span>
+      <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">histImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">r_hist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span> <span class="p">,</span>
+                       <span class="n">Point</span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">r_hist</span><span class="p">.</span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1aa5d20fc86d41d59e4d71ae93daee9726"><span class="std std-ref">at</span></a><span></span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">),</span>
+                       <span class="n">Scalar</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>  <span class="p">);</span>
+  <span class="p">}</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="s">&quot;calcHist Demo&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;calcHist Demo&quot;</span><span class="p">,</span> <span class="n">histImage</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="p">}</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Create the necessary matrices:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">Load the source image</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">src</span> <span class="o">=</span> <a class="reference internal" href="group_imgcodecs.html#doxid-d4-da8-group-imgcodecs-1ga288b8b3da0892bd651fce07b3bbd3a56"><span class="std std-ref">imread</span></a><span></span><span class="p">(</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span> <span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="n">src</span><span class="p">.</span><span class="n">data</span> <span class="p">)</span>
+  <span class="p">{</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+</pre>
+</li>
+<li><p class="first">Separate the source image in its three R,G and B planes. For this we use the OpenCV function <a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">cv::split</span></a> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Mat</span><span class="o">&gt;</span> <span class="n">bgr_planes</span><span class="p">;</span>
+<a class="reference internal" href="group_core_array.html#doxid-d2-de8-group-core-array-1ga0547c7fed86152d7e9d0096029c8518a"><span class="std std-ref">split</span></a><span></span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="n">bgr_planes</span> <span class="p">);</span>
+</pre>
+<p>our input is the image to be divided (this case with three channels) and the output is a vector of Mat )</p>
+</li>
+<li><p class="first">Now we are ready to start configuring the <strong>histograms</strong> for each plane. Since we are working with the B, G and R planes, we know that our values will range in the interval <span class="math notranslate nohighlight">\([0,255]\)</span></p>
+<ol class="arabic">
+<li><p class="first">Establish number of bins (5, 10…):</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">int</span> <span class="n">histSize</span> <span class="o">=</span> <span class="mi">256</span><span class="p">;</span> <span class="c1">//from 0 to 255</span>
+</pre>
+</li>
+<li><p class="first">Set the range of values (as we said, between 0 and 255 )</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">float</span> <span class="n">range</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span> <span class="p">}</span> <span class="p">;</span> <span class="c1">//the upper boundary is exclusive</span>
+<span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">histRange</span> <span class="o">=</span> <span class="p">{</span> <span class="n">range</span> <span class="p">};</span>
+</pre>
+</li>
+<li><p class="first">We want our bins to have the same size (uniform) and to clear the histograms in the beginning, so:</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">bool</span> <span class="n">uniform</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="kt">bool</span> <span class="n">accumulate</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">Finally, we create the Mat objects to save our histograms. Creating 3 (one for each plane):</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Mat</span> <span class="n">b_hist</span><span class="p">,</span> <span class="n">g_hist</span><span class="p">,</span> <span class="n">r_hist</span><span class="p">;</span>
+</pre>
+</li>
+<li><p class="first">We proceed to calculate the histograms by using the OpenCV function <a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">cv::calcHist</span></a> :</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">bgr_planes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Mat</span><span class="p">(),</span> <span class="n">b_hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histRange</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">accumulate</span> <span class="p">);</span>
+<a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">bgr_planes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Mat</span><span class="p">(),</span> <span class="n">g_hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histRange</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">accumulate</span> <span class="p">);</span>
+<a class="reference internal" href="group_imgproc_hist.html#doxid-d6-dc7-group-imgproc-hist-1ga4b2b5fd75503ff9e6844cc4dcdaed35d"><span class="std std-ref">calcHist</span></a><span></span><span class="p">(</span> <span class="o">&amp;</span><span class="n">bgr_planes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Mat</span><span class="p">(),</span> <span class="n">r_hist</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">histRange</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">accumulate</span> <span class="p">);</span>
+</pre>
+<p>where the arguments are:</p>
+<ul class="simple">
+<li><strong>&amp;bgr_planes[0]:</strong> The source array(s)</li>
+<li><strong>1</strong> : The number of source arrays (in this case we are using 1. We can enter here also a list of arrays )</li>
+<li><strong>0</strong> : The channel (<em>dim</em>) to be measured. In this case it is just the intensity (each array is single-channel) so we just write 0.</li>
+<li><strong>Mat()</strong> : A mask to be used on the source array ( zeros indicating pixels to be ignored ). If not defined it is not used</li>
+<li><strong>b_hist</strong> : The Mat object where the histogram will be stored</li>
+<li><strong>1</strong> : The histogram dimensionality.</li>
+<li><strong>histSize:</strong> The number of bins per each used dimension</li>
+<li><strong>histRange:</strong> The range of values to be measured per each dimension</li>
+<li><strong>uniform</strong> and <strong>accumulate</strong> : The bin sizes are the same and the histogram is cleared at the beginning.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p class="first">Create an image to display the histograms:</p>
+<pre class="highlight literal-block">
+<span></span><span class="c1">// Draw the histograms for R, G and B</span>
+<span class="kt">int</span> <span class="n">hist_w</span> <span class="o">=</span> <span class="mi">512</span><span class="p">;</span> <span class="kt">int</span> <span class="n">hist_h</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">bin_w</span> <span class="o">=</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">hist_w</span><span class="o">/</span><span class="n">histSize</span> <span class="p">);</span>
+
+<span class="n">Mat</span> <span class="n">histImage</span><span class="p">(</span> <span class="n">hist_h</span><span class="p">,</span> <span class="n">hist_w</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Notice that before drawing, we first <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">cv::normalize</span></a> the histogram so its values fall in the range indicated by the parameters entered:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span><span class="n">b_hist</span><span class="p">,</span> <span class="n">b_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">histImage</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span><span class="n">g_hist</span><span class="p">,</span> <span class="n">g_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">histImage</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1b6a396a456c8b6c6e4afd8591560d80"><span class="std std-ref">normalize</span></a><span></span><span class="p">(</span><span class="n">r_hist</span><span class="p">,</span> <span class="n">r_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">histImage</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span> <a class="reference internal" href="enum_cv_NormTypes.html#doxid-d2-de8-group-core-array-1ggad12cefbcb5291cf958a85b4b67b6149fa9f0c1c342a18114d47b516a88e29822e"><span class="std std-ref">NORM_MINMAX</span></a><span></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">Mat</span><span class="p">()</span> <span class="p">);</span>
+</pre>
+<p>this function receives these arguments:</p>
+<ul class="simple">
+<li><strong>b_hist:</strong> Input array</li>
+<li><strong>b_hist:</strong> Output normalized array (can be the same)</li>
+<li><strong>0</strong> and**histImage.rows: For this example, they are the lower and upper limits to normalize the values ofr_hist**</li>
+<li><strong>NORM_MINMAX:</strong> Argument that indicates the type of normalization (as described above, it adjusts the values between the two limits set before)</li>
+<li><strong>-1:</strong> Implies that the output normalized array will be the same type as the input</li>
+<li><strong>Mat():</strong> Optional mask</li>
+</ul>
+</li>
+<li><p class="first">Finally, observe that to access the bin (in this case in this 1D-Histogram):</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">for</span><span class="p">(</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">histSize</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">)</span>
+<span class="p">{</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">histImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">b_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span> <span class="p">,</span>
+                     <span class="n">Point</span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">b_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">),</span>
+                     <span class="n">Scalar</span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>  <span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">histImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">g_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span> <span class="p">,</span>
+                     <span class="n">Point</span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">g_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">),</span>
+                     <span class="n">Scalar</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>  <span class="p">);</span>
+    <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">histImage</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">r_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span> <span class="p">,</span>
+                     <span class="n">Point</span><span class="p">(</span> <span class="n">bin_w</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">hist_h</span> <span class="o">-</span> <a class="reference internal" href="group_core_utils.html#doxid-db-de0-group-core-utils-1ga085eca238176984a0b72df2818598d85"><span class="std std-ref">cvRound</span></a><span></span><span class="p">(</span><span class="n">r_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="p">),</span>
+                     <span class="n">Scalar</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span>  <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>we use the expression:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">b_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre>
+<p>where <span class="math notranslate nohighlight">\(i\)</span> indicates the dimension. If it were a 2D-histogram we would use something like:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">b_hist</span><span class="p">.</span><span class="n">at</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="p">)</span>
+</pre>
+</li>
+<li><p class="first">Finally we display our histograms and wait for the user to exit:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5afdf8410934fd099df85c75b2e0888b"><span class="std std-ref">namedWindow</span></a><span></span><span class="p">(</span><span class="s">&quot;calcHist Demo&quot;</span><span class="p">,</span> <a class="reference internal" href="enum_cv_WindowFlags.html#doxid-d7-dfc-group-highgui-1ggabf7d2c5625bc59ac130287f925557ac3acf621ace7a54954cbac01df27e47228f"><span class="std std-ref">WINDOW_AUTOSIZE</span></a><span></span> <span class="p">);</span>
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span><span class="s">&quot;calcHist Demo&quot;</span><span class="p">,</span> <span class="n">histImage</span> <span class="p">);</span>
+
+<a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</pre>
+</li>
+</ol>
+<p class="rubric">Result</p>
+<ol class="arabic">
+<li><p class="first">Using as input argument an image like the shown below:</p>
+<img alt="_images/Histogram_Calculation_Original_Image.jpg" src="_images/Histogram_Calculation_Original_Image.jpg" />
+</li>
+<li><p class="first">Produces the following histogram:</p>
+<img alt="_images/Histogram_Calculation_Result.jpg" src="_images/Histogram_Calculation_Result.jpg" />
+</li>
+</ol>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_histogram_comparison.html" class="btn btn-neutral float-right" title="Histogram Comparison" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_find_contours.html" class="btn btn-neutral float-left" title="Finding contours in your image" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

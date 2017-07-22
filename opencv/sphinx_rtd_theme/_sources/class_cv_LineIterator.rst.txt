@@ -1,0 +1,159 @@
+.. index:: pair: class; cv::LineIterator
+.. _doxid-dd/d2f/classcv_1_1_line_iterator:
+
+class cv::LineIterator
+======================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+Line iterator. :ref:`More...<details-dd/d2f/classcv_1_1_line_iterator>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	#include <imgproc.hpp>
+	
+	class LineIterator
+	{
+	public:
+		// fields
+	
+		int :target:`count<doxid-dd/d2f/classcv_1_1_line_iterator_1a78e06b7798ab056aba770b6e49c549b4>`;
+		int :target:`elemSize<doxid-dd/d2f/classcv_1_1_line_iterator_1aa012621795cee84b02dd63dee0d2a70b>`;
+		int :target:`err<doxid-dd/d2f/classcv_1_1_line_iterator_1a37cf77db73ddf2eaace21028c99b0cf7>`;
+		int :target:`minusDelta<doxid-dd/d2f/classcv_1_1_line_iterator_1ad8c1822684034533a52969c837e5f96c>`;
+		int :target:`minusStep<doxid-dd/d2f/classcv_1_1_line_iterator_1a293eafffedcac965ae5d7fb7fc8d8345>`;
+		int :target:`plusDelta<doxid-dd/d2f/classcv_1_1_line_iterator_1a364babc688c58ba62ea0cad61a65f07b>`;
+		int :target:`plusStep<doxid-dd/d2f/classcv_1_1_line_iterator_1adb7f1c0c3e722d9e87230b92e7b9f773>`;
+		:ref:`uchar<doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`* :target:`ptr<doxid-dd/d2f/classcv_1_1_line_iterator_1a9fc3f91adc5a20c6841c083cc89178d3>`;
+		const :ref:`uchar<doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`* :target:`ptr0<doxid-dd/d2f/classcv_1_1_line_iterator_1acc76bbdcf947d3040d9b6d0e0ca27714>`;
+		int :target:`step<doxid-dd/d2f/classcv_1_1_line_iterator_1ad01672bb85b10aff6f89dfcd93b618f5>`;
+
+		// construction
+	
+		:ref:`LineIterator<doxid-dd/d2f/classcv_1_1_line_iterator_1ac83a4c574ce6a50a78a52d7eee10371b>`(
+			const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& img,
+			:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` pt1,
+			:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` pt2,
+			int connectivity = 8,
+			bool leftToRight = false
+			);
+
+		// methods
+	
+		:ref:`uchar<doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`*
+		:ref:`operator*<doxid-dd/d2f/classcv_1_1_line_iterator_1a11df3b7dbaf0e16ddb430eab3b62e78f>`();
+	
+		LineIterator&
+		:ref:`operator++<doxid-dd/d2f/classcv_1_1_line_iterator_1a70052c25251e3387d8ab80d86febef95>`();
+	
+		LineIterator
+		:ref:`operator++<doxid-dd/d2f/classcv_1_1_line_iterator_1a79c1edcfb30865c5abec03e48f91bcdc>`(int);
+	
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`
+		:ref:`pos<doxid-dd/d2f/classcv_1_1_line_iterator_1afeddb548b519ef727e3d07b2361cd8e1>`() const;
+	};
+.. _details-dd/d2f/classcv_1_1_line_iterator:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Line iterator.
+
+The class is used to iterate over all the pixels on the raster line segment connecting two specified points.
+
+The class :ref:`LineIterator <doxid-dd/d2f/classcv_1_1_line_iterator>` is used to get each pixel of a raster line. It can be treated as versatile implementation of the Bresenham algorithm where you can stop at each pixel and do some extra processing, for example, grab pixel values along the line or draw a line with an effect (for example, with XOR operation).
+
+The number of pixels along the line is stored in :ref:`LineIterator::count <doxid-dd/d2f/classcv_1_1_line_iterator_1a78e06b7798ab056aba770b6e49c549b4>`. The method :ref:`LineIterator::pos <doxid-dd/d2f/classcv_1_1_line_iterator_1afeddb548b519ef727e3d07b2361cd8e1>` returns the current position in the image:
+
+.. ref-code-block:: cpp
+
+	// grabs pixels along the line (pt1, pt2)
+	// from 8-bit 3-channel image to the buffer
+	:ref:`LineIterator <doxid-dd/d2f/classcv_1_1_line_iterator_1ac83a4c574ce6a50a78a52d7eee10371b>` it(img, pt1, pt2, 8);
+	:ref:`LineIterator <doxid-dd/d2f/classcv_1_1_line_iterator_1ac83a4c574ce6a50a78a52d7eee10371b>` it2 = it;
+	vector<Vec3b> buf(it.count);
+	
+	for(int i = 0; i < it.count; i++, ++it)
+	    buf[i] = *(const :ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`)*it;
+	
+	// alternative way of iterating through the line
+	for(int i = 0; i < it2.count; i++, ++it2)
+	{
+	    :ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>` val = img.at<:ref:`Vec3b <doxid-dc/d84/group__core__basic_1ga7e6060c0b8d48459964df6e1eb524c03>`>(it2.pos());
+	    :ref:`CV_Assert <doxid-db/de0/group__core__utils_1gaf62bcd90f70e275191ab95136d85906b>`(buf[i] == val);
+	}
+
+Construction
+------------
+
+.. index:: pair: function; LineIterator
+.. _doxid-dd/d2f/classcv_1_1_line_iterator_1ac83a4c574ce6a50a78a52d7eee10371b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	LineIterator(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& img,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` pt1,
+		:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>` pt2,
+		int connectivity = 8,
+		bool leftToRight = false
+		)
+
+intializes the iterator
+
+creates iterators for the line connecting pt1 and pt2 the line will be clipped on the image boundaries the line is 8-connected or 4-connected If leftToRight=true, then the iteration is always done from the left-most point to the right most, not to depend on the ordering of pt1 and pt2 parameters
+
+Methods
+-------
+
+.. index:: pair: function; operator*
+.. _doxid-dd/d2f/classcv_1_1_line_iterator_1a11df3b7dbaf0e16ddb430eab3b62e78f:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`uchar<doxid-d1/d1b/group__core__hal__interface_1ga65f85814a8290f9797005d3b28e7e5fc>`*
+	operator*()
+
+returns pointer to the current pixel
+
+.. index:: pair: function; operator++
+.. _doxid-dd/d2f/classcv_1_1_line_iterator_1a70052c25251e3387d8ab80d86febef95:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	LineIterator&
+	operator++()
+
+prefix increment operator (++it). shifts iterator to the next pixel
+
+.. index:: pair: function; operator++
+.. _doxid-dd/d2f/classcv_1_1_line_iterator_1a79c1edcfb30865c5abec03e48f91bcdc:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	LineIterator
+	operator++(int)
+
+postfix increment operator (it++). shifts iterator to the next pixel
+
+.. index:: pair: function; pos
+.. _doxid-dd/d2f/classcv_1_1_line_iterator_1afeddb548b519ef727e3d07b2361cd8e1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Point<doxid-dc/d84/group__core__basic_1ga1e83eafb2d26b3c93f09e8338bcab192>`
+	pos() const
+
+returns coordinates of the current pixel
+

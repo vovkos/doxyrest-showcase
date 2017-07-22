@@ -1,0 +1,222 @@
+.. index:: pair: group; Intel IPP Asynchronous C/C++ Converters
+.. _doxid-d6/dcf/group__core__ipp:
+
+Intel IPP Asynchronous C/C++ Converters
+=======================================
+
+.. toctree::
+	:hidden:
+
+Overview
+~~~~~~~~
+
+This section describes conversion between OpenCV and `Intel IPP Asynchronous C/C++ <http://software.intel.com/en-us/intel-ipp-preview>`__ library. :ref:`More...<details-d6/dcf/group__core__ipp>`
+
+
+.. ref-code-block:: cpp
+	:class: doxyrest-overview-code-block
+
+	
+	// global functions
+
+	void
+	:ref:`cv::hpp::copyHppToMat<doxid-d6/dcf/group__core__ipp_1ga47857110cace6f68f53b07b8a2ffd8d1>`(
+		hppiMatrix* src,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& dst,
+		hppAccel accel,
+		int cn
+		);
+
+	hppiMatrix*
+	:ref:`cv::hpp::getHpp<doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>`(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& src,
+		hppAccel accel
+		);
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	:ref:`cv::hpp::getMat<doxid-d6/dcf/group__core__ipp_1ga6b6a7a9c44efd50c8aaf9fb0866a363a>`(
+		hppiMatrix* src,
+		hppAccel accel,
+		int cn
+		);
+
+	int
+	:ref:`cv::hpp::toCvType<doxid-d6/dcf/group__core__ipp_1ga1297af0153c512b43764dc8b5c8ba52d>`(const int hppType);
+
+	int
+	:ref:`cv::hpp::toHppType<doxid-d6/dcf/group__core__ipp_1gae8d23d0dce66f0e6611eacdeb9686f7a>`(const int cvType);
+
+.. _details-d6/dcf/group__core__ipp:
+
+Detailed Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+This section describes conversion between OpenCV and `Intel IPP Asynchronous C/C++ <http://software.intel.com/en-us/intel-ipp-preview>`__ library. `Getting Started Guide <http://registrationcenter.intel.com/irc_nas/3727/ipp_async_get_started.htm>`__ help you to install the library, configure header and library build paths.
+
+Global Functions
+----------------
+
+.. index:: pair: function; copyHppToMat
+.. _doxid-d6/dcf/group__core__ipp_1ga47857110cace6f68f53b07b8a2ffd8d1:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	void
+	cv::hpp::copyHppToMat(
+		hppiMatrix* src,
+		:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& dst,
+		hppAccel accel,
+		int cn
+		)
+
+Convert hppiMatrix to :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`.
+
+This function allocates and initializes new matrix (if needed) that has the same size and type as input matrix. Supports CV_8U, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- input hppiMatrix.
+
+	*
+		- dst
+
+		- output matrix.
+
+	*
+		- accel
+
+		- accelerator instance (see :ref:`hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>` for the list of acceleration framework types).
+
+	*
+		- cn
+
+		- number of channels.
+
+.. index:: pair: function; getHpp
+.. _doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	hppiMatrix*
+	cv::hpp::getHpp(
+		const :ref:`Mat<doxid-db/de6/classcv_1_1_mat>`& src,
+		hppAccel accel
+		)
+
+Create hppiMatrix from :ref:`Mat <doxid-db/de6/classcv_1_1_mat>`.
+
+This function allocates and initializes the hppiMatrix that has the same size and type as input matrix, returns the hppiMatrix\*.
+
+If you want to use zero-copy for GPU you should to have 4KB aligned matrix data. See details `hppiCreateSharedMatrix <http://software.intel.com/ru-ru/node/501697>`__.
+
+Supports CV_8U, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F.
+
+The hppiMatrix pointer to the image buffer in system memory refers to the src.data. Control the lifetime of the matrix and don't change its data, if there is no special need.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- input matrix.
+
+	*
+		- accel
+
+		- 
+		  accelerator instance. Supports type:
+		  
+		  * **HPP_ACCEL_TYPE_CPU** - accelerated by optimized CPU instructions.
+		  
+		  * **HPP_ACCEL_TYPE_GPU** - accelerated by GPU programmable units or fixed-function accelerators.
+		  
+		  * **HPP_ACCEL_TYPE_ANY** - any acceleration or no acceleration available.
+
+
+
+.. rubric:: See also:
+
+howToUseIPPAconversion, :ref:`hpp::getMat <doxid-d6/dcf/group__core__ipp_1ga6b6a7a9c44efd50c8aaf9fb0866a363a>`
+
+.. index:: pair: function; getMat
+.. _doxid-d6/dcf/group__core__ipp_1ga6b6a7a9c44efd50c8aaf9fb0866a363a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	:ref:`Mat<doxid-db/de6/classcv_1_1_mat>`
+	cv::hpp::getMat(
+		hppiMatrix* src,
+		hppAccel accel,
+		int cn
+		)
+
+Create :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` from hppiMatrix.
+
+This function allocates and initializes the :ref:`Mat <doxid-db/de6/classcv_1_1_mat>` that has the same size and type as input matrix. Supports CV_8U, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F.
+
+
+
+.. rubric:: Parameters:
+
+.. list-table::
+	:widths: 20 80
+
+	*
+		- src
+
+		- input hppiMatrix.
+
+	*
+		- accel
+
+		- accelerator instance (see :ref:`hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>` for the list of acceleration framework types).
+
+	*
+		- cn
+
+		- number of channels.
+
+
+
+.. rubric:: See also:
+
+howToUseIPPAconversion, :ref:`hpp::copyHppToMat <doxid-d6/dcf/group__core__ipp_1ga47857110cace6f68f53b07b8a2ffd8d1>`, :ref:`hpp::getHpp <doxid-d6/dcf/group__core__ipp_1gae751e7f96d79f90699fdf71bdaa87a6b>`.
+
+.. index:: pair: function; toCvType
+.. _doxid-d6/dcf/group__core__ipp_1ga1297af0153c512b43764dc8b5c8ba52d:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cv::hpp::toCvType(const int hppType)
+
+convert hppDataType to OpenCV data type
+
+.. index:: pair: function; toHppType
+.. _doxid-d6/dcf/group__core__ipp_1gae8d23d0dce66f0e6611eacdeb9686f7a:
+
+.. ref-code-block:: cpp
+	:class: doxyrest-title-code-block
+
+	int
+	cv::hpp::toHppType(const int cvType)
+
+convert OpenCV data type to hppDataType
+

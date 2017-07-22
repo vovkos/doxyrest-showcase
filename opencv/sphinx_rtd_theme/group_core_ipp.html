@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Intel IPP Asynchronous C/C++ Converters &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Intel VA-API/OpenCL (CL-VA) interoperability" href="group_core_va_intel.html" />
+    <link rel="prev" title="template struct cv::v_reg" href="struct_cv_v_reg.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="group_core.html">Core functionality</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="group_core_basic.html">Basic structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_c.html">C structures and operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_cluster.html">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_directx.html">DirectX interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_eigen.html">Eigen support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_hal.html">Hardware Acceleration Layer</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Intel IPP Asynchronous C/C++ Converters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#global-functions">Global Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_va_intel.html">Intel VA-API/OpenCL (CL-VA) interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opencl.html">OpenCL support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_opengl.html">OpenGL interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_array.html">Operations on arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_optim.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_utils.html">Utility and system functions and macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core_xml.html">XML/YAML Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_CovarFlags.html">enum cv::CovarFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_HersheyFonts.html">enum cv::HersheyFonts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_KmeansFlags.html">enum cv::KmeansFlags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_LineTypes.html">enum cv::LineTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enum_cv_ReduceTypes.html">enum cv::ReduceTypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_Affine3.html">template class cv::Affine3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_BufferPoolController.html">class cv::BufferPoolController</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImage.html">template class cv::WImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBuffer.html">template class cv::WImageBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageBufferC.html">template class cv::WImageBufferC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageC.html">template class cv::WImageC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageView.html">template class cv::WImageView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_cv_WImageViewC.html">template class cv::WImageViewC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_core.html#detailed-documentation">Detailed Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="group_core.html">Core functionality</a> &raquo;</li>
+        
+      <li>Intel IPP Asynchronous C/C++ Converters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="intel-ipp-asynchronous-c-c-converters">
+<span id="doxid-d6-dcf-group-core-ipp"></span><span id="index-0"></span><h1>Intel IPP Asynchronous C/C++ Converters</h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<p>This section describes conversion between OpenCV and <a class="reference external" href="http://software.intel.com/en-us/intel-ipp-preview">Intel IPP Asynchronous C/C++</a> library. <a class="reference internal" href="#details-d6-dcf-group-core-ipp"><span class="std std-ref">More…</span></a></p>
+<pre class="highlight doxyrest-overview-code-block literal-block">
+<span></span><span class="c1">// global functions</span>
+
+<span class="kt">void</span>
+<a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1ga47857110cace6f68f53b07b8a2ffd8d1"><span class="std std-ref">cv::hpp::copyHppToMat</span></a><span></span><span class="p">(</span>
+    <span class="n">hppiMatrix</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">dst</span><span class="p">,</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cn</span>
+    <span class="p">);</span>
+
+<span class="n">hppiMatrix</span><span class="o">*</span>
+<a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">cv::hpp::getHpp</span></a><span></span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span>
+    <span class="p">);</span>
+
+<a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1ga6b6a7a9c44efd50c8aaf9fb0866a363a"><span class="std std-ref">cv::hpp::getMat</span></a><span></span><span class="p">(</span>
+    <span class="n">hppiMatrix</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cn</span>
+    <span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1ga1297af0153c512b43764dc8b5c8ba52d"><span class="std std-ref">cv::hpp::toCvType</span></a><span></span><span class="p">(</span><span class="k">const</span> <span class="kt">int</span> <span class="n">hppType</span><span class="p">);</span>
+
+<span class="kt">int</span>
+<a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1gae8d23d0dce66f0e6611eacdeb9686f7a"><span class="std std-ref">cv::hpp::toHppType</span></a><span></span><span class="p">(</span><span class="k">const</span> <span class="kt">int</span> <span class="n">cvType</span><span class="p">);</span>
+</pre>
+</div>
+<div class="section" id="detailed-documentation">
+<span id="details-d6-dcf-group-core-ipp"></span><h2>Detailed Documentation</h2>
+<p>This section describes conversion between OpenCV and <a class="reference external" href="http://software.intel.com/en-us/intel-ipp-preview">Intel IPP Asynchronous C/C++</a> library. <a class="reference external" href="http://registrationcenter.intel.com/irc_nas/3727/ipp_async_get_started.htm">Getting Started Guide</a> help you to install the library, configure header and library build paths.</p>
+<div class="section" id="global-functions">
+<h3>Global Functions</h3>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-dcf-group-core-ipp-1ga47857110cace6f68f53b07b8a2ffd8d1">
+<span id="index-1"></span><span></span><span class="kt">void</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">hpp</span><span class="o">::</span><span class="n">copyHppToMat</span><span class="p">(</span>
+    <span class="n">hppiMatrix</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span>
+    <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">dst</span><span class="p">,</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cn</span>
+    <span class="p">)</span>
+</pre>
+<p>Convert hppiMatrix to <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a>.</p>
+<p>This function allocates and initializes new matrix (if needed) that has the same size and type as input matrix. Supports CV_8U, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>input hppiMatrix.</td>
+</tr>
+<tr class="row-even"><td>dst</td>
+<td>output matrix.</td>
+</tr>
+<tr class="row-odd"><td>accel</td>
+<td>accelerator instance (see <a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">hpp::getHpp</span></a> for the list of acceleration framework types).</td>
+</tr>
+<tr class="row-even"><td>cn</td>
+<td>number of channels.</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b">
+<span id="index-2"></span><span></span><span class="n">hppiMatrix</span><span class="o">*</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">hpp</span><span class="o">::</span><span class="n">getHpp</span><span class="p">(</span>
+    <span class="k">const</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span>
+    <span class="p">)</span>
+</pre>
+<p>Create hppiMatrix from <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a>.</p>
+<p>This function allocates and initializes the hppiMatrix that has the same size and type as input matrix, returns the hppiMatrix*.</p>
+<p>If you want to use zero-copy for GPU you should to have 4KB aligned matrix data. See details <a class="reference external" href="http://software.intel.com/ru-ru/node/501697">hppiCreateSharedMatrix</a>.</p>
+<p>Supports CV_8U, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F.</p>
+<p>The hppiMatrix pointer to the image buffer in system memory refers to the src.data. Control the lifetime of the matrix and don’t change its data, if there is no special need.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>input matrix.</td>
+</tr>
+<tr class="row-even"><td>accel</td>
+<td><p class="first">accelerator instance. Supports type:</p>
+<ul class="last simple">
+<li><strong>HPP_ACCEL_TYPE_CPU</strong> - accelerated by optimized CPU instructions.</li>
+<li><strong>HPP_ACCEL_TYPE_GPU</strong> - accelerated by GPU programmable units or fixed-function accelerators.</li>
+<li><strong>HPP_ACCEL_TYPE_ANY</strong> - any acceleration or no acceleration available.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p>howToUseIPPAconversion, <a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1ga6b6a7a9c44efd50c8aaf9fb0866a363a"><span class="std std-ref">hpp::getMat</span></a></p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-dcf-group-core-ipp-1ga6b6a7a9c44efd50c8aaf9fb0866a363a">
+<span id="index-3"></span><a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span>
+<span class="n">cv</span><span class="o">::</span><span class="n">hpp</span><span class="o">::</span><span class="n">getMat</span><span class="p">(</span>
+    <span class="n">hppiMatrix</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span>
+    <span class="n">hppAccel</span> <span class="n">accel</span><span class="p">,</span>
+    <span class="kt">int</span> <span class="n">cn</span>
+    <span class="p">)</span>
+</pre>
+<p>Create <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a> from hppiMatrix.</p>
+<p>This function allocates and initializes the <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a> that has the same size and type as input matrix. Supports CV_8U, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F.</p>
+<p class="rubric">Parameters:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>src</td>
+<td>input hppiMatrix.</td>
+</tr>
+<tr class="row-even"><td>accel</td>
+<td>accelerator instance (see <a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">hpp::getHpp</span></a> for the list of acceleration framework types).</td>
+</tr>
+<tr class="row-odd"><td>cn</td>
+<td>number of channels.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">See also:</p>
+<p>howToUseIPPAconversion, <a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1ga47857110cace6f68f53b07b8a2ffd8d1"><span class="std std-ref">hpp::copyHppToMat</span></a>, <a class="reference internal" href="#doxid-d6-dcf-group-core-ipp-1gae751e7f96d79f90699fdf71bdaa87a6b"><span class="std std-ref">hpp::getHpp</span></a>.</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-dcf-group-core-ipp-1ga1297af0153c512b43764dc8b5c8ba52d">
+<span id="index-4"></span><span></span><span class="kt">int</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">hpp</span><span class="o">::</span><span class="n">toCvType</span><span class="p">(</span><span class="k">const</span> <span class="kt">int</span> <span class="n">hppType</span><span class="p">)</span>
+</pre>
+<p>convert hppDataType to OpenCV data type</p>
+<pre class="highlight doxyrest-title-code-block literal-block" id="doxid-d6-dcf-group-core-ipp-1gae8d23d0dce66f0e6611eacdeb9686f7a">
+<span id="index-5"></span><span></span><span class="kt">int</span>
+<span class="n">cv</span><span class="o">::</span><span class="n">hpp</span><span class="o">::</span><span class="n">toHppType</span><span class="p">(</span><span class="k">const</span> <span class="kt">int</span> <span class="n">cvType</span><span class="p">)</span>
+</pre>
+<p>convert OpenCV data type to hppDataType</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="group_core_va_intel.html" class="btn btn-neutral float-right" title="Intel VA-API/OpenCL (CL-VA) interoperability" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="struct_cv_v_reg.html" class="btn btn-neutral float-left" title="template struct cv::v_reg" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

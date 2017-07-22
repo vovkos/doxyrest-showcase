@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Basic Drawing &mdash; OpenCV Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/target-highlight.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/doxyrest-sphinx_rtd_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changing the contrast and brightness of an image!" href="page_tutorial_basic_linear_transform.html" />
+    <link rel="prev" title="Adding (blending) two images using OpenCV" href="page_tutorial_adding_images.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCV Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="group_features2d.html">2D Features Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_viz.html">3D Visualizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_calib3d.html">Camera Calibration and 3D Reconstruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_flann.html">Clustering and Search in Multi-Dimensional Spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_photo.html">Computational Photography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_core.html">Core functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_highgui.html">High-level GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgcodecs.html">Image file reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_imgproc.html">Image processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_stitching.html">Images stitching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_ml.html">Machine Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_objdetect.html">Object Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_shape.html">Shape Distance and Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_superres.html">Super Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_video.html">Video Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videoio.html">Video I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_videostab.html">Video Stabilization</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="page_citelist.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_cuda_intro.html">CUDA Module Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_imgproc_color_conversions.html">Color conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_deprecated.html">Deprecated List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_ml_intro.html">Machine Learning Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="page_tutorial_root.html">OpenCV Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_features2d.html">2D Features framework (feature2d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_calib3d.html">Camera calibration and 3D reconstruction (calib3d module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_photo.html">Computational photography (photo module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_gpu.html">GPU-Accelerated Computer Vision (cuda module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_highgui.html">High Level GUI and Media (highgui module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgcodecs.html">Image Input and Output (imgcodecs module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_imgproc.html">Image Processing (imgproc module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_stitching.html">Images stitching (stitching module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_introduction.html">Introduction to OpenCV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ml.html">Machine Learning (ml module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_objdetect.html">Object Detection (objdetect module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_viz.html">OpenCV Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_ios.html">OpenCV iOS</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_adding_images.html">Adding (blending) two images using OpenCV</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Basic Drawing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_basic_linear_transform.html">Changing the contrast and brightness of an image!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_discrete_fourier_transform.html">Discrete Fourier Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_file_input_output_with_xml_yml.html">File Input and Output using XML and YAML files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_how_to_scan_images.html">How to scan images, lookup tables and time measurement with OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_how_to_use_OpenCV_parallel_for_.html">How to use the OpenCV parallel_for_ to parallelize your code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_how_to_use_ippa_conversion.html">Intel® IPP Asynchronous C/C++ library in OpenCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_interoperability_with_OpenCV_1.html">Interoperability with OpenCV 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_mat_mask_operations.html">Mask operations on matrices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_mat_the_basic_image_container.html">Mat - The Basic Image Container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_mat_operations.html">Operations with images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="page_tutorial_random_generator_and_text.html">Random generator and text with OpenCV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_videoio.html">Video Input and Output (videoio module)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="page_tutorial_table_of_content_video.html">Video analysis (video module)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="page_index.html">OpenCV modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_tutorial_py_root.html">OpenCV-Python Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_todo.html">Todo List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="page_videoio_overview.html">Video I/O with OpenCV Overview</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_contours2.cpp.html">contours2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_convexhull.cpp.html">convexhull.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_cout_mat.cpp.html">cout_mat.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_demhist.cpp.html">demhist.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_distrans.cpp.html">distrans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_edge.cpp.html">edge.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_ffilldemo.cpp.html">ffilldemo.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_filestorage.cpp.html">filestorage.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_fitellipse.cpp.html">fitellipse.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_grabcut.cpp.html">grabcut.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghcircles.cpp.html">houghcircles.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_houghlines.cpp.html">houghlines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_kmeans.cpp.html">kmeans.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_laplace.cpp.html">laplace.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_lsd_lines.cpp.html">lsd_lines.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_minarea.cpp.html">minarea.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_morphology2.cpp.html">morphology2.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_pca.cpp.html">pca.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_polar_transforms.cpp.html">polar_transforms.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_segment_objects.cpp.html">segment_objects.cpp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_watershed.cpp.html">watershed.cpp</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="global.html">Global Namespace</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OpenCV Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_root.html">OpenCV Tutorials</a> &raquo;</li>
+        
+          <li><a href="page_tutorial_table_of_content_core.html">The Core Functionality (core module)</a> &raquo;</li>
+        
+      <li>Basic Drawing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="basic-drawing">
+<span id="doxid-d3-d96-tutorial-basic-geometric-drawing"></span><span id="index-0"></span><h1>Basic Drawing</h1>
+<p class="rubric">Goals</p>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li>Use <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">cv::Point</span></a> to define 2D points in an image.</li>
+<li>Use <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">cv::Scalar</span></a> and why it is useful</li>
+<li>Draw a <strong>line</strong> by using the OpenCV function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">cv::line</span></a></li>
+<li>Draw an <strong>ellipse</strong> by using the OpenCV function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">cv::ellipse</span></a></li>
+<li>Draw a <strong>rectangle</strong> by using the OpenCV function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">cv::rectangle</span></a></li>
+<li>Draw a <strong>circle</strong> by using the OpenCV function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">cv::circle</span></a></li>
+<li>Draw a <strong>filled polygon</strong> by using the OpenCV function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf30888828337aa4c6b56782b5dfbd4b7"><span class="std std-ref">cv::fillPoly</span></a></li>
+</ul>
+<p class="rubric">OpenCV Theory</p>
+<p>For this tutorial, we will heavily use two structures: <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">cv::Point</span></a> and <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">cv::Scalar</span></a> :</p>
+<p class="rubric">Point</p>
+<p>It represents a 2D point, specified by its image coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>. We can define it as:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Point</span> <span class="n">pt</span><span class="p">;</span>
+<span class="n">pt</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="n">pt</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+</pre>
+<p>or</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">Point</span> <span class="n">pt</span> <span class="o">=</span>  <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+</pre>
+<p class="rubric">Scalar</p>
+<ul>
+<li><p class="first">Represents a 4-element vector. The type Scalar is widely used in OpenCV for passing pixel values.</p>
+</li>
+<li><p class="first">In this tutorial, we will use it extensively to represent BGR color values (3 parameters). It is not necessary to define the last argument if it is not going to be used.</p>
+</li>
+<li><p class="first">Let’s see an example, if we are asked for a color argument and we give:</p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="p">)</span>
+</pre>
+<p>We would be defining a BGR color such as: <em>Blue = a</em>, <em>Green = b</em> and <em>Red = c</em></p>
+</li>
+</ul>
+<p class="rubric">Code</p>
+<ul>
+<li><p class="first">This code is in your OpenCV sample folder. Otherwise you can grab it from <a class="reference external" href="https://github.com/opencv/opencv/tree/master/samples/cpp/tutorial_code/core/Matrix/Drawing_1.cpp">here</a></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/imgproc.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#define w 400</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <a class="reference internal" href="namespace_cv.html#doxid-d2-d75-namespacecv"><span class="std std-ref">cv</span></a><span></span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="n">MyEllipse</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">,</span> <span class="kt">double</span> <span class="n">angle</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="n">MyFilledCircle</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">,</span> <span class="n">Point</span> <span class="n">center</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="n">MyPolygon</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="n">MyLine</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">,</span> <span class="n">Point</span> <span class="n">start</span><span class="p">,</span> <span class="n">Point</span> <span class="n">end</span> <span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">void</span> <span class="p">){</span>
+
+  <span class="kt">char</span> <span class="n">atom_window</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&quot;Drawing 1: Atom&quot;</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">rook_window</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&quot;Drawing 2: Rook&quot;</span><span class="p">;</span>
+
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">atom_image</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">Mat::zeros</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+  <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">rook_image</span> <span class="o">=</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat-1a0b57b6a326c8876d944d188a46e0f556"><span class="std std-ref">Mat::zeros</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+
+
+  <span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="mi">90</span> <span class="p">);</span>
+  <span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+  <span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="mi">45</span> <span class="p">);</span>
+  <span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span> <span class="p">);</span>
+
+  <span class="n">MyFilledCircle</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="p">);</span>
+
+
+  <span class="n">MyPolygon</span><span class="p">(</span> <span class="n">rook_image</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span>
+         <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span>
+         <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
+         <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+         <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e"><span class="std std-ref">FILLED</span></a><span></span><span class="p">,</span>
+         <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span> <span class="p">);</span>
+
+  <span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="mi">15</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">)</span> <span class="p">);</span>
+  <span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span> <span class="p">);</span>
+  <span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span> <span class="p">);</span>
+  <span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">atom_window</span><span class="p">,</span> <span class="n">atom_image</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga8d86b207f7211250dbe6e28f76307ffb"><span class="std std-ref">moveWindow</span></a><span></span><span class="p">(</span> <span class="n">atom_window</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga453d42fe4cb60e5723281a89973ee563"><span class="std std-ref">imshow</span></a><span></span><span class="p">(</span> <span class="n">rook_window</span><span class="p">,</span> <span class="n">rook_image</span> <span class="p">);</span>
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga8d86b207f7211250dbe6e28f76307ffb"><span class="std std-ref">moveWindow</span></a><span></span><span class="p">(</span> <span class="n">rook_window</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">200</span> <span class="p">);</span>
+
+  <a class="reference internal" href="group_highgui.html#doxid-d7-dfc-group-highgui-1ga5628525ad33f52eab17feebcfba38bd7"><span class="std std-ref">waitKey</span></a><span></span><span class="p">(</span> <span class="mi">0</span> <span class="p">);</span>
+  <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+
+<span class="kt">void</span> <span class="n">MyEllipse</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">,</span> <span class="kt">double</span> <span class="n">angle</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">thickness</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">ellipse</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span> <span class="p">),</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">),</span>
+       <span class="n">angle</span><span class="p">,</span>
+       <span class="mi">0</span><span class="p">,</span>
+       <span class="mi">360</span><span class="p">,</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span>
+       <span class="n">thickness</span><span class="p">,</span>
+       <span class="n">lineType</span> <span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">MyFilledCircle</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">,</span> <span class="n">Point</span> <span class="n">center</span> <span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+      <span class="n">center</span><span class="p">,</span>
+      <span class="n">w</span><span class="o">/</span><span class="mi">32</span><span class="p">,</span>
+      <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+      <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e"><span class="std std-ref">FILLED</span></a><span></span><span class="p">,</span>
+      <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span> <span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">MyPolygon</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span><span class="p">;</span>
+
+  <span class="n">Point</span> <span class="n">rook_points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">20</span><span class="p">];</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>  <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">11</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">19</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">32</span><span class="p">,</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>     <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">26</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">8</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">26</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">9</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">22</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">22</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">18</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">18</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">14</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">14</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>     <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">17</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">32</span><span class="p">,</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">18</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">5</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>  <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+
+  <span class="k">const</span> <span class="n">Point</span><span class="o">*</span> <span class="n">ppt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">};</span>
+  <span class="kt">int</span> <span class="n">npt</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">20</span> <span class="p">};</span>
+
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf30888828337aa4c6b56782b5dfbd4b7"><span class="std std-ref">fillPoly</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+        <span class="n">ppt</span><span class="p">,</span>
+        <span class="n">npt</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+        <span class="n">lineType</span> <span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="n">MyLine</span><span class="p">(</span> <a class="reference internal" href="class_cv_Mat.html#doxid-db-de6-classcv-1-1-mat"><span class="std std-ref">Mat</span></a><span></span> <span class="n">img</span><span class="p">,</span> <span class="n">Point</span> <span class="n">start</span><span class="p">,</span> <span class="n">Point</span> <span class="n">end</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">thickness</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span><span class="p">;</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">,</span>
+    <span class="n">end</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span>
+    <span class="n">thickness</span><span class="p">,</span>
+    <span class="n">lineType</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+</li>
+</ul>
+<p class="rubric">Explanation</p>
+<ol class="arabic">
+<li><p class="first">Since we plan to draw two examples (an atom and a rook), we have to create two images and two windows to display them.</p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">char</span> <span class="n">atom_window</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&quot;Drawing 1: Atom&quot;</span><span class="p">;</span>
+<span class="kt">char</span> <span class="n">rook_window</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&quot;Drawing 2: Rook&quot;</span><span class="p">;</span>
+
+<span class="n">Mat</span> <span class="n">atom_image</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">zeros</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+<span class="n">Mat</span> <span class="n">rook_image</span> <span class="o">=</span> <span class="n">Mat</span><span class="o">::</span><span class="n">zeros</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <a class="reference internal" href="group_core_hal_interface.html#doxid-d1-d1b-group-core-hal-interface-1ga88c4cd9de76f678f33928ef1e3f96047"><span class="std std-ref">CV_8UC3</span></a><span></span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">We created functions to draw different geometric shapes. For instance, to draw the atom we used <em>MyEllipse</em> and <em>MyFilledCircle</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="mi">90</span> <span class="p">);</span>
+<span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+<span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="mi">45</span> <span class="p">);</span>
+<span class="n">MyEllipse</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span> <span class="p">);</span>
+
+<span class="n">MyFilledCircle</span><span class="p">(</span> <span class="n">atom_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">And to draw the rook we employed <em>MyLine</em>, <em>rectangle</em> and a <em>MyPolygon</em> :</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">MyPolygon</span><span class="p">(</span> <span class="n">rook_image</span> <span class="p">);</span>
+
+<a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+       <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e"><span class="std std-ref">FILLED</span></a><span></span><span class="p">,</span>
+       <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span> <span class="p">);</span>
+
+<span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="mi">15</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">)</span> <span class="p">);</span>
+<span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span> <span class="p">);</span>
+<span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span> <span class="p">);</span>
+<span class="n">MyLine</span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span> <span class="p">);</span>
+</pre>
+</li>
+<li><p class="first">Let’s check what is inside each of these functions:</p>
+<ul>
+<li><p class="first"><em>MyLine</em></p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">MyLine</span><span class="p">(</span> <span class="n">Mat</span> <span class="n">img</span><span class="p">,</span> <span class="n">Point</span> <span class="n">start</span><span class="p">,</span> <span class="n">Point</span> <span class="n">end</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">thickness</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span><span class="p">;</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">line</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">,</span>
+    <span class="n">end</span><span class="p">,</span>
+    <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span>
+    <span class="n">thickness</span><span class="p">,</span>
+    <span class="n">lineType</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>As we can see, <em>MyLine</em> just call the function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga7078a9fae8c7e7d13d24dac2520ae4a2"><span class="std std-ref">cv::line</span></a>, which does the following:</p>
+<ul class="simple">
+<li>Draw a line from Point <strong>start</strong> to Point <strong>end</strong></li>
+<li>The line is displayed in the image <strong>img</strong></li>
+<li>The line color is defined by <strong>Scalar( 0, 0, 0)</strong> which is the RGB value correspondent to <strong>Black</strong></li>
+<li>The line thickness is set to <strong>thickness</strong> (in this case 2)</li>
+<li>The line is a 8-connected one (<strong>lineType</strong> = 8)</li>
+</ul>
+</li>
+<li><p class="first"><em>MyEllipse</em></p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">MyEllipse</span><span class="p">(</span> <span class="n">Mat</span> <span class="n">img</span><span class="p">,</span> <span class="kt">double</span> <span class="n">angle</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">thickness</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">ellipse</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">w</span><span class="o">/</span><span class="mi">2</span> <span class="p">),</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga346f563897249351a34549137c8532a0"><span class="std std-ref">Size</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">),</span>
+       <span class="n">angle</span><span class="p">,</span>
+       <span class="mi">0</span><span class="p">,</span>
+       <span class="mi">360</span><span class="p">,</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">),</span>
+       <span class="n">thickness</span><span class="p">,</span>
+       <span class="n">lineType</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>From the code above, we can observe that the function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga28b2267d35786f5f890ca167236cbc69"><span class="std std-ref">cv::ellipse</span></a> draws an ellipse such that:</p>
+<ul class="simple">
+<li>The ellipse is displayed in the image <strong>img</strong></li>
+<li>The ellipse center is located in the point **(w/2, w/2)** and is enclosed in a box of size **(w/4, w/16)**</li>
+<li>The ellipse is rotated <strong>angle</strong> degrees</li>
+<li>The ellipse extends an arc between <strong>0</strong> and <strong>360</strong> degrees</li>
+<li>The color of the figure will be <strong>Scalar( 255, 0, 0)</strong> which means blue in BGR value.</li>
+<li>The ellipse’s <strong>thickness</strong> is 2.</li>
+</ul>
+</li>
+<li><p class="first"><em>MyFilledCircle</em></p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">MyFilledCircle</span><span class="p">(</span> <span class="n">Mat</span> <span class="n">img</span><span class="p">,</span> <span class="n">Point</span> <span class="n">center</span> <span class="p">)</span>
+<span class="p">{</span>
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf10604b069374903dbd0f0488cb43670"><span class="std std-ref">circle</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+      <span class="n">center</span><span class="p">,</span>
+      <span class="n">w</span><span class="o">/</span><span class="mi">32</span><span class="p">,</span>
+      <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+      <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e"><span class="std std-ref">FILLED</span></a><span></span><span class="p">,</span>
+      <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>Similar to the ellipse function, we can observe that <em>circle</em> receives as arguments:</p>
+<ul class="simple">
+<li>The image where the circle will be displayed (<strong>img</strong>)</li>
+<li>The center of the circle denoted as the Point <strong>center</strong></li>
+<li>The radius of the circle: <strong>w/32</strong></li>
+<li>The color of the circle: <strong>Scalar(0, 0, 255)</strong> which means <em>Red</em> in BGR</li>
+<li>Since <strong>thickness</strong> = -1, the circle will be drawn filled.</li>
+</ul>
+</li>
+<li><p class="first"><em>MyPolygon</em></p>
+<pre class="highlight literal-block">
+<span></span><span class="kt">void</span> <span class="nf">MyPolygon</span><span class="p">(</span> <span class="n">Mat</span> <span class="n">img</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">lineType</span> <span class="o">=</span> <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span><span class="p">;</span>
+
+  <span class="n">Point</span> <span class="n">rook_points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">20</span><span class="p">];</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>  <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">11</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">19</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">32</span><span class="p">,</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>     <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">26</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">8</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">26</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">9</span><span class="p">]</span>  <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">22</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">22</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">18</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">18</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">14</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">14</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">40</span><span class="p">,</span>    <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>     <span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>   <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">17</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">32</span><span class="p">,</span>  <span class="mi">3</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">18</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>  <span class="mi">5</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+  <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span>    <span class="n">w</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span>  <span class="mi">13</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">16</span> <span class="p">);</span>
+
+  <span class="k">const</span> <span class="n">Point</span><span class="o">*</span> <span class="n">ppt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">rook_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">};</span>
+  <span class="kt">int</span> <span class="n">npt</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">20</span> <span class="p">};</span>
+
+  <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf30888828337aa4c6b56782b5dfbd4b7"><span class="std std-ref">fillPoly</span></a><span></span><span class="p">(</span> <span class="n">img</span><span class="p">,</span>
+        <span class="n">ppt</span><span class="p">,</span>
+        <span class="n">npt</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+        <span class="n">lineType</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>To draw a filled polygon we use the function <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1gaf30888828337aa4c6b56782b5dfbd4b7"><span class="std std-ref">cv::fillPoly</span></a>. We note that:</p>
+<ul class="simple">
+<li>The polygon will be drawn on <strong>img</strong></li>
+<li>The vertices of the polygon are the set of points in <strong>ppt</strong></li>
+<li>The total number of vertices to be drawn are <strong>npt</strong></li>
+<li>The number of polygons to be drawn is only <strong>1</strong></li>
+<li>The color of the polygon is defined by <strong>Scalar( 255, 255, 255)</strong>, which is the BGR value for <em>white</em></li>
+</ul>
+</li>
+<li><p class="first"><em>rectangle</em></p>
+<pre class="highlight literal-block">
+<a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">rectangle</span></a><span></span><span class="p">(</span> <span class="n">rook_image</span><span class="p">,</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="mi">8</span> <span class="p">),</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga1e83eafb2d26b3c93f09e8338bcab192"><span class="std std-ref">Point</span></a><span></span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
+       <a class="reference internal" href="namespace_cv.html#doxid-dc-d84-group-core-basic-1ga599fe92e910c027be274233eccad7beb"><span class="std std-ref">Scalar</span></a><span></span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="p">),</span>
+       <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a89c5f6beef080e6df347167f85e07b9e"><span class="std std-ref">FILLED</span></a><span></span><span class="p">,</span>
+       <a class="reference internal" href="enum_cv_LineTypes.html#doxid-d0-de1-group-core-1ggaf076ef45de481ac96e0ab3dc2c29a777a5d32eda7017db273a37f158e5b51442a"><span class="std std-ref">LINE_8</span></a><span></span> <span class="p">);</span>
+</pre>
+<p>Finally we have the <a class="reference internal" href="group_imgproc_draw.html#doxid-d6-d6e-group-imgproc-draw-1ga07d2f74cadcf8e305e810ce8eed13bc9"><span class="std std-ref">cv::rectangle</span></a> function (we did not create a special function for this guy). We note that:</p>
+<ul class="simple">
+<li>The rectangle will be drawn on <strong>rook_image</strong></li>
+<li>Two opposite vertices of the rectangle are defined by ** Point( 0, 7*w/8 )** andPoint( w, w)**</li>
+<li>The color of the rectangle is given by <strong>Scalar(0, 255, 255)</strong> which is the BGR value for <em>yellow</em></li>
+<li>Since the thickness value is given by <strong>FILLED (-1)</strong>, the rectangle will be filled.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p class="rubric">Result</p>
+<p>Compiling and running your program should give you a result like this:</p>
+<img alt="_images/Drawing_1_Tutorial_Result_0.png" src="_images/Drawing_1_Tutorial_Result_0.png" />
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="page_tutorial_basic_linear_transform.html" class="btn btn-neutral float-right" title="Changing the contrast and brightness of an image!" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="page_tutorial_adding_images.html" class="btn btn-neutral float-left" title="Adding (blending) two images using OpenCV" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1999-2017, OpenCV Maintainers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
